@@ -1,0 +1,44 @@
+To export from Access to CSV
+============================
+
+ 1. Copy JMBT_2000_LIVE_DATA.mdb to C:\
+
+ 2. Copy JMBTTransfer.mdb wherever you like.
+
+ 3. Open JMBTTransfer.mdb in Access.  You should be able to browse the tables (which are all linked to JMBT_2000_LIVE_DATA.mdb).
+
+ 4. Open up the module "ExportCode".  Change the first line of code ("const outdir = ..." to a directory of your choosing (with a backslash at the end).
+
+ 5. Run the VBA procedure named ExportTable.  This will reate a bunch of csv files in the directory you chose in step 4.  These CSV files represent the entire access database.
+
+To import from CSV to PostgreSQL
+================================
+
+ 1. Look in package offstage.dbimport.jmbt package.
+
+ 2. Edit JMBTCSVImport.java.  Adjust path at top as necesary.
+
+ 3. Run it.  This will import the CSV files created above with the JMBTTransfer.mdb program.  Note that the character set of the input file is specified here as "ISO8859_1"; this should be correct.
+
+ 4. Make sure that non-ASCII characters in the CSV files made their way correctly into the PostgreSQL database tables.  Please verify this!
+
+ 5. Note that all columns in the import tables (which start with "aa") are of type varchar(300).
+
+Needs to be written
+===================
+
+ 1. There is currently no easy way to drop all the "aa" (import) tables.  This needs to be written.  Use "select * from pg_tables" to get a list of the tables in the DB.
+
+ 2. Convert all useful data from access import tables to offstageCRM tables.  This should be a program we can run, preferably in Java (so it integrates well with the above JMBTCSVImport).  There should be one simple place where we can set config parameters (eg. path to csv files, DB name, etc) and then "just run" it.  Suggestion:
+	a) make a way to iterate, record-by-record, through the entities in the original DB.
+	b) For each entity, insert the required data in the main tables.
+	c) Be aware that the new tables might not be able to represent all data in the old DB; please note these cases, and we will either extend the DB or throw out the data.
+	d) In many cases, you will have to search through to create a valid set of "ids".  For example, aapeople.miscphonetype contains a bunch of types of phones.  The "distinct" set from this column should go into phoneids table.
+
+ 3. Once the data are converted, stable and consistent in the new DB, write a program to clean it up.  Cleaning consists of:
+	a) Consoliding set types.  For example, there are way too many kinds of phoneids.
+	b) Searching out and resolving duplicate person entries.
+	c) Formatting phone numbers, zip codes, etc. in a standard way
+	d) ... whatever more we can think of to improve data consistency...
+ Some cleaning things may need manual intervention.  In this case, the procedure should flag problems, so later we can go through and fix them manually (with a front-end to be written, if needed).
+

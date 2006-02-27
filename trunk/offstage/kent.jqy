@@ -1,0 +1,19 @@
+<object-stream>
+  <offstage.equery.EQuery>
+    <clauses>
+      <offstage.equery.EQuery-Clause>
+        <elements>
+          <offstage.equery.EQuery-Element>
+            <colName>
+              <stable>persons</stable>
+              <scol>lastname</scol>
+            </colName>
+            <comparator>ilike</comparator>
+            <value class="string">%Kent%</value>
+          </offstage.equery.EQuery-Element>
+        </elements>
+        <name>Kents</name>
+      </offstage.equery.EQuery-Clause>
+    </clauses>
+  </offstage.equery.EQuery>
+</object-stream>

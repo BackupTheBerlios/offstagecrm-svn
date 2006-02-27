@@ -1,0 +1,61 @@
+Software used by OffstageCRM --- must be installed on developer's machine:
+============================
+
+1. Java2 SDK 1.4.2 (NOT 1.5)
+	http://java/sun.com
+
+2. Apache Ant
+	http://ant.apache.org/
+	Should be installed so it can be run from the command prompt separately from NetBeans
+
+3. NetBeans 4.1
+	http://www.netbeans.org
+
+4. TableLayout NetBeans Integration
+	http://developer.berlios.de/projects/nblayoutpack/
+	Already downloaded to ./nbm (use version corresponding to your NetBeans version)
+
+5. PostgreSQL v8
+	http://www.postgresql.org
+
+6. iReport --- visual builder for JasperReports
+	http://ireport.sourceforge.net/
+	iReport.jar file also needs to be available at compiletime --- it's in ./compilelib.
+
+7. MS Access database --- data
+
+8. MS Access database --- export
+
+Other useful tools
+==================
+
+1. Prefedit
+	http://sourceforge.net/project/showfiles.php?group_id=35777
+
+
+Libraries (included in distribution)
+====================================
+
+1. JasperReports --- report generator
+	http://jasperreports.sourceforge.net/
+
+2. TableLayout --- layout manager used in many screens
+
+3. Various Apache libraries, used by XXXXX?
+	commons-beanutils
+	commons-collections
+	commons-digester
+	commons-logging
+
+4. iText????
+
+5. OstermillerUtils --- used for something
+
+6. PostgreSQL JDBC driver: pg73jdbc3.jar
+	http://www.postgresql.org
+
+7. xpp3_min
+
+8. xstream
+
+
