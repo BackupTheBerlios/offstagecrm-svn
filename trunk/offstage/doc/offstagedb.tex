@@ -1,0 +1,422 @@
+\documentclass[11pt]{article}
+%\usepackage{hyperlatex}
+\usepackage{times}
+
+\setlength{\topmargin}{0in}
+\setlength{\textheight}{9in}    % 9 inch page
+\setlength{\textwidth}{5.5in}     % 5 3/4 inch line 
+\setlength{\oddsidemargin}{36pt}  % 1/4 inch (yields 1 1/4 inch left margin)
+\setlength{\evensidemargin}{36pt} % 1/4 inch
+
+\title{Offstage Database Structure and Coding Conventions}
+\author{Robert Fischer}
+
+\begin{document}
+
+% \T\thispagestyle{empty}
+\maketitle
+
+\section{Core Tables}
+
+The core database works by keeping track of two basic things:
+
+\begin{enumerate}
+\item Entities (i.e. people or organizations)
+\item Groups (arbitrary collections of entities).
+\end{enumerate}
+
+\subsection{Entities}
+
+Entities in Offstage are the subjects on which we opreate --- either \emph{persons} or \emph{organizations} (stored in tables of those names).  Both subclass from the \emph{entities} table, sharing common fields in \emph{entities}.  Fields unique to each kind of object are stored in the subclassed tables.  Thus, the primary key field for ALL THREE tables is \emph{entityid}, and it is auto-generated.
+
+\subsubsection{Families}
+
+People occur in families.  It is important to keep track of these family relationships for the purposes of communcations.  There are three kinds of communications, with different handling of it:
+
+ \begin{itemize}
+ \item \emph{SnailMail marketing:} Send just one per household address (see \emph{entities.primaryentityid}).
+ \item \emph{Email marketing:} Send to everyone involved.  Eg, send Nutcracker ads to children and parents at same household.
+ \item \emph{Customer correspondence:} with respect to a customer account --- invoicing, billing, registration, enrollment, etc.  Send only to adults designated as the caretakers of each student (see \emph{entities.adultid}).  This is true whether it's sent by Snail and E mail.  If the student is 19 or older, ignore the \emph{adultid} field and send directly to the student.
+ \end{itemize}
+
+NOTE: All SnailMail addresses are effectively billing addreses.
+
+\subsection{Groups}
+
+A group is an arbitrary set of entities.  This is stored, most generally in the \emph{groups} table.  Assuming each group may be identified by a \emph{groupid} primary key, then this table associates (\emph{groupid}, \emph{entityid}) pairs.
+
+The \emph{groupids} table gives a description for each group, in the form of a \emph{name} field.  This way, you can remember what group is what!
+
+\subsubsection{Groups or Attributes}
+
+Groups may be used in two ways:
+
+\begin{enumerate}
+ \item As a group of entities --- for example, the set of people involved in a mailing.
+ \item As attributes attached to entities.  For example, a \emph{Nutcracker} group could be created, and all entities interested in \emph{The Nutcracker} be placed in it.  When displaying an entity, an on-screen field could show whether that person is in the \emph{Nutcracker} group.
+ \end{enumerate}
+
+\subsubsection{Group Subclasses}
+
+Usually, groups need more information associated with them than just a name --- also, additional information may need to be associated with each entity in a group.  For example, a group called \emph{Donations 2005} could be used to track donors, but for each entity in the \emph{Donations 2005} group, one would need to keep track of how much money is donated.
+
+This is accomplished through subclassing. Each \emph{type} of group \emph{xyz} --- needing its own kind of extra data --- is represented by two tables:
+	\begin{enumerate}
+ \item \emph{xyzids} subclasses from \emph{groupids}.  It describes each group of type \emph{xyz}.
+ \item \emph{xyzs} is the actual grouping associations, and it subclasses from \emph{groups}.  Any extra fields to be associated with each entity go here.
+ \end{enumerate}
+
+The group types currently in the database are:
+ \begin{enumerate}
+\item[donation] Year-by-year donation data.  This should be replaced with a running donation table that gets filled in when each entity donates.
+ \item[dtgroup] (?)
+ \item[mailing] A mailing is a set of entities constructed at a particular point in time through queries.  Mailing labels may be printed.
+ \item[note] Arbitrary annotation attached to entities. (\emph{notetypes} is obsolete)
+ \item[phone] Phone numbers attached to entities
+ \item[status] (?)
+ \end{enumerate}
+
+\section{Accounting \& Billing}
+
+\subsection{Invoices}
+
+Payments are made to Ballet Theatre for four kinds of services:
+ \begin{enumerate}
+ \item Enrollment in classes.
+ \item One-time substitions in classes.
+ \item Purchase of class card.
+ \item Ticket Sales
+ \item Pledges
+ \end{enumerate}
+Currently, we only do enrollment, substition and class card invoices.
+
+An invoice represents an expectation of payment.  Notes:
+ \begin{itemize}
+ \item Table: \emph{invoiceids}
+ \item All goods and services provided by Ballet Theatre result in an invoice, even if that invoice is paid immediately (as with ticket sales).
+ \item The items \emph{on} the invoice are stored in a type-specific manner (enrollment, ticket sale, pledge).
+ \item The \emph{entityid} should be the head of a family, not a child.
+ \item The toal amount of the invoice is stored in \emph{amount}.  
+ \item At any given time, the amount remaining on the invoice and not yet paid is stored in \emph{remain}.
+ \item The \emph{invoiceid} generated is used to cross-reference with QuickBooks Pro.
+ \item Invoices may also be negative.  In that case, they're used for payroll of pianists and teachers.
+ \end{itemize}
+
+
+\subsubsection{Enrollment Invoices}
+
+ \begin{itemize}
+ \item Enrollment information is stored in \emph{enrollments} table and liked to invoices via the \emph{invoiceid} field.
+ \item Multiple enrollments can be put on a single invoice.
+ \item A stored procedure named should create an invoice for an entire (family, term) combination.  Enrollment invoices are created only once a year, after a family is entirely done enrolling.
+ \end{itemize}
+
+\subsection{Payments}
+
+A payment represents money coming into Ballet Theatre.
+ \begin{itemize}
+ \item Table: \emph{paymentids}
+ \item Column \emph{remain} indicates how much of a payment has not yet been allocated to an invoice.  This could hang around a while if someone overpays.
+ \item Three table sub-class \emph{paymentids}, depending on type of payment: \emph{cashpayments}, \emph{checkpayments}, \emph{ccpayments}
+ \item Only MasterCard and Visa are accepted.
+ \item For security purposes, only the last four digits of the credit card are stored in \emph{ccpayments.ccnumber}.  This is enough to match with credit receipts if a payment is contested.
+ \item The \emph{invaliddate} is the first date a CC is not valid.  If a CC expires on ``6/07'' then the invaliddate will be ``7/01/07 12:00 AM''.
+ \end{itemize}
+
+\subsection{Allocating Payments to Invoices}
+
+When a payment is made, the system will decide which invoice(s) it should be allocated to.  This will be done differently in different cases:
+ \begin{itemize}
+ \item For ticket sales, it will automatically allocate to the invoice for the current ticket sale.  The customer won't realize that invoice and payment are separate.
+ \item Customers should be able to pay outstanding invoices on-line.  In such cases, things will be kept simple to it's easy to know which invoice is being paid on which payment.  User will select invoice(s) to pay, decide how much to pay on each, and then pay that amount.
+ \item For more complex scenario, a back-office payment allocator screen will be created, which will allow the allocation of payments to invoices.
+ \end{itemize}
+
+\section{School Module}
+
+School needs vary widely.  The system must accomodate a variety of programming issues:
+ \begin{itemize}
+ \item Overlapping terms of programming.  Eg: YDP 2006-2007 overlaps with Nutcracker 2006.
+ \item Closed-enrollment and open-enrollment classes.
+ \item Substitions of students and teachers.
+ \item Keep track of teachers and pianists as well as students.
+ \item On-line registration and enrollment.
+ \item Some enrollment is by audition only.
+ \end{itemize}
+
+A \emph{term} is a named program over a fixed period of time, with a defined start date and end date.
+ \begin{itemize}
+ \item Table: \emph{termids}
+ \item Terms come in types, depending on programming (see \emph{termtypes}).
+ \item The \emph{nextdate} is the first date \emph{not} part of the term.
+ \item Terms may have acitivty associated with them outside their date range --- eg: auditions will fall before the start date.
+ \end{itemize}
+
+In what follows, we will first describe how YDP course offerings are
+represented in the system.  Then, we will describe how other offerings
+are represented.
+
+\subsection{School Module: Young Dancers Program (YDP)}
+
+Ballet Theatre offers a set of courses during a particular term.  A \emph{course} is a regularly meeting group of people of nearly constant enrollment.  There are two kinds of courses: closed and open enrollment.  They'll be dealth with separately here.  There are also special ``courses'' --- audition courses and registration courses.
+
+\begin{itemize}
+ \item Tables: \emph{courseids}, \emph{meetings}
+ \item Courses generally last for only one term.
+ \item Everyone ``enrolled'' in a course plays a role: generally student, teacher or pianist, but that varies for Nutcracker rehearsal ``courses''.  Table: \emph{sourseroles}.  This allows the same system to serve for: enrollment, pianist/teacher assignments, billing and payment.
+ \end{itemize}
+
+ \subsubsection{Closed Enrollment Courses}
+
+These are ``regular'' courses for the YPD (school) program.  Students enroll in a set of courses at the beginning of the term, and pay by the term.  Attendance is taken at every meeting.
+ \begin{itemize}
+ \item Always associated with a term.
+ \item All meetings for the course are within the term start/end dates.
+ \item The fields \emph{dayofweek}, \emph{tstart} and \emph{tnext} are used to auto-generate course meetings for a term.  A course \emph{can} meet at any time, but these fields allow the computer to do most of the work of setting up meetings, only to be edited at end by user.
+ \end{itemize}
+
+ \subsubsection{Audition Courses}
+
+Before each YDP term, a number of auditions are held for placement.  These are coded as courses as well:
+ \begin{itemize}
+ \item Linked to the term for which they are auditioning.  Generally outside the date range of the term.
+ \item They meet only once --- hence, \emph{dayofweek}, \emph{tstart} and \emph{tnext} are all null.
+ \end{itemize}
+
+\subsubsection{Programs}
+
+ \begin{itemize}
+ \item A \emph{program} is a set of offerings appropriate for a person.
+ \item One \emph{registers} for programs.
+ \item Not everyone is eligible to register for every program.  Eligibility is restricted in two ways:
+ \begin{enumerate}
+	 \item Some programs are by audition-only.  In that case, explicit eligibility must be provided for each student in the \emph{regelig} table and \emph{needselig} will be true.
+	\item Eligibility lasts only so long --- thus the \emph{expiredate} column.  This date will be set the same for all eligibilities determined at the same audition, etc.  NOTE: (programid, entityid) is NOT a primary key here, someone could become eligible for the same program multiple times in multiple ways.
+	 \item Other programs have a minimum age requirement.  In such case, \emph{minage} will be non-null.
+	 \item An entry in \emph{regelig} overrides age criteria no matter what the value of \emph{needselig}.
+	\item NOTE: School coordinator and register anyone for anything, regardless of eligibility.
+ \end{enumerate}
+ \item Each program has a bunch of courses associated with it.  (No good way to represent this yet).
+ \item In principle, anyone registered for a program can enroll or not enroll in any course associated with that program.  In practice, self-service enrollment is only allowed for pre-defined sets of courses (Table: \emph{coursesetids}, \emph{coursesets}).
+ \item In practice, this ``custom enrollment'' is done only be the school coordinator.  Since the coordinator needs the power to enroll anyone in any course, the system does not need to keep track of which course(s) are part of which programs.
+ \end{itemize}
+
+\subsubsection{Registration}
+
+ \begin{itemize}
+ \item The \emph{registrations} table records registrations.
+ \item Note that registration expires --- generally at the end of the term associated with the program for which one is registering.
+ \item A successful registration makes one eligible to enroll in courses associated with that program.
+ \item For open-class program registrations, registration expires one year after first class.  Once info is checked in person, this date is rolled forward year by year.
+ \end{itemize}
+
+With registration represented in the system, there are two main ways we expect students to register on the website:
+ \begin{itemize}
+	\item \emph{Anonymous Registration:} when a new customer with no history at Ballet Theatre registers.
+	\item \emph{Returning Registration:} when a student with prior BT history registers.
+ \end{itemize}
+
+
+\paragraph{Anonymous Registration}
+
+If someone comes to the web site as a new customer, they engage in an \emph{anonymous registration}.  At the time registration info is collected, we know only their age (via birthday) --- and can offer registration only in programs that do not require prior eligibility.  Once they register, we collect their name and other info as well.  The on-line registration process works as follows:
+
+ \begin{itemize}
+ \item They give their age; age is stored in a session variable.
+ \item Program eligibility is determined, based on age.  Appropriate programs are presented to student.
+ \item Student is allowed to register for one or more programs.  For audition-only portions of the school, this includes a program linked to the generic YDP audition class (age-appropriate).
+ \item Name, birthdate, login, password, parent's name, address, etc. are collected.
+ \item An opportunity is provided to enroll in courses appropriate for the program for which one is registered.  Enrollment is not finalized until customer has paid for courses (or at least paid part).
+ \end{itemize}
+
+At this point, the registrant counts as a prior student.  If they're registering for a non-audition program, they're done.  If they want to attend an audition-only program, they should enroll in the appopriate audition course (which consists of exactly one meeting), and attend the audition.  Based on the results of that audition, they will become eligible for certain programs, and they return at that point as a prior student.
+
+\paragraph{Prior Student Registration}
+
+Prior students log in with their username and password (actually, only parents can log in).  At that point, they get to register for programs for which they are eligible.  Program eligibility is updated periodically, based on either auditions or achievement in a previous term.
+
+\subsubsection{Enrollment}
+
+\begin{enumerate}
+ \item Table: \emph{enrollments}, \emph{courseroletypes}
+ \item Used to enroll a student in a course.
+ \item Set the \emph{courserole} appropriately for students.
+ \item Enrollment is not finalized until two things have happened (in order):
+ \begin{enumerate}
+	\item An acceptable payment plan is provided for the enrollment (\emph{paymentmethodids}).
+	\item The enrollment has been approved by the school principal.  Approval is arbitrary, but will be generally done in order of \emph{dtenrolled}.
+ \end{enumerate}
+ \item The \emph{dstart} and \emph{dend} fields are used to enroll students who start late or end early in the term.  Price is pro-rated.  This is subject to approval and not available on-line.
+ \end{enumerate}
+
+Once \emph{all} students of the same \emph{primaryentityid} have
+enrolled, a payment plan (\emph{pplanids}) may be created.  The price
+depends on a complex formula involving discounts for additional
+classes per week, second children, etc.  Price is estimated (and not
+filled into the \emph{pplanids.amount} field) until approval by
+principal.
+
+\paragraph{Audition Enrollment}
+
+Students are allowed to enroll in audition courses with automatic
+approval; enrollment is complete once full payment for the course is
+received (there is no payment plan for them).  This is true for YPD
+and Nutcracker and Summer Program auditions.
+
+\subsubsection{Registration Fee}
+
+A registration fee is collected for each student.  This is coded by making enrollment in some courses contingent upon enrollment in others (\emph{coursedeps}).  Whenever students enroll in YDP courses, they are \emph{required} to enroll in the associated registration course.  The course has no meetings, but costs \$25.
+
+\subsubsection{Payment Plans}
+
+When enrolling, a payment plan must be provided (\emph{pplanids}).  This consists of either:
+ \begin{enumerate}
+ \item A promise to pay by cash or check, subject to approval by school coordinator.
+ \item Acceptable credit card credentials with valid expiration date.
+ \end{enumerate}
+
+Payment plans come in two types (\emph{pplantypeids}):
+ \begin{enumerate}
+ \item Pay in full --- customer promises to pay full bill upon enrollment.
+ \item Pay in installments --- customer pays part up-front, part later.
+ \end{enumerate}
+
+A few notes:
+ \begin{enumerate}
+ \item If a pay-in-installments type is selected, then the credit card expiration date must be greater than the end of the terms for which one is enrolling.  If payment is not forthcoming, Ballet Theatre will charge the cards at the appropriate time.
+ \item The \emph{remain} field indicates how much is remaining to be paid on the enrollment (but not yet invoiced).  Once money is invoiced, \emph{remain} is decremented --- but \emph{remain} is now \emph{incremented} in the appropriate invoice.
+ \item Once \emph{remain} goes to zero and associated invoices have been paid, only the last four digits of \emph{ccnumber} are saved.
+ \end{enumerate}
+
+Periodically during each term, the system will generate invoices based
+on payment plans.  The invoiced money then becomes due by the invoice
+due date; it will be easy to track past-due invoices.
+
+\subsubsection{Enrollment Process}
+
+Putting two and two together, we see the process is as follows:
+ \begin{enumerate}
+ \item Parent enrolls all students via website.
+ \item An estimated price is provided on-line (but not recorded in any permanent storage).
+ \item Parent submits an acceptable payment plan.  No price yet.
+ \item School principal approves enrollment, possibly changing enrollment details.  Now the student is really enrolled and appears on the class lists.
+ \item Final price of enrollments is computed and entered into payment plan.
+ \item Parent is invoiced according to schedule indicated by payment plan.
+ \end{enumerate}
+
+\subsubsection{Substitutions}
+
+Sometimes, students might miss a course meeting and attend a different one instead.  This is recorded as a substition in the \emph{subs} table.
+ \begin{itemize}
+ \item Parents may request a substition on-line; however, it must be approved before it becomes ``real.''
+
+ \item Most subs for YDP don't involve any financial charges.  However, if they do, an invoice is created and linked via the \emph{invoiceid} field.
+
+ \item Once a sub is approved, the \emph{enrollments} plus \emph{subs} table provides the best expectation of who will attend a particular course meeting.
+ \end{itemize}
+
+\subsubsection{Attendance}
+
+The \emph{attendance} table provides an accurate accounting of who actually attended what meetings.  This is recorded at the front desk when students check in.  They declare who they are.  The system will be able to figure out what meetings they are expected to attend, and will thereby allow the front-desk operator an easy way to record which meetings they are \emph{actually} attending.
+
+\begin{itemize}
+
+ \item Teachers will still be expected to take attendance in class.  Teacher attendance proves a student actually went to class, on-line attendance only shows a student entered the building.
+
+ \item The system will be able to contact parents in a timely basis regarding students expected to arrive who did not.  This will reduce Ballet Theatre's liability.
+
+ \end{itemize}
+
+\subsection{School Module: Open Classes}
+
+Adult classes are open enrollment.  Here is how the above table structures work for the adult open enrollment program:
+ \begin{itemize}
+ \item All students 19 or over are eligible for the open class programs (which are coded by term).
+ \item Registration is taken on a rolling basis.  Registrations expire in one year, after which the school must verify previous registration info is still current.
+ \item Courses have no enrollment.
+ \item Courses are coded as being associated with a term and meeting on a particular day of the week and time.
+ \item When students make it to a meeting, they are entered in as a substitution.
+ \item Substitions are invoiced according to the prevailing price of the class at that time.  Payment is expected immediately.
+ \item Attendance is recorded in tandem with substition.
+ \item Summary: An entry into \emph{subs}, \emph{attendance}, \emph{invoiceids}, \emph{paymentids} is made for every open class registration.
+ \end{itemize}
+
+\subsubsection{Class Cards}
+
+Class cards provide a way to pre-pay for open classes at a reduced rate --- for example, \$10 per class instead of \$12.  It is essentially a pre-paid debit account linked with the student.
+
+\paragraph{Class Card Balance}
+
+A class card balance is determined by two things:
+ \begin{enumerate}
+ \item The most recent ``definitive'' balance is stored in \emph{ccardbalance}.
+ \item Transactions adding or subtracting money are stored in \emph{ccardtrans}. \end{enumerate}
+
+To get the \emph{current} balance, take the most recent record in \emph{ccardbalance} and add any more recent \emph{ccardtrans} records to it.
+
+\paragraph{Buying Class Card}
+
+A class card is created when a student pays for one at the front desk (eg: \$100 for 10 classes).  This does the following:
+ \begin{enumerate}
+ \item Create a class card-typed invoice.
+ \item Create a payment record for the invoice.
+ \item Create a \emph{ccardtrans} record.
+ \item Create a new \emph{ccardbalance} record reflecting the current balance.
+ \end{enumerate}
+
+Generally, the amount paid will be $100-x$ dollars where $x$ is the remainder of $100 / p$ and $p$ is the (discounted) price of one class.  This will bring the student's account up to an integral number of classes, in \$100 blocks.  Usually, $x$ will be zero, except for when prices rise.
+
+\paragraph{Paying with a Class Card}
+
+ \begin{itemize}
+ \item If a student chooses to pay with a class card, no invoice is created.  Instead an entry is placed in \emph{classcardtrans}.
+ \item There is no intrinsic reason that the balance cannot go negative for students who forgot their class card.  This is a policy decision for the school.
+ \end{itemize}
+
+\subsection{Children's Nutcracker}
+
+Children's Nutcracker is a task unto itself --- 200 children plus Nutcracker auditions, rehearsals and performances.
+
+Auditions are coded just like YDP auditions.  By enrolling in the
+audition course, children indicate a desire to be in the Nutcracker.
+
+Upon successful completion of auditions, children are enrolled (by
+staff) in courses appropriate to their assigned part.  These courses
+have no cost.  Attendance is required, of course, for successful
+casting in the show.
+
+Courses are also created for Nutcracker performances, and students are
+enrolled in them as well.
+
+
+\section{Queries}
+
+User-built entity queries are represented by Java data structures, which are stored in an XML serialization format.  They are not stored in the database.
+
+\section{Coding Conventions}
+
+\subsection{Date/Time}
+\begin{itemize}
+ \item Columns with name \emph{dxxx} store date only.
+ \item Columns with name \emph{dtxxx} store date an time.
+ \item Columns with name \emph{txxx} store time.
+ \item All times are without timestamp, and stored in local time.
+\end{itemize}
+
+\subsection{Datbase Connections}
+
+Database connections are obtained from a \emph{ConnPool} object.  The Servlet filters and GUI code handle this for the business logic.  Business logic code should take a \emph{Statement} object (or \emph{Connection} if needed), and should never store these objects beyond a method call.  If they take a \emph{Statement} object, they need not close their result set.  If they use a \emph{Connection}, they must close any \emph{Statement} objects they crated.
+
+\subsection{Transactions}
+
+Business logic should not handle transactions.  This will be handled by the sturctural code.  It is assumed that a transaction will take place for every button press by the user, or every controller servlet.
+
+\subsection{Stored Procedures}
+
+``Stored procedures'' are written in Java as static methods taking a \emph{Statement} in the \emph{offstage.db} package.  They have a naming convention as follows:
+\begin{verbatim}
+    {r/w}_{table}.{action}
+\end{verbatim}
+ where the first character is `r'or `w' depending on whether the procedure reads or writes the table.
+
+\end{document}
