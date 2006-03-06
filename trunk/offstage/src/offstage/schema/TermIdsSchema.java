@@ -21,12 +21,12 @@ package offstage.schema;
 import citibob.jschema.*;
 import citibob.jschema.pgsql.*;
 
-public class TermsSchema extends ConstSchema
+public class TermIdsSchema extends ConstSchema
 {
 
-public TermsSchema()
+public TermIdsSchema()
 {
-	table = "terms";
+	table = "termids";
 	cols = new Column[] {
 		new Column(new SqlInteger(), "termid", true),
 		new Column(new SqlInteger(), "termtypeid", false),
