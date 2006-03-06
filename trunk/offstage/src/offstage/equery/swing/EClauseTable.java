@@ -42,7 +42,7 @@ import offstage.equery.EQuerySchema;
  */
 
 
-public class EClauseTable extends JTable {
+public class EClauseTable extends citibob.swing.CitibobJTable {
 	
 
 EQuerySchema schema;

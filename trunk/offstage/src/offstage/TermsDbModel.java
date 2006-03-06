@@ -61,7 +61,7 @@ throws java.sql.SQLException
 {
 	// TODO: Hack: avoid problems with null dates!!!
 	super(
-		new SchemaBuf(new TermsSchema()) {
+		new SchemaBuf(new TermIdsSchema()) {
 		public Object getDefault(int col) {
 			if (java.util.Date.class.isAssignableFrom(getColumnClass(col))) {
 				return new java.util.Date();
