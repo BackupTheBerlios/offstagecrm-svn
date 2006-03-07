@@ -91,6 +91,7 @@ System.out.println("EC: getTableCellEditorComponent");
 			setCur(ed);
 		}
 		// Delegate...
+//		return super.getTableCellEditorComponent(table, e.value, isSelected, row, column);
 		return super.getTableCellEditorComponent(table, value, isSelected, row, column);
 	}
 	public Object getCellEditorValue()

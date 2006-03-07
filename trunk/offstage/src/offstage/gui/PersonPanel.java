@@ -79,6 +79,24 @@ extends javax.swing.JPanel {
 		genderButtonGroup.add("M", maleButton);
 		genderButtonGroup.add("F", femaleButton);
 		genderButtonGroup.add(null, unknownGenderButton);
+		
+		
+		familyTable.addMouseListener(new DClickTableMouseListener(familyTable) {
+		public void doubleClicked(final int row) {
+			runner.doRun(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				// Make sure it's selected in the GUI
+				familyTable.getSelectionModel().setSelectionInterval(row, row);
+
+				// Process the selection
+				int selected = familyTable.getSelectedRow();
+				if (selected < 0) return;
+				int entityID = dm.getEntity().getFamily().getEntityID(selected);
+				dm.setKey(entityID);
+				dm.doSelect(st);
+			}});
+		}});
+
 	}
 	
 	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm)
@@ -149,7 +167,6 @@ extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         isPrimaryIndicator1 = new offstage.gui.IsPrimaryIndicator();
         clearFamily = new javax.swing.JButton();
-        gotoEntity = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         customaddressto = new citibob.jschema.swing.JSchemaTextField();
@@ -288,16 +305,6 @@ extends javax.swing.JPanel {
 
         jPanel2.add(clearFamily);
 
-        gotoEntity.setText("Go");
-        gotoEntity.setToolTipText("Edit Selected Family Member");
-        gotoEntity.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gotoEntityActionPerformed(evt);
-            }
-        });
-
-        jPanel2.add(gotoEntity);
-
         FamilyPane.add(jPanel2, java.awt.BorderLayout.NORTH);
 
         add(FamilyPane, new info.clearthought.layout.TableLayoutConstraints(2, 0, 2, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
@@ -334,16 +341,6 @@ extends javax.swing.JPanel {
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_clearFamilyActionPerformed
-
-	private void gotoEntityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoEntityActionPerformed
-		runner.doRun(new StRunnable() { public void run(Statement st) throws Exception {
-			int selected = familyTable.getSelectedRow();
-			if (selected < 0) return;
-			int entityID = dm.getEntity().getFamily().getEntityID(selected);
-			dm.setKey(entityID);
-			dm.doSelect(st);
-		}});
-	}//GEN-LAST:event_gotoEntityActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -361,7 +358,6 @@ extends javax.swing.JPanel {
     private javax.swing.JRadioButton femaleButton;
     private citibob.jschema.swing.JSchemaTextField firstname;
     private citibob.jschema.swing.JSchemaKeyedButtonGroup genderButtonGroup;
-    private javax.swing.JButton gotoEntity;
     private offstage.gui.IsPrimaryIndicator isPrimaryIndicator1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

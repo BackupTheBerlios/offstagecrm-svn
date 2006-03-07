@@ -187,7 +187,7 @@ extends DefaultTableCellRenderer {
 		this.schema = schema;
 	}
 	public void setValue(Object o) {
-System.out.println("ColNameRenderer");
+//System.out.println("ColNameRenderer");
 		if (o instanceof EQuery.Element) {
 			EQuery.Element e = (EQuery.Element)o;
 			// EQuery.ColName ccn = e.colName;

@@ -65,7 +65,7 @@ extends MultiTableCellEditor
 			setCur(ed);
 		}
 		// Delegate...
-		return super.getTableCellEditorComponent(table, value, isSelected, row, column);
+		return super.getTableCellEditorComponent(table, e.comparator, isSelected, row, column);
 	}
 	public Object getCellEditorValue()
 	{

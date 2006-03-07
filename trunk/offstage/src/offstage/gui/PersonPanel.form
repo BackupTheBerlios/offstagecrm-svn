@@ -1452,15 +1452,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearFamilyActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="gotoEntity">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Go"/>
-                <Property name="toolTipText" type="java.lang.String" value="Edit Selected Family Member"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gotoEntityActionPerformed"/>
-              </Events>
-            </Component>
           </SubComponents>
         </Container>
       </SubComponents>

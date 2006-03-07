@@ -32,51 +32,41 @@ import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
 
 public class EClauseColumnEditor
-extends DefaultCellEditor
+extends KeyedTableCellEditor
 {
-	
-// ==================================================
-private class MyItem
-{
-	String view;		// Seen by user
-	EQuery.ColName value;		// Underlying value
-	public String toString()	{ return view; }
-	public MyItem(String view, EQuery.ColName value)
-	{
-		this.view = view;
-		this.value = value;
-	}
-}
-// ==================================================
-	
 	
 	EQuery.Element element;
-	public Component getTableCellEditorComponent(JTable table, Object value,
-	boolean isSelected, int row, int column)
-	{
-		element = (EQuery.Element)value;
-		return super.getTableCellEditorComponent(table, value, isSelected, row, column);
-	}
 	
-	public EClauseColumnEditor(EQuerySchema schema)
+	static KeyedModel newKeyedModel(EQuerySchema schema)
 	{
-		super(new JComboBox());
-		JComboBox cbox = (JComboBox)getComponent();
+		KeyedModel kmodel = new KeyedModel();
 		for (Iterator ii = schema.colIterator(); ii.hasNext();) {
 			EQuerySchema.Col col = (EQuerySchema.Col)ii.next();
 			String stable = col.table;
 			String scol = col.col.getName();
-			MyItem item = new MyItem(col.getViewName(),
-				new EQuery.ColName(stable, scol));
-			cbox.addItem(item);
+			kmodel.addItem(new EQuery.ColName(stable, scol), col.getViewName());
 		}
+		return kmodel;
+	}
+	
+	public Component getTableCellEditorComponent(JTable table, Object value,
+	boolean isSelected, int row, int column)
+	{
+		element = (EQuery.Element)value;
+		Component ret = super.getTableCellEditorComponent(table, element.colName, isSelected, row, column);
+//System.out.println("EClauseColumnEditor.getTableCellEditorComponent: value = " + );
+		return ret;
+	}
+	
+	public EClauseColumnEditor(EQuerySchema schema)
+	{
+		super(newKeyedModel(schema));
 	}
 
-	public Object getCellEditorValue()
+	public Object getCellEditorValue()	// Returns EQuery.Element
 	{
 		Object val = super.getCellEditorValue();
-		MyItem item = (MyItem)val;
-		element.colName = item.value;
+		element.colName = (EQuery.ColName)val;
 		return element;
 	}
 

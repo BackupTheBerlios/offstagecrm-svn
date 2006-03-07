@@ -26,6 +26,7 @@ package offstage.gui;
 import java.sql.*;
 import citibob.jschema.pgsql.*;
 import citibob.jschema.*;
+import citibob.swing.table.*;
 import citibob.multithread.*;
 import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
@@ -44,6 +45,21 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 	/** Creates new form SimpleSearchPanel */
 	public SimpleSearchPanel() {
 		initComponents();
+		
+		searchResultsTable.addMouseListener(new DClickTableMouseListener(searchResultsTable) {
+		public void doubleClicked(final int row) {
+			runner.doRun(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				// Make sure it's selected in the GUI
+				searchResultsTable.getSelectionModel().setSelectionInterval(row, row);
+
+				// Process the selection
+				int entityid = getSelectedEntityID();
+				if (entityid < 0) return;
+				dm.setKey(entityid);
+				dm.doSelect(st);
+			}});
+		}});
 	}
 	public void initRuntime(FrontApp app) //Statement st, FullEntityDbModel dm)
 	{
