@@ -103,7 +103,10 @@ throws SQLException
         info.clearthought.layout.TableLayout _tableLayoutInstance;
 
         jSplitPane1 = new javax.swing.JSplitPane();
+        jPanel3 = new javax.swing.JPanel();
         jFileChooser1 = new javax.swing.JFileChooser();
+        jToolBar3 = new javax.swing.JToolBar();
+        bOpenQuery = new javax.swing.JButton();
         jSplitPane2 = new javax.swing.JSplitPane();
         jSplitPane3 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
@@ -122,7 +125,6 @@ throws SQLException
         lQueryName = new javax.swing.JLabel();
         jToolBar1 = new javax.swing.JToolBar();
         bNewQuery = new javax.swing.JButton();
-        bOpenQuery = new javax.swing.JButton();
         bSaveQueryAs = new javax.swing.JButton();
         bSaveQuery = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
@@ -131,13 +133,28 @@ throws SQLException
         setLayout(new java.awt.BorderLayout());
 
         jSplitPane1.setDividerLocation(200);
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
         jFileChooser1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jFileChooser1ActionPerformed(evt);
             }
         });
 
-        jSplitPane1.setLeftComponent(jFileChooser1);
+        jPanel3.add(jFileChooser1, java.awt.BorderLayout.CENTER);
+
+        bOpenQuery.setText("Open");
+        bOpenQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bOpenQueryActionPerformed(evt);
+            }
+        });
+
+        jToolBar3.add(bOpenQuery);
+
+        jPanel3.add(jToolBar3, java.awt.BorderLayout.SOUTH);
+
+        jSplitPane1.setLeftComponent(jPanel3);
 
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -231,15 +248,6 @@ throws SQLException
         });
 
         jToolBar1.add(bNewQuery);
-
-        bOpenQuery.setText("Open");
-        bOpenQuery.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bOpenQueryActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.add(bOpenQuery);
 
         bSaveQueryAs.setText("Save As");
         bSaveQueryAs.addActionListener(new java.awt.event.ActionListener() {
@@ -375,7 +383,7 @@ private void bSaveQueryAsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 		int returnVal = fc.showSaveDialog(EQueryBrowser.this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File f = fc.getSelectedFile();
-			String saveAs = f.getName();
+			String saveAs = f.getPath();
 			System.out.println("extension = " + getExtension(f));
 			String ext = getExtension(f);
 			if (ext == null || "".equals(ext)) saveAs += ".jqy";
@@ -425,6 +433,7 @@ private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
@@ -433,6 +442,7 @@ private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JToolBar jToolBar3;
     private javax.swing.JLabel lQueryName;
     private offstage.gui.MailingidsTable tMailings;
     private offstage.gui.FamilyTable tTestResults;

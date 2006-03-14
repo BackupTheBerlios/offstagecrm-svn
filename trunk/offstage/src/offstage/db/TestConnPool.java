@@ -32,7 +32,7 @@ import citibob.sql.*;
  *
  * @author citibob
  */
-public class DBConnPool extends SimpleConnPool
+public class TestConnPool extends SimpleConnPool
 {
 static {
 	try {

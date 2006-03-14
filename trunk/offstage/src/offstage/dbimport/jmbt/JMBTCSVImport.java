@@ -24,7 +24,7 @@ public class JMBTCSVImport extends CSVImport
 /** Creates a new instance of DBImport */
 public static void main(String[] args) throws Exception
 {
-	Connection db = new DBConnPool().checkout();
+	Connection db = new TestConnPool().checkout();
 	Statement st = db.createStatement();
 //	importCsvFile(st, "People");
 //		String ss="\u0042\u0069\u0065\u006E\u0076" +

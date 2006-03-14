@@ -33,6 +33,7 @@ import javax.swing.event.*;
 import offstage.db.DB;
 import offstage.schema.MailingsSchema;
 import offstage.schema.MailingidsSchema;
+import citibob.multithread.*;
 
 /**
  *
@@ -43,7 +44,8 @@ public class MailingsDbModel extends MultiDbModel {
 IntKeyedDbModel mailingids;		// Set to just one record (for 1 mailing)
 IntKeyedDbModel mailings;		// Set to entire mailing info
 int mailingID;					// Current mailing ID
-Statement st;
+//Statement st;
+ActionRunner runner;
 
 public SchemaBuf getMailingsSb()
 	{ return mailings.getSchemaBuf(); }
@@ -59,11 +61,11 @@ public void setKey(int mailingID)
 
 /** Creates a new instance of MailingDbModel */
 public MailingsDbModel(final Statement st) {
-	this.st=st;
+	this.runner = runner;
 	add(mailings = new IntKeyedDbModel(new MailingsSchema(), "groupid", false));
-	mailings.setInstantUpdate(st, true);
+	mailings.setInstantUpdate(runner, true);
 	add(mailingids = new IntKeyedDbModel(new MailingidsSchema(), "groupid", false));
-	mailingids.setInstantUpdate(st, true);
+	mailingids.setInstantUpdate(runner, true);
 
 	// Refresh mailingids table when this changes.
 	mailingids.getSchemaBuf().addTableModelListener(new TableModelListener() {
@@ -78,24 +80,28 @@ public MailingsDbModel(final Statement st) {
 
 public void makeReport() throws SQLException, JRException
 {
-	ResultSet rs = null;
-	InputStream in = null;
-	try {
-		DB.w_mailings_makereport(st, mailingID);
+	runner.doRun(new StRunnable() {
+	public void run(Statement st) throws Exception {
+		ResultSet rs = null;
+		InputStream in = null;
+		try {
+			DB.w_mailings_makereport(st, mailingID);
 
-		in = Object.class.getResourceAsStream("/jmbt/front/reports/AddressLabels.jasper");
-		rs = st.executeQuery("select * from mailings" +
-				" where groupid=" + mailingID +
-				" and isgood = 't'" +
-				" order by country, zip");
-		HashMap params = new HashMap();
-		JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
-		JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
-		net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
-	} finally {
-		try { rs.close(); } catch(Exception e) {}
-		try { in.close(); } catch(Exception e) {}		
-	}
+			in = Object.class.getResourceAsStream("/jmbt/front/reports/AddressLabels.jasper");
+			rs = st.executeQuery("select * from mailings" +
+					" where groupid=" + mailingID +
+					" and isgood = 't'" +
+					" order by country, zip");
+			HashMap params = new HashMap();
+			JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
+			JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
+			net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
+		} finally {
+			// try { rs.close(); } catch(Exception e) {}
+			try { in.close(); } catch(Exception e) {}		
+		}
+
+	}});
 
 	
 }

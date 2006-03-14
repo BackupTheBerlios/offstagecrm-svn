@@ -214,7 +214,7 @@ extends javax.swing.JPanel {
         add(FirstMiddleLast, new info.clearthought.layout.TableLayoutConstraints(0, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         entitySubPanel1.setPreferredSize(null);
-        add(entitySubPanel1, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        add(entitySubPanel1, new info.clearthought.layout.TableLayoutConstraints(0, 3, 0, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         _tableLayoutInstance2 = new info.clearthought.layout.TableLayout();
         _tableLayoutInstance2.setHGap(0);
@@ -322,7 +322,7 @@ extends javax.swing.JPanel {
         customaddressto.setColName("customaddressto");
         jPanel3.add(customaddressto, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
-        add(jPanel3, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.TOP));
+        add(jPanel3, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.BOTTOM));
 
         phonePanel.setPreferredSize(new java.awt.Dimension(453, 150));
         add(phonePanel, new info.clearthought.layout.TableLayoutConstraints(1, 4, 2, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));

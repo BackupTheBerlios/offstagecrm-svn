@@ -46,7 +46,7 @@ public class TermsPNC extends citibob.jschema.gui.StatusPNC
 	
 public static void main(String[] args) throws Exception
 {
-	FrontApp app = new FrontApp();
+	FrontApp app = new FrontApp(null);
 	Statement st = app.getPool().checkout().createStatement();
 	TermsDbModel tm = new TermsDbModel(st, app.getDbChange());
 //	Statement st = app.createStatement();

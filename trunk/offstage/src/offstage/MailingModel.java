@@ -106,13 +106,13 @@ public MailingModel(Statement st, ActionRunner xrunner) throws SQLException {
 	this.runner = xrunner;
 	//this.st=st;
 	mailings = new IntKeyedDbModel(new MailingsSchema(), "groupid", false);
-	mailings.setInstantUpdate(st, true);
+	mailings.setInstantUpdate(xrunner, true);
 	
 	mailingids = new WhereClauseDbModel(new MailingidsSchema(),
 		"created >= now() - interval '30 days'", "created desc");
     mailingids.doSelect(st);
 //	add(mailingids, "groupid", false));
-	mailingids.setInstantUpdate(st, true);
+	mailingids.setInstantUpdate(xrunner, true);
 	
 	SchemaBuf sb = getMailingidsSb();
 	groupidCol = sb.findColumn("groupid");

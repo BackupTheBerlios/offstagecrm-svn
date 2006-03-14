@@ -30,7 +30,7 @@ package offstage.db;
 
 import java.sql.*;
 import javax.swing.*;
-import offstage.db.DBConnPool;
+import offstage.db.TestConnPool;
 /**
  *
  * @author citibob
@@ -40,7 +40,7 @@ public class DBTest {
 /** Creates a new instance of DBImport */
 public static void main(String[] args) throws Exception
 {
-	Connection db = new DBConnPool().checkout();
+	Connection db = new TestConnPool().checkout();
 	Statement st = db.createStatement();
 	ResultSet rs = st.executeQuery(
 			"select addressto from aapeople where addressto like '%Adelina%'");

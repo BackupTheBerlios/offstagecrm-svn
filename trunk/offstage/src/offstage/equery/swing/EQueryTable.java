@@ -49,6 +49,13 @@ public EQueryTable()
 {
 	super();
 	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+}
+
+public void initRuntime(EQueryTableModel xmodel)
+{
+	super.setModel(xmodel);
+	this.model = xmodel;
+
 	ListSelectionModel sm = getSelectionModel();
 	sm.addListSelectionListener(new ListSelectionListener() {
 	public void valueChanged(ListSelectionEvent e) {
@@ -64,12 +71,6 @@ public EQueryTable()
 		}
 	}
 	});
-}
-
-public void initRuntime(EQueryTableModel model)
-{
-	super.setModel(model);
-	this.model = model;
 }
 
 

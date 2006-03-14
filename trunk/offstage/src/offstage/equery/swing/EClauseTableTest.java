@@ -26,7 +26,7 @@ package offstage.equery.swing;
 import java.util.*;
 import java.sql.*;
 import citibob.sql.*;
-import offstage.db.DBConnPool;
+import offstage.db.TestConnPool;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
 
@@ -41,7 +41,7 @@ public class EClauseTableTest extends javax.swing.JFrame {
     public EClauseTableTest() throws SQLException {
 		initComponents();
 
-		Connection db = new DBConnPool().checkout();
+		Connection db = new TestConnPool().checkout();
 		Statement st = db.createStatement();
 
 		EQuerySchema eqs = new EQuerySchema(st);

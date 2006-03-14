@@ -97,7 +97,7 @@
 <target name="-post-jar">
     <copy todir="dist">
         <fileset dir="./lib"><include name="*.jar"/></fileset>
-        <fileset dir="../jschema/dist"><include name="jschema.jar"/></fileset>
+        <fileset dir="../jschema/dist"><include name="jschema.jar"/><include name="prefedit-0.7.jar"/></fileset>
     </copy>
 </target>
 

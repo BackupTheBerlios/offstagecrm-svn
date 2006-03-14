@@ -24,9 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package offstage.gui;
 import java.sql.*;
+import javax.swing.*;
 import java.util.prefs.*;
 import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
+import citibob.gui.*;
 import offstage.FrontApp;
 import offstage.EQueryBrowserApp;
 
@@ -35,15 +37,18 @@ import offstage.EQueryBrowserApp;
  * @author  citibob
  */
 public class OffstageGui extends javax.swing.JFrame {
+
+FrameSet frameSet;
 	
 	/** Creates new form FrontGui */
 	public OffstageGui() {
 		initComponents();
 	}
 
-	public void initRuntime(final FrontApp app)
+	public void initRuntime(final FrontApp app, FrameSet frameSet)
 	throws java.sql.SQLException
 	{
+		this.frameSet = frameSet;
 		Connection dbb = null;
 		Statement st = null;
 		try {
@@ -94,7 +99,10 @@ public class OffstageGui extends javax.swing.JFrame {
         mailings = new offstage.gui.MailingsEditor();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jSeparator1 = new javax.swing.JSeparator();
         miQuit = new javax.swing.JMenuItem();
+        mWindow = new javax.swing.JMenu();
+        Console = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -107,10 +115,30 @@ public class OffstageGui extends javax.swing.JFrame {
         getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
 
         jMenu1.setText("File");
+        jMenu1.add(jSeparator1);
+
         miQuit.setText("Quit");
+        miQuit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miQuitActionPerformed(evt);
+            }
+        });
+
         jMenu1.add(miQuit);
 
         jMenuBar1.add(jMenu1);
+
+        mWindow.setText("Window");
+        Console.setText("Java Console");
+        Console.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ConsoleActionPerformed(evt);
+            }
+        });
+
+        mWindow.add(Console);
+
+        jMenuBar1.add(mWindow);
 
         jMenu2.setText("Help");
         jMenuBar1.add(jMenu2);
@@ -120,22 +148,41 @@ public class OffstageGui extends javax.swing.JFrame {
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
+
+private void miQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miQuitActionPerformed
+	System.exit(0);
+// TODO add your handling code here:
+}//GEN-LAST:event_miQuitActionPerformed
+
+private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConsoleActionPerformed
+	frameSet.consoleFrame.setVisible(true);
+// TODO add your handling code here:
+}//GEN-LAST:event_ConsoleActionPerformed
 	
 	/**
 	 * @param args the command line arguments
 	 */
-	public static void main(String[] args) throws Exception
-    {
-		FrontApp app = new FrontApp();
-		OffstageGui gui = new OffstageGui();
-		gui.initRuntime(app);
-	    gui.setVisible(true);
-    }
+//	public static void main(String[] args) throws Exception
+//    {
+//		JFrame jf = new JFrame();
+//
+//		DBPrefsDialog d = new DBPrefsDialog(jf, "offstage/db", "offstage/gui/DBPrefsDialog");
+//		d.setVisible(true);
+//		if (!d.isOkPressed()) return;	// User cancelled DB open
+//
+//		FrontApp app = new FrontApp(d.newConnPool());
+//		OffstageGui gui = new OffstageGui();
+//		gui.initRuntime(app, null);
+//	    gui.setVisible(true);
+//    }
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem Console;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JMenu mWindow;
     private offstage.gui.MailingsEditor mailings;
     private javax.swing.JMenuItem miQuit;
     private offstage.gui.EditorPanel people;

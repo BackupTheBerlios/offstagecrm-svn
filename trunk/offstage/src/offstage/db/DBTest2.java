@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package offstage.db;
 
 import java.sql.*;
-import offstage.db.DBConnPool;
+import offstage.db.TestConnPool;
 
 /**
  *
@@ -36,7 +36,7 @@ public class DBTest2 extends javax.swing.JFrame {
 	/** Creates new form DBTest2 */
 	public DBTest2() throws Exception {
 		initComponents();
-		Connection db = new DBConnPool().checkout();
+		Connection db = new TestConnPool().checkout();
 		Statement st = db.createStatement();
 		ResultSet rs = st.executeQuery(
 				"select addressto from aapeople where addressto like '%Adelina%'");

@@ -24,7 +24,7 @@ import citibob.jschema.*;
 import java.sql.*;
 import java.io.*;
 import com.thoughtworks.xstream.*;
-import offstage.db.DBConnPool;
+import offstage.db.TestConnPool;
 
 public class EQuery
 {
@@ -143,7 +143,7 @@ public String getSql(EQuerySchema eqs)
 // ------------------------------------------------------
 public static void main(String[] args) throws Exception
 {
-	Connection db = new DBConnPool().checkout();
+	Connection db = new TestConnPool().checkout();
 	Statement st = db.createStatement();
 	EQuerySchema eqs = new EQuerySchema(st);
 	EQuery eq = new EQuery();

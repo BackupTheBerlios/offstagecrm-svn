@@ -23,7 +23,7 @@ import citibob.sql.*;
 import citibob.multithread.*;
 import offstage.db.FullEntityDbModel;
 import offstage.db.EntityListTableModel;
-import offstage.db.DBConnPool;
+import offstage.db.TestConnPool;
 import citibob.multithread.*;
 
 public class FrontApp
@@ -57,12 +57,13 @@ public ActionRunner getAppRunner() { return appRunner; }
 //	return DBConnection.getConnection();
 //}
 // -------------------------------------------------------
-public FrontApp() throws SQLException
+public FrontApp(ConnPool pool) throws SQLException
 {
 	Connection dbb = null;
 	Statement st = null;
-	
-	pool = new DBConnPool();
+
+	this.pool = pool;
+	//pool = new DBConnPool();
 	guiRunner = appRunner = new SimpleDbActionRunner(pool);
 	//guiRunner = new SimpleDbActionRunner(pool);
 	try {

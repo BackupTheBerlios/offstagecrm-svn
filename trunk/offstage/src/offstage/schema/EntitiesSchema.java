@@ -38,10 +38,10 @@ public EntitiesSchema()
 			new Column(new SqlString(50), "country", false),
 			new Column(new SqlString(50), "recordsource", false),
 			new Column(new SqlInteger(), "sourcekey", false),
-			new Column(new SqlInteger(), "ipeopleid", false),
+			//new Column(new SqlInteger(), "ipeopleid", false),
 			new Column(new SqlTimestamp(), "lastupdated", false),
 			new citibob.jschema.Column(new SqlInteger(), "relprimarytypeid", false),
-			new citibob.jschema.Column(new SqlBool(), "isquery", false),
+			//new citibob.jschema.Column(new SqlBool(), "isquery", false),
 			new Column(new SqlBool(), "sendmail", false),
 			new Column(new SqlBool(), "obsolete", false)
 	};
