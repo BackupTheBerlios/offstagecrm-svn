@@ -20,6 +20,9 @@ import citibob.swing.table.*;
 import citibob.swing.*;
 import citibob.jschema.gui.*;
 import citibob.jschema.*;
+import citibob.jschema.swing.StatusTable;
+import citibob.sql.KeyedModel;
+import citibob.sql.pgsql.*;
 
 /**
  *
@@ -40,13 +43,13 @@ public class CourseidsPNC extends citibob.jschema.gui.StatusPNC
 		StatusTable table = getTable();
 		//ColPermuteTableModel model = getTableModel();
 		KeyedModel dkm = new DayOfWeekKeyedModel();
-		table.setRenderEdit("dayofweek", new KeyedRenderEdit(dkm));
+		table.setRenderEditU("dayofweek", new KeyedRenderEdit(dkm));
 
 
-		List times = DateRenderer.makeDateList(null, 7,0, 23,0, 15L*60L*1000L);
+		List times = SqlDate.makeDateList(null, 7,0, 23,0, 15L*60L*1000L);
 		DateListRenderEdit dre = new DateListRenderEdit(times, "HH:mm");
-		table.setRenderEdit("tstart", dre);
-		table.setRenderEdit("tend", dre);
+		table.setRenderEditU("tstart", dre);
+		table.setRenderEditU("tend", dre);
 	}
 
 	

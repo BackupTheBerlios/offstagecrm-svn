@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package offstage.schema;
 
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.pgsql.*;
 
 public class EntitiesSchema extends ConstSchema
 {
@@ -28,7 +28,7 @@ public EntitiesSchema()
 {
 	table = "entities";
 	cols = new Column[] {
-			new Column(new SqlInteger(), "entityid", true),
+			new Column(new SqlInteger(false), "entityid", true),
 			new Column(new SqlInteger(), "primaryentityid", false),
 			new Column(new SqlString(100), "address1", false),
 			new Column(new SqlString(50), "address2", false),

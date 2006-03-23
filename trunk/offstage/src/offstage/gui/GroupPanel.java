@@ -27,7 +27,7 @@ package offstage.gui;
 import java.sql.*;
 import citibob.jschema.*;
 import citibob.jschema.swing.*;
-import citibob.jschema.swing.JSchemaWidgetTree;
+//import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
 import offstage.schema.GroupTypeKeyedModel;
 
@@ -35,12 +35,12 @@ import offstage.schema.GroupTypeKeyedModel;
  *
  * @author  citibob
  */
-public class GroupsPanel extends javax.swing.JPanel {
+public class GroupPanel extends javax.swing.JPanel {
 	
 SchemaBuf groupSb;
 
 	/** Creates new form GroupPanel */
-	public GroupsPanel() {
+	public GroupPanel() {
 		initComponents();
 	}
 

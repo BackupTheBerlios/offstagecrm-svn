@@ -30,13 +30,13 @@ public class DonationsTable extends GroupsTable {
     public DonationsTable() {
     }
 
-public void initRuntime(Statement st, SchemaBuf sb)
-throws java.sql.SQLException
-{
-	super.initRuntime(st, sb);
-	String fmt = "yyyy-MM-dd";
-	ColPermuteTableModel model = (ColPermuteTableModel)getModel();
-	setRenderEdit(model.findUnderlyingCol("date"), new DateRenderEdit(fmt));
-
-}
+//public void initRuntime(Statement st, SchemaBuf sb)
+//throws java.sql.SQLException
+//{
+//	super.initRuntime(st, sb);
+//	String fmt = "yyyy-MM-dd";
+//	ColPermuteTableModel model = (ColPermuteTableModel)getModel();
+//	setRenderEdit(model.findColumnU("date"), new DateRenderEdit(fmt));
+//
+//}
 }

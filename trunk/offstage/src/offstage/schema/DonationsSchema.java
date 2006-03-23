@@ -18,20 +18,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package offstage.schema;
 
+import citibob.sql.*;
+import citibob.sql.pgsql.*;
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.DbChangeModel;
+import java.sql.*;
 
-public class DonationsSchema extends GroupsSchema
+public class DonationsSchema extends ConstSchema
 {
 
-public DonationsSchema()
+public DonationsSchema(Statement st, DbChangeModel change)
+throws SQLException
 {
-	super();
 	table = "donations";
-	appendCols(new Column[] {
-		new Column(new SqlDate(), "date", false),
-		new Column(new SqlInteger(), "amount", false)
-	});
+	KeyedModel kmodel = new DbKeyedModel(st, change,
+		"donationids", "groupid", "name", "name");
+	cols = new Column[] {
+		new Column(new SqlEnum(kmodel, false), "groupid", true),
+		new Column(new SqlInteger(false), "entityid", true),
+		new ColumnDefaultNow(new SqlDate(false), "date", false),
+		new Column(new SqlNumeric(9, 2), "amount", false)
+	};
 }
 // ------------------------------------------
 // Singleton stuff

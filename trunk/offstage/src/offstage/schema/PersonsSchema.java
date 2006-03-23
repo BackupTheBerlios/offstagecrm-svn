@@ -19,7 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package offstage.schema;
 
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.pgsql.*;
+import citibob.sql.*;
+
 
 public class PersonsSchema extends EntitiesSchema
 {
@@ -36,7 +38,7 @@ public PersonsSchema()
 		new Column(new SqlString(50), "middlename", false),
 		new Column(new SqlString(50), "lastname", false),
 		new Column(new SqlString(1), "gender", false),
-		new Column(new SqlDate(), "dob", false),
+		new Column(new SqlDate(true), "dob", false),
 		new Column(new SqlString(100), "customaddressto", false),
 		new Column(new SqlString(100), "email", false)
 	});

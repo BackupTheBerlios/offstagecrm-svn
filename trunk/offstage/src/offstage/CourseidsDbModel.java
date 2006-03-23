@@ -37,6 +37,7 @@ import java.util.*;
 import javax.swing.event.*;
 import offstage.db.DB;
 import offstage.schema.*;
+import citibob.sql.DbChangeModel;
 
 /**
  * No setKey() in this class; it just displays terms for past 2 years.

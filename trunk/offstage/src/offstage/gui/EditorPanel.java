@@ -29,7 +29,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import citibob.jschema.*;
 import citibob.jschema.swing.*;
-import citibob.jschema.swing.JSchemaWidgetTree;
+//import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;

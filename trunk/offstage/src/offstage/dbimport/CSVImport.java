@@ -31,9 +31,9 @@ package offstage.dbimport;
 import com.Ostermiller.util.*;
 import java.io.*;
 import java.sql.*;
-import citibob.jschema.pgsql.*;
 import offstage.db.TestConnPool;
 import offstage.db.*;
+import citibob.sql.pgsql.*;
 
 /**
  *

@@ -18,17 +18,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package offstage.schema;
 
+import citibob.sql.*;
+import citibob.sql.pgsql.*;
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.DbChangeModel;
+import java.sql.*;
 
-public class MailingsSchema extends GroupsSchema
+public class MailingsSchema extends ConstSchema
 {
 
-public MailingsSchema()
+public MailingsSchema(Statement st, DbChangeModel change)
+throws SQLException
 {
 	super();
 	table = "mailings";
-	appendCols(new Column[] {
+	KeyedModel kmodel = new DbKeyedModel(st, change,
+		"mailingids", "groupid", "name", "name");
+	cols = new Column[] {
+		new Column(new SqlEnum(kmodel, false), "groupid", true),
+		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlString(), "addressto", false),
 		new Column(new SqlString(), "address1", false),
 		new Column(new SqlString(), "address2", false),
@@ -36,12 +44,7 @@ public MailingsSchema()
 		new Column(new SqlString(), "state", false),
 		new Column(new SqlString(), "zip", false),
 		new Column(new SqlString(), "country", false)
-	});
+	};
 }
-// ------------------------------------------
-// Singleton stuff
-//private static EventsSchema instance = new EventsSchema();
-//public static ConstSchema getInstance()
-//	{ return instance; }
 
 }

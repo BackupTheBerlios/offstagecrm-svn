@@ -21,6 +21,8 @@ package offstage.equery.swing;
 import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
+import citibob.swing.pgsql.*;
+import citibob.sql.pgsql.*;
 import java.sql.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
@@ -28,7 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
 
@@ -45,8 +46,9 @@ extends MultiTableCellEditor
 		editors = new HashMap();
 	}
 
+	SqlSwinger swing = new SqlStringSwinger(new SqlString(true));
 	TableCellEditor defaultEditor = new DefaultEClauseCellEditor(
-		new JTypedTextField(new SqlString().getTextConverter()));
+		new JTypedTextField(swing));
 	public Component getTableCellEditorComponent(JTable table, Object value,
 		boolean isSelected, int row, int column)
 	{

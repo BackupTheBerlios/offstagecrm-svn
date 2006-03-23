@@ -25,6 +25,7 @@ import offstage.db.FullEntityDbModel;
 import offstage.db.EntityListTableModel;
 import offstage.db.TestConnPool;
 import citibob.multithread.*;
+import citibob.sql.DbChangeModel;
 
 public class FrontApp
 {

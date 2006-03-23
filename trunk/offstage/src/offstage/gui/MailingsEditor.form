@@ -78,7 +78,7 @@
                 </Constraint>
               </Constraints>
               <SubComponents>
-                <Component class="citibob.jschema.swing.JSchemaTextField" name="lName">
+                <Component class="citibob.swing.typed.JTypedTextField" name="lName">
                   <Properties>
                     <Property name="colName" type="java.lang.String" value="name"/>
                   </Properties>
@@ -180,7 +180,7 @@
                   </StatementProvider>
                   <Parameters>
                     <CodeExpression id="7_lName">
-                      <CodeVariable name="lName" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+                      <CodeVariable name="lName" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
                       <ExpressionOrigin>
                         <ExpressionProvider type="ComponentRef">
                           <ComponentRef name="lName"/>

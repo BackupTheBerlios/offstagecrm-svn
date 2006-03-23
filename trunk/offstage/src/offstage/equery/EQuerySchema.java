@@ -20,17 +20,17 @@ package offstage.equery;
 
 import java.util.*;
 import citibob.sql.*;
+import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import java.sql.*;
-import citibob.jschema.pgsql.*;
 import offstage.schema.OrgSchema;
 import offstage.schema.NotesSchema;
 import offstage.schema.PersonsSchema;
 import offstage.schema.PhonesSchema;
 import offstage.schema.EventsSchema;
 import offstage.schema.DonationsSchema;
-import offstage.schema.GroupTypeKeyedModel;
 import offstage.schema.EntitiesSchema;
+import citibob.sql.KeyedModel;
 
 public class EQuerySchema
 {

@@ -47,6 +47,8 @@ public class GroupsTable extends CitibobJTable {
 /** Creates a new instance of GroupsTable */
 public GroupsTable() {
 	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	
+//	this.setDefaultRenderEdit(java.util.Date.class, new DateRenderEdit("yyyy-MM-dd"));
 }
 
 String[] xColNames = new String[] {};
@@ -91,9 +93,9 @@ throws java.sql.SQLException
 System.out.println("model = " + model);
 	setModel(model);
 	
-	setRenderEdit(model.findUnderlyingCol("groupid"),
+	setRenderEdit(model.findColumnU("groupid"),
 		new KeyedRenderEdit(new GroupTypeKeyedModel(st, idTableName)));
-	setRenderEdit(model.findUnderlyingCol("__status__"),
+	setRenderEdit(model.findColumnU("__status__"),
 		new citibob.swing.table.StatusRenderEdit());
 }
 

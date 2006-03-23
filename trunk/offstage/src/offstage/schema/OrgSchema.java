@@ -19,7 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package offstage.schema;
 
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.pgsql.*;
+import citibob.sql.*;
+
 
 public class OrgSchema extends EntitiesSchema
 {

@@ -67,15 +67,15 @@ public void initRuntime(SchemaBuf schemaBuf)
         info.clearthought.layout.TableLayout _tableLayoutInstance;
 
         jLabel1 = new javax.swing.JLabel();
-        address1 = new citibob.jschema.swing.JSchemaTextField();
-        address2 = new citibob.jschema.swing.JSchemaTextField();
-        city = new citibob.jschema.swing.JSchemaTextField();
-        state = new citibob.jschema.swing.JSchemaTextField();
-        zip = new citibob.jschema.swing.JSchemaTextField();
+        address1 = new citibob.swing.typed.JTypedTextField();
+        address2 = new citibob.swing.typed.JTypedTextField();
+        city = new citibob.swing.typed.JTypedTextField();
+        state = new citibob.swing.typed.JTypedTextField();
+        zip = new citibob.swing.typed.JTypedTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        entityid = new citibob.jschema.swing.JSchemaTextField();
-        lastupdated = new citibob.jschema.swing.JSchemaTextField();
+        entityid = new citibob.swing.typed.JTypedTextField();
+        lastupdated = new citibob.swing.typed.JTypedTextField();
         relprimarytypeid = new offstage.gui.RelPrimaryTypesIntComboBox();
         jLabel4 = new javax.swing.JLabel();
 
@@ -141,18 +141,18 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private citibob.jschema.swing.JSchemaTextField address1;
-    private citibob.jschema.swing.JSchemaTextField address2;
-    private citibob.jschema.swing.JSchemaTextField city;
-    private citibob.jschema.swing.JSchemaTextField entityid;
+    private citibob.swing.typed.JTypedTextField address1;
+    private citibob.swing.typed.JTypedTextField address2;
+    private citibob.swing.typed.JTypedTextField city;
+    private citibob.swing.typed.JTypedTextField entityid;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private citibob.jschema.swing.JSchemaTextField lastupdated;
+    private citibob.swing.typed.JTypedTextField lastupdated;
     private offstage.gui.RelPrimaryTypesIntComboBox relprimarytypeid;
-    private citibob.jschema.swing.JSchemaTextField state;
-    private citibob.jschema.swing.JSchemaTextField zip;
+    private citibob.swing.typed.JTypedTextField state;
+    private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 	
 }

@@ -30,6 +30,7 @@ import java.util.*;
 import citibob.jschema.*;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
+import citibob.sql.KeyedModel;
 
 public class EClauseColumnEditor
 extends KeyedTableCellEditor

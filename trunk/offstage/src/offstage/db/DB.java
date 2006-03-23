@@ -26,8 +26,8 @@ package offstage.db;
 
 import java.sql.*;
 import citibob.sql.*;
-import citibob.jschema.pgsql.*;
 import java.util.*;
+import citibob.sql.pgsql.*;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because

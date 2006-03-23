@@ -76,7 +76,7 @@ public class MailingsEditor extends javax.swing.JPanel {
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        lName = new citibob.jschema.swing.JSchemaTextField();
+        lName = new citibob.swing.typed.JTypedTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         tMailingIds = new offstage.gui.MailingidsTable();
 
@@ -172,7 +172,7 @@ public class MailingsEditor extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
-    private citibob.jschema.swing.JSchemaTextField lName;
+    private citibob.swing.typed.JTypedTextField lName;
     private javax.swing.JTable tMailing;
     private offstage.gui.MailingidsTable tMailingIds;
     // End of variables declaration//GEN-END:variables

@@ -32,7 +32,7 @@ import java.awt.event.*;
 import citibob.swing.typed.*;
 import citibob.exception.*;
 import citibob.jschema.*;
-import citibob.jschema.KeyedModel;
+import citibob.sql.KeyedModel;
 import citibob.swing.*;
 
 /**

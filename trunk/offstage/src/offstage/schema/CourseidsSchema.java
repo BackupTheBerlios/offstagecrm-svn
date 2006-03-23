@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package offstage.schema;
 
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.pgsql.*;
 
 public class CourseidsSchema extends GroupidsSchema
 {
@@ -29,7 +29,7 @@ public CourseidsSchema()
 	super();
 	table = "courseids";
 	appendCols(new Column[] {
-		new Column(new SqlInteger(), "termid", false),
+		new Column(new SqlInteger(false), "termid", false),
 		new Column(new SqlInteger(), "dayofweek", false),
 		new Column(new SqlTime(), "tstart", false),
 		new Column(new SqlTime(), "tend", false)

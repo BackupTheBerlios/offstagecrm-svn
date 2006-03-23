@@ -98,7 +98,7 @@
             <Property name="text" type="java.lang.String" value="Organization Name"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="name">
+        <Component class="citibob.swing.typed.JTypedTextField" name="name">
           <Properties>
             <Property name="colName" type="java.lang.String" value="name"/>
           </Properties>
@@ -252,7 +252,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="15_name">
-              <CodeVariable name="name" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="name" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="name"/>

@@ -2,7 +2,7 @@
 
 <Form version="1.1" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
-    <Component class="citibob.jschema.swing.JSchemaKeyedButtonGroup" name="genderButtonGroup">
+    <Component class="citibob.swing.typed.KeyedButtonGroup" name="genderButtonGroup">
       <Properties>
         <Property name="colName" type="java.lang.String" value="gender"/>
       </Properties>
@@ -33,22 +33,22 @@
             <Property name="text" type="java.lang.String" value="Last"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="salutation">
+        <Component class="citibob.swing.typed.JTypedTextField" name="salutation">
           <Properties>
             <Property name="colName" type="java.lang.String" value="salutation"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="firstname">
+        <Component class="citibob.swing.typed.JTypedTextField" name="firstname">
           <Properties>
             <Property name="colName" type="java.lang.String" value="firstname"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="middlename">
+        <Component class="citibob.swing.typed.JTypedTextField" name="middlename">
           <Properties>
             <Property name="colName" type="java.lang.String" value="middlename"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="lastname">
+        <Component class="citibob.swing.typed.JTypedTextField" name="lastname">
           <Properties>
             <Property name="colName" type="java.lang.String" value="lastname"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -315,7 +315,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="31_salutation">
-              <CodeVariable name="salutation" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="salutation" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="salutation"/>
@@ -370,7 +370,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="39_firstname">
-              <CodeVariable name="firstname" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="firstname" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="firstname"/>
@@ -425,7 +425,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="47_middlename">
-              <CodeVariable name="middlename" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="middlename" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="middlename"/>
@@ -480,7 +480,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="55_lastname">
-              <CodeVariable name="lastname" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="lastname" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="lastname"/>
@@ -559,22 +559,22 @@
             <Property name="text" type="java.lang.String" value="Email"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="occupation">
+        <Component class="citibob.swing.typed.JTypedTextField" name="occupation">
           <Properties>
             <Property name="colName" type="java.lang.String" value="occupation"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="dob">
+        <Component class="citibob.swing.typed.JTypedTextField" name="dob">
           <Properties>
             <Property name="colName" type="java.lang.String" value="dob"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="title">
+        <Component class="citibob.swing.typed.JTypedTextField" name="title">
           <Properties>
             <Property name="colName" type="java.lang.String" value="title"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="email">
+        <Component class="citibob.swing.typed.JTypedTextField" name="email">
           <Properties>
             <Property name="colName" type="java.lang.String" value="email"/>
           </Properties>
@@ -893,7 +893,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="101_occupation">
-              <CodeVariable name="occupation" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="occupation" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="occupation"/>
@@ -948,7 +948,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="109_dob">
-              <CodeVariable name="dob" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="dob" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="dob"/>
@@ -1003,7 +1003,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="117_title">
-              <CodeVariable name="title" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="title" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="title"/>
@@ -1058,7 +1058,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="125_email">
-              <CodeVariable name="email" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="email" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="email"/>
@@ -1463,7 +1463,7 @@
             <Property name="text" type="java.lang.String" value="To"/>
           </Properties>
         </Component>
-        <Component class="citibob.jschema.swing.JSchemaTextField" name="customaddressto">
+        <Component class="citibob.swing.typed.JTypedTextField" name="customaddressto">
           <Properties>
             <Property name="colName" type="java.lang.String" value="customaddressto"/>
           </Properties>
@@ -1617,7 +1617,7 @@
           </StatementProvider>
           <Parameters>
             <CodeExpression id="177_customaddressto">
-              <CodeVariable name="customaddressto" type="8194" declaredType="citibob.jschema.swing.JSchemaTextField"/>
+              <CodeVariable name="customaddressto" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
                   <ComponentRef name="customaddressto"/>

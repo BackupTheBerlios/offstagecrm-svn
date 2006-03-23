@@ -28,9 +28,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import citibob.jschema.*;
-import citibob.jschema.pgsql.*;
+import citibob.sql.pgsql.*;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
+import citibob.sql.SqlType;
+import citibob.sql.KeyedModel;
+import citibob.swing.pgsql.*;
 
 public class EClauseValueEditor
 extends MultiTableCellEditor
@@ -38,29 +41,36 @@ extends MultiTableCellEditor
 	HashMap editors;		// (KeyedModel | SqlType) --> TableCellEditor
 	EQuerySchema schema;
 	EQuery.Element curElement;	// Current table row we're editing
+//	SwingerMap smap;
 
-
+	SqlSwinger swing = new SqlStringSwinger(new SqlString(true));
 	TableCellEditor defaultEditor = new DefaultEClauseCellEditor(
-		new JTypedTextField(new SqlString().getTextConverter()));
+		new JTypedTextField(swing));
+
+//	TableCellEditor defaultEditor = new DefaultEClauseCellEditor(
+//		new JTypedTextField(new SqlString().getTextConverter()));
 //	TableCellEditor integerEditor = new DefaultEClauseCellEditor(
 //		new JTypedTextField(SqlInteger.textConverter));
 
-	private void addTypedTFEditor(SqlType type)
+	private void addTypedTFEditor(SqlSwinger swing)
 	{
-		editors.put(type.getClass(),
+		editors.put(swing.getSqlType().getClass(),
 			new DefaultEClauseCellEditor(
-			new JTypedTextField(type.getTextConverter())));
+			new JTypedTextField(swing))); //type.getTextConverter())));
 	}
+//	public EClauseValueEditor(EQuerySchema schema, SwingerMap smap)
 	public EClauseValueEditor(EQuerySchema schema)
 	{
+//		this.smap = smap
 		this.schema = schema;
 
 		// Set up editors for each basic SQL type
 		editors = new HashMap();
-		addTypedTFEditor(new SqlInteger());
-		addTypedTFEditor(new SqlDate());
-		addTypedTFEditor(new SqlString());
-		addTypedTFEditor(new SqlTimestamp());
+// TODO: this needs fixing up...
+		addTypedTFEditor(new SqlIntegerSwinger(new SqlInteger(false)));
+		addTypedTFEditor(new SqlDateSwinger(new SqlDate(), null, "MM/dd/yyyy"));
+		addTypedTFEditor(new SqlStringSwinger(new SqlString(false)));
+		addTypedTFEditor(new SqlTimestampSwinger(new SqlTimestamp(false), null, "MM/dd/yyyy HH:mm"));
 		editors.put(SqlBool.class,
 			new DefaultEClauseCellEditor(
 			new JBoolButton()));

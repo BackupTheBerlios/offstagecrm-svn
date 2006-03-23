@@ -18,11 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package offstage.gui;
 
-import citibob.jschema.swing.JSchemaKeyedComboBox;
+import citibob.swing.typed.*;
+//import citibob.jschema.swing.JSchemaKeyedComboBox;
 import java.sql.*;
 
 public class RelPrimaryTypesIntComboBox
-extends JSchemaKeyedComboBox
+extends JKeyedComboBox
 implements citibob.jschema.StatementInitializable
 {
 
@@ -32,8 +33,10 @@ implements citibob.jschema.StatementInitializable
 public void init(Statement st) throws SQLException
 {
 	ResultSet rs = st.executeQuery("select relprimarytypeid, name from relprimarytypes order by name");
-	setModel(rs, 1, 2);
+	KeyedModel kmodel = new KeyedModel();
+	kmodel.add(rs, 1, 2);
 	rs.close();
+	this.setKeyedModel(kmodel);
 }
 
 }

@@ -16,35 +16,33 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-/*
- * PhoneTypeKeyedModel.java
- *
- * Created on April 6, 2005, 10:24 PM
- */
-
 package offstage.schema;
 
-import citibob.jschema.KeyedModel;
+import citibob.sql.*;
+import citibob.sql.pgsql.*;
+import citibob.jschema.*;
 import java.sql.*;
 
 
-/**
- *
- * @author citibob
- */
-public class GroupTypeKeyedModel extends KeyedModel {
 
-/** Creates a new instance of PhoneTypeKeyedModel */
-public GroupTypeKeyedModel(Statement st, String idTableName) throws SQLException
+public class TermidsSchema extends ConstSchema
 {
-	super();
-	ResultSet rs = null;
-	try {
-		rs = st.executeQuery("select groupid, name from " + idTableName + " order by name");
-		addAllItems(rs, 1, 2);
-	} finally {
-		rs.close();
-	}
+
+public TermidsSchema(Statement st, DbChangeModel change)
+throws SQLException{
+	table = "termids";
+	KeyedModel kmodel = new DbKeyedModel(st, change,
+		"termtypes", "termtypeid", "name", "orderid");
+	cols = new Column[] {
+		new Column(new SqlInteger(false), "termid", true),
+		new Column(new SqlEnum(kmodel, false), "termtypeid", false),
+		new Column(new SqlString(), "name", false),
+//		new Column(new SqlDate(), "firstdate", false),
+//		new Column(new SqlDate(), "nextdate", false)
+		new ColumnDefaultNow(new SqlDate(false), "firstdate", false),
+		new ColumnDefaultNow(new SqlDate(false), "nextdate", false),
+		new Column(new SqlBool(), "iscurrent", false)
+	};
 }
 
 }

@@ -31,7 +31,7 @@ import citibob.sql.*;
 import citibob.multithread.*;
 import citibob.jschema.*;
 import citibob.jschema.swing.*;
-import citibob.jschema.swing.JSchemaWidgetTree;
+//import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
 import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
@@ -125,7 +125,7 @@ extends javax.swing.JPanel {
         clearFamily = new javax.swing.JButton();
         NamePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        name = new citibob.jschema.swing.JSchemaTextField();
+        name = new citibob.swing.typed.JTypedTextField();
         phonePanel = new offstage.gui.GroupPanel();
         jLabel11 = new javax.swing.JLabel();
 
@@ -241,7 +241,7 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
-    private citibob.jschema.swing.JSchemaTextField name;
+    private citibob.swing.typed.JTypedTextField name;
     private offstage.gui.GroupPanel phonePanel;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------

@@ -45,37 +45,26 @@ import offstage.schema.*;
 public class TermsDbModel extends WhereClauseDbModel
 {
 
-KeyedModel kmodel;
-//Statement st;
 DbChangeModel dbChange;
 
-public KeyedModel getTypeKeyedModel()
-{
-	return kmodel;
-}
-
-
 /** Creates a new instance of TermsDbModel */
-public TermsDbModel(Statement st, DbChangeModel dbChange)
+public TermsDbModel(Statement st, citibob.sql.DbChangeModel dbChange, citibob.jschema.Schema termids)
 throws java.sql.SQLException
 {
-	// TODO: Hack: avoid problems with null dates!!!
 	super(
-		new SchemaBuf(new TermIdsSchema()) {
-		public Object getDefault(int col) {
-			if (java.util.Date.class.isAssignableFrom(getColumnClass(col))) {
-				return new java.util.Date();
-			}
-			return null;
-		}},
+		new SchemaBuf(termids),
 		"firstdate > now() - interval '2 years'", "firstdate");
-	kmodel = new EnumKeyedModel(st, "termtypes", "termtypeid", "name", "orderid");
 	this.dbChange = dbChange;
 }
 
 public void doUpdate(Statement st) throws SQLException
 {
 	super.doUpdate(st);
-	dbChange.fireTermsChanged(st);
+	dbChange.fireTableChanged(st, "terms");
+	
+	put this fireTableChanged() as a standard part of DbModel or SchemaModel or something.
+			Also, make it able to fire events based on individual insert/update queries
+			on individual rows (which are stored in the DbModel, making it easy
+			to indicate what happened)
 }
 }

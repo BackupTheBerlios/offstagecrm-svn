@@ -34,7 +34,6 @@ import net.sf.jasperreports.engine.*;
 import java.util.*;
 import javax.swing.event.*;
 import javax.swing.*;
-import citibob.jschema.pgsql.*;
 import offstage.db.DB;
 import offstage.schema.MailingsSchema;
 import offstage.schema.MailingidsSchema;
