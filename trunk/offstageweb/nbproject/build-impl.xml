@@ -17,7 +17,7 @@ is divided into following sections:
   - cleanup
 
 -->
-<project xmlns:webproject3="http://www.netbeans.org/ns/web-project/3" xmlns:webproject2="http://www.netbeans.org/ns/web-project/2" xmlns:webproject1="http://www.netbeans.org/ns/web-project/1" name="offstageweb-impl" default="build" basedir="..">
+<project name="offstageweb-impl" default="build" basedir=".." xmlns:webproject3="http://www.netbeans.org/ns/web-project/3" xmlns:webproject2="http://www.netbeans.org/ns/web-project/2" xmlns:webproject1="http://www.netbeans.org/ns/web-project/1">
     <target name="default" depends="dist,javadoc" description="Build whole project."/>
     <!--
     ======================
@@ -35,18 +35,38 @@ is divided into following sections:
         <property file="${user.properties.file}"/>
         <!-- The two properties below are usually overridden -->
         <!-- by the active platform. Just a fallback. -->
-        <property value="1.4" name="default.javac.source"/>
-        <property value="1.4" name="default.javac.target"/>
+        <property name="default.javac.source" value="1.4"/>
+        <property name="default.javac.target" value="1.4"/>
     </target>
     <target name="-init-project" depends="-pre-init,-init-private,-init-user">
         <property file="nbproject/project.properties"/>
     </target>
     <target name="-do-ear-init" depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property" if="dist.ear.dir">
-        <property name="build.meta.inf.dir" value="${build.ear.web.dir}/META-INF"/>
-        <property value="${build.ear.classes.dir}" name="build.classes.dir.real"/>
-        <property value="${build.ear.web.dir}" name="build.web.dir.real"/>
+        <property value="${build.ear.web.dir}/META-INF" name="build.meta.inf.dir"/>
+        <property name="build.classes.dir.real" value="${build.ear.classes.dir}"/>
+        <property name="build.web.dir.real" value="${build.ear.web.dir}"/>
     </target>
     <target name="-do-init" depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property, -do-ear-init">
+        <webproject1:property name="platform.home" value="platforms.${platform.active}.home"/>
+        <webproject1:property name="platform.bootcp" value="platforms.${platform.active}.bootclasspath"/>
+        <webproject1:property name="platform.compiler" value="platforms.${platform.active}.compile"/>
+        <webproject1:property name="platform.javac.tmp" value="platforms.${platform.active}.javac"/>
+        <condition property="platform.javac" value="${platform.home}/bin/javac">
+            <equals arg1="${platform.javac.tmp}" arg2="$${platforms.${platform.active}.javac}"/>
+        </condition>
+        <property name="platform.javac" value="${platform.javac.tmp}"/>
+        <webproject1:property name="platform.java.tmp" value="platforms.${platform.active}.java"/>
+        <condition property="platform.java" value="${platform.home}/bin/java">
+            <equals arg1="${platform.java.tmp}" arg2="$${platforms.${platform.active}.java}"/>
+        </condition>
+        <property name="platform.java" value="${platform.java.tmp}"/>
+        <property file="${file.tmp}"/>
+        <delete file="${file.tmp}"/>
+        <fail unless="platform.home">Must set platform.home</fail>
+        <fail unless="platform.bootcp">Must set platform.bootcp</fail>
+        <fail unless="platform.java">Must set platform.java</fail>
+        <fail unless="platform.javac">Must set platform.javac</fail>
+        <fail if="platform.invalid">Platform is not correctly set up</fail>
         <condition property="have.tests">
             <or>
                 <available file="${test.src.dir}"/>
@@ -61,7 +81,7 @@ is divided into following sections:
         <condition property="no.javadoc.preview">
             <isfalse value="${javadoc.preview}"/>
         </condition>
-        <property value="" name="javac.compilerargs"/>
+        <property name="javac.compilerargs" value=""/>
         <condition property="no.deps">
             <and>
                 <istrue value="${no.dependencies}"/>
@@ -72,17 +92,17 @@ is divided into following sections:
                 <isset property="dist.ear.dir"/>
             </not>
         </condition>
-        <property value="${build.classes.excludes}" name="build.web.excludes"/>
+        <property name="build.web.excludes" value="${build.classes.excludes}"/>
         <condition property="do.compile.jsps">
             <istrue value="${compile.jsps}"/>
         </condition>
         <condition property="do.display.browser">
             <istrue value="${display.browser}"/>
         </condition>
-        <available property="has.custom.manifest" file="${conf.dir}/MANIFEST.MF"/>
-        <property name="build.meta.inf.dir" value="${build.web.dir}/META-INF"/>
-        <property value="${build.classes.dir}" name="build.classes.dir.real"/>
-        <property value="${build.web.dir}" name="build.web.dir.real"/>
+        <available file="${conf.dir}/MANIFEST.MF" property="has.custom.manifest"/>
+        <property value="${build.web.dir}/META-INF" name="build.meta.inf.dir"/>
+        <property name="build.classes.dir.real" value="${build.classes.dir}"/>
+        <property name="build.web.dir.real" value="${build.web.dir}"/>
     </target>
     <target name="-post-init">
         <!-- Empty placeholder for easier customization. -->
@@ -107,7 +127,7 @@ is divided into following sections:
             <attribute name="name"/>
             <attribute name="value"/>
             <sequential>
-                <property value="${@{value}}" name="@{name}"/>
+                <property name="@{name}" value="${@{value}}"/>
             </sequential>
         </macrodef>
     </target>
@@ -119,7 +139,7 @@ is divided into following sections:
             <attribute name="debug" default="${javac.debug}"/>
             <element name="customize" optional="true"/>
             <sequential>
-                <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}" includeantruntime="false">
+                <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="@{debug}" deprecation="${javac.deprecation}" source="${javac.source}" target="${javac.target}" fork="yes" executable="${platform.javac}" tempdir="${java.io.tmpdir}" includeantruntime="false">
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
@@ -133,7 +153,7 @@ is divided into following sections:
         <macrodef name="junit" uri="http://www.netbeans.org/ns/web-project/2">
             <attribute name="includes" default="**/*Test.java"/>
             <sequential>
-                <junit showoutput="true" fork="true" dir="${basedir}" failureproperty="tests.failed" errorproperty="tests.failed">
+                <junit showoutput="true" fork="true" dir="${basedir}" failureproperty="tests.failed" errorproperty="tests.failed" jvm="${platform.java}">
                     <batchtest todir="${build.test.results.dir}">
                         <fileset dir="${test.src.dir}" includes="@{includes}"/>
                     </batchtest>
@@ -142,9 +162,9 @@ is divided into following sections:
                     </classpath>
                     <syspropertyset>
                         <propertyref prefix="test-sys-prop."/>
-                        <mapper to="*" from="test-sys-prop.*" type="glob"/>
+                        <mapper type="glob" from="test-sys-prop.*" to="*"/>
                     </syspropertyset>
-                    <formatter usefile="false" type="brief"/>
+                    <formatter type="brief" usefile="false"/>
                 </junit>
             </sequential>
         </macrodef>
@@ -154,14 +174,14 @@ is divided into following sections:
             <attribute name="classname" default="${main.class}"/>
             <element name="customize" optional="true"/>
             <sequential>
-                <java classname="@{classname}" fork="true">
+                <java fork="true" classname="@{classname}" jvm="${platform.java}">
                     <jvmarg line="${runmain.jvmargs}"/>
                     <classpath>
                         <path path="${build.classes.dir.real}:${javac.classpath}:${j2ee.platform.classpath}"/>
                     </classpath>
                     <syspropertyset>
                         <propertyref prefix="run-sys-prop."/>
-                        <mapper to="*" from="run-sys-prop.*" type="glob"/>
+                        <mapper type="glob" from="run-sys-prop.*" to="*"/>
                     </syspropertyset>
                     <customize/>
                 </java>
@@ -173,10 +193,13 @@ is divided into following sections:
             <attribute name="name" default="${main.class}"/>
             <attribute name="classpath" default="${debug.classpath}"/>
             <sequential>
-                <nbjpdastart name="@{name}" addressproperty="jpda.address" transport="dt_socket">
+                <nbjpdastart transport="dt_socket" addressproperty="jpda.address" name="@{name}">
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
+                    <bootclasspath>
+                        <path path="${platform.bootcp}"/>
+                    </bootclasspath>
                 </nbjpdastart>
             </sequential>
         </macrodef>
@@ -184,7 +207,7 @@ is divided into following sections:
             <attribute name="dir" default="${build.classes.dir.real}"/>
             <sequential>
                 <nbjpdareload>
-                    <fileset dir="@{dir}" includes="${fix.includes}*.class"/>
+                    <fileset includes="${fix.includes}*.class" dir="@{dir}"/>
                 </nbjpdareload>
             </sequential>
         </macrodef>
@@ -195,7 +218,7 @@ is divided into following sections:
             <attribute name="classpath" default="${debug.classpath}"/>
             <attribute name="args" default="${application.args}"/>
             <sequential>
-                <java classname="@{classname}" fork="true">
+                <java fork="true" classname="@{classname}" jvm="${platform.java}">
                     <jvmarg value="-Xdebug"/>
                     <jvmarg value="-Xnoagent"/>
                     <jvmarg value="-Djava.compiler=none"/>
@@ -206,7 +229,7 @@ is divided into following sections:
                     </classpath>
                     <syspropertyset>
                         <propertyref prefix="run-sys-prop."/>
-                        <mapper to="*" from="run-sys-prop.*" type="glob"/>
+                        <mapper type="glob" from="run-sys-prop.*" to="*"/>
                     </syspropertyset>
                     <arg line="@{args}"/>
                 </java>
@@ -220,12 +243,12 @@ is divided into following sections:
     ======================
     -->
     <target name="deps-module-jar" depends="init" if="no.dist.ear.dir" unless="no.deps">
-        <ant antfile="${project.jschema}/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="${project.offstage}/build.xml" inheritall="false" target="jar"/>
+        <ant target="jar" inheritall="false" antfile="${project.jschema}/build.xml"/>
+        <ant target="jar" inheritall="false" antfile="${project.offstage}/build.xml"/>
     </target>
     <target name="deps-ear-jar" depends="init" if="dist.ear.dir" unless="no.deps">
-        <ant antfile="${project.jschema}/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="${project.offstage}/build.xml" inheritall="false" target="jar"/>
+        <ant target="jar" inheritall="false" antfile="${project.jschema}/build.xml"/>
+        <ant target="jar" inheritall="false" antfile="${project.offstage}/build.xml"/>
     </target>
     <target name="deps-jar" depends="init, deps-module-jar, deps-ear-jar" unless="no.deps"/>
     <target name="-pre-pre-compile" depends="init,deps-jar">
@@ -241,13 +264,13 @@ is divided into following sections:
             <fileset dir="${src.dir}" excludes="${build.classes.excludes}"/>
         </copy>
         <copy todir="${build.web.dir.real}">
-            <fileset dir="${web.docbase.dir}" excludes="${build.web.excludes}"/>
+            <fileset excludes="${build.web.excludes}" dir="${web.docbase.dir}"/>
         </copy>
     </target>
-    <target if="has.custom.manifest" name="-copy-manifest">
+    <target name="-copy-manifest" if="has.custom.manifest">
         <mkdir dir="${build.meta.inf.dir}"/>
         <copy todir="${build.meta.inf.dir}">
-            <fileset includes="MANIFEST.MF" dir="${conf.dir}"/>
+            <fileset dir="${conf.dir}" includes="MANIFEST.MF"/>
         </copy>
     </target>
     <target name="-post-compile">
@@ -274,7 +297,7 @@ is divided into following sections:
     <target name="compile-single" depends="init,deps-jar,-pre-pre-compile,-pre-compile-single,-do-compile-single,-post-compile-single"/>
     <target name="compile-jsps" depends="compile" if="do.compile.jsps" description="Test compile JSP pages to expose compilation errors.">
         <mkdir dir="${build.generated.dir}/src"/>
-        <java failonerror="true" fork="true" classname="org.netbeans.modules.web.project.ant.JspC">
+        <java classname="org.netbeans.modules.web.project.ant.JspC" fork="true" failonerror="true">
             <arg value="-uriroot"/>
             <arg file="${basedir}/${build.web.dir.real}"/>
             <arg value="-d"/>
@@ -283,12 +306,12 @@ is divided into following sections:
             <classpath path="${java.home}/../lib/tools.jar:${copyfiles.classpath}:${jspcompilation.classpath}"/>
         </java>
         <mkdir dir="${build.generated.dir}/classes"/>
-        <webproject2:javac classpath="${j2ee.platform.classpath}:${build.classes.dir.real}:${jspcompilation.classpath}" destdir="${build.generated.dir}/classes" srcdir="${build.generated.dir}/src"/>
+        <webproject2:javac srcdir="${build.generated.dir}/src" destdir="${build.generated.dir}/classes" classpath="${j2ee.platform.classpath}:${build.classes.dir.real}:${jspcompilation.classpath}"/>
     </target>
     <target name="-do-compile-single-jsp" depends="compile" if="jsp.includes">
         <fail unless="javac.jsp.includes">Must select some files in the IDE or set javac.jsp.includes</fail>
         <mkdir dir="${build.generated.dir}/src"/>
-        <java failonerror="true" fork="true" classname="org.netbeans.modules.web.project.ant.JspCSingle">
+        <java classname="org.netbeans.modules.web.project.ant.JspCSingle" fork="true" failonerror="true">
             <arg value="-uriroot"/>
             <arg file="${basedir}/${build.web.dir.real}"/>
             <arg value="-d"/>
@@ -299,7 +322,7 @@ is divided into following sections:
             <classpath path="${java.home}/../lib/tools.jar:${copyfiles.classpath}:${jspcompilation.classpath}"/>
         </java>
         <mkdir dir="${build.generated.dir}/classes"/>
-        <webproject2:javac classpath="${j2ee.platform.classpath}:${build.classes.dir.real}:${jspcompilation.classpath}" destdir="${build.generated.dir}/classes" srcdir="${build.generated.dir}/src">
+        <webproject2:javac srcdir="${build.generated.dir}/src" destdir="${build.generated.dir}/classes" classpath="${j2ee.platform.classpath}:${build.classes.dir.real}:${jspcompilation.classpath}">
             <customize>
                 <patternset includes="${javac.jsp.includes}"/>
             </customize>
@@ -318,39 +341,39 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target unless="has.custom.manifest" name="-do-dist-without-manifest" depends="init,compile,compile-jsps,-pre-dist">
-        <dirname file="${dist.war}" property="dist.jar.dir"/>
+    <target name="-do-dist-without-manifest" unless="has.custom.manifest" depends="init,compile,compile-jsps,-pre-dist">
+        <dirname property="dist.jar.dir" file="${dist.war}"/>
         <mkdir dir="${dist.jar.dir}"/>
-        <jar compress="${jar.compress}" jarfile="${dist.war}">
+        <jar jarfile="${dist.war}" compress="${jar.compress}">
             <fileset dir="${build.web.dir.real}"/>
         </jar>
     </target>
-    <target if="has.custom.manifest" name="-do-dist-with-manifest" depends="init,compile,compile-jsps,-pre-dist">
-        <dirname file="${dist.war}" property="dist.jar.dir"/>
+    <target name="-do-dist-with-manifest" if="has.custom.manifest" depends="init,compile,compile-jsps,-pre-dist">
+        <dirname property="dist.jar.dir" file="${dist.war}"/>
         <mkdir dir="${dist.jar.dir}"/>
-        <jar compress="${jar.compress}" jarfile="${dist.war}" manifest="${build.meta.inf.dir}/MANIFEST.MF">
+        <jar manifest="${build.meta.inf.dir}/MANIFEST.MF" jarfile="${dist.war}" compress="${jar.compress}">
             <fileset dir="${build.web.dir.real}"/>
         </jar>
     </target>
     <target name="do-dist" depends="init,compile,compile-jsps,-pre-dist,-do-dist-with-manifest,-do-dist-without-manifest"/>
-    <target depends="init" name="library-inclusion-in-manifest" if="dist.ear.dir">
-        <basename file="${reference.jschema.jar}" property="included.lib.reference.jschema.jar"/>
-        <copy todir="${dist.ear.dir}" file="${reference.jschema.jar}"/>
-        <basename file="${reference.offstage.jar}" property="included.lib.reference.offstage.jar"/>
-        <copy todir="${dist.ear.dir}" file="${reference.offstage.jar}"/>
+    <target name="library-inclusion-in-manifest" depends="init" if="dist.ear.dir">
+        <basename property="included.lib.reference.offstage.jar" file="${reference.offstage.jar}"/>
+        <copy file="${reference.offstage.jar}" todir="${dist.ear.dir}"/>
+        <basename property="included.lib.reference.jschema.jar" file="${reference.jschema.jar}"/>
+        <copy file="${reference.jschema.jar}" todir="${dist.ear.dir}"/>
         <mkdir dir="${build.web.dir.real}/META-INF"/>
-        <manifest mode="update" file="${build.web.dir.real}/META-INF/MANIFEST.MF">
-            <attribute name="Class-Path" value="${included.lib.reference.jschema.jar} ${included.lib.reference.offstage.jar} "/>
+        <manifest file="${build.web.dir.real}/META-INF/MANIFEST.MF" mode="update">
+            <attribute name="Class-Path" value="${included.lib.reference.offstage.jar} ${included.lib.reference.jschema.jar} "/>
         </manifest>
     </target>
-    <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
-        <copy todir="${build.web.dir.real}/WEB-INF/lib" file="${reference.jschema.jar}"/>
-        <copy todir="${build.web.dir.real}/WEB-INF/lib" file="${reference.offstage.jar}"/>
+    <target name="library-inclusion-in-archive" depends="init" unless="dist.ear.dir">
+        <copy file="${reference.offstage.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
+        <copy file="${reference.jschema.jar}" todir="${build.web.dir.real}/WEB-INF/lib"/>
     </target>
     <target name="do-ear-dist" depends="init,compile,compile-jsps,-pre-dist,library-inclusion-in-manifest">
-        <dirname file="${dist.ear.war}" property="dist.jar.dir"/>
+        <dirname property="dist.jar.dir" file="${dist.ear.war}"/>
         <mkdir dir="${dist.jar.dir}"/>
-        <jar manifest="${build.web.dir.real}/META-INF/MANIFEST.MF" compress="${jar.compress}" jarfile="${dist.ear.war}">
+        <jar jarfile="${dist.ear.war}" compress="${jar.compress}" manifest="${build.web.dir.real}/META-INF/MANIFEST.MF">
             <fileset dir="${build.web.dir.real}"/>
         </jar>
     </target>
@@ -367,12 +390,12 @@ is divided into following sections:
     -->
     <target name="run" depends="run-deploy,run-display-browser" description="Deploy to server and show in browser."/>
     <target name="run-deploy" depends="init,compile,compile-jsps,-do-compile-single-jsp,dist">
-        <nbdeploy forceRedeploy="${forceRedeploy}" clientUrlPart="${client.urlPart}" debugmode="false"/>
+        <nbdeploy debugmode="false" clientUrlPart="${client.urlPart}" forceRedeploy="${forceRedeploy}"/>
     </target>
     <target name="verify" depends="init,dist">
         <nbverify file="${dist.war}"/>
     </target>
-    <target if="do.display.browser" name="run-display-browser" depends="run-deploy">
+    <target name="run-display-browser" if="do.display.browser" depends="run-deploy">
         <nbbrowse url="${client.url}"/>
     </target>
     <target name="run-main" depends="init,compile-single">
@@ -385,18 +408,21 @@ is divided into following sections:
     ======================
     -->
     <target name="debug" description="Debug project in IDE." depends="init,compile,compile-jsps,-do-compile-single-jsp,dist" if="netbeans.home">
-        <nbdeploy clientUrlPart="${client.urlPart}" debugmode="true"/>
-        <nbjpdaconnect transport="${jpda.transport}" address="${jpda.address}" host="${jpda.host}" name="${name}">
+        <nbdeploy debugmode="true" clientUrlPart="${client.urlPart}"/>
+        <nbjpdaconnect name="${name}" host="${jpda.host}" address="${jpda.address}" transport="${jpda.transport}">
             <classpath>
                 <path path="${debug.classpath}:${ws.debug.classpaths}"/>
             </classpath>
             <sourcepath>
                 <path path="${web.docbase.dir}:${ws.web.docbase.dirs}"/>
             </sourcepath>
+            <bootclasspath>
+                <path path="${platform.bootcp}"/>
+            </bootclasspath>
         </nbjpdaconnect>
         <antcall target="debug-display-browser"/>
     </target>
-    <target if="do.display.browser" name="debug-display-browser">
+    <target name="debug-display-browser" if="do.display.browser">
         <nbbrowse url="${client.url}"/>
     </target>
     <target name="debug-single" if="netbeans.home" depends="init,compile,compile-jsps,-do-compile-single-jsp,debug"/>
@@ -410,7 +436,7 @@ is divided into following sections:
     <target name="debug-single-main" if="netbeans.home" depends="init,compile-single,-debug-start-debugger,-debug-start-debuggee-single"/>
     <target name="-pre-debug-fix" depends="init">
         <fail unless="fix.includes">Must set fix.includes</fail>
-        <property value="${fix.includes}.java" name="javac.includes"/>
+        <property name="javac.includes" value="${fix.includes}.java"/>
     </target>
     <target name="-do-debug-fix" if="netbeans.home" depends="init,-pre-debug-fix,compile-single">
         <webproject1:nbjpdareload/>
@@ -423,15 +449,64 @@ is divided into following sections:
     -->
     <target name="javadoc-build" depends="init">
         <mkdir dir="${dist.javadoc.dir}"/>
-        <javadoc destdir="${dist.javadoc.dir}" source="${javac.source}" notree="${javadoc.notree}" use="${javadoc.use}" nonavbar="${javadoc.nonavbar}" noindex="${javadoc.noindex}" splitindex="${javadoc.splitindex}" author="${javadoc.author}" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}" private="${javadoc.private}" additionalparam="${javadoc.additionalparam}" failonerror="true">
-            <classpath>
-                <path path="${javac.classpath}:${j2ee.platform.classpath}"/>
-            </classpath>
-            <sourcepath>
-                <pathelement location="${src.dir}"/>
-            </sourcepath>
-            <fileset dir="${src.dir}"/>
-        </javadoc>
+        <webproject1:property name="platform.javadoc.tmp" value="platforms.${platform.active}.javadoc"/>
+        <condition property="platform.javadoc" value="${platform.home}/bin/javadoc">
+            <equals arg1="${platform.javadoc.tmp}" arg2="$${platforms.${platform.active}.javadoc}"/>
+        </condition>
+        <property name="platform.javadoc" value="${platform.javadoc.tmp}"/>
+        <condition property="javadoc.notree.opt" value="-notree">
+            <istrue value="${javadoc.notree}"/>
+        </condition>
+        <property name="javadoc.notree.opt" value=""/>
+        <condition property="javadoc.use.opt" value="-use">
+            <istrue value="${javadoc.use}"/>
+        </condition>
+        <property name="javadoc.use.opt" value=""/>
+        <condition property="javadoc.nonavbar.opt" value="-nonavbar">
+            <istrue value="${javadoc.nonavbar}"/>
+        </condition>
+        <property name="javadoc.nonavbar.opt" value=""/>
+        <condition property="javadoc.noindex.opt" value="-noindex">
+            <istrue value="${javadoc.noindex}"/>
+        </condition>
+        <property name="javadoc.noindex.opt" value=""/>
+        <condition property="javadoc.splitindex.opt" value="-splitindex">
+            <istrue value="${javadoc.splitindex}"/>
+        </condition>
+        <property name="javadoc.splitindex.opt" value=""/>
+        <condition property="javadoc.author.opt" value="-author">
+            <istrue value="${javadoc.author}"/>
+        </condition>
+        <property name="javadoc.author.opt" value=""/>
+        <condition property="javadoc.version.opt" value="-version">
+            <istrue value="${javadoc.version}"/>
+        </condition>
+        <property name="javadoc.version.opt" value=""/>
+        <condition property="javadoc.private.opt" value="-private">
+            <istrue value="${javadoc.private}"/>
+        </condition>
+        <property name="javadoc.private.opt" value=""/>
+        <condition property="javadoc.classpath.opt" value="&quot;&quot;">
+            <equals arg1="${javac.classpath}" arg2=""/>
+        </condition>
+        <path id="javadoc.classpath.temp">
+            <pathelement path="${javac.classpath}:${j2ee.platform.classpath}"/>
+        </path>
+        <property name="javadoc.classpath.opt" refid="javadoc.classpath.temp"/>
+        <apply executable="${platform.javadoc}" failonerror="true" parallel="true">
+            <arg value="-d"/>
+            <arg file="${dist.javadoc.dir}"/>
+            <arg value="-source"/>
+            <arg value="${javac.source}"/>
+            <arg value="-windowtitle"/>
+            <arg value="${javadoc.windowtitle}"/>
+            <arg line="${javadoc.notree.opt} ${javadoc.use.opt} ${javadoc.nonavbar.opt} ${javadoc.noindex.opt} ${javadoc.splitindex.opt} ${javadoc.author.opt} ${javadoc.version.opt} ${javadoc.private.opt} ${javadoc.additionalparam}"/>
+            <arg value="-classpath"/>
+            <arg value="${javadoc.classpath.opt}"/>
+            <arg value="-sourcepath"/>
+            <arg path="${src.dir}"/>
+            <fileset dir="${src.dir}" includes="**/*.java"/>
+        </apply>
     </target>
     <target name="javadoc-browse" if="netbeans.home" unless="no.javadoc.preview" depends="init,javadoc-build">
         <nbbrowse file="${dist.javadoc.dir}/index.html"/>
@@ -515,10 +590,10 @@ is divided into following sections:
     -->
     <target name="-debug-start-debuggee-test" if="have.tests" depends="init,compile-test">
         <fail unless="test.class">Must select one file in the IDE or set test.class</fail>
-        <webproject1:debug args="${test.class}" classpath="${debug.test.classpath}" classname="junit.textui.TestRunner"/>
+        <webproject1:debug classname="junit.textui.TestRunner" classpath="${debug.test.classpath}" args="${test.class}"/>
     </target>
     <target name="-debug-start-debugger-test" if="netbeans.home+have.tests" depends="init,compile-test">
-        <webproject1:nbjpdastart classpath="${debug.test.classpath}" name="${test.class}"/>
+        <webproject1:nbjpdastart name="${test.class}" classpath="${debug.test.classpath}"/>
     </target>
     <target name="debug-test" depends="init,compile-test,-debug-start-debugger-test,-debug-start-debuggee-test"/>
     <target name="-do-debug-fix-test" if="netbeans.home" depends="init,-pre-debug-fix,compile-test-single">
@@ -532,15 +607,15 @@ is divided into following sections:
     ======================
     -->
     <target name="deps-clean" depends="init" if="no.dist.ear.dir" unless="no.deps">
-        <ant antfile="${project.jschema}/build.xml" inheritall="false" target="clean"/>
-        <ant antfile="${project.offstage}/build.xml" inheritall="false" target="clean"/>
+        <ant target="clean" inheritall="false" antfile="${project.jschema}/build.xml"/>
+        <ant target="clean" inheritall="false" antfile="${project.offstage}/build.xml"/>
     </target>
     <target name="do-clean" depends="init">
-        <condition property="build.dir.to.clean" value="${build.web.dir.real}">
+        <condition value="${build.web.dir.real}" property="build.dir.to.clean">
             <isset property="dist.ear.dir"/>
         </condition>
-        <property name="build.dir.to.clean" value="${build.web.dir.real}"/>
-        <delete quiet="true" includeEmptyDirs="true">
+        <property value="${build.web.dir.real}" name="build.dir.to.clean"/>
+        <delete includeEmptyDirs="true" quiet="true">
             <fileset dir="${build.dir.to.clean}/WEB-INF/lib"/>
         </delete>
         <delete includeEmptyDirs="true">
@@ -549,12 +624,12 @@ is divided into following sections:
                 <exclude name="${build.dir.to.clean}/WEB-INF/lib/**"/>
             </fileset>
         </delete>
-        <available property="status.clean-failed" type="dir" file="${build.dir.to.clean}/WEB-INF/lib"/>
+        <available file="${build.dir.to.clean}/WEB-INF/lib" type="dir" property="status.clean-failed"/>
         <delete dir="${dist.dir}"/>
     </target>
     <target name="check-clean" depends="do-clean" if="status.clean-failed">
         <echo message="Warning: unable to delete some files in ${build.web.dir.real}/WEB-INF/lib - they are probably locked by the J2EE server. "/>
-        <echo message="To delete all files undeploy the module from Server Registry in Runtime tab and then use Clean again." level="info"/>
+        <echo level="info" message="To delete all files undeploy the module from Server Registry in Runtime tab and then use Clean again."/>
     </target>
     <target name="-post-clean">
         <!-- Empty placeholder for easier customization. -->
