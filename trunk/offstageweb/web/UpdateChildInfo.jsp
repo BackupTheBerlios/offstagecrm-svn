@@ -65,7 +65,7 @@
 <tr>
 <td>Date of Birth (mm/dd/yyyy)</td>
 <td><input type="Text"  maxlength="10" name="dob" size="10" 
-value="<%=c.get(Calendar.MONTH)%>/<%=c.get(Calendar.DATE)%>/<%=c.get(Calendar.YEAR)%>" autocomplete=off >
+value="<%=c.get(Calendar.MONTH)+1%>/<%=c.get(Calendar.DATE)%>/<%=c.get(Calendar.YEAR)%>" autocomplete=off >
 </tr>
 
 <tr>

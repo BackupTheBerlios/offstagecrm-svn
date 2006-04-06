@@ -24,8 +24,8 @@
     <servlet-class>offstage.web.SampleServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>AddChildServlet</servlet-name>
-    <servlet-class>offstage.web.AddChildServlet</servlet-class>
+    <servlet-name>InsertChildServlet</servlet-name>
+    <servlet-class>offstage.web.InsertChildServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>GetFamilyStatusServlet</servlet-name>
@@ -51,13 +51,33 @@
     <servlet-name>GetPhoneInfoServlet</servlet-name>
     <servlet-class>offstage.web.GetPhoneInfoServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>UpdatePhonesServlet</servlet-name>
+    <servlet-class>offstage.web.UpdatePhonesServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>DeletePhonesServlet</servlet-name>
+    <servlet-class>offstage.web.DeletePhonesServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>InsertPhonesServlet</servlet-name>
+    <servlet-class>offstage.web.InsertPhonesServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetAccountInfoServlet</servlet-name>
+    <servlet-class>offstage.web.GetAccountInfoServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>UpdateAccountInfoServlet</servlet-name>
+    <servlet-class>offstage.web.UpdateAccountInfoServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>SampleServlet</servlet-name>
     <url-pattern>/SampleServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>AddChildServlet</servlet-name>
-    <url-pattern>/AddChildServlet</url-pattern>
+    <servlet-name>InsertChildServlet</servlet-name>
+    <url-pattern>/InsertChildServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>GetFamilyStatusServlet</servlet-name>
@@ -83,14 +103,32 @@
     <servlet-name>GetPhoneInfoServlet</servlet-name>
     <url-pattern>/GetPhoneInfoServlet</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UpdatePhonesServlet</servlet-name>
+    <url-pattern>/UpdatePhonesServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>DeletePhonesServlet</servlet-name>
+    <url-pattern>/DeletePhonesServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>InsertPhonesServlet</servlet-name>
+    <url-pattern>/InsertPhonesServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetAccountInfoServlet</servlet-name>
+    <url-pattern>/GetAccountInfoServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UpdateAccountInfoServlet</servlet-name>
+    <url-pattern>/UpdateAccountInfoServlet</url-pattern>
+  </servlet-mapping>
   <session-config>
     <session-timeout>
             30
         </session-timeout>
   </session-config>
   <welcome-file-list>
-    <welcome-file>
-            index.jsp
-        </welcome-file>
+    <welcome-file>GetFamilyStatusServlet</welcome-file>
   </welcome-file-list>
 </web-app>
