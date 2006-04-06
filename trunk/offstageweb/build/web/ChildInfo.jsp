@@ -1,7 +1,7 @@
 <%@ include file="jsp_h.jsp" %>
 <table>
 <tr><td style="font-size:x-large;" colspan="2">Enter Child Information:</td></tr>
-<form method="POST" action="<%=root%>/AddChildServlet">
+<form method="POST" action="<%=root%>/InsertChildServlet">
 <tr><td colspan="2"><hr/></td></td>
 
 <tr>

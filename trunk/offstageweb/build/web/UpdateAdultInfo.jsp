@@ -10,6 +10,8 @@ Iterator i = familyList.listIterator();
 
 String dob = null;
 Integer entityid = null;
+
+// Look for primary entity on family list
 Map adult = null;
 while ( i.hasNext() ){
     adult = (Map)i.next();

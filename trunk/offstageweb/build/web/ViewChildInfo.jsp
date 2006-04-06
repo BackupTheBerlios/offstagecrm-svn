@@ -8,6 +8,7 @@ String id = (String)request.getParameter( "id" );
 ResultSetArrayList familyList = (ResultSetArrayList)sess.getAttribute("familyList");
 Iterator i = familyList.listIterator();
 
+// Find person on family list
 Map child = null;
 while ( i.hasNext() ){
     child = (Map)i.next();

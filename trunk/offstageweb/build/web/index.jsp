@@ -2,6 +2,7 @@
 <%
 ResultSet rs = st.executeQuery("select * from courseids");
 %>
+[<a href="<%=root%>/GetFamilyStatusServlet">Family Status</a>]
         
 <p>This is a sample JSP page.</p>
 
