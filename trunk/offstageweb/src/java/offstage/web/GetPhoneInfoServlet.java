@@ -35,7 +35,7 @@ public class GetPhoneInfoServlet extends citibob.web.DbServlet {
                 if ( extension != null ) sess.setAttribute( "extension", extension );
                 else sess.setAttribute( "extension", null );
                 
-                redirect(request, response, "/UpdatePhones.jsp");
+                redirect(request, response, "/familystatus/UpdatePhones.jsp");
                 
             } catch ( SQLException e ){
                 System.out.println( e );

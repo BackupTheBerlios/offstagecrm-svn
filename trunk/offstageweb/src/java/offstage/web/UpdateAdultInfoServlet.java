@@ -62,7 +62,7 @@ public class UpdateAdultInfoServlet extends citibob.web.DbServlet  {
                 String badInput = buf.substring(0, length-2);
                 sess.setAttribute( "badInput", badInput );
                 sess.setAttribute( "adult", adult );
-                redirect(request, response, "/UpdateAdultInfoError.jsp?id=" + (Integer)adult.get( "entityid" ) );
+                redirect(request, response, "/familystatus/UpdateAdultInfoError.jsp?id=" + (Integer)adult.get( "entityid" ) );
             } else{
                 try {
                     DB.updateAdult( st, 

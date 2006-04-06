@@ -40,7 +40,7 @@ public class GetContactInfoServlet extends GetPhoneInfoServlet  {
                 if ( extension != null ) sess.setAttribute( "extension", extension );
                 else sess.setAttribute( "extension", null );
                 
-                redirect(request, response, "/ViewContactInfo.jsp");
+                redirect(request, response, "/familystatus/ViewContactInfo.jsp");
                 
             } catch ( SQLException e ){
                 System.out.println( e );

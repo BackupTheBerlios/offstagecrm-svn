@@ -33,7 +33,7 @@ public class UpdateAccountInfoServlet extends citibob.web.DbServlet {
             } else {
                 String message = "Input Error: Please Fill In Both Fields!";
                 sess.setAttribute( "message", message );
-                redirect(request, response, "/UpdateAccountError.jsp?" +
+                redirect(request, response, "/familystatus/UpdateAccountError.jsp?" +
                         "username=" + username +
                         "&password=" + password
                         );

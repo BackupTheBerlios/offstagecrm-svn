@@ -21,14 +21,15 @@ public class GetFamilyStatusServlet extends citibob.web.DbServlet {
 // Normally log in process will set primaryentityid in the session
 // For now either pass id in using parameters or use one harded coded below
 //    int primaryentityid = 12633;
-        Integer id = new Integer( request.getParameter("id") );
-        if ( id == null ){
+        String idStr = request.getParameter("id");
+        if ( idStr == null ){
             Integer _primaryentityid = new Integer(6056);
             sess.setAttribute( "primaryentityid", _primaryentityid );
-        } else sess.setAttribute( "primaryentityid", id );
+        } else sess.setAttribute( "primaryentityid", new Integer( idStr ) );
 
 // Keep the code from this point on...
         Integer primaryentityid = (Integer)sess.getAttribute( "primaryentityid" );
+System.out.println("primaryentityid is:" + primaryentityid);
         if ( primaryentityid != null ){
             try {
                 boolean hasCardBalance = DB.hasCardBalance( st, primaryentityid );

@@ -50,13 +50,13 @@ public class GetAccountInfoServlet extends GetPhoneInfoServlet {
                     }
                     // Redirect to view adult info
                     System.out.println("REDIRECTING TO VIEW ADULT");
-                    redirect(request, response, "/ViewAdultInfo.jsp?id=" + id );
+                    redirect(request, response, "/familystatus/ViewAdultInfo.jsp?id=" + id );
                 } 
                 
                 // Else got to edit child info
                 else {
                     System.out.println("REDIRECTING TO VIEW CHILD");
-                    redirect(request, response, "/ViewChildInfo.jsp?id=" + id );
+                    redirect(request, response, "/familystatus/ViewChildInfo.jsp?id=" + id );
                 }
             } 
             else redirect(request, response, "/FamilyStatus.jsp" );

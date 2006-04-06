@@ -68,7 +68,7 @@ public class InsertPhonesServlet extends citibob.web.DbServlet {
                 redirect(request, response, "/GetPhoneInfoServlet");
             }
             // Redirect if bad input
-            redirect(request, response, "/InsertPhonesError.jsp?" +
+            redirect(request, response, "/familystatus/InsertPhonesError.jsp?" +
                     "message=" + message.toString() +
                     "&name=" + name +
                     "&number=" + number +

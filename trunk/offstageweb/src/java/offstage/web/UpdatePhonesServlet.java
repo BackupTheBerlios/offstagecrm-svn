@@ -101,13 +101,13 @@ public class UpdatePhonesServlet extends citibob.web.DbServlet {
                 redirect(request, response, "/GetPhoneInfoServlet");
             }
             // Redirect if bad input
-            redirect(request, response, "/EditPhonesError.jsp?" +
+            redirect(request, response, "/familystatus/EditPhonesError.jsp?" +
                     "message=" + message.toString() +
                     "&name=" + name +
                     "&number=" + number +
                     "&extension=" + extension
                     );
-        } else redirect(request, response, "/UpdatePhones.jsp");
+        } else redirect(request, response, "/familystatus/UpdatePhones.jsp");
         
     }
     

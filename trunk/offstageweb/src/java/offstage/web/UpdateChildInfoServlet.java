@@ -64,7 +64,7 @@ public class UpdateChildInfoServlet extends citibob.web.DbServlet  {
                 sess.setAttribute( "email", email );
                 sess.setAttribute( "relprimarytype", relprimarytype );
                 sess.setAttribute( "badInput", badInput );
-                redirect(request, response, "/UpdateChildInfoError.jsp?id=" + entityid );
+                redirect(request, response, "/familystatus/UpdateChildInfoError.jsp?id=" + entityid );
             } else{
                 // If age indicates under 19 then insert into db...
                 if ( !logic.isAdult(dob) ){
@@ -91,7 +91,7 @@ public class UpdateChildInfoServlet extends citibob.web.DbServlet  {
                     sess.setAttribute( "dob", dob );
                     sess.setAttribute( "email", email );
                     sess.setAttribute( "relprimarytype", relprimarytype );
-                    redirect(request, response, "/ChildIsAdult.jsp");
+                    redirect(request, response, "/familystatus/ChildIsAdult.jsp");
                 }
             }
         } else redirect(request, response, "/FamilyStatus.jsp");

@@ -40,7 +40,7 @@ System.out.println(customaddressto);
             if ( customaddressto == null || address1 == null ||
                  city == null || state.compareTo("") == 0 || 
                  zip == null || country == null ){
-                redirect(request, response, "/UpdateContactInfoError.jsp?" +
+                redirect(request, response, "/familystatus/UpdateContactInfoError.jsp?" +
                         "customaddressto=" + URLEncoder.encode(customaddressto, "UTF-8" ) + 
                         "&address1=" + URLEncoder.encode( address1, "UTF-8" ) +
                         "&address2=" + URLEncoder.encode( address2, "UTF-8" ) + 
