@@ -1,4 +1,4 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 
 <%
 String message = request.getParameter( "message" );

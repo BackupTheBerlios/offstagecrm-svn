@@ -1,4 +1,4 @@
-<%@ include file="db_h.jsp" %>
+<%@ include file="/db_h.jsp" %>
 <%@page import="offstage.web.*"%>
 <%@page import="java.util.*"%>
 

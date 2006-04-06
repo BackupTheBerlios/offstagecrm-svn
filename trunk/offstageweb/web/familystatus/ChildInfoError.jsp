@@ -1,7 +1,5 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <% 
-String entityid = (String)request.getParameter("id");
-System.out.println( "id is: " + entityid );
 String badInput = (String)sess.getAttribute("badInput");
 String firstname = (String)sess.getAttribute("firstname");
 String middlename = (String)sess.getAttribute("middlename");
@@ -16,7 +14,7 @@ String relprimarytype = (String)sess.getAttribute("relprimarytype");
 <tr><td style="font-size:x-large;" colspan="2">Input Error: <%=badInput%></td></tr>
 <tr><td colspan="2"><hr/></td></td>
 <tr><td style="font-size:x-large;" colspan="2">Please Edit Child Information</td></tr>
-<form method="POST" action="<%=root%>/UpdateChildInfoServlet?id=<%=entityid%>">
+<form method="POST" action="<%=root%>/InsertChildServlet">
 <tr><td colspan="2"><hr/></td></td>
 
 <tr>

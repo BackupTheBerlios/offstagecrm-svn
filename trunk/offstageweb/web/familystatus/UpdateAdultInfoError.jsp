@@ -1,4 +1,4 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <%@page import="java.util.*"%>
 <% 
 String badInput = (String)sess.getAttribute("badInput");

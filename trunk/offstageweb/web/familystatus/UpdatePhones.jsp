@@ -1,4 +1,4 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <%@page import="offstage.web.*"%>
 <%@page import="offstage.web.collections.*"%>
 <%@page import="java.util.*"%>
@@ -41,14 +41,14 @@ boolean hasHome = false, hasWork = false, hasFax = false;
 %>
  ext. <%=extension%>
 </td><td>
-[<a href="<%=root%>/EditPhones.jsp?phonetype=<%=name%>&number=<%=number%>&extension=<%=extension%>">Edit</a>]
+[<a href="<%=root%>/familystatus/EditPhones.jsp?phonetype=<%=name%>&number=<%=number%>&extension=<%=extension%>">Edit</a>]
 [<a href="<%=root%>/DeletePhonesServlet?phonetype=<%=name%>&hasExtension=yes">Remove</a>]
 <%
             // Else proceed as usual
             } else {
 %>
 </td><td>
-[<a href="<%=root%>/EditPhones.jsp?phonetype=<%=name%>&number=<%=number%>">Edit</a>]
+[<a href="<%=root%>/familystatus/EditPhones.jsp?phonetype=<%=name%>&number=<%=number%>">Edit</a>]
 [<a href="<%=root%>/DeletePhonesServlet?phonetype=<%=name%>">Remove</a>]
 </td></tr>
 <%
@@ -62,7 +62,7 @@ boolean hasHome = false, hasWork = false, hasFax = false;
     // If work number not found then give option to add one
     if ( !hasWork ){
 %>
-[<a href="<%=root%>/InsertPhones.jsp?phonetype=work">Add Work Phone</a>]
+[<a href="<%=root%>/familystatus/InsertPhones.jsp?phonetype=work">Add Work Phone</a>]
 <%
     }
 %>
@@ -70,7 +70,7 @@ boolean hasHome = false, hasWork = false, hasFax = false;
     // If home number not found then give option to add one
     if ( !hasHome ){
 %>
-[<a href="<%=root%>/InsertPhones.jsp?phonetype=home">Add Home Phone</a>]
+[<a href="<%=root%>/familystatus/InsertPhones.jsp?phonetype=home">Add Home Phone</a>]
 <%
     }
 %>
@@ -78,7 +78,7 @@ boolean hasHome = false, hasWork = false, hasFax = false;
     // If fax number not found then give option to add one
     if ( !hasFax ){
 %>
-[<a href="<%=root%>/InsertPhones.jsp?phonetype=fax">Add Fax</a>]
+[<a href="<%=root%>/familystatus/InsertPhones.jsp?phonetype=fax">Add Fax</a>]
 <%
     }
 %>
