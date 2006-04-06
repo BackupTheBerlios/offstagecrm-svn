@@ -1,15 +1,14 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 
 <%
-String message = request.getParameter( "message" );
-String name = request.getParameter( "name" );
-String number = request.getParameter( "number" );
-String extension = request.getParameter( "extension" );
+String name = request.getParameter("phonetype");
+String number = request.getParameter("number");
+String extension = request.getParameter("extension");
 if ( extension == null ) extension = "";
 %>
 <table>
 <form method="POST" action="<%=root%>/UpdatePhonesServlet?name=<%=name%>">
-<tr><td style="font-size:x-large;" colspan="3"><%=message%></td></tr>
+<tr><td style="font-size:x-large;" colspan="3">Edit Phone Number:</td></tr>
 <tr><td colspan="3"><hr/></td></tr>
 <tr><td><%=name%></td>
 <td><input type="text" name="number" value="<%=number%>" >

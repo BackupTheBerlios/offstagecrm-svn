@@ -1,4 +1,4 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <%@page import="offstage.web.*"%>
 <%@page import="offstage.web.collections.*"%>
 <%@page import="java.util.*"%>
@@ -48,6 +48,6 @@ while ( i.hasNext() ){
 <tr><td colspan="2"><hr/></td></tr>
 <tr><td colspan="2">
 [<a href="<%=root%>/FamilyStatus.jsp">Back</a>]
-[<a href="<%=root%>/UpdateChildInfo.jsp?id=<%=id%>">Update</a>]
+[<a href="<%=root%>/familystatus/UpdateChildInfo.jsp?id=<%=id%>">Update</a>]
 
 </table>

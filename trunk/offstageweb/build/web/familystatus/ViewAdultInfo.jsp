@@ -1,4 +1,4 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <%@page import="offstage.web.*"%>
 <%@page import="offstage.web.collections.*"%>
 <%@page import="java.util.*"%>
@@ -21,7 +21,7 @@ while ( i.hasNext() ){
 
 <table>
 <tr colspan="2"><td>
-Personal Info[<a href="<%=root%>/UpdateAdultInfo.jsp?id=<%=id%>">Edit</a>]
+Personal Info[<a href="<%=root%>/familystatus/UpdateAdultInfo.jsp?id=<%=id%>">Edit</a>]
 </td></tr>
 <tr><td colspan="2"><hr/></td></td>
 
@@ -60,7 +60,7 @@ Personal Info[<a href="<%=root%>/UpdateAdultInfo.jsp?id=<%=id%>">Edit</a>]
 %>
 <tr><td colspan="2"><hr/></td></tr>
 <tr colspan="2"><td>
-Username/Password[<a href="<%=root%>/UpdateAccount.jsp">Edit</a>]
+Username/Password[<a href="<%=root%>/familystatus/UpdateAccount.jsp">Edit</a>]
 </td></tr>
 <tr><td colspan="2"><hr/></td></tr>
 

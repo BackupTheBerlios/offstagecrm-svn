@@ -1,4 +1,4 @@
-<%@ include file="jsp_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <%
     String dob = (String)sess.getAttribute( "dob" );
     String firstname = (String)sess.getAttribute( "firstname" );
