@@ -7,6 +7,7 @@ package offstage.web;
 
 import java.sql.*;
 import citibob.jschema.pgsql.*;
+import org.apache.xml.dtm.ref.sax2dtm.SAX2DTM;
 /**
  * 
  * @author Michael Wahl
@@ -25,7 +26,7 @@ public class DB {
      * @return rows of entityid, firstname, middlename, lastname, gender, dob, email,
      * relprimarytype.name, adultid, occupation, title
      */
-    public static ResultSet getFamily( Statement st, int primaryentityid )
+    public static ResultSet getFamily( Statement st, Integer primaryentityid )
     throws SQLException
     {
         return st.executeQuery(
@@ -96,6 +97,37 @@ public class DB {
     }
     
     /**
+     * Update phone number given the unique entityid( owner of phone number ) and
+     * the type of phone (name)
+     * @param st statement used to update
+     * @param entityid unique id of owner of phone number
+     * @param name type of phone number (i.e. work, home, fax etc.)
+     * @param number phone number
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return number of rows effected
+     */
+    public static int updatePhones( Statement st, Integer entityid, 
+            String name, String number )
+    throws SQLException
+    {
+        ResultSet rs = st.executeQuery(
+                " SELECT groupid " +
+                " FROM phoneids " +
+                " WHERE name = " + SqlString.sql(name)
+                );
+        
+        int groupid = Integer.MIN_VALUE;
+        if ( rs.next() ) groupid = rs.getInt("groupid");
+System.out.println("groupid is: " + groupid);
+        return st.executeUpdate(
+                "UPDATE phones " +
+                " SET phone = " + SqlString.sql(number) +
+                " WHERE groupid = " + SqlInteger.sql(groupid) +
+                " AND entityid = " + SqlInteger.sql(entityid)
+                );
+    }
+    
+    /**
      * Get all phones associated with the unique identifier, primaryentityid
      * @param st 
      * @param primaryentityid unique identifier
@@ -112,15 +144,74 @@ public class DB {
                 " AND phones.groupid = phoneids.groupid"
                 );
     }
-    
+
+    /**
+     * Remove phone given entityid and name of type of phone
+     * @param st statement used to interact with db
+     * @param entityid unique id of entity associated with phone
+     * @param name type of phone being removed
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return whether phone number has been removed from db
+     */
+    public static boolean deletePhones( Statement st, Integer entityid, String name )
+    throws SQLException
+    {
+        ResultSet rs = st.executeQuery(
+                " SELECT groupid " +
+                " FROM phoneids " +
+                " WHERE name = " + SqlString.sql(name)
+                );
+        
+        int groupid = Integer.MIN_VALUE;
+        if ( rs.next() ) groupid = rs.getInt("groupid");
+        
+        return st.execute(
+                "DELETE FROM " +
+                " phones " +
+                " WHERE entityid =" + SqlInteger.sql(entityid) +
+                " AND groupid =" + SqlInteger.sql(groupid)
+                );
+    }
+
+    /**
+     * Insert phone number into db given entityid and name
+     * @param st statement used to interact with db
+     * @param entityid unique id of entity the phone number belongs to
+     * @param name type of phone number
+     * @param number phone number
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return number of rows effected by insert
+     */
+    public static int insertPhones( Statement st, Integer entityid, String name, 
+            String number )
+    throws SQLException
+    {
+        ResultSet rs = st.executeQuery(
+                " SELECT groupid " +
+                " FROM phoneids " +
+                " WHERE name = " + SqlString.sql(name)
+                );
+        
+        int groupid = Integer.MIN_VALUE;
+        if ( rs.next() ) groupid = rs.getInt("groupid");
+        
+        return st.executeUpdate(
+                "INSERT INTO phones" +
+                " VALUES (" +
+                " " + SqlInteger.sql(groupid) + ", " +
+                " " + SqlInteger.sql(entityid) + ", " +
+                " " + SqlString.sql(number) + " ) " 
+                );
+        
+    }
     /**
      * Get card balance for the associated primaryentityid
-     * @param st 
+     * @param st statement used to interact with db
      * @param primaryentityid unique identifier
      * @throws java.sql.SQLException if a database access error occurs
      * @return card balance
      */
-    public static double getCardBalance( Statement st, int primaryentityid )
+    public static double getCardBalance( Statement st, Integer primaryentityid )
     throws SQLException
     {
         
@@ -162,7 +253,7 @@ public class DB {
      * @throws java.sql.SQLException if a database access error occurs
      * @return number of rows effected
      */
-    public static boolean hasCardBalance( Statement st, int primaryentityid )
+    public static boolean hasCardBalance( Statement st, Integer primaryentityid )
     throws SQLException
     {
         // Get most current balance
@@ -274,10 +365,12 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
             String email, String relprimarytype, Integer primaryentityid )
     throws SQLException
     {
+        // Get new entityid
         int entityid = 0;
         ResultSet rs = st.executeQuery("SELECT nextval('entities_entityid_seq')");
         if ( rs.next() ) entityid = rs.getInt(1);
-System.out.println("new entityid is: " + entityid );
+
+        // Find relprimarytypeid
         int relprimarytypeid = 0;
         rs = st.executeQuery(
                 " SELECT relprimarytypeid " +
@@ -285,8 +378,8 @@ System.out.println("new entityid is: " + entityid );
                 " WHERE name = " + SqlString.sql(relprimarytype)
                 );
         if ( rs.next() ) relprimarytypeid = rs.getInt(1);
-System.out.println( "relprimarytypeid is: " + relprimarytypeid );
         
+        // Insert new person
         return st.executeUpdate(
                 "INSERT INTO persons" +
                 " VALUES (" +
@@ -307,7 +400,6 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
 //this was obsolete - a boolean that was added to make crm work
                 " " + Boolean.valueOf(false) + ", " +
                 " now()," +
-//this was adultid - an int added to make crm work
                 " " + SqlInteger.sql( primaryentityid ) + ", " +
                 " " + SqlString.sql("") + ", " +
                 " " + SqlString.sql("") + ", " +
@@ -323,4 +415,44 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
                 " )" 
                 );
     }
+
+    /**
+     * Retrieve password, username associated with given entityid
+     * @param st statement used to get info from db
+     * @param entityid unique id
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return single username, password pair
+     */
+    public static ResultSet getAccountInfo( Statement st, Integer entityid )
+    throws SQLException
+    {
+        return st.executeQuery(
+                "SELECT username, password " +
+                " FROM accounts" +
+                " WHERE entityid = " + SqlInteger.sql(entityid)
+                );
+    }
+    
+    /**
+     * Update username, password of the given entityid
+     * @param st statement used to update
+     * @param entityid unique id
+     * @param username name for entityid
+     * @param password password for entityid's account
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return number of rows effected in update
+     */
+    public static int updateAccountInfo( Statement st, Integer entityid, 
+            String username, String password )
+    throws SQLException
+    {
+        return st.executeUpdate(
+                "UPDATE accounts " +
+                " SET " +
+                " username = " + SqlString.sql(username) + ", " +
+                " password = " + SqlString.sql(password) + " " +
+                " WHERE entityid = " + SqlInteger.sql(entityid)
+                );
+    }
+
 }

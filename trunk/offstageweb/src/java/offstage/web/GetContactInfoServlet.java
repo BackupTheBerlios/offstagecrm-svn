@@ -38,6 +38,7 @@ public class GetContactInfoServlet extends GetPhoneInfoServlet  {
                 // Get phone extension if it exists in phone numbers
                 String extension = getExtension( phones );
                 if ( extension != null ) sess.setAttribute( "extension", extension );
+                else sess.setAttribute( "extension", null );
                 
                 redirect(request, response, "/ViewContactInfo.jsp");
                 
@@ -45,6 +46,6 @@ public class GetContactInfoServlet extends GetPhoneInfoServlet  {
                 System.out.println( e );
                 redirect(request, response, "/FamilyStatus.jsp");
             }
-        } else redirect(request, response, "/FamilyStatus.jsp");
+        } else redirect(request, response, "/login.jsp");
     }
 }

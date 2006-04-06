@@ -26,20 +26,22 @@ public class GetPhoneInfoServlet extends citibob.web.DbServlet {
         
         if ( primaryentityid != null ) {
             try {
-                ResultSet _rs = DB.getPhones( st, primaryentityid );
-                ResultSetArrayList phones = new ResultSetArrayList( _rs );
+                System.out.println("GETTING PHONES");
+                ResultSet rs = DB.getPhones( st, primaryentityid );
+                ResultSetArrayList phones = new ResultSetArrayList( rs );
                 sess.setAttribute( "phones", phones );
                 
                 String extension = this.getExtension( phones );
                 if ( extension != null ) sess.setAttribute( "extension", extension );
-
+                else sess.setAttribute( "extension", null );
+                
                 redirect(request, response, "/UpdatePhones.jsp");
                 
             } catch ( SQLException e ){
                 System.out.println( e );
                 redirect(request, response, "/FamilyStatus.jsp");
             }
-        } else redirect(request, response, "/FamilyStatus.jsp");
+        } else redirect(request, response, "/login.jsp");
     }
 
     /**
