@@ -29,6 +29,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import citibob.jschema.*;
 import citibob.jschema.swing.*;
+import citibob.swing.typed.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
 import offstage.FrontApp;
@@ -99,7 +100,7 @@ extends javax.swing.JPanel {
 
 	}
 	
-	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm)
+	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
 	throws java.sql.SQLException
 	{
 		this.runner = runner;
@@ -110,12 +111,15 @@ extends javax.swing.JPanel {
 
 		//this.phonesSb = phonesSb;
 		this.model = model;
-		
-		JSchemaWidgetTree.bindToSchemaRow(this, model);
-		genderButtonGroup.bind(model);
-		phonePanel.initRuntime(st, dm.getPhonesSb(), "phoneids",
-			new String[] {"Number"},
-			new String[] {"phone"});
+		TypedWidgetBinder.bindRecursive(this, model, smap);
+		new TypedWidgetBinder().bind(genderButtonGroup, model);
+		new IsPrimaryBinder().bind(cbIsPrimary, model);
+				
+		phonePanel.initRuntime(st, dm.getPhonesSb(),
+			new String[] {"Type", "Number"},
+			new String[] {"groupid", "phone"}, smap);
+			
+			
 //		phonesTable.initRuntime(dm.getPhonesSb());
 //		this.addPhoneType.setModel(new GroupTypeKeyedModel(st, "phoneids"));
 		// phonesTable.setModel(new ColPermuteTableModel(phonesSb,
@@ -153,9 +157,9 @@ extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         occupation = new citibob.swing.typed.JTypedTextField();
-        dob = new citibob.swing.typed.JTypedTextField();
         title = new citibob.swing.typed.JTypedTextField();
         email = new citibob.swing.typed.JTypedTextField();
+        dob = new citibob.swing.typed.JTypedDateChooser();
         Gender = new javax.swing.JPanel();
         maleButton = new javax.swing.JRadioButton();
         femaleButton = new javax.swing.JRadioButton();
@@ -165,7 +169,7 @@ extends javax.swing.JPanel {
         familyTable = new offstage.gui.FamilyTable();
         jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        isPrimaryIndicator1 = new offstage.gui.IsPrimaryIndicator();
+        cbIsPrimary = new citibob.swing.typed.JBoolCheckbox();
         clearFamily = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -238,14 +242,14 @@ extends javax.swing.JPanel {
         occupation.setColName("occupation");
         MiscInfo.add(occupation, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
-        dob.setColName("dob");
-        MiscInfo.add(dob, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
         title.setColName("title");
         MiscInfo.add(title, new info.clearthought.layout.TableLayoutConstraints(1, 2, 1, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         email.setColName("email");
         MiscInfo.add(email, new info.clearthought.layout.TableLayoutConstraints(1, 3, 1, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+
+        dob.setColName("dob");
+        MiscInfo.add(dob, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         add(MiscInfo, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
@@ -291,9 +295,8 @@ extends javax.swing.JPanel {
 
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
-        isPrimaryIndicator1.setText("Primary Family Contact");
-        isPrimaryIndicator1.setEnabled(false);
-        jPanel2.add(isPrimaryIndicator1);
+        cbIsPrimary.setText("Primary Family Contact");
+        jPanel2.add(cbIsPrimary);
 
         clearFamily.setText("Make Primary");
         clearFamily.setToolTipText("");
@@ -349,16 +352,16 @@ extends javax.swing.JPanel {
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel Gender;
     private javax.swing.JPanel MiscInfo;
+    private citibob.swing.typed.JBoolCheckbox cbIsPrimary;
     private javax.swing.JButton clearFamily;
     private citibob.swing.typed.JTypedTextField customaddressto;
-    private citibob.swing.typed.JTypedTextField dob;
+    private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email;
     private offstage.gui.EntitySubPanel entitySubPanel1;
     private offstage.gui.FamilyTable familyTable;
     private javax.swing.JRadioButton femaleButton;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
-    private offstage.gui.IsPrimaryIndicator isPrimaryIndicator1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

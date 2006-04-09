@@ -51,13 +51,14 @@ public class EQueryEditor extends javax.swing.JPanel {
 		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eClauseTable, 15));
     }
 
-	public void initRuntime(EQueryTableModel qm, EClauseTableModel cm)
+	public void initRuntime(EQueryTableModel qm, EClauseTableModel cm, SwingerMap smap)
 	throws SQLException
 	{
 		this.qmodel = qm;
 		this.cmodel = cm;
 		eQueryTable.initRuntime(qm);
-		eClauseTable.initRuntime(cm);
+		eClauseTable.setModel(cm);
+		eClauseTable.setSwingerMap(smap);
 	}
 
     /** This method is called from within the constructor to
@@ -76,7 +77,7 @@ public class EQueryEditor extends javax.swing.JPanel {
         bRemoveClause = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         eClauseScrollPane = new javax.swing.JScrollPane();
-        eClauseTable = new offstage.equery.swing.EClauseTable();
+        eClauseTable = new citibob.swing.typed.JTypeTable();
         jToolBar1 = new javax.swing.JToolBar();
         bAddElement = new javax.swing.JButton();
         bRemoveElement = new javax.swing.JButton();
@@ -203,7 +204,7 @@ private void bAddElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JButton bRemoveClause;
     private javax.swing.JButton bRemoveElement;
     private javax.swing.JScrollPane eClauseScrollPane;
-    private offstage.equery.swing.EClauseTable eClauseTable;
+    private citibob.swing.typed.JTypeTable eClauseTable;
     private offstage.equery.swing.EQueryTable eQueryTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

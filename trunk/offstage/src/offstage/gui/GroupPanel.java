@@ -29,7 +29,8 @@ import citibob.jschema.*;
 import citibob.jschema.swing.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
-import offstage.schema.GroupTypeKeyedModel;
+import citibob.sql.*;
+import citibob.swing.typed.*;
 
 /**
  *
@@ -45,23 +46,31 @@ SchemaBuf groupSb;
 	}
 
 	// st good
-	public void initRuntime(Statement st, SchemaBuf groupSb, String idTableName,
-	String[] colNames, String[] sColMap)
+	public void initRuntime(Statement st, SchemaBuf groupSb,
+	String[] colNames, String[] sColMap, citibob.swing.typed.SwingerMap swingers)
 	throws java.sql.SQLException
 	{
-		groupTable.setColNames(colNames);
-		groupTable.setColMap(sColMap);
-		groupTable.setIDTableName(idTableName);
-		groupTable.initRuntime(st, groupSb);
-		initRuntime(st, groupSb, idTableName, groupTable);
+		JEnum addJType = (JEnum)groupSb.getSchema().getCol("groupid").getType();
+		groupTable.setModelU(groupSb, colNames, sColMap, null, swingers);
+//public void setModelU(JTypeTableModel schemaBuf,
+//		String[] colNames, String[] sColMap, boolean[] editable,
+//		citibob.swing.typed.SwingerMap swingers)
+//		groupTable.setColNames(colNames);
+//		groupTable.setColMap(sColMap);
+//		groupTable.setIDTableName(idTableName);
+//		groupTable.initRuntime(st, groupSb);
+		initRuntime(st, groupSb, addJType, groupTable, swingers);
 	}
 	
-	public void initRuntime(Statement st, SchemaBuf groupSb, String idTableName, GroupsTable groupTable)
+	public void initRuntime(Statement st, SchemaBuf groupSb, JEnum addJType,
+	GroupsTable groupTable, SwingerMap swingers)
 	throws java.sql.SQLException
 	{
 		this.groupSb = groupSb;
 		this.groupTable = groupTable;
-		this.addType.setModel(new GroupTypeKeyedModel(st, idTableName));
+		this.addType.setJType(swingers.newSwinger(addJType));
+//		this.addType.setKeyedModel(new DbKeyedModel(st, null,
+//				idTableName, "groupid", "name", "name"));
 	}
 	/** This method is called from within the constructor to
 	 * initialize the form.

@@ -23,12 +23,7 @@ import citibob.multithread.*;
 import citibob.sql.*;
 import java.util.*;
 import java.sql.*;
-import offstage.schema.OrgSchema;
-import offstage.schema.NotesSchema;
-import offstage.schema.PersonsSchema;
-import offstage.schema.PhonesSchema;
-import offstage.schema.EventsSchema;
-import offstage.schema.DonationsSchema;
+import offstage.schema.*;
 
 /** Query one person record and all the stuff related to it. */
 
@@ -121,16 +116,16 @@ public SchemaBuf getNotesSb()
 	{ return notes.getSchemaBuf(); }
 //public FamilyTableModel getFamily()
 //	{ return family; }
-public FullEntityDbModel(ActionRunner appRunner)
+public FullEntityDbModel(OffstageSchemaSet osset, ActionRunner appRunner)
 {
 //	add(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityID", false));
 //	add(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityID", false));
-	add(onePerson = new EntityDbModel(new PersonsSchema(), appRunner));
-	add(oneOrg = new EntityDbModel(new OrgSchema(), appRunner));
-	add(phones = new IntKeyedDbModel(new PhonesSchema(), "entityID"));
-	add(donations = new IntKeyedDbModel(new DonationsSchema(), "entityID"));
-	add(notes = new IntKeyedDbModel(new NotesSchema(), "entityID"));
-	add(events = new IntKeyedDbModel(new EventsSchema(), "entityID"));
+	add(onePerson = new EntityDbModel(osset.persons, appRunner));
+	add(oneOrg = new EntityDbModel(osset.org, appRunner));
+	add(phones = new IntKeyedDbModel(osset.phones, "entityID"));
+	add(donations = new IntKeyedDbModel(osset.donations, "entityID"));
+	add(notes = new IntKeyedDbModel(osset.notes, "entityID"));
+	add(events = new IntKeyedDbModel(osset.events, "entityID"));
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

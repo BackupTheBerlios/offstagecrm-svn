@@ -20,13 +20,20 @@ package offstage.schema;
 
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
+import citibob.sql.*;
+import citibob.util.KeyedModel;
+import java.sql.*;
 
 public class EntitiesSchema extends ConstSchema
 {
 
-public EntitiesSchema()
+public EntitiesSchema(Statement st, DbChangeModel change)
+throws SQLException
 {
 	table = "entities";
+
+	KeyedModel kmodel = new DbKeyedModel(st, change,
+		"relprimarytypes", "relprimarytypeid", "name", "name");
 	cols = new Column[] {
 			new Column(new SqlInteger(false), "entityid", true),
 			new Column(new SqlInteger(), "primaryentityid", false),
@@ -40,16 +47,16 @@ public EntitiesSchema()
 			new Column(new SqlInteger(), "sourcekey", false),
 			//new Column(new SqlInteger(), "ipeopleid", false),
 			new Column(new SqlTimestamp(), "lastupdated", false),
-			new citibob.jschema.Column(new SqlInteger(), "relprimarytypeid", false),
+			new citibob.jschema.Column(new SqlEnum(kmodel, true), "relprimarytypeid", false),
 			//new citibob.jschema.Column(new SqlBool(), "isquery", false),
 			new Column(new SqlBool(), "sendmail", false),
 			new Column(new SqlBool(), "obsolete", false)
 	};
 }	
 // ------------------------------------------
-// Singleton stuff
-private static EntitiesSchema instance = new EntitiesSchema();
-public static ConstSchema getInstance()
-	{ return instance; }
+//// Singleton stuff
+//private static EntitiesSchema instance = new EntitiesSchema();
+//public static ConstSchema getInstance()
+//	{ return instance; }
 
 }

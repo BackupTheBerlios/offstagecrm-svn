@@ -25,7 +25,9 @@ import offstage.db.FullEntityDbModel;
 import offstage.db.EntityListTableModel;
 import offstage.db.TestConnPool;
 import citibob.multithread.*;
-import citibob.sql.DbChangeModel;
+import citibob.sql.*;
+import citibob.swing.typed.*;
+import offstage.schema.*;
 
 public class FrontApp
 {
@@ -40,6 +42,8 @@ int screen = PEOPLE_SCREEN;
 //Connection db;
 DbChangeModel dbChange;
 ConnPool pool;
+SwingerMap swingerMap;
+OffstageSchemaSet sset;
 
 FullEntityDbModel fullEntityDm;
 EQueryBrowserApp equeryBrowserApp;
@@ -63,6 +67,8 @@ public FrontApp(ConnPool pool) throws SQLException
 	Connection dbb = null;
 	Statement st = null;
 
+	this.swingerMap = new citibob.sql.pgsql.DefaultSwingerMap();
+	
 	this.pool = pool;
 	//pool = new DBConnPool();
 	guiRunner = appRunner = new SimpleDbActionRunner(pool);
@@ -73,10 +79,11 @@ public FrontApp(ConnPool pool) throws SQLException
 	
 
 		dbChange = new DbChangeModel();
-		fullEntityDm = new FullEntityDbModel(appRunner);
-		mailings = new MailingModel(st, appRunner);
+		this.sset = new OffstageSchemaSet(st, dbChange);
+		fullEntityDm = new FullEntityDbModel(sset, appRunner);
+		mailings = new MailingModel(st, sset, appRunner);
 //	mailings.refreshMailingids();
-		equeryBrowserApp = new EQueryBrowserApp(st, mailings);
+		equeryBrowserApp = new EQueryBrowserApp(st, mailings, sset);
 		simpleSearchResults = new EntityListTableModel();
 	} finally {
 		st.close();
@@ -100,6 +107,8 @@ public EQueryBrowserApp getEqueryBrowserApp()
 	{ return equeryBrowserApp; }
 public DbChangeModel getDbChange()
 	{ return dbChange; }
+public OffstageSchemaSet getSchemaSet() { return sset; }
+public SwingerMap getSwingerMap() { return swingerMap; }
 // -------------------------------------------------
 public int getScreen()
 { return screen; }

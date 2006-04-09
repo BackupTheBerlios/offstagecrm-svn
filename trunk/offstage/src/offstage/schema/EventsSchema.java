@@ -23,6 +23,7 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.sql.DbChangeModel;
 import java.sql.*;
+import citibob.util.KeyedModel;
 
 public class EventsSchema extends ConstSchema
 {

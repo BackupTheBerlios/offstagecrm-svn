@@ -28,25 +28,26 @@ import javax.swing.*;
 import javax.swing.table.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
+import citibob.jschema.*;
+import citibob.jschema.swing.*;
 
 /**
  *
  * @author citibob
  */
-public class MailingsTable extends CitibobJTable
+public class MailingsTable extends SchemaBufTable
 {
-public MailingsTable() {
-	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-}
+//public MailingsTable() {
+//	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//}
 
-public void initRuntime(CitibobTableModel mailings)
+public void initRuntime(SchemaBuf mailings)
+//OffstageSchemaSet sset, CitibobTableModel mailings)
 {
-	ColPermuteTableModel model = new ColPermuteTableModel(
-		mailings,
+	this.setModelU(mailings,
 		new String[] {"Name", "Address1", "Address2", "City", "State", "Zip", "Country"},
-		new String[] {"addressto", "address1", "address2", "city", "state", "zip", "country"});
-	model.setEditable(new boolean[] {false, false});
-	setModel(model);
+		new String[] {"addressto", "address1", "address2", "city", "state", "zip", "country"},
+		new boolean[] {false, false, false, false, false, false, false});
 }
 // ========================================================
 }

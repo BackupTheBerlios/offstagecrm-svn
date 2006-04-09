@@ -45,7 +45,7 @@ public void initRuntime(CitibobTableModel family)
 	ColPermuteTableModel model = new ColPermuteTableModel(
 		family,
 		new String[] {"Name"},
-		new String[] {"name"});
+		new String[] {"name"}, new boolean[] {false});
 	setModel(model);
 }
 	

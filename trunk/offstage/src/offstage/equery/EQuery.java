@@ -36,14 +36,33 @@ ArrayList clauses = new ArrayList();
 public static class ColName
 {
 	public String stable;
-	public String scol;	
+	public String scol;
 	public ColName(String st, String sc)
 	{
 		stable = st;
 		scol = sc;
 	}
+	public ColName(String s)
+	{
+		int dot = s.indexOf('.');
+		if (dot < 0) return;
+		stable = s.substring(0,dot);
+		scol = s.substring(dot+1);
+	}
 	public String toString()
-		{ return stable + "." + scol; }
+		{ return (stable + "." + scol); }
+	
+	public boolean equals(Object o) {
+		if (!(o instanceof ColName)) return false;
+		ColName cc = (ColName)o;
+		boolean ret = (cc.stable.equals(stable) && cc.scol.equals(scol));
+//System.out.println(this + " == " + o + ": " + ret);
+		return ret;
+	}
+	public int hashCode()
+	{
+		return stable.hashCode() * 31 + scol.hashCode();
+	}
 }
 public static class Element
 {
@@ -114,7 +133,7 @@ public void writeSqlQuery(EQuerySchema schema, SqlQuery sql)
 		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
 			Element e = (Element)jj.next();
 			ColName cn = e.colName;
-			Column c = ((EQuerySchema.Col)schema.getCol(cn.stable,cn.scol)).col;
+			Column c = ((EQuerySchema.Col)schema.getCol(cn)).col;
 			if (!sql.containsTable(e.colName.stable)) {
 				String joinClause = ((EQuerySchema.Tab)schema.getTab(cn.stable)).joinClause;
 				sql.addWhereClause(joinClause);
@@ -143,9 +162,20 @@ public String getSql(EQuerySchema eqs)
 // ------------------------------------------------------
 public static void main(String[] args) throws Exception
 {
+	
+	ColName a = new ColName("tab",  "col");
+	HashMap map = new HashMap();
+	map.put(a, a);
+	ColName b = new ColName("tab.col");
+	System.out.println(a.equals(b));
+	System.out.println(map.get(b));
+	System.out.println(map.get(a));
+	if (true) return;
+	
 	Connection db = new TestConnPool().checkout();
 	Statement st = db.createStatement();
-	EQuerySchema eqs = new EQuerySchema(st);
+	offstage.schema.OffstageSchemaSet sset = new offstage.schema.OffstageSchemaSet(st, null);
+	EQuerySchema eqs = new EQuerySchema(st, sset);
 	EQuery eq = new EQuery();
 	eq.newClause();
 	eq.addElement("phones", "phone", "=", "617-308-0436 yyy");

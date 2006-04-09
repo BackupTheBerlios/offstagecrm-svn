@@ -33,6 +33,7 @@ import citibob.swing.table.*;
 import offstage.FrontApp;
 import offstage.MailingModel;
 import offstage.MailingsDbModel;
+import citibob.swing.typed.*;
 
 /**
  *
@@ -53,12 +54,15 @@ public class MailingsEditor extends javax.swing.JPanel {
 		runner = app.getGuiRunner();
 		mailing = app.getMailingModel();
 		tMailingIds.initRuntime(mailing);
-		ColPermuteTableModel tModel = new ColPermuteTableModel(mailing.getMailingsSb(),
-			new String[] {"To", "Address 1", "Address 2", "City", "State", "Zip", "Country"},
-			new String[] {"addressto", "address1", "address2", "city", "state", "zip", "country"});
-		tMailing.setModel(tModel);
+		
+		
+		tMailing.setModelU(mailing.getMailingsSb(),
+			new String[] {"Name", "Address1", "Address2", "City", "State", "Zip", "Country"},
+			new String[] {"addressto", "address1", "address2", "city", "state", "zip", "country"},
+			new boolean[] {false, false, false, false, false, false, false});
+		
 		SchemaRowModel rowModel = mailing.getCurMailingidRm();
-		JSchemaWidgetTree.bindToSchemaRow(this, rowModel);
+		TypedWidgetBinder.bindRecursive(this, rowModel, app.getSwingerMap());
 	}
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -72,7 +76,7 @@ public class MailingsEditor extends javax.swing.JPanel {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tMailing = new javax.swing.JTable();
+        tMailing = new citibob.jschema.swing.SchemaBufTable();
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -173,7 +177,7 @@ public class MailingsEditor extends javax.swing.JPanel {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private citibob.swing.typed.JTypedTextField lName;
-    private javax.swing.JTable tMailing;
+    private citibob.jschema.swing.SchemaBufTable tMailing;
     private offstage.gui.MailingidsTable tMailingIds;
     // End of variables declaration//GEN-END:variables
 

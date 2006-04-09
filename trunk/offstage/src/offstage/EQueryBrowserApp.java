@@ -33,6 +33,7 @@ import offstage.equery.EQuerySchema;
 import offstage.equery.EQueryXStream;
 import offstage.equery.swing.EClauseTableModel;
 import offstage.equery.swing.EQueryTableModel;
+import offstage.schema.*;
 
 public class EQueryBrowserApp
 {
@@ -52,9 +53,9 @@ EQuerySchema schema;
 MailingModel mailingModel;
 //SchemaBufDbModel mailingids;
 // -------------------------------------------------------
-public EQueryBrowserApp(Statement st, MailingModel mailingModel) throws SQLException
+public EQueryBrowserApp(Statement st, MailingModel mailingModel, OffstageSchemaSet dbSchemaSet) throws SQLException
 {
-	schema = new EQuerySchema(st);
+	schema = new EQuerySchema(st, dbSchemaSet);
 	clauseModel = new EClauseTableModel(schema);
 	queryModel = new EQueryTableModel(clauseModel);
 	this.mailingModel = mailingModel;

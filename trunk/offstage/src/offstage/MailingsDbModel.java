@@ -34,6 +34,7 @@ import offstage.db.DB;
 import offstage.schema.MailingsSchema;
 import offstage.schema.MailingidsSchema;
 import citibob.multithread.*;
+import offstage.schema.*;
 
 /**
  *
@@ -60,11 +61,12 @@ public void setKey(int mailingID)
 }
 
 /** Creates a new instance of MailingDbModel */
-public MailingsDbModel(final Statement st) {
+public MailingsDbModel(final Statement st, OffstageSchemaSet sset) {
 	this.runner = runner;
-	add(mailings = new IntKeyedDbModel(new MailingsSchema(), "groupid", false));
+	mailings = new IntKeyedDbModel(sset.mailings, "groupid", false, null);
+	add(mailings);	
 	mailings.setInstantUpdate(runner, true);
-	add(mailingids = new IntKeyedDbModel(new MailingidsSchema(), "groupid", false));
+	add(mailingids = new IntKeyedDbModel(sset.mailingids, "groupid", false, null));
 	mailingids.setInstantUpdate(runner, true);
 
 	// Refresh mailingids table when this changes.

@@ -32,33 +32,22 @@ import java.awt.event.*;
 import citibob.swing.typed.*;
 import citibob.exception.*;
 import citibob.jschema.*;
-import citibob.sql.KeyedModel;
+import citibob.util.KeyedModel;
 import citibob.swing.*;
 
 /**
  *
  * @author  citibob
  */
-public class IsPrimaryIndicator
-extends JBoolCheckbox
-implements RowModel.ColListener, SchemaRowModelBindable
+public class IsPrimaryBinder
+implements RowModel.ColListener
 {
 
 SchemaRowModel bufRow;
 int entityidCol, primaryCol;
+TypedWidget tw;
 
-public String getColName()
-	{ return ""; }		// Can't return null, since then bind() won't be called.
-public void setColName(String s)
-	{ }
 // --------------------------------------------------------------
-public IsPrimaryIndicator(SchemaRowModel bufRow)
-{
-	super();
-	bind(bufRow);
-}
-public IsPrimaryIndicator()
-	{ super(); }
 protected void finalize()
 {
 	bufRow.removeColListener(entityidCol, this);
@@ -67,13 +56,11 @@ protected void finalize()
 }
 // --------------------------------------------------------------
 /** Binds this widget to listen/edit a particular column in a RowModel, using the type for that column derived from the associated Schema.  NOTE: This requires a correspondence in the numbering of columns in the Schema and in the RowModel.  No permutions inbetween are allowed!  This should not be a problem, just make sure the TableRowModel binds DIRECTLY to the source SchemaBuf, not to some permutation thereof. */
-public void bind(SchemaRowModel bufRow)
+public void bind(TypedWidget tw, SchemaRowModel bufRow)
 {
+	this.tw = tw;
 	entityidCol = bufRow.getSchema().findCol("entityid");
 	primaryCol = bufRow.getSchema().findCol("primaryentityid");
-
-//	/** Set ourselves up with the correct data type formatter / validater */
-//	setTextConverter(schema.getCol(colNo).getType().getTextConverter());
 
 	/** Bind as a listener to the RowModel (which fronts a SchemaBuf)... */
 	this.bufRow = bufRow;
@@ -90,12 +77,12 @@ public void valueChanged(int col)
 {
 	int entityid = ((Integer)bufRow.get(entityidCol)).intValue();
 	int primaryid = ((Integer)bufRow.get(primaryCol)).intValue();
-	setValue(entityid == primaryid ? Boolean.TRUE : Boolean.FALSE);
+	tw.setValue(entityid == primaryid ? Boolean.TRUE : Boolean.FALSE);
 }
 public void curRowChanged(int col)
 {
 	int row = bufRow.getCurRow();
-	if (row == MultiRowModel.NOROW) setValue(null);
+	if (row == MultiRowModel.NOROW) tw.setValue(null);
 	else valueChanged(col);
 //	setEnabled(row != MultiRowModel.NOROW);
 //	setValue(row == MultiRowModel.NOROW ? null : bufRow.get(col));

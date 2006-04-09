@@ -41,14 +41,14 @@ throws SQLException
 {
 	courseids = new CourseidsSchema();
 	donations = new DonationsSchema(st, change);
-	entities = new EntitiesSchema();
+	entities = new EntitiesSchema(st, change);
 	events = new EventsSchema(st, change);
 	groupids = new GroupidsSchema();
 	mailingids = new MailingidsSchema();
 	mailings = new MailingsSchema(st, change);
 	notes = new NotesSchema(st, change);
-	org = new OrgSchema();
-	persons = new PersonsSchema();
+	org = new OrgSchema(st, change);
+	persons = new PersonsSchema(st, change);
 	phones = new PhonesSchema(st, change);
 	termids = new TermidsSchema(st, change);
 	termtypes = new TermtypesSchema();

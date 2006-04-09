@@ -22,7 +22,9 @@ import java.util.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.swing.typed.*;
 import java.sql.*;
+import offstage.schema.OffstageSchemaSet;
 import offstage.schema.OrgSchema;
 import offstage.schema.NotesSchema;
 import offstage.schema.PersonsSchema;
@@ -30,33 +32,45 @@ import offstage.schema.PhonesSchema;
 import offstage.schema.EventsSchema;
 import offstage.schema.DonationsSchema;
 import offstage.schema.EntitiesSchema;
-import citibob.sql.KeyedModel;
+import citibob.util.KeyedModel;
 
 public class EQuerySchema
 {
 
 // Info on the fields we can process; set up by initializer
-HashMap cols = new HashMap();			// Maps "table.col" -> Col
-LinkedList colList = new LinkedList();	// Holds same columns as cols, in order of insertion
+KeyedModel cols;	// Equery.ColName --> Col
+JEnum colsJType;
+
+//HashMap cols = new HashMap();			// Maps "table.col" -> Col
+//LinkedList colList = new LinkedList();	// Holds same columns as cols, in order of insertion
 HashMap tabs = new HashMap();	// Maps "table" -> String
 HashMap typeComparators = new HashMap();	// Maps SqlType --> list of comparators
 // -----------------------------------------------
 public static class Col
 {
-	public String table;
+	public EQuery.ColName cname;
+//	public String table;
 	public Column col;
-	private String viewName = null;					// Name user knows this column by
-	public KeyedModel kmodel = null;		// For enumerated column types; null if not used
-	public String[] comparators;			// List of Strings, which can be used in SQL to compare this field.
-	void setViewName(String s)
-		{ this.viewName = s; }
-	boolean hasViewName()
-		{ return viewName != null; }
-	public String getViewName()
-	{
-		if (viewName == null) return "---" + table + "." + col.getName();
-		return viewName;
-	}
+	public JEnum comparators;
+	
+	
+	String viewName;
+	public void setViewName(String vn)
+		{ viewName = vn; }
+
+//	private String viewName = null;					// Name user knows this column by
+//	void setViewName(String s)
+//		{ this.viewName = s; }
+//	boolean hasViewName()
+//		{ return viewName != null; }
+//	public String getViewName()
+//	{
+//		if (viewName == null) return "---" + col.
+//				table + "." + col.getName();
+//		return viewName;
+//	}
+	public String toString()
+		{ return (viewName != null ? viewName : cname.toString()); }
 }
 public static class Tab
 {
@@ -65,51 +79,57 @@ public static class Tab
 	public String joinClause;
 }
 // -----------------------------------------------
-private String colKey(String table, String col)
-	{ return table + "." + col; }
+public JEnum getColsJType() { return colsJType; }
+
+//private String colKey(String table, String col)
+//	{ return table + "." + col; }
 public Tab getTab(String table)
 	{ return (Tab)tabs.get(table); }
-public Col getCol(String table, String scol)
-	{ return (Col)cols.get(colKey(table, scol)); }
+//public Col getCol(String table, String scol)
+//	{ return (Col)cols.get(colKey(table, scol)).obj; }
 public Col getCol(EQuery.ColName cname)
 {
 	if (cname == null) return null;
-	return (Col)cols.get(colKey(cname.stable, cname.scol));
+	return (Col)cols.get(cname).obj;
 }
-public Iterator colIterator()
-	{ return colList.iterator(); }
-public void setKeyedModel(String table, String scol, KeyedModel kmodel)
+//public Iterator colIterator()
+//	{ return colList.iterator(); }
+// --------------------------------------------------
+private DbKeyedModel newGroupTypeKeyedModel(Statement st, String table)
+throws SQLException
 {
-	Col col = getCol(table,scol);
-	col.kmodel = kmodel;
-	col.comparators = new String[] {"=", "<>"};
+	return new DbKeyedModel(st, null, table, "groupid", "name", "name");
 }
-public EQuerySchema(Statement st) throws SQLException
+private void addTypeComparator(Class klass, String[] vals)
 {
-	typeComparators.put(SqlBool.class, new String[] {"="});
-	typeComparators.put(SqlDate.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
-	typeComparators.put(SqlInteger.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
-	typeComparators.put(SqlString.class, new String[] {"=", "<>", "ilike", "not ilike", "similar to", "not similar to"});
-	typeComparators.put(SqlTimestamp.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
-	cols = new HashMap();
-	addSchema(new EntitiesSchema(),
+	typeComparators.put(klass, new JEnum(new KeyedModel(vals)));
+}
+// --------------------------------------------------
+public EQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
+{
+	addTypeComparator(SqlBool.class, new String[] {"="});
+	addTypeComparator(SqlDate.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+	addTypeComparator(SqlInteger.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+	addTypeComparator(SqlNumeric.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+	addTypeComparator(SqlEnum.class, new String[] {"=", "<>"});
+	addTypeComparator(SqlString.class, new String[] {"=", "<>", "ilike", "not ilike", "similar to", "not similar to"});
+	addTypeComparator(SqlTimestamp.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+	cols = new KeyedModel();
+	colsJType = new JEnum(cols);
+	addSchema(sset.entities,
 		"entities.entityid = main.entityid");
-	addSchema(new OrgSchema(),
+	addSchema(sset.org,
 		"organizations.entityid = main.entityid");
-	addSchema(new PersonsSchema(),
+	addSchema(sset.persons,
 		"persons.entityid = main.entityid");
-	addSchema(new EventsSchema(),
+	addSchema(sset.events,
 		"events.entityid = main.entityid");
-	setKeyedModel("events", "groupid", new GroupTypeKeyedModel(st, "eventids"));
-	addSchema(new DonationsSchema(),
+	addSchema(sset.donations,
 		"donations.entityid = main.entityid");
-	setKeyedModel("donations", "groupid", new GroupTypeKeyedModel(st, "donationids"));
-	addSchema(new NotesSchema(),
+	addSchema(sset.notes,
 		"notes.entityid = main.entityid");
-	setKeyedModel("notes", "groupid", new GroupTypeKeyedModel(st, "noteids"));
-	addSchema(new PhonesSchema(),
+	addSchema(sset.phones,
 		"phones.entityid = main.entityid");
-	setKeyedModel("phones", "groupid", new GroupTypeKeyedModel(st, "phoneids"));
 	doAlias();
 }
 private void addSchema(Schema sc, String joinClause, String table)
@@ -124,11 +144,12 @@ private void addSchema(Schema sc, String joinClause, String table)
 		Col col = new Col();
 		col.col = sc.getCol(i);
 		Class colClass = col.col.getType().getClass();
-		col.comparators = (String[]) typeComparators.get(colClass);
-		col.table = table;
-System.out.println("Adding to Schema: " + colKey(col.table, col.col.getName()));
-		cols.put(colKey(col.table, col.col.getName()), col);
-		colList.add(col);
+		col.comparators = (JEnum)typeComparators.get(colClass);
+		EQuery.ColName cname = new EQuery.ColName(table,  col.col.getName());
+		col.cname = cname;
+//		col.table = table;
+if (cname.stable.equals("persons")) System.out.println("Adding to Schema: " + cname);
+		cols.addItem(cname, col);
 	}
 }
 private void addSchema(Schema sc, String joinClause)
@@ -169,20 +190,27 @@ static final String[] alias = {
 void doAlias()
 {
 	// Set aliases
-	HashMap newCols = new HashMap();
-	colList.clear();
+	KeyedModel newCols = new KeyedModel();
 	for (int i=0; i<alias.length; i+=2) {
-		String cname = alias[i];
+		EQuery.ColName cname = new EQuery.ColName(alias[i]);
 		String vname = alias[i+1];
-		Col col = (Col)cols.get(cname);
+//System.out.println((cols.get(cname).getClass()));
+System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
+		Col col = (Col)cols.get(cname).obj;
 		if (col == null) continue;
 		col.setViewName(vname);
-		newCols.put(colKey(col.table, col.col.getName()), col);
-		colList.add(col);
+		newCols.addItem(col.cname, col);
 	}
 
+	// Add null column name
+	Col c = new Col();
+	c.cname = new EQuery.ColName("", "");
+	c.setViewName("<null>");
+	newCols.addItem(null, c);
+	
 	// Remove non-aliased columns
 	cols = newCols;
+	colsJType = new JEnum(cols);
 //	for (Iterator ii=cols.values().iterator(); ii.hasNext(); ) {
 //		Col col = (Col)ii.next();
 //		if (!col.hasViewName()) ii.remove();

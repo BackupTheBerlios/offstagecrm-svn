@@ -29,7 +29,7 @@ import citibob.sql.*;
 import offstage.db.TestConnPool;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
-
+import offstage.schema.*;
 
 /**
  *
@@ -44,7 +44,8 @@ public class EClauseTableTest extends javax.swing.JFrame {
 		Connection db = new TestConnPool().checkout();
 		Statement st = db.createStatement();
 
-		EQuerySchema eqs = new EQuerySchema(st);
+		OffstageSchemaSet sset = new OffstageSchemaSet(st, null);
+		EQuerySchema eqs = new EQuerySchema(st, sset);
 		EQuery eq = new EQuery();
 		eq.newClause("Clause 1");
 		eq.addElement("phones", "phone", "=", "617-308-0436 zzz");
@@ -58,7 +59,7 @@ public class EClauseTableTest extends javax.swing.JFrame {
 System.out.println("new EClauseTableModel");
 		EClauseTableModel cm = new EClauseTableModel(eqs);
 		EQueryTableModel qm = new EQueryTableModel(cm);
-		eQueryEditor.initRuntime(qm,cm);
+		eQueryEditor.initRuntime(qm,cm, new citibob.sql.pgsql.DefaultSwingerMap());
 		qm.setQuery(eq);
 
 		SqlQuery sql = new SqlQuery();

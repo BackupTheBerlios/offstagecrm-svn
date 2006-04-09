@@ -34,6 +34,7 @@ import citibob.multithread.*;
 import citibob.jschema.swing.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
+import citibob.swing.typed.*;
 import java.awt.*;
 import java.awt.event.*;
 import offstage.FrontApp;
@@ -51,20 +52,20 @@ public class EntityPanel extends javax.swing.JPanel {
 
 	EntityPanel getThis() { return this; }
 	
-	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm)
+	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
 	throws java.sql.SQLException
 	{
-		personPanel.initRuntime(st, runner, dm);
-		orgPanel.initRuntime(st, runner, dm);
-		donationsPanel.initRuntime(st, dm.getDonationSb(), "donationids",
-			new String[] {"Date", "Amount"},
-			new String[] {"date", "amount"});
-		eventsPanel.initRuntime(st, dm.getEventsSb(), "eventids",
-			new String[] {"Role"},
-			new String[] {"role"});
-		notesPanel.initRuntime(st, dm.getNotesSb(), "noteids",
-			new String[] {"Date", "Note"},
-			new String[] {"date", "note"});
+		personPanel.initRuntime(st, runner, dm, smap);
+		orgPanel.initRuntime(st, runner, dm, smap);
+		donationsPanel.initRuntime(st, dm.getDonationSb(),
+			new String[] {"Type", "Date", "Amount"},
+			new String[] {"groupid", "date", "amount"}, smap);
+		eventsPanel.initRuntime(st, dm.getEventsSb(),
+			new String[] {"Type", "Role"},
+			new String[] {"groupid", "role"}, smap);
+		notesPanel.initRuntime(st, dm.getNotesSb(),
+			new String[] {"Type", "Date", "Note"},
+			new String[] {"groupid", "date", "note"}, smap);
 		dm.addListener(new FullEntityDbModel.Adapter() {
 		public void entityTypeChanged(int type) {
 			CardLayout cl = (CardLayout)(basicPanel.getLayout());

@@ -33,12 +33,13 @@ import citibob.swing.table.*;
 import citibob.jschema.*;
 import java.sql.*;
 import offstage.MailingModel;
+import citibob.jschema.swing.*;
 
 /**
  *
  * @author citibob
  */
-public class MailingidsTable extends CitibobJTable
+public class MailingidsTable extends SchemaBufTable
 {
 	
 //MailingModel mailing;		// Sets the key on this object.  May be NULL.
@@ -68,12 +69,12 @@ public void initRuntime(MailingModel mailing)
 //	MailingModel mailing = fapp.getMailingModel();
 //	this.fapp = fapp;
 	
-	ColPermuteTableModel model = new ColPermuteTableModel(
+	super.setModelU(
 		mailing.getMailingidsSb(),
 		new String[] {"Name", "Create Date"},
-		new String[] {"name", "created"});
-	model.setEditable(new boolean[] {false, false});
-	setModel(model);
+		new String[] {"name", "created"},
+		new boolean[] {false, false});
+		
 	setSelectionModel(mailing.getMailingidsSelectModel());
 }
 //void selectRow()

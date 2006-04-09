@@ -36,18 +36,19 @@ import java.util.*;
 import citibob.jschema.*;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
-import citibob.sql.KeyedModel;
+import citibob.util.KeyedModel;
 
 /**
  *
  * @author citibob
  */
 public class EClauseTableModel extends AbstractTableModel
-implements CitibobTableModel, EClauseTableConst
+implements JTypeTableModel, EClauseTableConst
 {
 
 EQuerySchema schema;
 EQuery.Clause clause;
+
 /** Creates a new instance of EClauseTableModel */
 public EClauseTableModel(EQuerySchema schema, EQuery.Clause clause)
 {
@@ -59,6 +60,7 @@ public EClauseTableModel(EQuerySchema schema)
 	this.schema = schema;
 	this.clause = null;
 }
+// ------------------------------------------------------
 public EQuerySchema getSchema()
 {
 	return schema;
@@ -98,148 +100,92 @@ public String getColumnName(int column)
 	  }
 	  return null;	
 }
-public int findCol(String colName)
-{
-	if (S_COLUMN.equals(colName)) return C_COLUMN;
-	if (S_COMPARE.equals(colName)) return C_COMPARE;
-	if (S_VALUE.equals(colName)) return C_VALUE;
-	return -1;
-}
+//public int findColumn(String colName)
+//{
+//	if (S_COLUMN.equals(colName)) return C_COLUMN;
+//	if (S_COMPARE.equals(colName)) return C_COMPARE;
+//	if (S_VALUE.equals(colName)) return C_VALUE;
+//	return -1;
+//}
 // --------------------------------------------------
 /** Allow editing of all non-key fields. */
 public boolean isCellEditable(int rowIndex, int columnIndex)
 	{ return (clause != null); }
 // --------------------------------------------------
-/** Set entire row.  Normally, setValueAt() will be called with a modified
-version of the object retrieved from getValueAt(). */
-public void setValueAt(Object val, int rowIndex, int colIndex)
+public EQuery.Element getElement(int row)
+	{ return (clause == null ? null : (EQuery.Element)clause.elements.get(row)); }
+public void setValueAt(Object val, int row, int colIndex)
 {
-/*
-	EQuery.Element el = (EQuery.Element)clause.get(rowIndex);
+	EQuery.Element el = getElement(row);
+	if (el == null) return;
 	switch(colIndex) {
 		case C_COLUMN :
+			JType oldCompareType = getJType(row, C_COMPARE);
+			JType oldValueType = getJType(row, C_VALUE);
+			
 			EQuery.ColName cn = (EQuery.ColName)val;
 			el.colName = cn;
+			this.fireTableCellUpdated(row, C_COLUMN);
+			
+			// Update other cols if needed...
+			if (oldCompareType == null || !oldCompareType.equals(getJType(row, C_COMPARE))) {
+				el.comparator = "=";
+				this.fireTableCellUpdated(row, C_COMPARE);
+			}
+			if (oldValueType == null || !oldValueType.equals(getJType(row, C_VALUE))) {
+				EQuerySchema.Col col = schema.getCol(el.colName);
+				if (col == null || col.col == null) el.value = null;
+				else el.value = col.col.getDefault();
+				this.fireTableCellUpdated(row, C_VALUE);
+			}
+			
 		break;
 		case C_COMPARE :
 			String s = (String)val;
 			el.comparator = s;
+			this.fireTableCellUpdated(row, colIndex);
 		break;
 		case C_VALUE :
 			el.value = val;
+			this.fireTableCellUpdated(row, colIndex);
 		break;
 	}
-*/
-	if (clause == null) return;
-	clause.elements.set(rowIndex, val);
-	// Redisplay the entire row!
-	this.fireTableRowsUpdated(rowIndex,rowIndex);
 }
 // --------------------------------------------------
 	public int getRowCount()
 	  { return (clause == null ? 0 : clause.elements.size()); }
 	public int getColumnCount()
 	  { return 3; }
-	public Object getValueAt(int row, int column)
+	public Object getValueAt(int row, int col)
 	{
-		return (clause == null ? null : clause.elements.get(row));
-/*
-		EQuery.Element el = (EQuery.Element)clause.get(row);
-	  switch(column) {
-		  case C_COLUMN : return el.colName;
-		  case C_COMPARE : return el.comparator;
-		  case C_VALUE : return el.value;
-	  }
-	  return null;
-*/
-  }
-public Class getColumnClass(int columnIndex) 
-{
-	return EQuery.Element.class;
-/*
-	switch(columnIndex) {
-		case C_COLUMN : return EQuery.ColName.class;
-		case C_COMPARE : return String.class;
-		case C_VALUE : return Object.class;
+		EQuery.Element el = getElement(row);
+		if (el == null) return null;
+		switch(col) {
+			case C_COLUMN : return el.colName;
+			case C_COMPARE : return el.comparator;
+			case C_VALUE : return el.value;
+		}
+		return null;
 	}
+// ===============================================================
+// Implementation of JTypeTableModel (prototype stuff)
+/** Return SqlType for an entire column --- or null, if this column does not have a single SqlType. */
+public JType getColumnJType(int col)
+	{ return null; }
+
+/** Return JType for a cell --- used to set up renderers and editors */
+public JType getJType(int row, int colIndex)
+{
+	if (colIndex == C_COLUMN) return schema.getColsJType();
+	
+	EQuery.Element el = getElement(row);
+	if (el == null) return null;
+	EQuerySchema.Col col = schema.getCol(el.colName);
+	if (col == null) return null;
+	if (colIndex == C_COMPARE) return col.comparators;
+	if (col.col == null) return null;
+	if (colIndex == C_VALUE) return col.col.getType();
 	return null;
-*/
 }
 // ===============================================================
-// Implementation of CitibobTableModel (prototype stuff)
-java.util.List proto;
-public java.util.List getPrototypes()
-	{ return proto; }
-public void setPrototypes(java.util.List proto)
-	{ this.proto = proto; }
-public void setPrototypes(Object[] pr)
-{
-	proto = new ArrayList(pr.length);
-	for (int i = 0; i < pr.length; ++i) {
-		proto.add(pr[i]);
-	}
-}
-// ===============================================================
-public static class ColNameRenderer
-extends DefaultTableCellRenderer {
-	EQuerySchema schema;
-	public ColNameRenderer(EQuerySchema schema)
-	{
-		this.schema = schema;
-	}
-	public void setValue(Object o) {
-//System.out.println("ColNameRenderer");
-		if (o instanceof EQuery.Element) {
-			EQuery.Element e = (EQuery.Element)o;
-			// EQuery.ColName ccn = e.colName;
-//System.out.println("colName = " + e.colName);
-			EQuerySchema.Col col = schema.getCol(e.colName);
-			setText(col == null ? "<none>" : col.getViewName());
-		} else {
-			setText("<ERROR>");
-		}
-	}
-}
-public static class CompareRenderer
-extends DefaultTableCellRenderer {
-	public void setValue(Object o) {
-		if (o instanceof EQuery.Element) {
-			EQuery.Element e = (EQuery.Element)o;
-			setText(e.comparator == null ? "<none>" : e.comparator);
-		} else {
-			setText("<ERROR>");
-		}
-	}
-}
-public static class ValueRenderer
-extends DefaultTableCellRenderer {
-	EQuerySchema schema;
-	public ValueRenderer(EQuerySchema schema)
-		{ this.schema = schema; }
-	public void setValue(Object o) {
-		if (o instanceof EQuery.Element) {
-			EQuery.Element e = (EQuery.Element)o;
-			if (e.colName == null) {
-				setText("<null>");
-			} else {
-				EQuerySchema.Col col = schema.getCol(e.colName);
-				KeyedModel kmodel = col.kmodel;
-				if (kmodel != null) {
-					if (e.value == null) {
-						setText("<null>");
-					} else {
-						Object oval = kmodel.get(e.value);
-						if (oval == null) setText("<" + e.value.toString() + ">");
-						else setText(oval.toString());
-					}
-				} else {
-					setText(e.value == null ? "<null>" : e.value.toString());
-				}
-			}
-		} else {
-			setText("<ERROR>");
-		}
-	}
-}
-// ===========================================================
 }

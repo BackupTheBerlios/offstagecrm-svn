@@ -35,8 +35,7 @@ import java.util.*;
 import javax.swing.event.*;
 import javax.swing.*;
 import offstage.db.DB;
-import offstage.schema.MailingsSchema;
-import offstage.schema.MailingidsSchema;
+import offstage.schema.*;
 
 /**
  *
@@ -101,14 +100,15 @@ public void refreshMailingids(Statement st) throws SQLException
 }
 
 /** Creates a new instance of MailingDbModel */
-public MailingModel(Statement st, ActionRunner xrunner) throws SQLException {
+public MailingModel(Statement st, OffstageSchemaSet sset, ActionRunner xrunner)
+throws SQLException {
 	this.runner = xrunner;
 	//this.st=st;
-	mailings = new IntKeyedDbModel(new MailingsSchema(), "groupid", false);
+	mailings = new IntKeyedDbModel(sset.mailings, "groupid", false, null);
 	mailings.setInstantUpdate(xrunner, true);
 	
-	mailingids = new WhereClauseDbModel(new MailingidsSchema(),
-		"created >= now() - interval '30 days'", "created desc");
+	mailingids = new WhereClauseDbModel(sset.mailingids,
+		"created >= now() - interval '30 days'", "created desc", null);
     mailingids.doSelect(st);
 //	add(mailingids, "groupid", false));
 	mailingids.setInstantUpdate(xrunner, true);

@@ -59,7 +59,7 @@ FrameSet frameSet;
 			queries.initRuntime(app);
 			mailings.initRuntime(st, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
 
-			JSchemaWidgetTree.initWithStatement(this, st);
+			//JSchemaWidgetTree.initWithStatement(this, st);
 
 			app.addListener(new FrontApp.Adapter() {
 			public void screenChanged() {

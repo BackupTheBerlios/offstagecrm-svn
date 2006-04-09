@@ -61,7 +61,7 @@ throws SQLException
 	this.fapp = fapp;
 	this.app = fapp.getEqueryBrowserApp();
 	app.addListener(new AppListener());
-	eQueryEditor1.initRuntime(app.getQueryModel(), app.getClauseModel());
+	eQueryEditor1.initRuntime(app.getQueryModel(), app.getClauseModel(), fapp.getSwingerMap());
 	//saveAsName = null;
 	lQueryName.setText("");
 

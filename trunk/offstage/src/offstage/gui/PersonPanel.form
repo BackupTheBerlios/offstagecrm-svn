@@ -564,11 +564,6 @@
             <Property name="colName" type="java.lang.String" value="occupation"/>
           </Properties>
         </Component>
-        <Component class="citibob.swing.typed.JTypedTextField" name="dob">
-          <Properties>
-            <Property name="colName" type="java.lang.String" value="dob"/>
-          </Properties>
-        </Component>
         <Component class="citibob.swing.typed.JTypedTextField" name="title">
           <Properties>
             <Property name="colName" type="java.lang.String" value="title"/>
@@ -577,6 +572,11 @@
         <Component class="citibob.swing.typed.JTypedTextField" name="email">
           <Properties>
             <Property name="colName" type="java.lang.String" value="email"/>
+          </Properties>
+        </Component>
+        <Component class="citibob.swing.typed.JTypedDateChooser" name="dob">
+          <Properties>
+            <Property name="colName" type="java.lang.String" value="dob"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -947,11 +947,11 @@
             <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
           </StatementProvider>
           <Parameters>
-            <CodeExpression id="109_dob">
-              <CodeVariable name="dob" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
+            <CodeExpression id="109_title">
+              <CodeVariable name="title" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="dob"/>
+                  <ComponentRef name="title"/>
                 </ExpressionProvider>
               </ExpressionOrigin>
             </CodeExpression>
@@ -968,7 +968,7 @@
                   </CodeExpression>
                   <CodeExpression id="112">
                     <ExpressionOrigin>
-                      <Value type="int" value="1"/>
+                      <Value type="int" value="2"/>
                     </ExpressionOrigin>
                   </CodeExpression>
                   <CodeExpression id="113">
@@ -978,7 +978,7 @@
                   </CodeExpression>
                   <CodeExpression id="114">
                     <ExpressionOrigin>
-                      <Value type="int" value="1"/>
+                      <Value type="int" value="2"/>
                     </ExpressionOrigin>
                   </CodeExpression>
                   <CodeExpression id="115">
@@ -1002,11 +1002,11 @@
             <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
           </StatementProvider>
           <Parameters>
-            <CodeExpression id="117_title">
-              <CodeVariable name="title" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
+            <CodeExpression id="117_email">
+              <CodeVariable name="email" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="title"/>
+                  <ComponentRef name="email"/>
                 </ExpressionProvider>
               </ExpressionOrigin>
             </CodeExpression>
@@ -1023,7 +1023,7 @@
                   </CodeExpression>
                   <CodeExpression id="120">
                     <ExpressionOrigin>
-                      <Value type="int" value="2"/>
+                      <Value type="int" value="3"/>
                     </ExpressionOrigin>
                   </CodeExpression>
                   <CodeExpression id="121">
@@ -1033,7 +1033,7 @@
                   </CodeExpression>
                   <CodeExpression id="122">
                     <ExpressionOrigin>
-                      <Value type="int" value="2"/>
+                      <Value type="int" value="3"/>
                     </ExpressionOrigin>
                   </CodeExpression>
                   <CodeExpression id="123">
@@ -1057,11 +1057,11 @@
             <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
           </StatementProvider>
           <Parameters>
-            <CodeExpression id="125_email">
-              <CodeVariable name="email" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
+            <CodeExpression id="125_dob">
+              <CodeVariable name="dob" type="8194" declaredType="citibob.swing.typed.JTypedDateChooser"/>
               <ExpressionOrigin>
                 <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="email"/>
+                  <ComponentRef name="dob"/>
                 </ExpressionProvider>
               </ExpressionOrigin>
             </CodeExpression>
@@ -1078,7 +1078,7 @@
                   </CodeExpression>
                   <CodeExpression id="128">
                     <ExpressionOrigin>
-                      <Value type="int" value="3"/>
+                      <Value type="int" value="1"/>
                     </ExpressionOrigin>
                   </CodeExpression>
                   <CodeExpression id="129">
@@ -1088,7 +1088,7 @@
                   </CodeExpression>
                   <CodeExpression id="130">
                     <ExpressionOrigin>
-                      <Value type="int" value="3"/>
+                      <Value type="int" value="1"/>
                     </ExpressionOrigin>
                   </CodeExpression>
                   <CodeExpression id="131">
@@ -1437,10 +1437,9 @@
             <Property name="axis" type="int" value="1"/>
           </Layout>
           <SubComponents>
-            <Component class="offstage.gui.IsPrimaryIndicator" name="isPrimaryIndicator1">
+            <Component class="citibob.swing.typed.JBoolCheckbox" name="cbIsPrimary">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Primary Family Contact"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="clearFamily">

@@ -39,7 +39,7 @@ public class TermsPNC extends citibob.jschema.gui.StatusPNC
 		super.initRuntime(dm,
  			new String[] {"Type", "Name", "From", "To (+1)"},
 			new String[] {"termtypeid", "name", "firstdate", "nextdate"},
-			swingers, runner);
+			null, swingers, runner);
 //		String fmt = "yyyy-MM-dd";
 //		StatusTable table = getTable();
 //		//ColPermuteTableModel model = getTableModel();

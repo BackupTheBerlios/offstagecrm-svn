@@ -26,7 +26,7 @@ public class EntityDbModel extends IntKeyedDbModel
 	
 	/** Creates a new instance of EntityDbModel */
 	public EntityDbModel(Schema schema, ActionRunner appRunner) {
-		super(new EntityBuf(schema), "entityid", false);
+		super(new EntityBuf(schema), "entityid", false, null);
 		
 		family = new FamilyTableModel(appRunner);
 		SchemaBufRowModel rm = new SchemaBufRowModel(this.getSchemaBuf());

@@ -56,7 +56,7 @@ ActionRunner runner;
 		this.runner = fapp.getGuiRunner();
 		this.model = fapp.getFullEntityDm();
 		//JSchemaWidgetTree.bindToPool(this, fapp.getPool());
-		entityPanel.initRuntime(st, fapp.getGuiRunner(), model);
+		entityPanel.initRuntime(st, fapp.getGuiRunner(), model, fapp.getSwingerMap());
 		simpleSearch.initRuntime(fapp);
 	}
 	/** This method is called from within the constructor to
@@ -72,6 +72,7 @@ ActionRunner runner;
         simpleSearch = new offstage.gui.SimpleSearchPanel();
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
+        bUndo = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
         bNewPerson = new javax.swing.JButton();
         bNewOrg = new javax.swing.JButton();
@@ -97,7 +98,16 @@ ActionRunner runner;
 
         jToolBar1.add(bSave);
 
-        bDelete.setText("Delete");
+        bUndo.setText("Undo");
+        bUndo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bUndoActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bUndo);
+
+        bDelete.setText("Delete Entity");
         bDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bDeleteActionPerformed(evt);
@@ -129,6 +139,13 @@ ActionRunner runner;
     }
     // </editor-fold>//GEN-END:initComponents
 
+	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
+	runner.doRun(new StRunnable() {
+	public void run(Statement st) throws Exception {
+		model.doSelect(st);
+	}});
+	}//GEN-LAST:event_bUndoActionPerformed
+
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
 	runner.doRun(new StRunnable() {
 	public void run(Statement st) throws Exception {
@@ -154,6 +171,7 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 	runner.doRun(new StRunnable() {
 	public void run(Statement st) throws Exception {
 		model.doUpdate(st);
+		model.doSelect(st);
 	}});
 }//GEN-LAST:event_bSaveActionPerformed
 	
@@ -163,6 +181,7 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton bNewOrg;
     private javax.swing.JButton bNewPerson;
     private javax.swing.JButton bSave;
+    private javax.swing.JButton bUndo;
     private offstage.gui.EntityPanel entityPanel;
     private javax.swing.JToolBar jToolBar1;
     private offstage.gui.SimpleSearchPanel simpleSearch;

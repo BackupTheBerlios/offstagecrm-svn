@@ -21,23 +21,26 @@ package offstage.schema;
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
+import citibob.util.KeyedModel;
+import java.sql.*;
 
 
 public class OrgSchema extends EntitiesSchema
 {
 
-public OrgSchema()
+public OrgSchema(Statement st, DbChangeModel change)
+throws SQLException
 {
-	super();
+	super(st, change);
 	table = "organizations";
 	appendCols(new Column[] {
 		new Column(new SqlString(100), "name", false)
 	});
 }
 // ------------------------------------------
-// Singleton stuff
-private static PersonsSchema instance = new PersonsSchema();
-public static ConstSchema getInstance()
-	{ return instance; }
+//// Singleton stuff
+//private static PersonsSchema instance = new PersonsSchema();
+//public static ConstSchema getInstance()
+//	{ return instance; }
 
 }

@@ -33,6 +33,7 @@ import citibob.jschema.*;
 import citibob.jschema.swing.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
 import citibob.swing.table.*;
+import citibob.swing.typed.*;
 import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
 
@@ -81,7 +82,7 @@ extends javax.swing.JPanel {
 		initComponents();
 	}
 	
-	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm)
+	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
 	throws java.sql.SQLException
 	{
 		this.runner = runner;
@@ -93,11 +94,12 @@ extends javax.swing.JPanel {
 		//this.phonesSb = phonesSb;
 		this.model = model;
 		
-		JSchemaWidgetTree.bindToSchemaRow(this, model);
+		TypedWidgetBinder.bindRecursive(this, model, smap);
 		//JSchemaWidgetTree.bindToPool(this, pool);
-		phonePanel.initRuntime(st, dm.getPhonesSb(), "phoneids",
-			new String[] {"Number"},
-			new String[] {"phone"});
+		//JEnum phoneEnum = (JEnum)dm.getPhonesSb().getSchema().getCol("groupid").getType();
+		phonePanel.initRuntime(st, dm.getPhonesSb(),
+			new String[] {"Type", "Number"},
+			new String[] {"groupid", "phone"}, smap);
 		// phonesTable.setModel(new ColPermuteTableModel(phonesSb,
 		//	new String[] {"Type", "Phone"},
 		//	new String[] {"groupid", "phone"}));

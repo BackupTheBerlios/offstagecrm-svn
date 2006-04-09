@@ -15,13 +15,14 @@ import offstage.db.*;
 import javax.swing.*;
 import java.sql.*;
 import java.util.*;
+import citibob.swing.typed.*;
 import citibob.multithread.*;
 import citibob.swing.table.*;
 import citibob.swing.*;
 import citibob.jschema.gui.*;
 import citibob.jschema.*;
 import citibob.jschema.swing.StatusTable;
-import citibob.sql.KeyedModel;
+import citibob.util.KeyedModel;
 import citibob.sql.pgsql.*;
 
 /**
@@ -31,14 +32,14 @@ import citibob.sql.pgsql.*;
 public class CourseidsPNC extends citibob.jschema.gui.StatusPNC
 {
 
-	public void initRuntime(CourseidsDbModel dm, ActionRunner runner)
+	public void initRuntime(SchemaBufDbModel dm, SwingerMap swingers, ActionRunner runner)
 	throws java.sql.SQLException
 	{
 		//dm.setInstantUpdate(st, true);
 		super.initRuntime(dm,
  			new String[] {"Name", "Weekday", "StartTime", "EndTime"},
 			new String[] {"name", "dayofweek", "tstart", "tend"},
-			runner);
+			null, swingers, runner);
 		//String fmt = "HH:mm";
 		StatusTable table = getTable();
 		//ColPermuteTableModel model = getTableModel();

@@ -45,26 +45,23 @@ import offstage.schema.*;
 public class TermsDbModel extends WhereClauseDbModel
 {
 
-DbChangeModel dbChange;
-
 /** Creates a new instance of TermsDbModel */
 public TermsDbModel(Statement st, citibob.sql.DbChangeModel dbChange, citibob.jschema.Schema termids)
 throws java.sql.SQLException
 {
 	super(
 		new SchemaBuf(termids),
-		"firstdate > now() - interval '2 years'", "firstdate");
-	this.dbChange = dbChange;
+		"firstdate > now() - interval '2 years'", "firstdate", dbChange);
 }
 
-public void doUpdate(Statement st) throws SQLException
-{
-	super.doUpdate(st);
-	dbChange.fireTableChanged(st, "terms");
-	
-	put this fireTableChanged() as a standard part of DbModel or SchemaModel or something.
-			Also, make it able to fire events based on individual insert/update queries
-			on individual rows (which are stored in the DbModel, making it easy
-			to indicate what happened)
-}
+//public void doUpdate(Statement st) throws SQLException
+//{
+//	super.doUpdate(st);
+//	dbChange.fireTableChanged(st, "terms");
+//	
+//	put this fireTableChanged() as a standard part of DbModel or SchemaModel or something.
+//			Also, make it able to fire events based on individual insert/update queries
+//			on individual rows (which are stored in the DbModel, making it easy
+//			to indicate what happened)
+//}
 }
