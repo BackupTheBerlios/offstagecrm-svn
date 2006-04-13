@@ -39,7 +39,8 @@ import offstage.EQueryBrowserApp;
 public class OffstageGui extends javax.swing.JFrame {
 
 FrameSet frameSet;
-	
+FrontApp app;
+
 	/** Creates new form FrontGui */
 	public OffstageGui() {
 		initComponents();
@@ -48,6 +49,7 @@ FrameSet frameSet;
 	public void initRuntime(final FrontApp app, FrameSet frameSet)
 	throws java.sql.SQLException
 	{
+		this.app = app;
 		this.frameSet = frameSet;
 		Connection dbb = null;
 		Statement st = null;
@@ -99,9 +101,11 @@ FrameSet frameSet;
         mailings = new offstage.gui.MailingsEditor();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        miThrowException = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         miQuit = new javax.swing.JMenuItem();
         mWindow = new javax.swing.JMenu();
+        miMailPrefs = new javax.swing.JMenuItem();
         Console = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
@@ -115,6 +119,9 @@ FrameSet frameSet;
         getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
 
         jMenu1.setText("File");
+        miThrowException.setText("Throw Exception");
+        jMenu1.add(miThrowException);
+
         jMenu1.add(jSeparator1);
 
         miQuit.setText("Quit");
@@ -129,6 +136,15 @@ FrameSet frameSet;
         jMenuBar1.add(jMenu1);
 
         mWindow.setText("Window");
+        miMailPrefs.setText("Mail Preferences");
+        miMailPrefs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miMailPrefsActionPerformed(evt);
+            }
+        });
+
+        mWindow.add(miMailPrefs);
+
         Console.setText("Java Console");
         Console.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -148,6 +164,12 @@ FrameSet frameSet;
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
+
+	private void miMailPrefsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miMailPrefsActionPerformed
+		new citibob.mail.MailPrefsDialog(this).setVisible(true);
+
+// TODO add your handling code here:
+	}//GEN-LAST:event_miMailPrefsActionPerformed
 
 private void miQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miQuitActionPerformed
 	System.exit(0);
@@ -184,7 +206,9 @@ private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JMenu mWindow;
     private offstage.gui.MailingsEditor mailings;
+    private javax.swing.JMenuItem miMailPrefs;
     private javax.swing.JMenuItem miQuit;
+    private javax.swing.JMenuItem miThrowException;
     private offstage.gui.EditorPanel people;
     private offstage.gui.EQueryBrowser queries;
     private javax.swing.JTabbedPane tabs;

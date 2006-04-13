@@ -38,12 +38,13 @@ protected ConsoleFrame consoleFrame;
 			System.exit(0);
 		}
 
-		FrontApp app = new FrontApp(d.newConnPool());
+		consoleFrame = new ConsoleFrame();
+		consoleFrame.initRuntime("Java Console", "offstage/gui/ConsoleFrame");
+		
+		FrontApp app = new FrontApp(d.newConnPool(), consoleFrame.getDocument());
 		offstageGui = new OffstageGui();
 		offstageGui.initRuntime(app, this);
 
-		consoleFrame = new ConsoleFrame();
-		consoleFrame.initRuntime("Java Console", "offstage/gui/ConsoleFrame");
 
 	    offstageGui.setVisible(true);
     }

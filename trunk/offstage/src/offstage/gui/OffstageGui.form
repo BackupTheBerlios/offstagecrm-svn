@@ -9,6 +9,11 @@
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miThrowException">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Throw Exception"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JSeparator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miQuit">
@@ -26,6 +31,14 @@
             <Property name="text" type="java.lang.String" value="Window"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miMailPrefs">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Mail Preferences"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miMailPrefsActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="Console">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Java Console"/>

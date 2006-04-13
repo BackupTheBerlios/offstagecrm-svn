@@ -157,6 +157,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 		runner.doRun(new StRunnable() {
 		public void run(Statement st) throws Exception {
+//			throw new Exception("Bobs Exception");
 			jButton1.requestFocus();
 			mailing.makeReport(st);
 		}});

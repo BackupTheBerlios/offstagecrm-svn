@@ -1440,6 +1440,7 @@
             <Component class="citibob.swing.typed.JBoolCheckbox" name="cbIsPrimary">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Primary Family Contact"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="clearFamily">

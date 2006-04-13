@@ -296,6 +296,7 @@ extends javax.swing.JPanel {
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
         cbIsPrimary.setText("Primary Family Contact");
+        cbIsPrimary.setEnabled(false);
         jPanel2.add(cbIsPrimary);
 
         clearFamily.setText("Make Primary");

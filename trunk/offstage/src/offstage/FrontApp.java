@@ -28,6 +28,8 @@ import citibob.multithread.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
 import offstage.schema.*;
+import citibob.mail.*;
+import javax.mail.internet.*;
 
 public class FrontApp
 {
@@ -52,26 +54,33 @@ EntityListTableModel simpleSearchResults;
 ActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
+MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 // -------------------------------------------------------
 public ConnPool getPool() { return pool; }
 public ActionRunner getGuiRunner() { return guiRunner; }
 public ActionRunner getAppRunner() { return appRunner; }
+public MailSender getMailSender() { return mailSender; }
 //public Connection createConnection()
 //throws SQLException
 //{
 //	return DBConnection.getConnection();
 //}
 // -------------------------------------------------------
-public FrontApp(ConnPool pool) throws SQLException
+public FrontApp(ConnPool pool, javax.swing.text.Document stdoutDoc)
+throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 {
 	Connection dbb = null;
 	Statement st = null;
 
+	this.mailSender = new citibob.mail.GuiMailSender();
 	this.swingerMap = new citibob.sql.pgsql.DefaultSwingerMap();
 	
 	this.pool = pool;
 	//pool = new DBConnPool();
-	guiRunner = appRunner = new SimpleDbActionRunner(pool);
+	MailSender sender = new GuiMailSender();
+	ExpHandler expHandler = new MailExpHandler(sender,
+			new InternetAddress("citibob@earthlink.net"), "OffstageCRM", stdoutDoc);
+	guiRunner = appRunner = new SimpleDbActionRunner(pool, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
 	try {
 		dbb = pool.checkout();
