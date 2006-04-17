@@ -1,4 +1,4 @@
-package offstage.web;
+package offstage.web.familystatus;
 /*
  * UpdateContactInfoServlet.java
  * Created on March 18, 2006, 6:11 PM
@@ -15,6 +15,7 @@ import citibob.sql.*;
 import citibob.jschema.pgsql.*;
 import java.util.*;
 import java.text.*;
+import offstage.web.*;
 /**
  * Update contact information associated with a unique primary entityid
  * @author Michael Wahl

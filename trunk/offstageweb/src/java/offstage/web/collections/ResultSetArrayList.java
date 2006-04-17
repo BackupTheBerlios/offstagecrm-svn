@@ -4,6 +4,7 @@
  */
 package offstage.web.collections;
 
+import java.io.Serializable;
 import java.util.*;
 import java.sql.*;
 /**
@@ -13,7 +14,7 @@ import java.sql.*;
  * This hashmap is suitable for ResultSets that contain multiple rows of data.
  * @author Michael Wahl
  */
-public class ResultSetArrayList extends ArrayList implements RSCollection {
+public class ResultSetArrayList extends ArrayList implements RSCollection, Serializable {
     private String[] columnNames;
     private int[] columnTypes;
     private String[] columnTypeNames;
@@ -33,7 +34,8 @@ public class ResultSetArrayList extends ArrayList implements RSCollection {
             for (int i = 0; i < columnNames.length; i++) {                
                 map.put(columnNames[i], rs.getObject(i + 1));            
             }
-//            list.add(Collections.unmodifiableMap(map));        
+//            list.add(Collections.unmodifiableMap(map));  
+            map = Collections.unmodifiableMap(map);
             this.add(map);        
         }
     }
@@ -54,4 +56,90 @@ public class ResultSetArrayList extends ArrayList implements RSCollection {
      * MetaData for this structure
      */
     public String[] getTableNames(){return tableNames;}
+    
+    /**
+     * Search entire list for Maps that have the specified value given the 
+     * specified key.
+     * @param key what we are searching with each Map in the ArrayList
+     * @param value what we want to find using the key
+     * @return a list of all Maps in this array that have the specified value
+     */
+    public ArrayList get( String key, Object value ){
+        // First check to see if key is found on maps...
+        boolean correctkey = false;
+        for ( int i = 0; i < columnNames.length; ++i ){
+            if ( columnNames[i].compareTo(key) == 0 ){
+                correctkey = true;
+                break;
+            }
+        }
+        // If key not found on map then throw illegal argument exception
+        if( !correctkey ) throw new IllegalArgumentException("KEY NOT FOUND ON MAP");
+        
+        // Now search for all maps that contains the given key-value pair
+        ArrayList temp = new ArrayList();
+        Iterator i = this.listIterator();
+        while ( i.hasNext() ){
+            Map row = (Map)i.next();
+            Object _value = (Object)row.get(key);
+            if ( value instanceof Boolean ) 
+            {
+                if ( ((Boolean)_value).equals((Boolean)value) )
+                    temp.add(row);
+            }
+            else if ( value instanceof Byte )
+            {
+                if ( ((Byte)_value).compareTo((Byte)value)== 0 )
+                temp.add(row);
+            }
+            else if ( value instanceof Character )
+            {
+                if ( ((Character)_value).compareTo((Character)value)== 0 )
+                temp.add(row);
+            } 
+            else if ( value instanceof Double )
+            {
+                if ( ((Double)_value).compareTo((Double)value)== 0 )
+                temp.add(row);
+            } 
+            else if ( value instanceof Float )
+            {
+                if ( ((Float)_value).compareTo((Float)value)== 0 )
+                temp.add(row);
+            } 
+            else if ( value instanceof Integer )
+            {
+                if ( ((Integer)_value).compareTo((Integer)value)== 0 )
+                temp.add(row);
+            } 
+            else if ( value instanceof Long )
+            {
+                if ( ((Long)_value).compareTo((Long)value)== 0 )
+                temp.add(row);
+            } 
+            else if ( value instanceof Short )
+            {
+                if ( ((Short)_value).compareTo((Short)value)== 0 )
+                temp.add(row);
+            } 
+            else if ( value instanceof String )
+            {
+                if ( ((String)_value).compareTo((String)value)== 0 )
+                temp.add(row);
+            } else throw new IllegalArgumentException("Value must be Boolean" +
+                        "Byte, Character, Double, Float, Integer, Long, Short or String");
+        }
+        return temp;
+    }
+/*
+    public String toString(){
+        StringTokenizer tokenizer = new StringTokenizer( super.toString(), "}" );
+        StringBuffer buf = new StringBuffer();
+        while ( tokenizer.hasMoreTokens() ){
+            buf.append( "\n" + tokenizer.nextToken() + "}" );
+        }
+        return buf.toString();
+    }
+ */
+
 }

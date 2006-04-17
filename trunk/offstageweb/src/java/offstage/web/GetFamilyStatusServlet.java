@@ -7,6 +7,7 @@ package offstage.web;
 import javax.servlet.http.*;
 
 import java.sql.*;
+import java.util.ArrayList;
 import offstage.web.collections.ResultSetArrayList;
 /**
  * 
@@ -40,6 +41,7 @@ System.out.println("primaryentityid is:" + primaryentityid);
 
                 ResultSet rs = DB.getFamily( st, primaryentityid );
                 ResultSetArrayList familyList = new ResultSetArrayList( rs );
+
                 sess.setAttribute( "familyList", familyList );
             } catch ( SQLException e ){
                 System.out.println( e );

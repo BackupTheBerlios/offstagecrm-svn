@@ -136,4 +136,65 @@ public class Logic {
         }
         return true;
     }
+
+    /**
+     * Given dob Date return age.
+     */
+    public Integer getAge( Date dob ) 
+    throws ParseException {
+        Calendar c = Calendar.getInstance();
+        int cmonth = c.get(Calendar.MONTH);
+        int cday = c.get(Calendar.DATE);
+        int cyear = c.get(Calendar.YEAR);
+        
+        c.setTime(dob);
+        int bmonth = c.get(Calendar.MONTH);
+        int bday = c.get(Calendar.DATE);
+        int byear = c.get(Calendar.YEAR);
+
+        if ( bmonth < cmonth || ( bmonth == cmonth && bday <= cday ) ){
+            return new Integer( cyear - byear );
+        } else return new Integer( cyear - byear - 1 );
+    }
+    
+    /**
+     * Given dob string with 'yyyy/mm/dd' format return age
+     */
+    public Integer getAge( String dob ) 
+    throws ParseException {
+        // Check format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false);
+        Date bdate = dateFormat.parse(dob);
+        
+        Calendar c = Calendar.getInstance();
+        int cmonth = c.get(Calendar.MONTH);
+        int cday = c.get(Calendar.DATE);
+        int cyear = c.get(Calendar.YEAR);
+        
+        c.setTime(bdate);
+        int bmonth = c.get(Calendar.MONTH);
+        int bday = c.get(Calendar.DATE);
+        int byear = c.get(Calendar.YEAR);
+
+        if ( bmonth < cmonth || ( bmonth == cmonth && bday <= cday ) ){
+            return new Integer( cyear - byear );
+        } else return new Integer( cyear - byear - 1 );
+    }
+
+    public String getDay(Integer dayofweek) {
+        if ( dayofweek == null ) return null;
+        else {
+            switch( dayofweek.intValue() ){
+                case Calendar.SUNDAY : return "Sunday";
+                case Calendar.MONDAY : return "Monday";
+                case Calendar.TUESDAY : return "Tuesday";
+                case Calendar.WEDNESDAY : return "Wednesday";
+                case Calendar.THURSDAY : return "Thursday";
+                case Calendar.FRIDAY : return "Friday";
+                case Calendar.SATURDAY : return "Saturday";
+            }
+        }
+        return null;
+    }
 }

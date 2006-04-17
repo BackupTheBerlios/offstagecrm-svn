@@ -3,7 +3,7 @@
  * Created on March 10, 2006, 6:37 PM
  */
 
-package offstage.web;
+package offstage.web.familystatus;
 
 import java.io.*;
 import java.net.*;
@@ -15,6 +15,7 @@ import citibob.sql.*;
 import citibob.jschema.pgsql.*;
 import java.util.*;
 import java.text.*;
+import offstage.web.*;
 
 /**
  * Add child and its associated information to the persistent storage

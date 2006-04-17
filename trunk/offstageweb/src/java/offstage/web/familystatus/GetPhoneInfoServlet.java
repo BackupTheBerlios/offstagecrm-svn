@@ -4,7 +4,7 @@
  * Created on March 24, 2006, 4:44 PM
  */
 
-package offstage.web;
+package offstage.web.familystatus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.http.*;
 import offstage.web.collections.ResultSetArrayList;
+import offstage.web.*;
 
 /**
  * Get phone information for the given entity redirect to 

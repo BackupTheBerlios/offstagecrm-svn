@@ -3,13 +3,14 @@
  * Created on March 18, 2006, 3:55 PM
  */
 
-package offstage.web;
+package offstage.web.familystatus;
 import javax.servlet.http.*;
 
 import java.sql.*;
 import java.util.*;
 import offstage.web.collections.ResultSetArrayList;
 import offstage.web.collections.ResultSetHashMap;
+import offstage.web.*;
 
 /**
  * Get both address info and phone info then redirect to ViewContactInfo.jsp

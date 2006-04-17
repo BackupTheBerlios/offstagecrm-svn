@@ -4,6 +4,8 @@
 
 package offstage.web.collections;
 
+import java.util.ArrayList;
+
 /**
  * Each new data structure should implement these methods - we want to store
  * (and consequently retrieve) some of the metadata that was contained in the 

@@ -3,7 +3,7 @@
  * Created on March 17, 2006, 10:14 PM
  */
 
-package offstage.web;
+package offstage.web.familystatus;
 
 import java.io.*;
 import java.net.*;
@@ -16,6 +16,7 @@ import citibob.sql.*;
 import citibob.jschema.pgsql.*;
 import java.util.*;
 import java.text.*;
+import offstage.web.*;
 /**
  * Update information associated with an adult identifiable by entityid
  * @author Michael Wahl

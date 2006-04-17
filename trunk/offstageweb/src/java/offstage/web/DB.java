@@ -7,7 +7,8 @@ package offstage.web;
 
 import java.sql.*;
 import citibob.jschema.pgsql.*;
-import org.apache.xml.dtm.ref.sax2dtm.SAX2DTM;
+import java.util.Calendar;
+//import org.apache.xml.dtm.ref.sax2dtm.SAX2DTM;
 /**
  * 
  * @author Michael Wahl
@@ -454,5 +455,251 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
                 " WHERE entityid = " + SqlInteger.sql(entityid)
                 );
     }
+
+    /**
+     * Get programs in which the given entityid has already registered for that
+     * are current.
+     * @param st statement used to query db
+     * @param entityid unique id associated with programid
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return set of programids and name of programs that given entityid has 
+     * registered for
+     */
+    public static ResultSet getCurrentRegistrations(Statement st, Integer entityid) 
+    throws SQLException {
+        return st.executeQuery(
+                "SELECT programids.name, programids.programid" +
+                " FROM registrations, programids" +
+                " WHERE registrations.entityid = " + SqlInteger.sql(entityid) + 
+                " AND registrations.programid = programids.programid" +
+                
+                // exclude registrations that have expired
+                " AND registrations.expiredate >= now()" +
+                
+                // EITHER exclude programs that are not current OR...
+                " AND ( programids.termid NOT IN ( SELECT termids.termid" +
+                "                                  FROM termids" +
+                "                                  WHERE termids.iscurrent = " + SqlBool.sql(false) + ") " +
+                
+                // ...OR include programs that do not have a termid
+                "       OR ( programids.programid NOT IN ( SELECT programids.programid " +
+                "                                          FROM programids " +
+                "                                          WHERE programids.termid > " + SqlInteger.sql(-1) + ") ) )"
+                );
+    }
+
+    /**
+     * Get all programs that the given entityid is eligible for given the age
+     * and whether or not any needed eligibility has been met.  Exclude programs
+     * that the entityid has already registered for and programs that aren't 
+     * current.
+     * @param st statement used for the query
+     * @param entityid unique id associated with the eligible programs
+     * @param age age of entity
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return 
+     */
+    public static ResultSet getEligibleRegistrations(Statement st, Integer entityid, Integer age ) 
+    throws SQLException {
+        return st.executeQuery(
+                " SELECT programids.name, programids.programid " +
+                " FROM programids" +
+                
+                // Get programs where no eligibilty needed
+                " WHERE ( programids.needselig = 'false' " +
+                
+                // If need eligibility then get programs that are on
+                // the registration eligibility list that have the
+                // associated entityid
+                "         OR ( programids.needselig = 'true' " +
+                "              AND programids.programid IN ( SELECT programid" +
+                "                                            FROM regelig " +
+                "                                            WHERE regelig.entityid = " + SqlInteger.sql(entityid) + " )))" +
+                
+                // Also EITHER include programs where minage requirement is met OR...
+                " AND ( " + SqlInteger.sql(age) + " >= programids.minage OR" +
+                
+                // ...include programs where no minage specified
+                "       programids.programid NOT IN ( SELECT programid " +
+                "                                     FROM programids" +
+                                                      // This returns all programs where minage specified
+                "                                     WHERE programids.minage > " + SqlInteger.sql(-1) + " ) )" +
+                
+                // Next exclude programs which person has already registered for
+                " AND ( programids.programid NOT IN ( SELECT registrations.programid" + 
+                "                                     FROM registrations" +
+                "                                     WHERE registrations.entityid = " + SqlInteger.sql(entityid) + " ) )" +
+                
+                // Last EITHER exclude programs that are not current OR...
+                " AND ( ( programids.termid NOT IN (SELECT termids.termid" +
+                "                                   FROM termids" +
+                "                                   WHERE termids.iscurrent = " + SqlBool.sql(false) + ") )" +
+                
+                // ...OR include programs that do not have a termid
+                "         OR ( programids.programid NOT IN ( SELECT programids.programid " +
+                "                                            FROM programids " +
+                "                                            WHERE programids.termid > " + SqlInteger.sql(-1) + ") ) )"
+                );
+    }
+
+    /**
+     * Given programid and entityid insert a new registration
+     * @param st statement used to query and update db
+     * @param programid unique id of the program
+     * @param entityid unique id of the entity
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return number of rows effected by insert
+     */
+    public static int insertRegistration(Statement st, Integer programid, 
+            Integer entityid) 
+    throws SQLException {
+        
+        // First need to get the expiration date:
+        Calendar c = Calendar.getInstance();
+        java.util.Date expiredate = null;
+        
+        ResultSet rs = st.executeQuery(
+                "SELECT termids.nextdate " +
+                " FROM termids, programids" +
+                " WHERE termids.termid = programids.termid" +
+                " AND programids.programid = " + SqlInteger.sql( programid )
+                );
+        
+        // Get expire time of term from termids if available...
+        if ( rs.next() ) {
+            java.sql.Date d = rs.getDate("nextdate");
+            c.setTimeInMillis( d.getTime() );
+        }
+        
+        // ...Else if no termid associated with program then set expiration date to 1 year
+        else {
+            int year = c.get( Calendar.YEAR );
+            c.set( Calendar.YEAR, year + 1 );
+        }
+        expiredate = new java.sql.Date( c.getTimeInMillis() );
+        
+        return st.executeUpdate(
+                "INSERT INTO registrations" +
+                " VALUES (" +
+                " " + SqlInteger.sql( programid ) + ", " +
+                " " + SqlInteger.sql( entityid ) + ", " +
+                " " + SqlTimestamp.sql( new Timestamp( System.currentTimeMillis() ) ) + ", " +
+                " " + SqlDate.sql( expiredate ) + ") "
+                );
+    }
+    
+    /**
+     * Get all enrollments that a given entityid is eligible for - including any
+     * that the entityid is currently enrolled in.
+     */
+    public static ResultSet getEligibleEnrollments( Statement st, Integer entityid ) 
+    throws SQLException {
+        return st.executeQuery(
+                "SELECT coursesetids.coursesetid, programid, " +
+                " coursesetids.name as coursesetids_name, " +
+                " courseids.courseid, courseids.name as courseids_name," +
+                " courseids.dayofweek, courseids.tstart, courseids.tnext," +
+                " termids.name as term_name, termids.firstdate, termids.nextdate" +
+                " FROM coursesetids, coursesets, courseids, termids" +
+                " WHERE coursesetids.coursesetid = coursesets.coursesetid" +
+                " AND coursesets.courseid = courseids.courseid" +
+                
+                // Cross termids, courseids
+                " AND termids.termid = courseids.termid" +
+                
+                // Entity has to be registered for program
+                " AND coursesetids.programid IN" +
+                "(" +
+                "            SELECT programids.programid" +
+                "            FROM registrations, programids" +
+                "            WHERE registrations.entityid = " + SqlInteger.sql(entityid) + 
+                "            AND registrations.programid = programids.programid" +
+
+                             // Registration can't be expired
+                "            AND registrations.expiredate >= now()" +
+                             // EITHER term has to be current... 
+                "            AND ( programids.termid NOT IN ( SELECT termids.termid" +
+                "                                             FROM termids" +
+                "                                             WHERE termids.iscurrent = false )" +
+                
+                                   // ...OR there is no term associated with the program.
+                "                  OR ( programids.programid NOT IN ( SELECT programids.programid" +
+                "                                                     FROM programids" +
+                "                                                     WHERE programids.termid > -1 ) ) )" +
+                ")" +
+                "ORDER BY coursesets.coursesetid, courseids.dayofweek, courseids.tstart"
+                );
+    }
+    
+    /**
+     * Get all courses for which an entityid is currently enrolled in
+     */
+    public static ResultSet getCurrentEnrollments(Statement st, Integer entityid) 
+    throws SQLException {
+        return st.executeQuery(
+                // Get all course information of enrolled course associated with entityid...
+                "SELECT courseids.courseid, courseids.name as course_name, " +
+                " courseids.dayofweek, courseids.tstart, courseids.tnext," +
+                " termids.name as term_name, termids.firstdate, termids.nextdate" +
+                " FROM enrollments, courseids, termids " +
+                " WHERE enrollments.entityid = " + SqlInteger.sql(entityid) + 
+                
+                // Include EITHER current enrollments...
+                " AND ( enrollments.dend <= now() or" +
+
+                // OR enrollments where enrollments.dend is blank
+                "       enrollments.dend NOT IN ( SELECT enrollments.dend " +
+                "                                 FROM enrollments " +
+                "                                 WHERE enrollments.dend > 'epoch' ) )" +
+                
+                // Cross courseids, enrollments
+                " AND courseids.courseid = enrollments.courseid" +
+                
+                // Cross termids, courseids
+                " AND termids.termid = courseids.termid" +
+                " ORDER BY courseids.dayofweek"
+                );
+    }
+
+    public static ResultSet getCourseset(Statement st, Integer coursesetid) 
+    throws SQLException {
+        return st.executeQuery(
+                "SELECT coursesets.courseid" +
+                " FROM coursesets" +
+                " WHERE coursesets.coursesetid = " + SqlInteger.sql( coursesetid )
+                );
+    }
+
+    /**
+     * Insert enrollment row with courserole as student and date enrolled as
+     * current time given unique courseid and entityid
+     */
+    public static int insertStudentEnrollment(Statement st, Integer courseid, 
+            Integer entityid ) 
+    throws SQLException {
+        // Get courserole id...
+        ResultSet rs = st.executeQuery(
+                "SELECT courseroleid " +
+                " FROM courseroles" +
+                " WHERE name = 'Student'"
+                );
+        Integer courseroleid = null;
+        if ( rs.next() ){
+            courseroleid = new Integer( rs.getInt("courseroleid") );
+            
+            // ...then insert new enrollment
+            return st.executeUpdate(
+                    "INSERT INTO enrollments " +
+                    " ( courseid, entityid, courserole, dtenrolled )" +
+                    " VALUES (" +
+                    SqlInteger.sql( courseid ) + ", " +
+                    SqlInteger.sql( entityid ) + ", " +
+                    SqlInteger.sql( courseroleid ) + ", " +
+                    SqlTimestamp.sql( new Timestamp( System.currentTimeMillis() ) ) + 
+                    " ) "
+                    );
+        } else return 0;
+    }
+
 
 }

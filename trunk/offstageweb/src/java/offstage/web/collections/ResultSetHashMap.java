@@ -6,6 +6,7 @@
 package offstage.web.collections;
 
 import java.sql.*;
+import java.util.Collections;
 
 /**
  * A HashMap with a constructor that has a java.sql.ResultSet as its only parameter.
@@ -32,6 +33,7 @@ public class ResultSetHashMap extends java.util.HashMap implements RSCollection 
                 this.put(columnNames[i], rs.getObject(i + 1));            
             }
         }
+        Collections.unmodifiableMap(this);
     }
     
     /**
