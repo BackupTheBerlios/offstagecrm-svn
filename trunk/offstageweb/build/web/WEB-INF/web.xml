@@ -9,6 +9,25 @@
     <filter-name>OffstageDbFilter</filter-name>
     <filter-class>offstage.web.OffstageDbFilter</filter-class>
   </filter>
+  <filter>
+    <filter-name>AddChildFilter</filter-name>
+    <filter-class>offstage.web.AddChildFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AddChildFilter</filter-name>
+    <url-pattern>/familystatus/ChildInfo.jsp</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AddChildFilter</filter-name>
+    <url-pattern>/FamilyStatus.jsp</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AddChildFilter</filter-name>
+    <url-pattern>/GetFamilyStatusServlet</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
   <filter-mapping>
     <filter-name>OffstageDbFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -25,7 +44,7 @@
   </servlet>
   <servlet>
     <servlet-name>InsertChildServlet</servlet-name>
-    <servlet-class>offstage.web.InsertChildServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.InsertChildServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>GetFamilyStatusServlet</servlet-name>
@@ -33,43 +52,59 @@
   </servlet>
   <servlet>
     <servlet-name>UpdateChildInfoServlet</servlet-name>
-    <servlet-class>offstage.web.UpdateChildInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.UpdateChildInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>UpdateAdultInfoServlet</servlet-name>
-    <servlet-class>offstage.web.UpdateAdultInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.UpdateAdultInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>GetContactInfoServlet</servlet-name>
-    <servlet-class>offstage.web.GetContactInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.GetContactInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>UpdateContactInfoServlet</servlet-name>
-    <servlet-class>offstage.web.UpdateContactInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.UpdateContactInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>GetPhoneInfoServlet</servlet-name>
-    <servlet-class>offstage.web.GetPhoneInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.GetPhoneInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>UpdatePhonesServlet</servlet-name>
-    <servlet-class>offstage.web.UpdatePhonesServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.UpdatePhonesServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>DeletePhonesServlet</servlet-name>
-    <servlet-class>offstage.web.DeletePhonesServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.DeletePhonesServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>InsertPhonesServlet</servlet-name>
-    <servlet-class>offstage.web.InsertPhonesServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.InsertPhonesServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>GetAccountInfoServlet</servlet-name>
-    <servlet-class>offstage.web.GetAccountInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.GetAccountInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>UpdateAccountInfoServlet</servlet-name>
-    <servlet-class>offstage.web.UpdateAccountInfoServlet</servlet-class>
+    <servlet-class>offstage.web.familystatus.UpdateAccountInfoServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetRegistrationsServlet</servlet-name>
+    <servlet-class>offstage.web.registration.GetRegistrationsServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>InsertRegistrationServlet</servlet-name>
+    <servlet-class>offstage.web.registration.InsertRegistrationServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetEnrollmentsServlet</servlet-name>
+    <servlet-class>offstage.web.registration.GetEnrollmentsServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>InsertEnrollmentSetServlet</servlet-name>
+    <servlet-class>offstage.web.registration.InsertEnrollmentSetServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>SampleServlet</servlet-name>
@@ -122,6 +157,22 @@
   <servlet-mapping>
     <servlet-name>UpdateAccountInfoServlet</servlet-name>
     <url-pattern>/UpdateAccountInfoServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetRegistrationsServlet</servlet-name>
+    <url-pattern>/GetRegistrationsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>InsertRegistrationServlet</servlet-name>
+    <url-pattern>/InsertRegistrationServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetEnrollmentsServlet</servlet-name>
+    <url-pattern>/GetEnrollmentsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>InsertEnrollmentSetServlet</servlet-name>
+    <url-pattern>/InsertEnrollmentSetServlet</url-pattern>
   </servlet-mapping>
   <session-config>
     <session-timeout>
