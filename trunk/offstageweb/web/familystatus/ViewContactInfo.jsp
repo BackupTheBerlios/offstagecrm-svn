@@ -14,7 +14,7 @@ String extension = (String)sess.getAttribute( "extension" );
 %>
 <table>
 
-<tr><td colspan="2" >Contact Info[<a href="<%=root%>/UpdateContactInfo.jsp">Edit</a>]</td></tr>
+<tr><td colspan="2" >Contact Info[<a href="<%=root%>/familystatus/UpdateContactInfo.jsp">Edit</a>]</td></tr>
 <tr><td colspan="2"><hr/></td></tr>
 <tr>
 <td>Address To</td>
@@ -58,7 +58,7 @@ String extension = (String)sess.getAttribute( "extension" );
 
 <tr><td colspan="2"><hr/></td></tr>
 <tr>
-<td colspan="2">Phone Numbers[<a href="<%=root%>/UpdatePhones.jsp">Edit</a>]
+<td colspan="2">Phone Numbers[<a href="<%=root%>/familystatus/UpdatePhones.jsp">Edit</a>]
 </td></tr>
 <tr><td colspan="2"><hr/></td></tr>
 <%

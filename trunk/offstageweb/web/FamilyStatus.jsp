@@ -13,8 +13,9 @@ Iterator i = familyList.listIterator();
 <tr><td>Family</td><td>Members</td><td></td></tr>
 <tr><td colspan="3"><hr/></td></tr>
 <%
+System.out.println("IN FAMILYSTATUS!");
 while ( i.hasNext() ){
-    HashMap m = (HashMap)i.next();
+    Map m = (Map)i.next();
     Integer entityid = (Integer)m.get("entityid");
     Integer adultid = (Integer)m.get("adultid");
     String fname = (String)m.get("firstname");
@@ -34,8 +35,8 @@ while ( i.hasNext() ){
 %>
 </td><td>
 [<a href="<%=root%>/GetAccountInfoServlet?id=<%=entityid%>&adultid=<%=adultid%>">Update Personal Info</a>]
-[<a href="<%=root%>/GetRegistrationsServlet?id=<%=entityid%>">Registrations</a>]
-[Enrollments]
+[<a href="<%=root%>/GetRegistrationsServlet?id=<%=entityid%>&dob=<%=m.get("dob")%>&fname=<%=fname%>">Registrations</a>]
+[<a href="<%=root%>/GetEnrollmentsServlet?id=<%=entityid%>">Enrollments</a>]
 </td></tr>
 <%
     // If primary adult show card balance (if any)

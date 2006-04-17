@@ -1,4 +1,4 @@
-<%@ include file="/db_h.jsp" %>
+<%@ include file="/jsp_h.jsp" %>
 <%@page import="offstage.web.*"%>
 <%@page import="offstage.web.collections.*"%>
 <%@page import="java.util.*"%>
@@ -18,7 +18,7 @@
     ResultSetArrayList familyList = (ResultSetArrayList)sess.getAttribute("familyList");
     Iterator i = familyList.listIterator();
     while ( i.hasNext() && id.compareTo( entityid.toString() ) != 0 ){
-        HashMap m = (HashMap)i.next();
+        Map m = (Map)i.next();
         entityid = (Integer)m.get("entityid");
         firstname = (String)m.get("firstname");
         middlename = (String)m.get("middlename");
