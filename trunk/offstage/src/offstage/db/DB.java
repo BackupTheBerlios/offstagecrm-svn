@@ -176,4 +176,12 @@ System.out.println(sql);
 //	rs.close();
 }
 // --------------------------------------------------
+public static String dbversion(Statement st)
+throws SQLException
+{
+	ResultSet rs = st.executeQuery("select major,minor,rev from dbversion");
+//	String version = 
+//	citibob.sql.SqlQuery.
+	return null;
+}
 }

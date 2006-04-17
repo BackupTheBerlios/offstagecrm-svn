@@ -32,7 +32,7 @@ protected ConsoleFrame consoleFrame;
     /** Creates a new instance of FrameSet */
     public FrameSet() throws Exception {
 		// JFrame jf = new JFrame();
-		DBPrefsDialog d = new DBPrefsDialog(null, "offstage/db", "offstage/gui/DBPrefsDialog");
+		DBPrefsDialog d = new DBPrefsDialog(null, "offstage/db", "offstage/db/gui/DBPrefsDialog");
 		d.setVisible(true);
 		if (!d.isOkPressed()) {	// User cancelled DB open
 			System.exit(0);

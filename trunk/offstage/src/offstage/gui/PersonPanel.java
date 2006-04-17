@@ -176,6 +176,8 @@ extends javax.swing.JPanel {
         customaddressto = new citibob.swing.typed.JTypedTextField();
         phonePanel = new offstage.gui.GroupPanel();
         jLabel11 = new javax.swing.JLabel();
+        spacer = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
 
         genderButtonGroup.setColName("gender");
 
@@ -183,7 +185,7 @@ extends javax.swing.JPanel {
         _tableLayoutInstance.setHGap(0);
         _tableLayoutInstance.setVGap(0);
         _tableLayoutInstance.setColumn(new double[]{200,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL});
+        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.PREFERRED});
         setLayout(_tableLayoutInstance);
 
         _tableLayoutInstance1 = new info.clearthought.layout.TableLayout();
@@ -328,11 +330,16 @@ extends javax.swing.JPanel {
 
         add(jPanel3, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.BOTTOM));
 
-        phonePanel.setPreferredSize(new java.awt.Dimension(453, 150));
+        phonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
         add(phonePanel, new info.clearthought.layout.TableLayoutConstraints(1, 4, 2, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         jLabel11.setText("Phone Numbers");
         add(jLabel11, new info.clearthought.layout.TableLayoutConstraints(1, 3, 2, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+
+        jLabel9.setText("label");
+        spacer.add(jLabel9);
+
+        add(spacer, new info.clearthought.layout.TableLayoutConstraints(0, 5, 2, 5, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
     }
     // </editor-fold>//GEN-END:initComponents
@@ -373,6 +380,7 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private citibob.swing.typed.JTypedTextField lastname;
@@ -381,6 +389,7 @@ extends javax.swing.JPanel {
     private citibob.swing.typed.JTypedTextField occupation;
     private offstage.gui.GroupPanel phonePanel;
     private citibob.swing.typed.JTypedTextField salutation;
+    private javax.swing.JPanel spacer;
     private citibob.swing.typed.JTypedTextField title;
     private javax.swing.JRadioButton unknownGenderButton;
     // End of variables declaration//GEN-END:variables

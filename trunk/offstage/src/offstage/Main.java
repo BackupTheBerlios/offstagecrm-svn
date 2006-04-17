@@ -32,7 +32,7 @@ public class Main
 public static void main(String[] args) throws Exception
 {
 	
-	FrontApp app = new FrontApp(null);
+	FrontApp app = null;//new FrontApp(null);
 	FullEntityDbModel dm = app.getFullEntityDm();
 	Statement st = app.getPool().checkout().createStatement();
 
