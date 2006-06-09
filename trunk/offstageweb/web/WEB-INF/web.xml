@@ -15,12 +15,7 @@
   </filter>
   <filter-mapping>
     <filter-name>AddChildFilter</filter-name>
-    <url-pattern>/familystatus/ChildInfo.jsp</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AddChildFilter</filter-name>
-    <url-pattern>/FamilyStatus.jsp</url-pattern>
+    <url-pattern>/familystatus/InsertChildInfo.jsp</url-pattern>
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
   <filter-mapping>
@@ -67,28 +62,8 @@
     <servlet-class>offstage.web.familystatus.UpdateContactInfoServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>GetPhoneInfoServlet</servlet-name>
-    <servlet-class>offstage.web.familystatus.GetPhoneInfoServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>UpdatePhonesServlet</servlet-name>
-    <servlet-class>offstage.web.familystatus.UpdatePhonesServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>DeletePhonesServlet</servlet-name>
-    <servlet-class>offstage.web.familystatus.DeletePhonesServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>InsertPhonesServlet</servlet-name>
-    <servlet-class>offstage.web.familystatus.InsertPhonesServlet</servlet-class>
-  </servlet>
-  <servlet>
     <servlet-name>GetAccountInfoServlet</servlet-name>
     <servlet-class>offstage.web.familystatus.GetAccountInfoServlet</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>UpdateAccountInfoServlet</servlet-name>
-    <servlet-class>offstage.web.familystatus.UpdateAccountInfoServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>GetRegistrationsServlet</servlet-name>
@@ -105,6 +80,18 @@
   <servlet>
     <servlet-name>InsertEnrollmentSetServlet</servlet-name>
     <servlet-class>offstage.web.registration.InsertEnrollmentSetServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ParaServlet</servlet-name>
+    <servlet-class>offstage.web.MyServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetPaymentPlansServlet</servlet-name>
+    <servlet-class>offstage.web.registration.GetPaymentPlansServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>InsertPaymentPlanServlet</servlet-name>
+    <servlet-class>offstage.web.registration.InsertPaymentPlanServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>SampleServlet</servlet-name>
@@ -135,28 +122,8 @@
     <url-pattern>/UpdateContactInfoServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>GetPhoneInfoServlet</servlet-name>
-    <url-pattern>/GetPhoneInfoServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>UpdatePhonesServlet</servlet-name>
-    <url-pattern>/UpdatePhonesServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>DeletePhonesServlet</servlet-name>
-    <url-pattern>/DeletePhonesServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>InsertPhonesServlet</servlet-name>
-    <url-pattern>/InsertPhonesServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
     <servlet-name>GetAccountInfoServlet</servlet-name>
     <url-pattern>/GetAccountInfoServlet</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>UpdateAccountInfoServlet</servlet-name>
-    <url-pattern>/UpdateAccountInfoServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>GetRegistrationsServlet</servlet-name>
@@ -173,6 +140,18 @@
   <servlet-mapping>
     <servlet-name>InsertEnrollmentSetServlet</servlet-name>
     <url-pattern>/InsertEnrollmentSetServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ParaServlet</servlet-name>
+    <url-pattern>/ParaServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetPaymentPlansServlet</servlet-name>
+    <url-pattern>/GetPaymentPlansServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>InsertPaymentPlanServlet</servlet-name>
+    <url-pattern>/InsertPaymentPlanServlet</url-pattern>
   </servlet-mapping>
   <session-config>
     <session-timeout>
