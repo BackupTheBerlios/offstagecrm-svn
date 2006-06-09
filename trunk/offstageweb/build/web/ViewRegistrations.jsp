@@ -3,12 +3,35 @@
 <%@page import="offstage.web.collections.*"%>
 <%@page import="java.util.*"%>
 <%
-String id = (String)request.getParameter( "id" );
-String fname = (String)request.getParameter( "fname" );
-String age = (String)request.getParameter( "age" );
 
+// Get id
+String _id = (String)request.getParameter( "id" );
+Integer id = null;
+try {
+    id = new Integer( _id );
+} catch(Throwable t){
+    System.out.println(t);
+}
+
+// Get fname
+ResultSetArrayList familyList = (ResultSetArrayList)sess.getAttribute("familyList");
+String fname = null;
+if ( familyList != null ){
+    Map person = familyList.get( "entityid", id );
+    if ( person != null )
+        fname = (String)person.get("firstname");
+}
+
+// Get registered and eligible programs
 ResultSetArrayList registeredPrograms = (ResultSetArrayList)sess.getAttribute("registeredPrograms");
 ResultSetArrayList eligiblePrograms = (ResultSetArrayList)sess.getAttribute("eligiblePrograms");
+
+// If any of these four variables are null, then redirect
+if ( id == null || fname == null || eligiblePrograms == null || registeredPrograms == null ){
+        response.sendRedirect( request.getContextPath() + 
+                "/GetFamilyStatusServlet" 
+                );
+}
 Iterator i = registeredPrograms.listIterator();
 Iterator ii = eligiblePrograms.listIterator();
 %>
@@ -39,30 +62,22 @@ Iterator ii = eligiblePrograms.listIterator();
     }
 %>
 
-<%
-    // Show if person eligible to register for any programs
-    if ( ii.hasNext() ){
-%>
 <tr><td>Programs Eligible To Register For</td></td>
 <tr><td><hr/></td></td>
-<tr><td><ul>
+<form method="POST" action="<%=root%>/InsertRegistrationServlet?id=<%=id%>">
 <%
-        while ( ii.hasNext() ) {
-            Map eprogram = (Map)ii.next();
+    while ( ii.hasNext() ) {
+        Map eprogram = (Map)ii.next();
 %>
-<li>
-<%=eprogram.get("name")%>
-[<a href="<%=root%>/InsertRegistrationServlet?id=<%=id%>&age=<%=age%>&programid=<%=eprogram.get("programid")%>">Register</a>]
-</li>
-<%
-        }
-%>
-</ul></td></tr>
-<tr><td><hr/></td></tr>
+<tr><td>
+<input type="checkbox" name="<%=eprogram.get("programid")%>" ><%=eprogram.get("name")%>
+</td></tr>
 <%
     }
 %>
-<tr><td>
-[<a href="<%=root%>/FamilyStatus.jsp">Back</a>]
-</td></tr>
+<tr><td colspan="2"><hr/></td></td>
+<tr><td colspan="2">
+<input type="submit" name="submit" value="Register">
+<input type="submit" name="submit" value="Back"></td></tr>
+</form>
 </table>
