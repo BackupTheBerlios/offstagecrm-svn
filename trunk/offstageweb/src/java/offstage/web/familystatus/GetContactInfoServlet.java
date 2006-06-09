@@ -13,17 +13,21 @@ import offstage.web.collections.ResultSetHashMap;
 import offstage.web.*;
 
 /**
- * Get both address info and phone info then redirect to ViewContactInfo.jsp
+ * Get both address info then redirect to ViewContactInfo.jsp
  * Extend GetPhoneInfoServlet to use its getExtension() method
  * @author Michael Wahl
  */
-public class GetContactInfoServlet extends GetPhoneInfoServlet  {
+public class GetContactInfoServlet extends citibob.web.DbServlet {
     
     public void dbRequest(HttpServletRequest request, HttpServletResponse response,
         HttpSession sess, Statement st) throws Exception
     {
-        Integer primaryentityid = (Integer)sess.getAttribute("primaryentityid");
+        // Remove extraneous information from session...
+        sess.removeAttribute("contactInfo");
+        sess.removeAttribute("phones");
         
+        // Get primaryentityid from session
+        Integer primaryentityid = (Integer)sess.getAttribute("primaryentityid");
         if ( primaryentityid != null ) {
             try {
                 // Get address info, email
@@ -32,21 +36,30 @@ public class GetContactInfoServlet extends GetPhoneInfoServlet  {
                 sess.setAttribute( "contactInfo", contactInfo );
                 
                 // Get phone numbers
-                ResultSet _rs = DB.getPhones( st, primaryentityid );
-                ResultSetArrayList phones = new ResultSetArrayList( _rs );
+                rs = DB.getPhones( st, primaryentityid );
+                ResultSetArrayList phonelist = new ResultSetArrayList( rs );
+                HashMap phones = new HashMap();
+                
+                // Iterate to search for phones that are work, home or fax
+                // Remove all phones that aren't work, home, or fax
+                Iterator i = phonelist.listIterator();
+                while ( i.hasNext() ){
+                    Map phone = (Map)i.next();
+                    String phonename = (String)phone.get( "name" );
+                    if ( phonename.compareTo("work") == 0 ||
+                         phonename.compareTo("home") == 0 ||
+                         phonename.compareTo("fax") == 0 )
+                    {
+                        phones.put( phonename,  phone );
+                    }
+                }
                 sess.setAttribute( "phones", phones );
                 
-                // Get phone extension if it exists in phone numbers
-                String extension = getExtension( phones );
-                if ( extension != null ) sess.setAttribute( "extension", extension );
-                else sess.setAttribute( "extension", null );
-                
-                redirect(request, response, "/familystatus/ViewContactInfo.jsp");
-                
+                redirect(request, response, "/familystatus/UpdateContactInfo.jsp");
             } catch ( SQLException e ){
                 System.out.println( e );
-                redirect(request, response, "/FamilyStatus.jsp");
+                redirect( request, response, "/FamilyStatus.jsp" );
             }
-        } else redirect(request, response, "/login.jsp");
+        } else redirect( request, response, "/FamilyStatus.jsp" );
     }
 }

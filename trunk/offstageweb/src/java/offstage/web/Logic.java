@@ -5,6 +5,7 @@ package offstage.web;
  * Created on March 11, 2006, 2:01 PM
  */
 
+import java.sql.Time;
 import java.util.*;
 import java.text.*;
 /**
@@ -48,33 +49,25 @@ public class Logic {
     }
     
     /**
-     * Check to see if the date is of the format 'mm/dd/yyyy'
+     * Return Date with 'mm/dd/yyyy' format
      */
-    public boolean isCorrectDateFormat( String dob ){
-        if ( dob.compareTo("mm/dd/yyyy") == 0) return false;
-        StringTokenizer tokenizer = new StringTokenizer( dob, "/" );
-        if ( tokenizer.countTokens() == 3 ) {
-            String bmonth = tokenizer.nextToken();
-            String bdate = tokenizer.nextToken();
-            String byear = tokenizer.nextToken();
-            try {
-                // If cant perform parseInt, then not a number - this will throw
-                // an exception
-                Integer.parseInt(bmonth);
-                Integer.parseInt(bdate);
-                Integer.parseInt(byear);
-
-                // Check format
-                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-                dateFormat.setLenient(false);
-                dateFormat.parse(dob);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        } else return false;
+    public Date formatDate( String dob )
+    throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        dateFormat.setLenient(false);
+        return dateFormat.parse(dob);
     }
 
+    /**
+     * Return Date with the specified format
+     */
+    public Date formatDate( String date, String format )
+    throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        dateFormat.setLenient(false);
+        return dateFormat.parse(date);
+    }
+    
     /**
      * Test for correct format: '(xxx)xxx-xxxx'
      * Should be split into six tokens:
@@ -142,6 +135,8 @@ public class Logic {
      */
     public Integer getAge( Date dob ) 
     throws ParseException {
+        if (dob == null) throw new NullPointerException("dob cannot be null");
+        
         Calendar c = Calendar.getInstance();
         int cmonth = c.get(Calendar.MONTH);
         int cday = c.get(Calendar.DATE);
@@ -157,32 +152,7 @@ public class Logic {
         } else return new Integer( cyear - byear - 1 );
     }
     
-    /**
-     * Given dob string with 'yyyy/mm/dd' format return age
-     */
-    public Integer getAge( String dob ) 
-    throws ParseException {
-        // Check format
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false);
-        Date bdate = dateFormat.parse(dob);
-        
-        Calendar c = Calendar.getInstance();
-        int cmonth = c.get(Calendar.MONTH);
-        int cday = c.get(Calendar.DATE);
-        int cyear = c.get(Calendar.YEAR);
-        
-        c.setTime(bdate);
-        int bmonth = c.get(Calendar.MONTH);
-        int bday = c.get(Calendar.DATE);
-        int byear = c.get(Calendar.YEAR);
-
-        if ( bmonth < cmonth || ( bmonth == cmonth && bday <= cday ) ){
-            return new Integer( cyear - byear );
-        } else return new Integer( cyear - byear - 1 );
-    }
-
-    public String getDay(Integer dayofweek) {
+    public String getDayOfWeek(Integer dayofweek) {
         if ( dayofweek == null ) return null;
         else {
             switch( dayofweek.intValue() ){
@@ -196,5 +166,25 @@ public class Logic {
             }
         }
         return null;
+    }
+    
+    /**
+     * Given specified pattern for SimpleDateFormat, format the given Date.  If
+     * Date paramter is null or pattern is null, then return null.
+     */
+    public String getSimpleDate( java.util.Date date, String pattern ){
+        if ( date == null || pattern == null ) return null;
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        return sdf.format(date);
+    }
+    
+    /**
+     * Given the specified DateFormat type and the given Time, format.  If the
+     * Time parameter is null, then return null.
+     */
+    public String getSimpleTime( java.sql.Time time, int dateformat ){
+        if ( time == null ) return null;
+        DateFormat timeFormatter = DateFormat.getTimeInstance( dateformat );
+        return timeFormatter.format(time);
     }
 }

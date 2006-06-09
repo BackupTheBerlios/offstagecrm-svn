@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import javax.servlet.http.*;
 import javax.servlet.FilterChain;
@@ -54,8 +55,9 @@ public class AddChildFilter extends DbFilter {
     	HttpServletRequest hr = (HttpServletRequest)request;
         HttpSession sess = hr.getSession();
         String uri = hr.getRequestURI();
+System.out.println("IN ADDCHILDFILTER, uri is: " + uri );
         
-        if( uri.indexOf("/familystatus/ChildInfo.jsp") != -1 ){
+        if( uri.indexOf("/familystatus/InsertChildInfo.jsp") != -1 ){
 System.out.println("TESTING FOR MESSAGE IN CHILDINFO.JSP REQUEST PARAMETER");
             String message = hr.getParameter("message");
             if ( message != null && message.compareTo("enrollmentprocess") == 0 ){
@@ -65,34 +67,7 @@ System.out.println("SETTING EMESSAGE IN SESSION");
             }
         }
         
-        // If asking for FamilyStatus then check to see if there is an 'emessage'
-        // in the session.  This 'emessage' was set if '/familystatus/ChildInfo.jsp'
-        // was requested and if there was a parameter called 'emessage' that
-        // said 'enrollmentprocess'.  This means that a person choose to add a 
-        // child during the enrollment process.
-        else if ( uri.indexOf("FamilyStatus.jsp") != -1 )
-        {
-            String emessage = (String)sess.getAttribute("emessage");
-            
-            // IF asked for FamilyStatus.jsp AND there is an emessage,  
-            // THEN that means that the user has choosen to cancel adding a new
-            // child during the enrollment process so we should redirect back
-            // to ViewEnrollments.jsp with out any changes.
-            if( emessage != null && emessage.compareTo("enrollmentprocess") == 0 )
-            {
-System.out.println("CANCEL ADD CHILD SO...RETRIEVE EMESSAGE REDIRECT TO VIEW ENROLLMENTS");
-                String id = (String)sess.getAttribute("eid");
-                String fname = (String)sess.getAttribute("efname");
-                sess.removeAttribute("emessage");
-                sess.removeAttribute("eid");
-                ((HttpServletResponse)response).sendRedirect( 
-                        ((HttpServletRequest)request).getContextPath() + 
-                        "/GetEnrollmentsServlet?" +
-                        "id=" + id
-                        );
-            }
-        } 
-        else if ( uri.indexOf("GetFamilyStatusServlet") != -1 )
+        if ( uri.indexOf("GetFamilyStatusServlet") != -1 )
         {
             String emessage = (String)sess.getAttribute("emessage");
             
@@ -118,18 +93,17 @@ System.out.println("CHILD ADDED SO...RESETTING FAMILYLIST...");
                     ResultSetArrayList familyList = (ResultSetArrayList)sess.getAttribute("familyList");
 
                     // Now compare old list with new list
+                    boolean entityfound = false;
                     Integer entityid = null;
-                    String fname = null;
                     Iterator newi = newfamilyList.listIterator();
                     while ( newi.hasNext() ){
+                        entityfound = false;
                         Map newperson = (Map)newi.next();
                         entityid = (Integer)newperson.get("entityid");
-                        fname = (String)newperson.get("firstname");
                         Integer newentityid = (Integer)newperson.get("entityid");
                         
                         // Search through the entire old list for each identityid
                         // on the new list.
-                        boolean entityfound = false;
                         Iterator oldi = familyList.listIterator();
                         while ( oldi.hasNext() && !entityfound ){
                             Map oldperson = (Map)oldi.next();
@@ -147,10 +121,24 @@ System.out.println("CHILD ADDED SO...RESETTING FAMILYLIST...");
                         }
                     }
                     
+                    // If the two lists are the same then assume that adding child
+                    // process was cancelled so we want to return to original 
+                    // entity enrollment screen
+                    if (entityfound == true){
+                        String _entityid = (String)sess.getAttribute("eid"); 
+                        try {
+                            entityid = new Integer(_entityid);
+                        } catch (Throwable t){ 
+                            System.out.println(t);
+                        }
+                    }
+                    
                     // Put new list into session for later use
                     sess.setAttribute( "familyList", newfamilyList );
+                    // Remove extraneous attributes
                     sess.removeAttribute("emessage");
                     sess.removeAttribute("eid");
+                    
 System.out.println("CHILD ADDED SO...AND NOW REDIRECTING TO VIEW ENROLLMENTS");
                     // Then redirect to Get EnrollmentServlet
                     ((HttpServletResponse)response).sendRedirect( 

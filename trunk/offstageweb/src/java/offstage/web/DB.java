@@ -139,7 +139,7 @@ System.out.println("groupid is: " + groupid);
     throws SQLException
     {
         return st.executeQuery(
-                "SELECT phoneids.name, phones.phone" +
+                "SELECT phoneids.name, phone, domestic, ext " +
                 " FROM phones, phoneids" +
                 " WHERE entityid = " + SqlInteger.sql(primaryentityid) +
                 " AND phones.groupid = phoneids.groupid"
@@ -180,11 +180,13 @@ System.out.println("groupid is: " + groupid);
      * @param entityid unique id of entity the phone number belongs to
      * @param name type of phone number
      * @param number phone number
+     * @param ext the extension
+     * @param domestic whether or not the number is domestic
      * @throws java.sql.SQLException if a database access error occurs
      * @return number of rows effected by insert
      */
     public static int insertPhones( Statement st, Integer entityid, String name, 
-            String number )
+            String number, Integer ext, Boolean domestic )
     throws SQLException
     {
         ResultSet rs = st.executeQuery(
@@ -201,7 +203,10 @@ System.out.println("groupid is: " + groupid);
                 " VALUES (" +
                 " " + SqlInteger.sql(groupid) + ", " +
                 " " + SqlInteger.sql(entityid) + ", " +
-                " " + SqlString.sql(number) + " ) " 
+                " " + SqlString.sql(number) + ", " +
+                " " + SqlInteger.sql(ext) + ", " +
+                " " + SqlBool.sql(domestic) + 
+                " ) " 
                 );
         
     }
@@ -282,7 +287,7 @@ System.out.println("groupid is: " + groupid);
      * @return number of rows effected
      */
     public static int updateChild( Statement st, Integer entityid, String firstname, 
-            String middlename, String lastname, String gender, String dob, 
+            String middlename, String lastname, String gender, java.util.Date dob, 
             String email, String relprimarytype )
     throws SQLException
     {
@@ -302,7 +307,7 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
                 " middlename = " + SqlString.sql(middlename) + ", " +
                 " lastname = " + SqlString.sql(lastname) + ", " +
                 " gender = " + SqlString.sql(gender) + ", " +
-                " dob = to_date(" + SqlString.sql(dob) + ", 'MM/DD/YYYY'), " +
+                " dob = " + SqlDate.sql(dob) + ", " +
                 " email = " + SqlString.sql(email) + ", " +
                 " relprimarytypeid = " + SqlInteger.sql( relprimarytypeid )  + ", " +
                 " lastupdated = " + SqlTimestamp.sql( new Timestamp( System.currentTimeMillis() ) ) + " " +
@@ -326,11 +331,10 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
      * @return number of rows effected
      */
     public static int updateAdult( Statement st, Integer entityid, String firstname, 
-            String middlename, String lastname, String gender, String dob, 
+            String middlename, String lastname, String gender, java.util.Date dob, 
             String email, String occupation, String title )
     throws SQLException
     {
-        System.out.println( "occupation is " + occupation );
         return st.executeUpdate(
                 "UPDATE persons " +
                 " SET " +
@@ -338,7 +342,7 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
                 " middlename = " + SqlString.sql(middlename) + ", " +
                 " lastname = " + SqlString.sql(lastname) + ", " +
                 " gender = " + SqlString.sql(gender) + ", " +
-                " dob = to_date(" + SqlString.sql(dob) + ", 'MM/DD/YYYY'), " +
+                " dob = " + SqlDate.sql(dob) + ", " +
                 " email = " + SqlString.sql(email) + ", " +
                 " lastupdated = " + SqlTimestamp.sql( new Timestamp( System.currentTimeMillis() ) ) + ", " +
                 " occupation = " + SqlString.sql(occupation) + ", " +
@@ -362,7 +366,7 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
      * @return number of rows effected
      */
     public static int insertChild( Statement st, String firstname, 
-            String middlename, String lastname, String gender, String dob, 
+            String middlename, String lastname, String gender, java.util.Date dob, 
             String email, String relprimarytype, Integer primaryentityid )
     throws SQLException
     {
@@ -411,7 +415,7 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
                 " " + SqlString.sql("") + ", " +
                 
                 " " + SqlString.sql(gender) + ", " +
-                " to_date(" + SqlString.sql(dob) + ", 'MM/DD/YYYY'), " +
+                " " + SqlDate.sql(dob) + ", " +
                 " " + SqlString.sql(email) + " " +
                 " )" 
                 );
@@ -428,7 +432,7 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
     throws SQLException
     {
         return st.executeQuery(
-                "SELECT username, password " +
+                "SELECT * " +
                 " FROM accounts" +
                 " WHERE entityid = " + SqlInteger.sql(entityid)
                 );
@@ -591,6 +595,8 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
     /**
      * Get all enrollments that a given entityid is eligible for - including any
      * that the entityid is currently enrolled in.
+     * @param st statement used to query and update db
+     * @throws java.sql.SQLException if a database access error occurs
      */
     public static ResultSet getEligibleEnrollments( Statement st, Integer entityid ) 
     throws SQLException {
@@ -633,6 +639,8 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
     
     /**
      * Get all courses for which an entityid is currently enrolled in
+     * @param st statement used to query and update db
+     * @throws java.sql.SQLException if a database access error occurs
      */
     public static ResultSet getCurrentEnrollments(Statement st, Integer entityid) 
     throws SQLException {
@@ -640,7 +648,8 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
                 // Get all course information of enrolled course associated with entityid...
                 "SELECT courseids.courseid, courseids.name as course_name, " +
                 " courseids.dayofweek, courseids.tstart, courseids.tnext," +
-                " termids.name as term_name, termids.firstdate, termids.nextdate" +
+                " termids.name as term_name, termids.firstdate, termids.nextdate, " +
+                " enrollments.pplanid, enrollments.entityid, termids.termid" +
                 " FROM enrollments, courseids, termids " +
                 " WHERE enrollments.entityid = " + SqlInteger.sql(entityid) + 
                 
@@ -673,6 +682,8 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
     /**
      * Insert enrollment row with courserole as student and date enrolled as
      * current time given unique courseid and entityid
+     * @param st statement used to query and update db
+     * @throws java.sql.SQLException if a database access error occurs
      */
     public static int insertStudentEnrollment(Statement st, Integer courseid, 
             Integer entityid ) 
@@ -701,5 +712,102 @@ System.out.println( "relprimarytypeid is: " + relprimarytypeid );
         } else return 0;
     }
 
+    /**
+     * Get all current payment plans associated with the given entityid
+     * @param st statement used to query and update db
+     * @param entityid 
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return 
+     */
+    public static ResultSet getCurrentPaymentPlans(Statement st, Integer entityid) 
+    throws SQLException {
+            // ...then insert new enrollment
+        return st.executeQuery(
+                "SELECT pplanids.pplanid, pplanids.remain as remainpp, " +
+                " pplanids.amount as amountpp, substring(pplanids.ccnumber from '....$') as ccnumber," +
+                " paymenttypeids.name as paymentname, pplantypeids.name as planname, " +
+                " termids.name as termname" +
+                " FROM pplanids, paymenttypeids, pplantypeids, termids" +
+                " WHERE entityid = " + SqlInteger.sql(entityid) +
+                " AND pplanids.paymenttypeid = paymenttypeids.paymenttypeid" +
+                " AND pplanids.paymentplantypeid = pplantypeids.pplantypeid" +
+                " AND pplanids.termid = termids.termid"
+                );
+    }
+    
+    /**
+     * Get all invoices associated with a particular payment plan id
+     * @param st statement used to query and update db
+     * @param pplanid 
+     * @throws java.sql.SQLException if a database access error occurs
+     * @return 
+     */
+    public static ResultSet getPPInvoices(Statement st, Integer pplanid) 
+    throws SQLException {
+        return st.executeQuery(
+                "SELECT * " +
+                " FROM pplaninvoiceids, invoiceids" +
+                " WHERE pplaninvoiceids.invoiceid = invoiceids.invoiceid" +
+                " AND pplaninvoiceids.pplanid = " + SqlInteger.sql(pplanid)
+                );
+    }
 
+
+    public static ResultSet getPPlanTypeidsMenu(Statement st) throws SQLException {
+        return st.executeQuery(
+                " SELECT pplantypeid as value, name as label, pplantypeids.type" +
+                " FROM pplantypeids"
+                );
+    }
+
+    public static ResultSet getPaymentTypeidsMenu(Statement st) throws SQLException {
+        return st.executeQuery(
+                " SELECT paymenttypeid as value, name as label, paymenttypeids.table" +
+                " FROM paymenttypeids"
+                );
+    }
+
+    public static Integer insertPaymentPlan(Statement st, Integer primaryentityid, 
+            String cctypeid, String ccnumber, java.util.Date invaliddate, String name, 
+            Integer pplantypeid, Integer termid, Integer paymenttypeid) 
+    throws SQLException {
+        // Get new pplanid
+        int pplanid = 0;
+        ResultSet rs = st.executeQuery("SELECT nextval('pplanids_pplanid_seq')");
+        if ( rs.next() ) pplanid = rs.getInt(1);
+        
+        boolean executed = st.execute(
+                "INSERT INTO pplanids" +
+                " VALUES (" +
+                " " + SqlInteger.sql( pplanid ) + ", " +
+                " " + SqlInteger.sql( primaryentityid ) + ", " +
+                " " + SqlInteger.sql( paymenttypeid ) + ", " +
+                " " + SqlString.sql( cctypeid ) + ", " +
+                " " + SqlString.sql( ccnumber ) + ", " + 
+                " " + SqlDate.sql( invaliddate ) + ", " + 
+                " " + SqlString.sql( name ) + ", " + 
+                // dtime
+                " " + SqlTimestamp.sql( new Timestamp(System.currentTimeMillis()) ) + ", " + 
+                // dtapproved
+                " null, " + 
+                " " + SqlInteger.sql( pplantypeid ) + ", " +
+                // Remain
+                " null, " + 
+                // Amount
+                " null, " + 
+                " " + SqlInteger.sql( termid ) + ") "
+                );
+        return new Integer(pplanid);
+    }
+
+    public static int updateEnrollment(Statement st, Integer courseid, 
+            Integer entityid, Integer pplanid) 
+    throws SQLException {
+        return st.executeUpdate(
+                " UPDATE enrollments " +
+                " SET pplanid = " + SqlInteger.sql(pplanid) +  
+                " WHERE courseid = " + SqlInteger.sql(courseid) + 
+                " and entityid = " + SqlInteger.sql(entityid)
+                );
+    }
 }

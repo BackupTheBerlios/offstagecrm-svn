@@ -34,7 +34,6 @@ public class ResultSetArrayList extends ArrayList implements RSCollection, Seria
             for (int i = 0; i < columnNames.length; i++) {                
                 map.put(columnNames[i], rs.getObject(i + 1));            
             }
-//            list.add(Collections.unmodifiableMap(map));  
             map = Collections.unmodifiableMap(map);
             this.add(map);        
         }
@@ -64,7 +63,10 @@ public class ResultSetArrayList extends ArrayList implements RSCollection, Seria
      * @param value what we want to find using the key
      * @return a list of all Maps in this array that have the specified value
      */
-    public ArrayList get( String key, Object value ){
+    public Map get( String key, Object value ){
+        if ( key == null || value == null )
+            throw new NullPointerException("KEY AND/OR VALUE PARAMETERS CANNOT BE NULL");
+        
         // First check to see if key is found on maps...
         boolean correctkey = false;
         for ( int i = 0; i < columnNames.length; ++i ){
@@ -76,8 +78,7 @@ public class ResultSetArrayList extends ArrayList implements RSCollection, Seria
         // If key not found on map then throw illegal argument exception
         if( !correctkey ) throw new IllegalArgumentException("KEY NOT FOUND ON MAP");
         
-        // Now search for all maps that contains the given key-value pair
-        ArrayList temp = new ArrayList();
+        // Now search for the first map that has the key/value pair
         Iterator i = this.listIterator();
         while ( i.hasNext() ){
             Map row = (Map)i.next();
@@ -85,51 +86,51 @@ public class ResultSetArrayList extends ArrayList implements RSCollection, Seria
             if ( value instanceof Boolean ) 
             {
                 if ( ((Boolean)_value).equals((Boolean)value) )
-                    temp.add(row);
+                    return row;
             }
             else if ( value instanceof Byte )
             {
-                if ( ((Byte)_value).compareTo((Byte)value)== 0 )
-                temp.add(row);
+                if ( ((Byte)_value).compareTo((Byte)value) == 0 )
+                    return row;
             }
             else if ( value instanceof Character )
             {
                 if ( ((Character)_value).compareTo((Character)value)== 0 )
-                temp.add(row);
+                    return row;
             } 
             else if ( value instanceof Double )
             {
                 if ( ((Double)_value).compareTo((Double)value)== 0 )
-                temp.add(row);
+                    return row;
             } 
             else if ( value instanceof Float )
             {
                 if ( ((Float)_value).compareTo((Float)value)== 0 )
-                temp.add(row);
+                    return row;
             } 
             else if ( value instanceof Integer )
             {
                 if ( ((Integer)_value).compareTo((Integer)value)== 0 )
-                temp.add(row);
+                    return row;
             } 
             else if ( value instanceof Long )
             {
                 if ( ((Long)_value).compareTo((Long)value)== 0 )
-                temp.add(row);
+                    return row;
             } 
             else if ( value instanceof Short )
             {
                 if ( ((Short)_value).compareTo((Short)value)== 0 )
-                temp.add(row);
+                    return row;
             } 
             else if ( value instanceof String )
             {
                 if ( ((String)_value).compareTo((String)value)== 0 )
-                temp.add(row);
+                    return row;
             } else throw new IllegalArgumentException("Value must be Boolean" +
                         "Byte, Character, Double, Float, Integer, Long, Short or String");
         }
-        return temp;
+        return null;
     }
 /*
     public String toString(){

@@ -7,8 +7,10 @@ package offstage.web.registration;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.servlet.http.*;
@@ -19,28 +21,36 @@ import offstage.web.collections.ResultSetArrayList;
  *
  * @author Michael Wahl
  */
-public class GetEnrollmentsServlet extends citibob.web.DbServlet{
+public class GetEnrollmentsServlet extends offstage.web.MyServlet{
     
     public void dbRequest(HttpServletRequest request, HttpServletResponse response,
         HttpSession sess, Statement st) throws Exception
     {
-        String _entityid = request.getParameter( "id" );
-System.out.println("ENTITY ID IS: " + _entityid);
-        String fname = null;
-        if ( _entityid != null ){
-            Integer entityid = new Integer( _entityid );
+        sess.removeAttribute( "currentEnrollments" );
+        sess.removeAttribute( "famDropDown" );
+        sess.removeAttribute( "eligibleEnrollments" );
+        
+        // Get entityid from parameter
+        Integer entityid = this.getIntegerParameter(request, "id");
+        
+        if ( entityid != null ){
             
-            // Get firstname to send as a parameter during the redirect...
+            // Create drop down list for ViewEnrollments.jsp to view 
+            // enrollments of another person in the family
             ResultSetArrayList familyList = (ResultSetArrayList)sess.getAttribute("familyList");
-            Iterator iterator = familyList.listIterator();
-            while( iterator.hasNext() ){
-                Map person = (Map)iterator.next();
-                Integer pid = (Integer)person.get("entityid");
-                if ( pid.compareTo(entityid) == 0 ){
-                    fname = (String)person.get("firstname");
-                    break;
-                }
+            int famsize = familyList.size();
+            ArrayList famDropDown = new ArrayList();
+            Iterator it = familyList.listIterator();
+            while ( it.hasNext() ){
+                Map person = (Map)it.next();
+                Integer eid = (Integer)person.get("entityid");
+                String fname = (String)person.get("firstname");
+                HashMap temp = new HashMap();
+                temp.put( "value", eid );
+                temp.put( "label", fname );
+                famDropDown.add(temp);
             }
+            sess.setAttribute( "famDropDown", famDropDown );
             
             // Now get all enrollments associated with entityid
             try {
@@ -86,14 +96,25 @@ System.out.println("ENTITY ID IS: " + _entityid);
                         }
                     }
                 }
+                
+                if ( eligibleEnrollments.size() == 0 && currentEnrollments.size() == 0 ){
+                    sess.removeAttribute( "currentEnrollments" );
+                    sess.removeAttribute( "famDropDown" );
+                    sess.removeAttribute( "eligibleEnrollments" );
+                    redirect( request, response, "/GetRegistrationsServlet?" +
+                            "id=" + entityid
+                            );
+                } else {
+                    LinkedList urlstack = (LinkedList)sess.getAttribute("urlstack");
+                    urlstack.addFirst( "/GetEnrollmentsServlet?id=" + entityid );
+                    redirect( request, response, "/ViewEnrollments.jsp?" +
+                            "id=" + entityid
+                            );
+                }
             } catch ( SQLException e ){
                 System.out.println( e );
             }
-            redirect( request, response, "/ViewEnrollments.jsp?" +
-                    "id=" + entityid +
-                    "&fname=" + fname 
-                    );
-        } else redirect(request, response, "/FamilyStatus.jsp");
+        } else redirect(request, response, "/GetFamilyStatusServlet");
     }
     
     /**

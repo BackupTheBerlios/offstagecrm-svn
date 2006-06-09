@@ -8,6 +8,8 @@ package offstage.web.registration;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.Map;
 import javax.servlet.http.*;
 import offstage.web.DB;
 import offstage.web.Logic;
@@ -19,36 +21,54 @@ import offstage.web.collections.ResultSetArrayList;
  * is eligible for given date of birth.
  * @author Michael Wahl
  */
-public class GetRegistrationsServlet extends citibob.web.DbServlet {
+public class GetRegistrationsServlet extends offstage.web.MyServlet {
     
     public void dbRequest(HttpServletRequest request, HttpServletResponse response,
         HttpSession sess, Statement st) throws Exception
     {
-        String _entityid = request.getParameter( "id" );
-        String dob = request.getParameter( "dob" );
-        if ( _entityid != null && dob != null ){
+        // Remove Extraneous attributes
+        sess.removeAttribute("registeredPrograms");
+        sess.removeAttribute("eligiblePrograms");
+        
+        Integer entityid = this.getIntegerParameter( request, "id" );
+        ResultSetArrayList familyList = (ResultSetArrayList)sess.getAttribute( "familyList" );
+System.out.println("entityid is: " + entityid);
+System.out.println("familyList is: " + familyList);
+
+        Integer age = null;
+        if ( entityid != null && familyList != null ) {
+            Map person = familyList.get( "entityid", entityid );
+        
+            // Validate dob and get age
             Logic logic = new Logic();
-            Integer age = logic.getAge(dob);
-            Integer entityid = new Integer( _entityid );
+            java.util.Date birthdate = null;
+            if ( person != null ){
+                birthdate = (java.util.Date)person.get("dob");
+                age = logic.getAge(birthdate);
+            }
+        }
+        
+        if ( entityid != null && age != null ){
             try {
-                
                 ResultSet rs = DB.getCurrentRegistrations( st, entityid );
                 ResultSetArrayList registeredPrograms = new ResultSetArrayList( rs );
-                sess.setAttribute( "registeredPrograms", registeredPrograms );
 System.out.println(registeredPrograms);
+
                 rs = DB.getEligibleRegistrations( st, entityid, age );
                 ResultSetArrayList eligiblePrograms = new ResultSetArrayList( rs );
-                sess.setAttribute( "eligiblePrograms", eligiblePrograms );
 System.out.println(eligiblePrograms);
-                
+
+                LinkedList urlstack = (LinkedList)sess.getAttribute("urlstack");
+                urlstack.addFirst( "/GetRegistrationsServlet?id=" + entityid );
+
+                sess.setAttribute( "registeredPrograms", registeredPrograms );
+                sess.setAttribute( "eligiblePrograms", eligiblePrograms );
+                redirect( request, response, "/ViewRegistrations.jsp?" +
+                        "id=" + entityid
+                        );
             } catch( SQLException e ){
                 System.out.println( e );
             }
-            redirect( request, response, "/ViewRegistrations.jsp?id=" + entityid + 
-                    "&fname=" + request.getParameter( "fname" ) +
-                    "&age=" + age
-                    );
-
-        } else redirect( request, response, "/FamilyStatus.jsp" );
+        } else redirect( request, response, "/GetFamilyStatusServlet" );
     }
 }
