@@ -50,29 +50,29 @@ public class TermsPNC extends citibob.jschema.gui.StatusPNC
 
 	
 	
-public static void main(String[] args) throws Exception
-{
-	DBPrefsDialog d = new DBPrefsDialog(null, "offstage/db", "offstage/gui/DBPrefsDialog");
-		d.setVisible(true);
-		if (!d.isOkPressed()) {	// User cancelled DB open
-			System.exit(0);
-		}
-	ConnPool pool = d.newConnPool();
-	DbChangeModel change = new DbChangeModel();
-	SwingerMap swingers = new citibob.sql.pgsql.DefaultSwingerMap();
-	
-	//FrontApp app = new FrontApp(d.newConnPool());
-	Statement st = pool.checkout().createStatement();
-	OffstageSchemaSet sset = new OffstageSchemaSet(st, change);
-	TermsDbModel tm = new offstage.TermsDbModel(st, change, sset.termids);
-//	Statement st = app.createStatement();
-	tm.doSelect(st);
-	TermsPNC panel = new TermsPNC();
-	ActionRunner runner = new SimpleDbActionRunner(pool);
-	panel.initRuntime(tm, swingers, runner);
-	JFrame frame = new JFrame();
-	frame.setSize(500,300);
-	frame.getContentPane().add(panel);
-	frame.show();
-}
+//public static void main(String[] args) throws Exception
+//{
+//	DBPrefsDialog d = new DBPrefsDialog(null, "offstage/db", "offstage/gui/DBPrefsDialog");
+//		d.setVisible(true);
+//		if (!d.isOkPressed()) {	// User cancelled DB open
+//			System.exit(0);
+//		}
+//	ConnPool pool = d.newConnPool();
+//	DbChangeModel change = new DbChangeModel();
+//	SwingerMap swingers = new citibob.sql.pgsql.DefaultSwingerMap();
+//	
+//	//FrontApp app = new FrontApp(d.newConnPool());
+//	Statement st = pool.checkout().createStatement();
+//	OffstageSchemaSet sset = new OffstageSchemaSet(st, change);
+//	TermsDbModel tm = new offstage.TermsDbModel(st, change, sset.termids);
+////	Statement st = app.createStatement();
+//	tm.doSelect(st);
+//	TermsPNC panel = new TermsPNC();
+//	ActionRunner runner = new SimpleDbActionRunner(pool);
+//	panel.initRuntime(tm, swingers, runner);
+//	JFrame frame = new JFrame();
+//	frame.setSize(500,300);
+//	frame.getContentPane().add(panel);
+//	frame.show();
+//}
 }

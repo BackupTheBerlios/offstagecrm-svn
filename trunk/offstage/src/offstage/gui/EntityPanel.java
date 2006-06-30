@@ -61,11 +61,14 @@ public class EntityPanel extends javax.swing.JPanel {
 			new String[] {"Type", "Date", "Amount"},
 			new String[] {"groupid", "date", "amount"}, smap);
 		eventsPanel.initRuntime(st, dm.getEventsSb(),
-			new String[] {"Type", "Role"},
+			new String[] {"Event", "Role"},
 			new String[] {"groupid", "role"}, smap);
 		notesPanel.initRuntime(st, dm.getNotesSb(),
 			new String[] {"Type", "Date", "Note"},
 			new String[] {"groupid", "date", "note"}, smap);
+		ticketsPanel.initRuntime(st, dm.getTicketsSb(),
+			new String[] {"Event", "Type", "#Tix", "Payment"},
+			new String[] {"groupid", "tickettypeid", "numberoftickets", "payment"}, smap);
 		dm.addListener(new FullEntityDbModel.Adapter() {
 		public void entityTypeChanged(int type) {
 			CardLayout cl = (CardLayout)(basicPanel.getLayout());
@@ -95,6 +98,7 @@ public class EntityPanel extends javax.swing.JPanel {
         donationsPanel = new offstage.gui.GroupPanel();
         eventsPanel = new offstage.gui.GroupPanel();
         notesPanel = new offstage.gui.GroupPanel();
+        ticketsPanel = new offstage.gui.GroupPanel();
 
         _tableLayoutInstance = new info.clearthought.layout.TableLayout();
         _tableLayoutInstance.setHGap(0);
@@ -118,6 +122,8 @@ public class EntityPanel extends javax.swing.JPanel {
 
         groupPanels.addTab("Notes", notesPanel);
 
+        groupPanels.addTab("Tickets", ticketsPanel);
+
         add(groupPanels, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
     }
@@ -132,6 +138,7 @@ public class EntityPanel extends javax.swing.JPanel {
     private offstage.gui.GroupPanel notesPanel;
     private offstage.gui.OrgPanel orgPanel;
     private offstage.gui.PersonPanel personPanel;
+    private offstage.gui.GroupPanel ticketsPanel;
     // End of variables declaration//GEN-END:variables
 
 //	public static void main(String[] args) throws Exception

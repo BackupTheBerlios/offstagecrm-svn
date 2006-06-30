@@ -64,6 +64,7 @@ EntityDbModel oneOrg;
 IntKeyedDbModel phones;
 IntKeyedDbModel donations;
 IntKeyedDbModel notes;
+IntKeyedDbModel tickets;
 IntKeyedDbModel events;
 //FamilyTableModel family;
 
@@ -81,6 +82,7 @@ public void setKey(int entityID)
 	phones.setKey(entityID);
 	donations.setKey(entityID);
 	notes.setKey(entityID);
+	tickets.setKey(entityID);
 	events.setKey(entityID);
 }
 public int getEntityId()
@@ -114,6 +116,8 @@ public SchemaBuf getEventsSb()
 	{ return events.getSchemaBuf(); }
 public SchemaBuf getNotesSb()
 	{ return notes.getSchemaBuf(); }
+public SchemaBuf getTicketsSb()
+	{ return tickets.getSchemaBuf(); }
 //public FamilyTableModel getFamily()
 //	{ return family; }
 public FullEntityDbModel(OffstageSchemaSet osset, ActionRunner appRunner)
@@ -125,6 +129,7 @@ public FullEntityDbModel(OffstageSchemaSet osset, ActionRunner appRunner)
 	add(phones = new IntKeyedDbModel(osset.phones, "entityID"));
 	add(donations = new IntKeyedDbModel(osset.donations, "entityID"));
 	add(notes = new IntKeyedDbModel(osset.notes, "entityID"));
+	add(tickets = new IntKeyedDbModel(osset.tickets, "entityID"));
 	add(events = new IntKeyedDbModel(osset.events, "entityID"));
 }
 

@@ -46,7 +46,7 @@ FrontApp app;
 		initComponents();
 	}
 
-	public void initRuntime(final FrontApp app, FrameSet frameSet)
+	public void initRuntime(final FrontApp app, FrameSet frameSet, Preferences guiPrefs)
 	throws java.sql.SQLException
 	{
 		this.app = app;
@@ -80,7 +80,7 @@ FrontApp app;
 
 			// Mess with preferences
 			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-			prefs = prefs.node("OmniGui");
+			prefs = guiPrefs.node("OffstageGui");
 			new SwingPrefs().setPrefs(this, "", prefs);
 		} finally {
 			st.close();

@@ -28,6 +28,7 @@ public Schema groupids;
 public Schema mailingids;
 public Schema mailings;
 public Schema notes;
+public Schema tickets;
 public Schema org;
 public Schema persons;
 public Schema phones;
@@ -47,6 +48,7 @@ throws SQLException
 	mailingids = new MailingidsSchema();
 	mailings = new MailingsSchema(st, change);
 	notes = new NotesSchema(st, change);
+	tickets = new TicketeventsSchema(st, change);
 	org = new OrgSchema(st, change);
 	persons = new PersonsSchema(st, change);
 	phones = new PhonesSchema(st, change);

@@ -14,6 +14,7 @@ import citibob.version.*;
 import java.util.prefs.*;
 import java.util.*;
 import java.sql.*;
+import java.io.*;
 
 /**
  *
@@ -21,41 +22,56 @@ import java.sql.*;
  */
 public class OffstageVersion {
 
-//public final Version frontendVersion;
-//public final Version dbVersion;
-//public final Version prefVersion;
-//
-//// Converters from given version to actual version
-//public final Version.Entry dbEntry;
-//public final Version.Entry prefEntry;
-//
-//
-//Version.Entry[] dbWorks = null;
-//Version.Entry[] prefWorks = null;
-//
-//public final Preferences pref;
-//public final Preferences guiPref;
-//
-///** Creates a new instance of OffstageVersion */
-//public OffstageVersion(Statement st)
-//throws SQLException, java.util.prefs.BackingStoreException
-//{
-//	// Version of this front-end
-//	frontendVersion = new Version(0,3,0);
-//
-//	// Mappings of what database, etc. versions this front-end works with.
-//	// Most-preferred mappings are first!
-//	dbWorks = new Version.Entry[] {
-//		new Version.Entry(new Version.Range(0,3,0), null)
-//	};
-//	prefWorks = new Version.Entry[] {
-//		new Version.Entry(new Version.Range(0,3,0), null)
-//	};
-//
-//	// Make sure the database is right version
-//	dbVersion = new Version(st, "dbversion");
-//	dbEntry = getEntry(dbWorks, dbVersion);
-//
+static final Version.Entry[] dbWorks;
+
+public static Version frontendVersion;
+public static Version dbVersion;
+static Version.Entry dbEntry;
+public static Preferences prefs;			// Root preferences node
+public static Preferences guiPrefs;		// Root prefs node for GUI
+
+// ------------------------------------------------------------------
+static {
+	// Version of this front-end
+	frontendVersion = new Version(0,3,0);
+
+	// Mappings of what database, etc. versions this front-end works with.
+	// Most-preferred mappings are first!
+	dbWorks = new Version.Entry[] {
+		new Version.Entry(new Version.Range(0,3,0), null)
+	};
+
+	try {
+		fetchPrefRoots();
+	} catch(Exception e) {
+		e.printStackTrace(System.err);
+		System.exit(-1);
+	}
+}
+// ------------------------------------------------------------------
+private static void fetchPrefRoots()
+throws BackingStoreException, IOException, InvalidPreferencesFormatException
+{
+	Preferences n = Preferences.userRoot();
+	n = n.node("offstage");
+	String sversion = frontendVersion.toString();
+	if (!n.nodeExists(sversion)) {
+		// No preferences; create them.
+		Preferences.importPreferences(
+			OffstageVersion.class.getResourceAsStream("prefs.xml"));
+	}
+	prefs = n.node(sversion);
+	guiPrefs = prefs.node("gui");
+}
+// ------------------------------------------------------------------
+/** Creates a new instance of OffstageVersion */
+public static void fetchDbVersion(Statement st)
+throws SQLException, BackingStoreException, IOException, InvalidPreferencesFormatException
+{
+	// Make sure the database is right version
+	dbVersion = new Version(st, "dbversion");
+	dbEntry = getEntry(dbWorks, dbVersion);
+
 //	// Decide on version of preferences to use.
 //	Preferences prefRoot = Preferences.userRoot();
 //	prefRoot = prefRoot.node("offstage");
@@ -74,27 +90,27 @@ public class OffstageVersion {
 //			break;
 //		}
 //	}
-//}
-//
-///** Make sure the versions found are appropriate. */
-//public void checkVersions() throws VersionException
-//{
-//	if (dbEntry == null || dbEntry.converter != null) throw new VersionException(
-//		"Database version " + dbVersion + " not appropriate for front-end version " + frontendVersion);
-//	
+}
+
+/** Make sure the versions found are appropriate. */
+public static void checkVersions() throws VersionException
+{
+	if (dbEntry == null || dbEntry.converter != null) throw new VersionException(
+		"Database version " + dbVersion + " not appropriate for front-end version " + frontendVersion);
+	
 //	if (prefEntry == null || prefEntry.converter != null) throw new VersionException(
 //		"No suitable preferences for front-end version " + frontendVersion + " found!");
-//}
-//
-//
-///** Gets the entry corresponding to v. */
-//private static Version.Entry getEntry(Version.Entry[] e, Version v)
-//{
-//	for (int i=0; i<e.length; ++i) {
-//		if (e[i].range.inRange(v)) return e[i];
-//	}
-//	return null;
-//}
+}
+
+
+/** Gets the entry corresponding to v. */
+private static Version.Entry getEntry(Version.Entry[] e, Version v)
+{
+	for (int i=0; i<e.length; ++i) {
+		if (e[i].range.inRange(v)) return e[i];
+	}
+	return null;
+}
 
 
 }
