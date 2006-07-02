@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
-Class-Path: jschema.jar prefedit-0.7.jar commons-beanutils.jar commons-collections-3.1.jar commons-digester-1.7.jar commons-logging.jar itext-1.3.jar jasperreports-0.6.8.jar pg73jdbc3.jar TableLayout.jar xpp3_min-1.1.3.4.I.jar xstream-1.1.2.jar
+Class-Path: jschema.jar prefedit-0.7.jar mail.jar activation.jar commons-beanutils.jar commons-collections-3.1.jar commons-digester-1.7.jar commons-logging.jar itext-1.3.jar jasperreports-0.6.8.jar pg73jdbc3.jar TableLayout.jar xpp3_min-1.1.3.4.I.jar xstream-1.1.2.jar

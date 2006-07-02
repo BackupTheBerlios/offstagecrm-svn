@@ -75,9 +75,16 @@ public void bind(TypedWidget tw, SchemaRowModel bufRow)
 /** Propagate data from underlying model to widget. */
 public void valueChanged(int col)
 {
-	int entityid = ((Integer)bufRow.get(entityidCol)).intValue();
-	int primaryid = ((Integer)bufRow.get(primaryCol)).intValue();
-	tw.setValue(entityid == primaryid ? Boolean.TRUE : Boolean.FALSE);
+	Integer Entityid = (Integer)bufRow.get(entityidCol);
+	Integer Primaryid = (Integer)bufRow.get(primaryCol);
+	if (Entityid == null || Primaryid == null) {
+		// New record; assume primary for now
+		tw.setValue(Boolean.TRUE);
+	} else {
+		int entityid = Entityid.intValue();
+		int primaryid = Primaryid.intValue();
+		tw.setValue(entityid == primaryid ? Boolean.TRUE : Boolean.FALSE);
+	}
 }
 public void curRowChanged(int col)
 {

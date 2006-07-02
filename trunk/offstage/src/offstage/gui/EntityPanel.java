@@ -69,6 +69,12 @@ public class EntityPanel extends javax.swing.JPanel {
 		ticketsPanel.initRuntime(st, dm.getTicketsSb(),
 			new String[] {"Event", "Type", "#Tix", "Payment"},
 			new String[] {"groupid", "tickettypeid", "numberoftickets", "payment"}, smap);
+		interestsPanel.initRuntime(st, dm.getInterestsSb(),
+			new String[] {"Interest", "By Person", "Referred By"},
+			new String[] {"groupid", "byperson", "referredby"}, smap);
+		classesPanel.initRuntime(st, dm.getClassesSb(),
+			new String[] {"Class", "Comments"},
+			new String[] {"groupid", "comments"}, smap);
 		dm.addListener(new FullEntityDbModel.Adapter() {
 		public void entityTypeChanged(int type) {
 			CardLayout cl = (CardLayout)(basicPanel.getLayout());
@@ -99,6 +105,8 @@ public class EntityPanel extends javax.swing.JPanel {
         eventsPanel = new offstage.gui.GroupPanel();
         notesPanel = new offstage.gui.GroupPanel();
         ticketsPanel = new offstage.gui.GroupPanel();
+        interestsPanel = new offstage.gui.GroupPanel();
+        classesPanel = new offstage.gui.GroupPanel();
 
         _tableLayoutInstance = new info.clearthought.layout.TableLayout();
         _tableLayoutInstance.setHGap(0);
@@ -124,6 +132,10 @@ public class EntityPanel extends javax.swing.JPanel {
 
         groupPanels.addTab("Tickets", ticketsPanel);
 
+        groupPanels.addTab("Interests", interestsPanel);
+
+        groupPanels.addTab("Classes", classesPanel);
+
         add(groupPanels, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
     }
@@ -132,9 +144,11 @@ public class EntityPanel extends javax.swing.JPanel {
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel basicPanel;
+    private offstage.gui.GroupPanel classesPanel;
     private offstage.gui.GroupPanel donationsPanel;
     private offstage.gui.GroupPanel eventsPanel;
     private javax.swing.JTabbedPane groupPanels;
+    private offstage.gui.GroupPanel interestsPanel;
     private offstage.gui.GroupPanel notesPanel;
     private offstage.gui.OrgPanel orgPanel;
     private offstage.gui.PersonPanel personPanel;

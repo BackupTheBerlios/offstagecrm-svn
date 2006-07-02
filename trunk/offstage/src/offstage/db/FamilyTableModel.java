@@ -74,9 +74,14 @@ public void valueChanged(final int col)
 {
 	runner.doRun(new StRunnable() {
 	public void run(Statement st) throws Exception {
-		int primaryid = ((Integer)bufRow.get(primaryCol)).intValue();
+		Integer Primaryid = (Integer)bufRow.get(primaryCol);
+		if (Primaryid == null) {
+			setRowCount(0);		// Just clear it out...
+		} else {
+			int primaryid = Primaryid.intValue();
 System.out.println("FamilyTableModel: value changed to: " + primaryid);
-		setValue(st, primaryid);
+			setValue(st, primaryid);
+		}
 	}});
 }
 public void curRowChanged(int col)

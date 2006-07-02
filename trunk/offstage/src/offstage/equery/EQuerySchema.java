@@ -130,6 +130,10 @@ public EQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
 		"notes.entityid = main.entityid");
 	addSchema(sset.phones,
 		"phones.entityid = main.entityid");
+	addSchema(sset.classes,
+		"classes.entityid = main.entityid");
+	addSchema(sset.interests,
+		"interests.entityid = main.entityid");
 	doAlias();
 }
 private void addSchema(Schema sc, String joinClause, String table)
@@ -148,7 +152,7 @@ private void addSchema(Schema sc, String joinClause, String table)
 		EQuery.ColName cname = new EQuery.ColName(table,  col.col.getName());
 		col.cname = cname;
 //		col.table = table;
-if (cname.stable.equals("persons")) System.out.println("Adding to Schema: " + cname);
+if (cname.stable.equals("classes")) System.err.println("Adding to Schema: " + cname);
 		cols.addItem(cname, col);
 	}
 }
@@ -182,6 +186,8 @@ static final String[] alias = {
 	"notes.note", "note",
 	"phones.groupid", "phone-type",
 	"phones.phone", "phone",
+	"classes.groupid", "classes",
+	"interests.groupid", "interests",
 	"entities.entityid", "entityid",
 	"entities.obsolete", "obsolete",
 };
@@ -195,7 +201,7 @@ void doAlias()
 		EQuery.ColName cname = new EQuery.ColName(alias[i]);
 		String vname = alias[i+1];
 //System.out.println((cols.get(cname).getClass()));
-System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
+System.err.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
 		Col col = (Col)cols.get(cname).obj;
 		if (col == null) continue;
 		col.setViewName(vname);

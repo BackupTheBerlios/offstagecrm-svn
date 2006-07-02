@@ -34,7 +34,7 @@ public Schema persons;
 public Schema phones;
 public Schema termids;
 public Schema termtypes;
-
+public Schema classes, interests;
 
 /** Creates a new instance of OffstageSchema */
 public OffstageSchemaSet(Statement st, DbChangeModel change)
@@ -54,6 +54,8 @@ throws SQLException
 	phones = new PhonesSchema(st, change);
 	termids = new TermidsSchema(st, change);
 	termtypes = new TermtypesSchema();
+	classes = new ClassesSchema(st, change);
+	interests = new InterestsSchema(st, change);
 }
 	
 }

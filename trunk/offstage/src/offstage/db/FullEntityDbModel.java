@@ -66,6 +66,8 @@ IntKeyedDbModel donations;
 IntKeyedDbModel notes;
 IntKeyedDbModel tickets;
 IntKeyedDbModel events;
+IntKeyedDbModel classes;
+IntKeyedDbModel interests;
 //FamilyTableModel family;
 
 //SchemaBufRowModel onePersonRm;
@@ -84,6 +86,8 @@ public void setKey(int entityID)
 	notes.setKey(entityID);
 	tickets.setKey(entityID);
 	events.setKey(entityID);
+	classes.setKey(entityID);
+	interests.setKey(entityID);
 }
 public int getEntityId()
 {
@@ -114,6 +118,10 @@ public SchemaBuf getDonationSb()
 	{ return donations.getSchemaBuf(); }
 public SchemaBuf getEventsSb()
 	{ return events.getSchemaBuf(); }
+public SchemaBuf getClassesSb()
+	{ return classes.getSchemaBuf(); }
+public SchemaBuf getInterestsSb()
+	{ return interests.getSchemaBuf(); }
 public SchemaBuf getNotesSb()
 	{ return notes.getSchemaBuf(); }
 public SchemaBuf getTicketsSb()
@@ -131,6 +139,8 @@ public FullEntityDbModel(OffstageSchemaSet osset, ActionRunner appRunner)
 	add(notes = new IntKeyedDbModel(osset.notes, "entityID"));
 	add(tickets = new IntKeyedDbModel(osset.tickets, "entityID"));
 	add(events = new IntKeyedDbModel(osset.events, "entityID"));
+	add(classes = new IntKeyedDbModel(osset.classes, "entityID"));
+	add(interests = new IntKeyedDbModel(osset.interests, "entityID"));
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

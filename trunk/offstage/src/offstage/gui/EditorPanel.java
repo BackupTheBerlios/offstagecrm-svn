@@ -108,6 +108,7 @@ ActionRunner runner;
         jToolBar1.add(bUndo);
 
         bDelete.setText("Delete Entity");
+        bDelete.setEnabled(false);
         bDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bDeleteActionPerformed(evt);
