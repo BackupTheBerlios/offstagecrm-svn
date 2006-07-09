@@ -49,7 +49,7 @@ OffstageSchemaSet sset;
 
 FullEntityDbModel fullEntityDm;
 EQueryBrowserApp equeryBrowserApp;
-MailingModel mailings;
+MailingModel2 mailings;
 EntityListTableModel simpleSearchResults;
 ActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
@@ -90,7 +90,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		dbChange = new DbChangeModel();
 		this.sset = new OffstageSchemaSet(st, dbChange);
 		fullEntityDm = new FullEntityDbModel(sset, appRunner);
-		mailings = new MailingModel(st, sset, appRunner);
+		mailings = new MailingModel2(st, sset);//, appRunner);
 //	mailings.refreshMailingids();
 		equeryBrowserApp = new EQueryBrowserApp(st, mailings, sset);
 		simpleSearchResults = new EntityListTableModel();
@@ -110,7 +110,7 @@ public EntityListTableModel getSimpleSearchResults()
 // ------------------------------------
 public FullEntityDbModel getFullEntityDm()
 	{ return fullEntityDm; }
-public MailingModel getMailingModel()
+public MailingModel2 getMailingModel()
 	{ return mailings; }
 public EQueryBrowserApp getEqueryBrowserApp()
 	{ return equeryBrowserApp; }

@@ -42,16 +42,16 @@ import offstage.schema.*;
  * No setKey() in this class; it just displays terms for past 2 years.
  * @author citibob
  */
-public class TermsDbModel extends WhereClauseDbModel
+public class TermsDbModel extends SchemaBufDbModel
 {
 
 /** Creates a new instance of TermsDbModel */
 public TermsDbModel(Statement st, citibob.sql.DbChangeModel dbChange, citibob.jschema.Schema termids)
 throws java.sql.SQLException
 {
-	super(
-		new SchemaBuf(termids),
-		"firstdate > now() - interval '2 years'", "firstdate", dbChange);
+	super(new SchemaBuf(termids), dbChange);
+	this.setWhereClause("firstdate > now() - interval '2 years'");
+	this.setOrderClause("firstdate");
 }
 
 //public void doUpdate(Statement st) throws SQLException

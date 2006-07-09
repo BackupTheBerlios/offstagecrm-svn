@@ -33,10 +33,11 @@ throws SQLException
 {
 	super();
 	table = "mailings";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
-		"mailingids", "groupid", "name", "name");
+//	KeyedModel kmodel = new DbKeyedModel(st, change,
+//		"mailingids", "groupid", "name", "name");
 	cols = new Column[] {
-		new Column(new SqlEnum(kmodel, false), "groupid", true),
+//		new Column(new SqlEnum(kmodel, false), "groupid", true),
+		new Column(new SqlInteger(false), "groupid", true),
 		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlString(), "addressto", false),
 		new Column(new SqlString(), "address1", false),

@@ -32,8 +32,9 @@ import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.jschema.*;
 import java.sql.*;
-import offstage.MailingModel;
+import offstage.MailingModel2;
 import citibob.jschema.swing.*;
+import citibob.swing.JTypeJTable;
 
 /**
  *
@@ -62,20 +63,20 @@ public MailingidsTable() {
 //    }});
 }
 
-public void initRuntime(MailingModel mailing)
+public void initRuntime(MailingModel2 mailing)
 //Statement st, CitibobTableModel mailingids, MailingsDbModel mailingsDm)
 {
 	//this.st = fapp.createStatement();
 //	MailingModel mailing = fapp.getMailingModel();
 //	this.fapp = fapp;
 	
-	super.setModelU(
-		mailing.getMailingidsSb(),
-		new String[] {"Name", "Create Date"},
-		new String[] {"name", "created"},
-		new boolean[] {false, false});
-		
-	setSelectionModel(mailing.getMailingidsSelectModel());
+//	super.setModelU(
+//		mailing.getMailingidsSb(),
+//		new String[] {"Name", "Create Date"},
+//		new String[] {"name", "created"},
+//		new boolean[] {true, false});
+//		
+//	setSelectionModel(mailing.getMailingidsSelectModel());
 }
 //void selectRow()
 //{

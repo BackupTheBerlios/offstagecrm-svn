@@ -26,6 +26,7 @@ package offstage.db;
 
 import citibob.swing.*;
 import java.sql.*;
+import citibob.swing.table.RSTableModel;
 
 /**
  *
@@ -34,11 +35,11 @@ import java.sql.*;
 public class EntityListTableModel extends RSTableModel {
 
 	
-public EntityListTableModel()
-{
-	super();
-	setPrototypes(new String[] {"101010", "organizations", "Johan Sebastian Bach"});
-}
+//public EntityListTableModel()
+//{
+//	super();
+//	setPrototypes(new String[] {"101010", "organizations", "Johan Sebastian Bach"});
+//}
 // --------------------------------------------------
 /** idSql is Sql statement to select a bunch of IDs */
 private void addAllRows(Statement st, String idSql, String orderBy) throws SQLException

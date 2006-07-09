@@ -31,8 +31,8 @@ import citibob.swing.*;
 import citibob.multithread.*;
 import citibob.swing.table.*;
 import offstage.FrontApp;
-import offstage.MailingModel;
-import offstage.MailingsDbModel;
+import offstage.MailingModel2;
+//import offstage.MailingsDbModel;
 import citibob.swing.typed.*;
 
 /**
@@ -41,7 +41,7 @@ import citibob.swing.typed.*;
  */
 public class MailingsEditor extends javax.swing.JPanel {
 
-	MailingModel mailing;
+	MailingModel2 mailing;
 	ActionRunner runner;
 //	Statement st;
 	
@@ -53,15 +53,38 @@ public class MailingsEditor extends javax.swing.JPanel {
 	{
 		runner = app.getGuiRunner();
 		mailing = app.getMailingModel();
-		tMailingIds.initRuntime(mailing);
+//		tMailingIds.initRuntime(mailing);
+		tMailingIds.setModelU(
+			mailing.getMailingidsDb(),
+			new String[] {"Name", "Create Date"},
+			new String[] {"name", "created"},
+			new boolean[] {true, false}, app.getSwingerMap());
+		tMailingIds.setRenderU("created", new javax.swing.table.DefaultTableCellRenderer());
+//		tMailingIds.setSelectionModel(mailing.getMailingidsDb()SelectModel());
+		mailing.getMailingidsDb().setInstantUpdate(app.getAppRunner(), true);
 		
+		tMailingIds.addMouseListener(new DClickTableMouseListener(tMailingIds) {
+		public void doubleClicked(final int row) {
+			runner.doRun(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				// Make sure it's selected in the GUI
+				tMailingIds.getSelectionModel().setSelectionInterval(row, row);
+
+				// Process the selection
+				Integer Mailingid = (Integer)mailing.getMailingidsDb().getSchemaBuf().getValueAt(row, "groupid");
+				if (Mailingid == null) return;
+				mailing.setKey(Mailingid.intValue());
+				mailing.doSelect(st);
+			}});
+		}});
 		
-		tMailing.setModelU(mailing.getMailingsSb(),
+		tMailing.setModelU(mailing.getMailingsDb().getSchemaBuf(),
 			new String[] {"Name", "Address1", "Address2", "City", "State", "Zip", "Country"},
 			new String[] {"addressto", "address1", "address2", "city", "state", "zip", "country"},
-			new boolean[] {false, false, false, false, false, false, false});
+			null, app.getSwingerMap());
+//			new boolean[] {false, false, false, false, false, false, false});
 		
-		SchemaRowModel rowModel = mailing.getCurMailingidRm();
+		SchemaBufRowModel rowModel = new SchemaBufRowModel(mailing.getOneMailingidsDb().getSchemaBuf());
 		TypedWidgetBinder.bindRecursive(this, rowModel, app.getSwingerMap());
 	}
 	/** This method is called from within the constructor to
@@ -76,9 +99,12 @@ public class MailingsEditor extends javax.swing.JPanel {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tMailing = new citibob.jschema.swing.SchemaBufTable();
+        tMailing = new citibob.jschema.swing.StatusTable();
         jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
+        bSave = new javax.swing.JButton();
+        bUndo = new javax.swing.JButton();
+        bDelete = new javax.swing.JButton();
+        bViewLabels = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         lName = new citibob.swing.typed.JTypedTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -103,14 +129,41 @@ public class MailingsEditor extends javax.swing.JPanel {
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jButton1.setText("View Labels");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        bSave.setText("Save");
+        bSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                bSaveActionPerformed(evt);
             }
         });
 
-        jToolBar1.add(jButton1);
+        jToolBar1.add(bSave);
+
+        bUndo.setText("Undo");
+        bUndo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bUndoActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bUndo);
+
+        bDelete.setText("Delete");
+        bDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bDeleteActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bDelete);
+
+        bViewLabels.setText("Save & View Labels");
+        bViewLabels.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bViewLabelsActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bViewLabels);
 
         jPanel2.add(jToolBar1, java.awt.BorderLayout.SOUTH);
 
@@ -154,15 +207,40 @@ public class MailingsEditor extends javax.swing.JPanel {
     }
     // </editor-fold>//GEN-END:initComponents
 
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
+		runner.doRun(new StRunnable() {
+		public void run(Statement st) throws Exception {
+			bUndo.requestFocus();
+			mailing.doSelect(st);
+		}});
+	}//GEN-LAST:event_bUndoActionPerformed
+
+	private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+		runner.doRun(new StRunnable() {
+		public void run(Statement st) throws Exception {
+			bSave.requestFocus();
+			mailing.doUpdate(st);
+			mailing.getMailingidsDb().doSelect(st);
+		}});
+	}//GEN-LAST:event_bSaveActionPerformed
+
+	private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
+			int selected = tMailing.getSelectedRow();
+			if (selected != -1) {
+				mailing.getMailingsDb().getSchemaBuf().deleteRow(selected);
+			}
+	}//GEN-LAST:event_bDeleteActionPerformed
+
+	private void bViewLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bViewLabelsActionPerformed
 		runner.doRun(new StRunnable() {
 		public void run(Statement st) throws Exception {
 //			throw new Exception("Bobs Exception");
-			jButton1.requestFocus();
+			bViewLabels.requestFocus();
+			mailing.doUpdate(st);
 			mailing.makeReport(st);
 		}});
 		// TODO add your handling code here:
-	}//GEN-LAST:event_jButton1ActionPerformed
+	}//GEN-LAST:event_bViewLabelsActionPerformed
 
 	private void lNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lNameActionPerformed
 		// TODO add your handling code here:
@@ -170,7 +248,10 @@ public class MailingsEditor extends javax.swing.JPanel {
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton bDelete;
+    private javax.swing.JButton bSave;
+    private javax.swing.JButton bUndo;
+    private javax.swing.JButton bViewLabels;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -178,7 +259,7 @@ public class MailingsEditor extends javax.swing.JPanel {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
     private citibob.swing.typed.JTypedTextField lName;
-    private citibob.jschema.swing.SchemaBufTable tMailing;
+    private citibob.jschema.swing.StatusTable tMailing;
     private offstage.gui.MailingidsTable tMailingIds;
     // End of variables declaration//GEN-END:variables
 

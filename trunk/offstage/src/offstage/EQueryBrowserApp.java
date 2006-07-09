@@ -50,10 +50,10 @@ EQueryTableModel queryModel;
 EClauseTableModel clauseModel;
 EQuerySchema schema;
 
-MailingModel mailingModel;
+MailingModel2 mailingModel;
 //SchemaBufDbModel mailingids;
 // -------------------------------------------------------
-public EQueryBrowserApp(Statement st, MailingModel mailingModel, OffstageSchemaSet dbSchemaSet) throws SQLException
+public EQueryBrowserApp(Statement st, MailingModel2 mailingModel, OffstageSchemaSet dbSchemaSet) throws SQLException
 {
 	schema = new EQuerySchema(st, dbSchemaSet);
 	clauseModel = new EClauseTableModel(schema);
@@ -168,8 +168,8 @@ System.out.println("Created Mailing list ID: " + xmailingID);
 	sql = "select w_mailings_correctlist(" + SqlInteger.sql(xmailingID) + ", FALSE)";
 	st.executeQuery(sql);
 	
-	mailingModel.refreshMailingids(st);
-	mailingModel.setMailingID(xmailingID);
+	mailingModel.getMailingidsDb().doSelect(st);
+//	mailingModel.setMailingID(xmailingID);
 }
 // ===================================================
 public static interface Listener
