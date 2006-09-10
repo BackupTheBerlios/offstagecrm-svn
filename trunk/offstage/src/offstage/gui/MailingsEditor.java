@@ -84,8 +84,8 @@ public class MailingsEditor extends javax.swing.JPanel {
 			null, app.getSwingerMap());
 //			new boolean[] {false, false, false, false, false, false, false});
 		
-		SchemaBufRowModel rowModel = new SchemaBufRowModel(mailing.getOneMailingidsDb().getSchemaBuf());
-		TypedWidgetBinder.bindRecursive(this, rowModel, app.getSwingerMap());
+//		SchemaBufRowModel rowModel = new SchemaBufRowModel(mailing.getOneMailingidsDb().getSchemaBuf());
+//		TypedWidgetBinder.bindRecursive(this, rowModel, app.getSwingerMap());
 	}
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -103,6 +103,7 @@ public class MailingsEditor extends javax.swing.JPanel {
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
+        bInsert = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
         bViewLabels = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -146,6 +147,15 @@ public class MailingsEditor extends javax.swing.JPanel {
         });
 
         jToolBar1.add(bUndo);
+
+        bInsert.setText("Insert");
+        bInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bInsertActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bInsert);
 
         bDelete.setText("Delete");
         bDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -207,6 +217,13 @@ public class MailingsEditor extends javax.swing.JPanel {
     }
     // </editor-fold>//GEN-END:initComponents
 
+private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bInsertActionPerformed
+	runner.doRun(new StRunnable() {
+	public void run(Statement st) throws Exception {
+		mailing.newAddress();
+	}});
+}//GEN-LAST:event_bInsertActionPerformed
+
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 		runner.doRun(new StRunnable() {
 		public void run(Statement st) throws Exception {
@@ -249,6 +266,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bDelete;
+    private javax.swing.JButton bInsert;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
     private javax.swing.JButton bViewLabels;

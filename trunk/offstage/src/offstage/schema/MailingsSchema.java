@@ -38,7 +38,8 @@ throws SQLException
 	cols = new Column[] {
 //		new Column(new SqlEnum(kmodel, false), "groupid", true),
 		new Column(new SqlInteger(false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
+		new Column(new SqlInteger(false), "oid", true),
+		new Column(new SqlInteger(true), "entityid", false),
 		new Column(new SqlString(), "addressto", false),
 		new Column(new SqlString(), "address1", false),
 		new Column(new SqlString(), "address2", false),

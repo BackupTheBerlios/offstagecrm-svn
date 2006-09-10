@@ -37,7 +37,7 @@ throws SQLException
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),
 		new Column(new SqlInteger(false), "entityid", true),
-		new ColumnDefaultNow(new SqlDate(false), "date", false),
+		new ColumnDefaultNow(new SqlDate(false), "date", true),
 		new Column(new SqlNumeric(9, 2), "amount", false)
 	};
 }

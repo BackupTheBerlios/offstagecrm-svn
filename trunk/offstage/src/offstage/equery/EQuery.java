@@ -32,6 +32,9 @@ public class EQuery
 // Info on the query
 ArrayList clauses = new ArrayList();
 
+// Clause types
+public final static int ADD = 1;
+public final static int SUBTRACT = -1;
 // ============================================
 public static class ColName
 {
@@ -81,6 +84,7 @@ public static class Element
 
 public static class Clause
 {
+	public int type;			// ADD or SUBTRACT
 	public ArrayList elements;
 	public String name;
 	public Clause(String name)
@@ -107,6 +111,7 @@ public Clause getClause(int n)
 {
 	return (Clause)clauses.get(n);
 }
+
 public int getNumClauses()
 	{ return clauses.size(); }
 public void addElement(Element e)
@@ -144,7 +149,8 @@ public void writeSqlQuery(EQuerySchema schema, SqlQuery sql)
 				" (" + c.getType().toSql(e.value) + ")";
 		}
 		ewhere = ewhere + ")";
-		cwhere = cwhere + " or\n" + ewhere;
+		String joiner = (clause.type == ADD ? "or" : "and not");
+		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere;
 	}
 	cwhere = cwhere + ")";
 	sql.addWhereClause(cwhere);

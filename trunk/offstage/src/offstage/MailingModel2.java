@@ -45,7 +45,7 @@ public class MailingModel2 extends MultiDbModel
 
 SchemaBufDbModel mailingids;		// Set to just one record (for 1 mailing)
 IntKeyedDbModel mailings;		// Set to entire mailing info
-IntKeyedDbModel oneMailingid;		// Set to entire mailing info
+//IntKeyedDbModel oneMailingid;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
 //Statement st;
 ActionRunner runner;
@@ -54,14 +54,22 @@ public IntKeyedDbModel getMailingsDb()
 	{ return mailings; }
 public SchemaBufDbModel getMailingidsDb()
 	{ return mailingids; }
-public SchemaBufDbModel getOneMailingidsDb()
-	{ return oneMailingid; }
+//public SchemaBufDbModel getOneMailingidsDb()
+//	{ return oneMailingid; }
 
 public void setKey(int mailingID)
 {
 	mailings.setKey(mailingID);
-	oneMailingid.setKey(mailingID);
+//	oneMailingid.setKey(mailingID);
 }
+
+/** Sets up the SchemaBufs for a new person,
+which will be inserted into the DB upon doUpdate(). */
+public void newAddress() throws KeyViolationException
+{
+	mailings.getSchemaBuf().insertRow(-1, new String[] {"groupid"}, new Object[] {mailings.getKey()});
+}
+
 
 /** Creates a new instance of MailingDbModel */
 public MailingModel2(final Statement st, OffstageSchemaSet sset)
@@ -70,8 +78,8 @@ throws SQLException
 	this.runner = runner;
 	mailings = new IntKeyedDbModel(sset.mailings, "groupid", false, null);
 	add(mailings);
-	oneMailingid = new IntKeyedDbModel(sset.mailingids, "groupid", false, null);
-	add(oneMailingid);
+//	oneMailingid = new IntKeyedDbModel(sset.mailingids, "groupid", false, null);
+//	add(oneMailingid);
 	
 //	add(mailings);
 //	mailings.setInstantUpdate(runner, true);

@@ -41,8 +41,14 @@ import offstage.equery.EQuery;
  * @author citibob
  */
 public class EQueryTableModel extends AbstractTableModel
-implements CitibobTableModel
+implements JTypeTableModel
 {
+
+public static final int C_ADDSUB = 0;
+public static final int C_NAME = 1;
+
+public static final String S_ADDSUB = "Add/Sub";
+public static final String S_NAME = "Name";
 
 EQuery query;
 EClauseTableModel clauseModel;		// Allows us to control current clause.
@@ -96,13 +102,17 @@ public void removeClause(int idx)
 // --------------------------------------------------
 public String getColumnName(int column) 
 {
-	return "Name";
+	switch(column) {
+		case C_ADDSUB : return S_ADDSUB;
+		case C_NAME : return S_NAME;
+	}
+	return null;	
 }
-public int findCol(String colName)
-{
-	if ("Name".equals(colName)) return 0;
-	return -1;
-}
+//public int findCol(String colName)
+//{
+//	if ("Name".equals(colName)) return 0;
+//	return -1;
+//}
 // --------------------------------------------------
 /** Allow editing of all non-key fields. */
 public boolean isCellEditable(int rowIndex, int columnIndex)
@@ -122,25 +132,40 @@ public void setValueAt(Object val, int rowIndex, int colIndex)
 	public int getRowCount()
 	  { return (query == null ? 0 : query.getNumClauses()); }
 	public int getColumnCount()
-	  { return 1; }
-	public Object getValueAt(int row, int column)
-		{ return query.getClause(row).name; }
+	  { return 2; }
+public Object getValueAt(int row, int column)
+{
+	EQuery.Clause c = query.getClause(row);
+	switch(column) {
+		case C_ADDSUB : return c.type;
+		case C_NAME : return c.name;
+	}
+	return null;
+}
 public Class getColumnClass(int columnIndex) 
 {
+	switch(column) {
+		case C_ADDSUB : return c.type;
+		case C_NAME : return c.name;
+	}
 	return String.class;
 }
 // ===============================================================
 // Implementation of CitibobTableModel (prototype stuff)
-java.util.List proto;
-public java.util.List getPrototypes()
-	{ return proto; }
-public void setPrototypes(java.util.List proto)
-	{ this.proto = proto; }
-public void setPrototypes(Object[] pr)
+// ===============================================================
+// Implementation of JTypeTableModel (prototype stuff)
+/** Return SqlType for an entire column --- or null, if this column does not have a single SqlType. */
+public JType getColumnJType(int col)
 {
-	proto = new ArrayList(pr.length);
-	for (int i = 0; i < pr.length; ++i) {
-		proto.add(pr[i]);
+	switch(column) {
+		case C_ADDSUB : return c.type;
+		case C_NAME : return c.name;
 	}
+	return String.class;
 }
+
+/** Return JType for a cell --- used to set up renderers and editors */
+public JType getJType(int row, int colIndex)
+{ return null; }
+// ===============================================================
 }
