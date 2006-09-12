@@ -169,9 +169,9 @@ public void setValueAt(Object val, int row, int colIndex)
 	}
 // ===============================================================
 // Implementation of JTypeTableModel (prototype stuff)
-/** Return SqlType for an entire column --- or null, if this column does not have a single SqlType. */
-public JType getColumnJType(int col)
-	{ return null; }
+///** Return SqlType for an entire column --- or null, if this column does not have a single SqlType. */
+//public JType getColumnJType(int col)
+//	{ return null; }
 
 /** Return JType for a cell --- used to set up renderers and editors */
 public JType getJType(int row, int colIndex)

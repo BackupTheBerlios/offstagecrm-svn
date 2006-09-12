@@ -34,6 +34,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import citibob.jschema.*;
+import citibob.swing.JTypeTable;
 
 
 
@@ -41,7 +42,7 @@ import citibob.jschema.*;
  *
  * @author citibob
  */
-public class EQueryTable extends JTable {
+public class EQueryTable extends JTypeTable {
 
 EQueryTableModel model;
 

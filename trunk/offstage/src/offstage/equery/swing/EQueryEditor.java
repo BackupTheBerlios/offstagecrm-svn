@@ -57,6 +57,7 @@ public class EQueryEditor extends javax.swing.JPanel {
 		this.qmodel = qm;
 		this.cmodel = cm;
 		eQueryTable.initRuntime(qm);
+		eQueryTable.setSwingerMap(smap);
 		eClauseTable.setModel(cm);
 		eClauseTable.setSwingerMap(smap);
 	}
@@ -77,7 +78,7 @@ public class EQueryEditor extends javax.swing.JPanel {
         bRemoveClause = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         eClauseScrollPane = new javax.swing.JScrollPane();
-        eClauseTable = new citibob.swing.typed.JTypeTable();
+        eClauseTable = new citibob.swing.JTypeTable();
         jToolBar1 = new javax.swing.JToolBar();
         bAddElement = new javax.swing.JButton();
         bRemoveElement = new javax.swing.JButton();
@@ -204,7 +205,7 @@ private void bAddElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JButton bRemoveClause;
     private javax.swing.JButton bRemoveElement;
     private javax.swing.JScrollPane eClauseScrollPane;
-    private citibob.swing.typed.JTypeTable eClauseTable;
+    private citibob.swing.JTypeTable eClauseTable;
     private offstage.equery.swing.EQueryTable eQueryTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

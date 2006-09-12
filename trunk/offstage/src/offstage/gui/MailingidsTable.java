@@ -34,7 +34,7 @@ import citibob.jschema.*;
 import java.sql.*;
 import offstage.MailingModel2;
 import citibob.jschema.swing.*;
-import citibob.swing.JTypeJTable;
+import citibob.swing.JTypeColTable;
 
 /**
  *

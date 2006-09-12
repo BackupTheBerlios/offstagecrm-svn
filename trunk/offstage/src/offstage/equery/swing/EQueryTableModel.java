@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package offstage.equery.swing;
 
+import citibob.util.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
@@ -53,7 +54,14 @@ public static final String S_NAME = "Name";
 EQuery query;
 EClauseTableModel clauseModel;		// Allows us to control current clause.
 int curRow;							// Index of current row in our model --- the clause we're currently editing
-
+static JType[] jtypes;
+static {
+	jtypes = new JType[] {
+		new JEnum(new KeyedModel(
+			new Object[] {new Integer(EQuery.ADD), new Integer(EQuery.SUBTRACT)},
+			new Object[] {"+", "-"})),
+		new JavaJType(String.class)};
+}
 /** Creates a new instance of EClauseTableModel */
 public EQueryTableModel(EClauseTableModel clauseModel)
 {
@@ -124,7 +132,10 @@ public void setValueAt(Object val, int rowIndex, int colIndex)
 {
 	if (query == null) return;
 	EQuery.Clause c = query.getClause(rowIndex);
-	c.name = (String)val;
+	switch(colIndex) {
+		case C_ADDSUB : c.type = ((Integer)val).intValue(); break;
+		case C_NAME : c.name = (String)val; break;
+	}
 	// Redisplay the entire row!
 	this.fireTableCellUpdated(rowIndex, colIndex);
 }
@@ -137,16 +148,16 @@ public Object getValueAt(int row, int column)
 {
 	EQuery.Clause c = query.getClause(row);
 	switch(column) {
-		case C_ADDSUB : return c.type;
+		case C_ADDSUB : return new Integer(c.type);
 		case C_NAME : return c.name;
 	}
 	return null;
 }
-public Class getColumnClass(int columnIndex) 
+public Class getColumnClass(int column) 
 {
 	switch(column) {
-		case C_ADDSUB : return c.type;
-		case C_NAME : return c.name;
+		case C_ADDSUB : return Integer.class;
+		case C_NAME : return String.class;
 	}
 	return String.class;
 }
@@ -155,17 +166,13 @@ public Class getColumnClass(int columnIndex)
 // ===============================================================
 // Implementation of JTypeTableModel (prototype stuff)
 /** Return SqlType for an entire column --- or null, if this column does not have a single SqlType. */
-public JType getColumnJType(int col)
+public JType getJType(int row, int column)
 {
-	switch(column) {
-		case C_ADDSUB : return c.type;
-		case C_NAME : return c.name;
-	}
-	return String.class;
+	return jtypes[column];
 }
 
-/** Return JType for a cell --- used to set up renderers and editors */
-public JType getJType(int row, int colIndex)
-{ return null; }
+///** Return JType for a cell --- used to set up renderers and editors */
+//public JType getJType(int row, int colIndex)
+//{ return null; }
 // ===============================================================
 }

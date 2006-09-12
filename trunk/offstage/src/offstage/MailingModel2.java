@@ -67,7 +67,9 @@ public void setKey(int mailingID)
 which will be inserted into the DB upon doUpdate(). */
 public void newAddress() throws KeyViolationException
 {
-	mailings.getSchemaBuf().insertRow(-1, new String[] {"groupid"}, new Object[] {mailings.getKey()});
+	mailings.getSchemaBuf().insertRow(-1, new String[] {"groupid"}, new Object[] {new Integer(mailings.getKey())});
+//	mailings.getSchemaBuf().insertRow(-1, (String[])null, null);
+	//new String[] {"groupid"}, new Object[] {mailings.getKey()});
 }
 
 

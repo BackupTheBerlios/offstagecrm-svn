@@ -84,7 +84,7 @@ public static class Element
 
 public static class Clause
 {
-	public int type;			// ADD or SUBTRACT
+	public int type = ADD;			// ADD or SUBTRACT
 	public ArrayList elements;
 	public String name;
 	public Clause(String name)
