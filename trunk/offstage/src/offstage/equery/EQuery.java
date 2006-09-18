@@ -32,81 +32,13 @@ public class EQuery
 // Info on the query
 ArrayList clauses = new ArrayList();
 
-// Clause types
-public final static int ADD = 1;
-public final static int SUBTRACT = -1;
 // ============================================
-public static class ColName
-{
-	public String stable;
-	public String scol;
-	public ColName(String st, String sc)
-	{
-		stable = st;
-		scol = sc;
-	}
-	public ColName(String s)
-	{
-		int dot = s.indexOf('.');
-		if (dot < 0) return;
-		stable = s.substring(0,dot);
-		scol = s.substring(dot+1);
-	}
-	public String toString()
-		{ return (stable + "." + scol); }
-	
-	public boolean equals(Object o) {
-		if (!(o instanceof ColName)) return false;
-		ColName cc = (ColName)o;
-		boolean ret = (cc.stable.equals(stable) && cc.scol.equals(scol));
-//System.out.println(this + " == " + o + ": " + ret);
-		return ret;
-	}
-	public int hashCode()
-	{
-		return stable.hashCode() * 31 + scol.hashCode();
-	}
-}
-public static class Element
-{
-	public ColName colName;
-	public String comparator;
-	public Object value;
-	public Element(ColName colName, String comparator, Object value)
-	{
-		this.colName = colName;
-		this.comparator = comparator;
-		this.value = value;
-	}
-	public Element()
-	{ }
-}
+/** Inserts clause before clause #ix */
+public void insertClause(int ix, Clause c)
+	{ clauses.add(ix, c); }
+public void appendClause(Clause c)
+	{ clauses.add(c); }
 
-public static class Clause
-{
-	public int type = ADD;			// ADD or SUBTRACT
-	public ArrayList elements;
-	public String name;
-	public Clause(String name)
-	{
-		this.name = name;
-		this.elements = new ArrayList();
-	}
-	public Clause()
-		{ this("New Clause"); }
-}
-
-public void newClause()
-{
-//	int sz = clauses.size();
-//	clauses.ensureCapacity(sz + 1);
-//	clauses.add(new ArrayList());
-	clauses.add(new Clause());
-}
-public void newClause(String name)
-{
-	clauses.add(new Clause(name));
-}
 public Clause getClause(int n)
 {
 	return (Clause)clauses.get(n);
@@ -114,11 +46,14 @@ public Clause getClause(int n)
 
 public int getNumClauses()
 	{ return clauses.size(); }
+
+/** Convenience: add an element to the last clause */
 public void addElement(Element e)
 {
 	Clause clause = (Clause)clauses.get(clauses.size() - 1);
-	clause.elements.add(e);
+	clause.addElement(e);
 }
+/** Convenience: add an element to the last clause */
 public void addElement(String table, String col, String comparator, Object value)
 {
 	Element e = new Element(new ColName(table,col),comparator,value);
