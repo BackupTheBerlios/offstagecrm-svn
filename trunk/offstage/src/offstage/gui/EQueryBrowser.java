@@ -33,7 +33,7 @@ import offstage.FrontApp;
 import offstage.EQueryBrowserApp;
 import offstage.db.FullEntityDbModel;
 import offstage.db.EntityListTableModel;
-import offstage.equery.EQuery;
+import offstage.equery.*;
 import citibob.multithread.*;
 
 /**
@@ -61,7 +61,7 @@ throws SQLException
 	this.fapp = fapp;
 	this.app = fapp.getEqueryBrowserApp();
 	app.addListener(new AppListener());
-	eQueryEditor1.initRuntime(app.getQueryModel(), app.getClauseModel(), fapp.getSwingerMap());
+	eQueryEditor1.initRuntime(app.getQueryModel(), fapp.getSwingerMap());
 	//saveAsName = null;
 	lQueryName.setText("");
 
@@ -367,7 +367,7 @@ private void bNewQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 	runner.doRun(new ERunnable() {
 	public void run() throws Exception {
 		EQuery eq = new EQuery();
-		eq.newClause();
+		eq.appendClause(new Clause());
 		app.setEQuery(eq, null);
 	}});
 // TODO add your handling code here:

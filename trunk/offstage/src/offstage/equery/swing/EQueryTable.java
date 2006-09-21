@@ -34,7 +34,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import citibob.jschema.*;
-import citibob.swing.JTypeTable;
 
 
 
@@ -42,37 +41,58 @@ import citibob.swing.JTypeTable;
  *
  * @author citibob
  */
-public class EQueryTable extends JTypeTable {
-
-EQueryTableModel model;
-
-public EQueryTable()
+public class EQueryTable extends ColorsJTypeTable
 {
-	super();
-	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+static Color purple = new Color(204, 204, 255);
+	
+public Color getFore(boolean isSelected, boolean hasFocus, int row, int col)
+{
+//	if (isSelected) return SystemColor.activeCaptionText;
+//	EQueryTableModel2 m = (EQueryTableModel2)getModel();
+//	EQueryTableModel2.RowSpec rs = m.getRow(row);
+//	if (rs.isElement()) return null;
+//	return Color.black;
+	return null;
+}
+public Color getBack(boolean isSelected, boolean hasFocus, int row, int col)
+{
+	if (isSelected) return purple; //SystemColor.controlLtHighlight;
+	EQueryTableModel2 m = (EQueryTableModel2)getModel();
+	EQueryTableModel2.RowSpec rs = m.getRow(row);
+	if (rs.isElement()) return null;
+	return Color.pink;
 }
 
-public void initRuntime(EQueryTableModel xmodel)
-{
-	super.setModel(xmodel);
-	this.model = xmodel;
-
-	ListSelectionModel sm = getSelectionModel();
-	sm.addListSelectionListener(new ListSelectionListener() {
-	public void valueChanged(ListSelectionEvent e) {
-		//Ignore extra messages.
-		if (e.getValueIsAdjusting()) return;
-
-		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-		if (lsm.isSelectionEmpty()) {
-			model.setCurRow(-1);
-		} else {
-			int selectedRow = lsm.getMinSelectionIndex();
-			model.setCurRow(selectedRow);
-		}
-	}
-	});
-}
+//EQueryTableModel model;
+//
+//public EQueryTable()
+//{
+//	super();
+//	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//}
+//
+//public void initRuntime(EQueryTableModel xmodel)
+//{
+//	super.setModel(xmodel);
+//	this.model = xmodel;
+//
+//	ListSelectionModel sm = getSelectionModel();
+//	sm.addListSelectionListener(new ListSelectionListener() {
+//	public void valueChanged(ListSelectionEvent e) {
+//		//Ignore extra messages.
+//		if (e.getValueIsAdjusting()) return;
+//
+//		ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+//		if (lsm.isSelectionEmpty()) {
+//			model.setCurRow(-1);
+//		} else {
+//			int selectedRow = lsm.getMinSelectionIndex();
+//			model.setCurRow(selectedRow);
+//		}
+//	}
+//	});
+//}
 
 
 

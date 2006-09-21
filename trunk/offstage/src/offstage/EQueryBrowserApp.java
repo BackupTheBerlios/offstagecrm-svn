@@ -31,8 +31,7 @@ import offstage.db.DB;
 import offstage.equery.EQuery;
 import offstage.equery.EQuerySchema;
 import offstage.equery.EQueryXStream;
-import offstage.equery.swing.EClauseTableModel;
-import offstage.equery.swing.EQueryTableModel;
+import offstage.equery.swing.EQueryTableModel2;
 import offstage.schema.*;
 
 public class EQueryBrowserApp
@@ -46,8 +45,7 @@ File eQueryFname = null;	// Filename from which rent EQuery was loaded; null if 
 //int mailingID = -1;			// ID of mailing made from loaded EQuery
 
 // Current EQuery and EClause being edited
-EQueryTableModel queryModel;
-EClauseTableModel clauseModel;
+EQueryTableModel2 queryModel;
 EQuerySchema schema;
 
 MailingModel2 mailingModel;
@@ -56,8 +54,7 @@ MailingModel2 mailingModel;
 public EQueryBrowserApp(Statement st, MailingModel2 mailingModel, OffstageSchemaSet dbSchemaSet) throws SQLException
 {
 	schema = new EQuerySchema(st, dbSchemaSet);
-	clauseModel = new EClauseTableModel(schema);
-	queryModel = new EQueryTableModel(clauseModel);
+	queryModel = new EQueryTableModel2(schema);
 	this.mailingModel = mailingModel;
 
 //	mailings = new IntKeyedDbModel(new MailingidsSchema(), "groupid");
@@ -76,10 +73,8 @@ public EQueryBrowserApp(Statement st, MailingModel2 mailingModel, OffstageSchema
 //	{ return mailingID; }
 public EQuerySchema getSchema()
 	{ return schema; }
-public EQueryTableModel getQueryModel()
+public EQueryTableModel2 getQueryModel()
 	{ return queryModel; }
-public EClauseTableModel getClauseModel()
-	{ return clauseModel; }
 
 public EQuery getEQuery()
 	{ return queryModel.getQuery(); }

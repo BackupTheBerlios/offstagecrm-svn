@@ -38,7 +38,8 @@ public void insertClause(int ix, Clause c)
 	{ clauses.add(ix, c); }
 public void appendClause(Clause c)
 	{ clauses.add(c); }
-
+public Clause removeClause(int ix)
+	{ return (Clause)clauses.remove(ix); }
 public Clause getClause(int n)
 {
 	return (Clause)clauses.get(n);
@@ -47,18 +48,18 @@ public Clause getClause(int n)
 public int getNumClauses()
 	{ return clauses.size(); }
 
-/** Convenience: add an element to the last clause */
-public void addElement(Element e)
-{
-	Clause clause = (Clause)clauses.get(clauses.size() - 1);
-	clause.addElement(e);
-}
-/** Convenience: add an element to the last clause */
-public void addElement(String table, String col, String comparator, Object value)
-{
-	Element e = new Element(new ColName(table,col),comparator,value);
-	addElement(e);
-}
+///** Convenience: add an element to the last clause */
+//public void addElement(Element e)
+//{
+//	Clause clause = (Clause)clauses.get(clauses.size() - 1);
+//	clause.addElement(e);
+//}
+///** Convenience: add an element to the last clause */
+//public void addElement(String table, String col, String comparator, Object value)
+//{
+//	Element e = new Element(new ColName(table,col),comparator,value);
+//	addElement(e);
+//}
 public ArrayList getClauses()
 	{ return clauses; }
 // -----------------------------------------------
@@ -74,17 +75,17 @@ public void writeSqlQuery(EQuerySchema schema, SqlQuery sql)
 			Element e = (Element)jj.next();
 			ColName cn = e.colName;
 			Column c = ((EQuerySchema.Col)schema.getCol(cn)).col;
-			if (!sql.containsTable(e.colName.stable)) {
-				String joinClause = ((EQuerySchema.Tab)schema.getTab(cn.stable)).joinClause;
+			if (!sql.containsTable(e.colName.getTable())) {
+				String joinClause = ((EQuerySchema.Tab)schema.getTab(cn.getTable())).joinClause;
 				sql.addWhereClause(joinClause);
-				sql.addTable(cn.stable);
+				sql.addTable(cn.getTable());
 			}
 			ewhere = ewhere + " and\n" +
 				e.colName.toString() + " " + e.comparator + " " +
 				" (" + c.getType().toSql(e.value) + ")";
 		}
 		ewhere = ewhere + ")";
-		String joiner = (clause.type == ADD ? "or" : "and not");
+		String joiner = (clause.type == Clause.ADD ? "or" : "and not");
 		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere;
 	}
 	cwhere = cwhere + ")";
@@ -101,44 +102,44 @@ public String getSql(EQuerySchema eqs)
 	return sql.getSelectSQL();	
 }
 // ------------------------------------------------------
-public static void main(String[] args) throws Exception
-{
-	
-	ColName a = new ColName("tab",  "col");
-	HashMap map = new HashMap();
-	map.put(a, a);
-	ColName b = new ColName("tab.col");
-	System.out.println(a.equals(b));
-	System.out.println(map.get(b));
-	System.out.println(map.get(a));
-	if (true) return;
-	
-	Connection db = new TestConnPool().checkout();
-	Statement st = db.createStatement();
-	offstage.schema.OffstageSchemaSet sset = new offstage.schema.OffstageSchemaSet(st, null);
-	EQuerySchema eqs = new EQuerySchema(st, sset);
-	EQuery eq = new EQuery();
-	eq.newClause();
-	eq.addElement("phones", "phone", "=", "617-308-0436 yyy");
-	eq.addElement("phones", "groupid", "=", new Integer(109));
-	eq.newClause();
-	eq.addElement("donations", "groupid", "=", new Integer(169));
-	eq.newClause();
-	eq.addElement("persons", "lastname", "like", "%Fischer%");
-	SqlQuery sql = new SqlQuery();
-	eq.writeSqlQuery(eqs, sql);
-	sql.addTable("entities as main");
-	sql.addColumn("main.entityid");
-	sql.setDistinct(true);
-	String ssql = sql.getSelectSQL();
-	System.out.println(ssql);
-
-	// Serialize using XML
-	FileWriter fout = new FileWriter("test.xml");
-	XStream xs = new XStream();
-	ObjectOutputStream oos = xs.createObjectOutputStream(fout);
-	oos.writeObject(eq);
-	oos.close();
-
-}
+//public static void main(String[] args) throws Exception
+//{
+//	
+//	ColName a = new ColName("tab",  "col");
+//	HashMap map = new HashMap();
+//	map.put(a, a);
+//	ColName b = new ColName("tab.col");
+//	System.out.println(a.equals(b));
+//	System.out.println(map.get(b));
+//	System.out.println(map.get(a));
+//	if (true) return;
+//	
+//	Connection db = new TestConnPool().checkout();
+//	Statement st = db.createStatement();
+//	offstage.schema.OffstageSchemaSet sset = new offstage.schema.OffstageSchemaSet(st, null);
+//	EQuerySchema eqs = new EQuerySchema(st, sset);
+//	EQuery eq = new EQuery();
+//	eq.newClause();
+//	eq.addElement("phones", "phone", "=", "617-308-0436 yyy");
+//	eq.addElement("phones", "groupid", "=", new Integer(109));
+//	eq.newClause();
+//	eq.addElement("donations", "groupid", "=", new Integer(169));
+//	eq.newClause();
+//	eq.addElement("persons", "lastname", "like", "%Fischer%");
+//	SqlQuery sql = new SqlQuery();
+//	eq.writeSqlQuery(eqs, sql);
+//	sql.addTable("entities as main");
+//	sql.addColumn("main.entityid");
+//	sql.setDistinct(true);
+//	String ssql = sql.getSelectSQL();
+//	System.out.println(ssql);
+//
+//	// Serialize using XML
+//	FileWriter fout = new FileWriter("test.xml");
+//	XStream xs = new XStream();
+//	ObjectOutputStream oos = xs.createObjectOutputStream(fout);
+//	oos.writeObject(eq);
+//	oos.close();
+//
+//}
 }

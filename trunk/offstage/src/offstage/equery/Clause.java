@@ -27,7 +27,9 @@ public ArrayList getElements() { return elements; }
 /** Inserts clause before clause #ix */
 public void insertElement(int ix, Element c)
 	{ elements.add(ix, c); }
-public void appendElement(Element c)
-	{ elements.add(c); }
+public void removeElement(int ix)
+{ elements.remove(ix); }
+//public void appendElement(Element c)
+//	{ elements.add(c); }
 
 }

@@ -48,7 +48,7 @@ HashMap typeComparators = new HashMap();	// Maps SqlType --> list of comparators
 // -----------------------------------------------
 public static class Col
 {
-	public EQuery.ColName cname;
+	public ColName cname;
 //	public String table;
 	public Column col;
 	public JEnum comparators;
@@ -87,7 +87,7 @@ public Tab getTab(String table)
 	{ return (Tab)tabs.get(table); }
 //public Col getCol(String table, String scol)
 //	{ return (Col)cols.get(colKey(table, scol)).obj; }
-public Col getCol(EQuery.ColName cname)
+public Col getCol(ColName cname)
 {
 	if (cname == null) return null;
 	return (Col)cols.get(cname).obj;
@@ -149,10 +149,10 @@ private void addSchema(Schema sc, String joinClause, String table)
 		col.col = sc.getCol(i);
 		Class colClass = col.col.getType().getClass();
 		col.comparators = (JEnum)typeComparators.get(colClass);
-		EQuery.ColName cname = new EQuery.ColName(table,  col.col.getName());
+		ColName cname = new ColName(table,  col.col.getName());
 		col.cname = cname;
 //		col.table = table;
-if (cname.stable.equals("classes")) System.err.println("Adding to Schema: " + cname);
+//if (cname.stable.equals("classes")) System.err.println("Adding to Schema: " + cname);
 		cols.addItem(cname, col);
 	}
 }
@@ -198,7 +198,7 @@ void doAlias()
 	// Set aliases
 	KeyedModel newCols = new KeyedModel();
 	for (int i=0; i<alias.length; i+=2) {
-		EQuery.ColName cname = new EQuery.ColName(alias[i]);
+		ColName cname = new ColName(alias[i]);
 		String vname = alias[i+1];
 //System.out.println((cols.get(cname).getClass()));
 System.err.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
@@ -210,7 +210,7 @@ System.err.println("Looking in schema: " + cname + "(size = " + cols.getItemMap(
 
 	// Add null column name
 	Col c = new Col();
-	c.cname = new EQuery.ColName("", "");
+	c.cname = new ColName("", "");
 	c.setViewName("<null>");
 	newCols.addItem(null, c);
 	

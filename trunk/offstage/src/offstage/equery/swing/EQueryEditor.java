@@ -34,6 +34,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import citibob.jschema.*;
+import offstage.equery.*;
 
 /**
  *
@@ -41,25 +42,21 @@ import citibob.jschema.*;
  */
 public class EQueryEditor extends javax.swing.JPanel {
 
-	EQueryTableModel qmodel;
-	EClauseTableModel cmodel;
+	EQueryTableModel2 model;
 
     /** Creates new form EQueryEditor */
     public EQueryEditor() {
         initComponents();
 		
-		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eClauseTable, 15));
+		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eQueryTable, 15));
     }
 
-	public void initRuntime(EQueryTableModel qm, EClauseTableModel cm, SwingerMap smap)
+	public void initRuntime(EQueryTableModel2 qm, SwingerMap smap)
 	throws SQLException
 	{
-		this.qmodel = qm;
-		this.cmodel = cm;
-		eQueryTable.initRuntime(qm);
+		this.model = qm;
+		eQueryTable.setModel(qm);
 		eQueryTable.setSwingerMap(smap);
-		eClauseTable.setModel(cm);
-		eClauseTable.setSwingerMap(smap);
 	}
 
     /** This method is called from within the constructor to
@@ -69,23 +66,14 @@ public class EQueryEditor extends javax.swing.JPanel {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        eQueryTable = new offstage.equery.swing.EQueryTable();
-        jToolBar2 = new javax.swing.JToolBar();
-        bAddClause = new javax.swing.JButton();
-        bRemoveClause = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
         eClauseScrollPane = new javax.swing.JScrollPane();
-        eClauseTable = new citibob.swing.JTypeTable();
+        eQueryTable = new offstage.equery.swing.EQueryTable();
         jToolBar1 = new javax.swing.JToolBar();
+        bAddClause = new javax.swing.JButton();
         bAddElement = new javax.swing.JButton();
-        bRemoveElement = new javax.swing.JButton();
+        bRemoveRow = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
-
-        jPanel1.setLayout(new java.awt.BorderLayout());
 
         eQueryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -98,50 +86,20 @@ public class EQueryEditor extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(eQueryTable);
+        eClauseScrollPane.setViewportView(eQueryTable);
 
-        jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        add(eClauseScrollPane, java.awt.BorderLayout.CENTER);
 
-        bAddClause.setText("Add");
+        bAddClause.setText("+Clause");
         bAddClause.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bAddClauseActionPerformed(evt);
             }
         });
 
-        jToolBar2.add(bAddClause);
+        jToolBar1.add(bAddClause);
 
-        bRemoveClause.setText("Remove");
-        bRemoveClause.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bRemoveClauseActionPerformed(evt);
-            }
-        });
-
-        jToolBar2.add(bRemoveClause);
-
-        jPanel1.add(jToolBar2, java.awt.BorderLayout.SOUTH);
-
-        jSplitPane1.setLeftComponent(jPanel1);
-
-        jPanel2.setLayout(new java.awt.BorderLayout());
-
-        eClauseTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        eClauseScrollPane.setViewportView(eClauseTable);
-
-        jPanel2.add(eClauseScrollPane, java.awt.BorderLayout.CENTER);
-
-        bAddElement.setText("Add");
+        bAddElement.setText("+Element");
         bAddElement.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bAddElementActionPerformed(evt);
@@ -150,69 +108,52 @@ public class EQueryEditor extends javax.swing.JPanel {
 
         jToolBar1.add(bAddElement);
 
-        bRemoveElement.setText("Remove");
-        bRemoveElement.addActionListener(new java.awt.event.ActionListener() {
+        bRemoveRow.setText("-");
+        bRemoveRow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bRemoveElementActionPerformed(evt);
+                bRemoveRowActionPerformed(evt);
             }
         });
 
-        jToolBar1.add(bRemoveElement);
+        jToolBar1.add(bRemoveRow);
 
-        jPanel2.add(jToolBar1, java.awt.BorderLayout.SOUTH);
-
-        jSplitPane1.setRightComponent(jPanel2);
-
-        add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        add(jToolBar1, java.awt.BorderLayout.SOUTH);
 
     }
     // </editor-fold>//GEN-END:initComponents
 
-private void bRemoveClauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveClauseActionPerformed
+public int getSelectedRow()
+{
 	ListSelectionModel lsm = eQueryTable.getSelectionModel();
 	if (lsm.isSelectionEmpty()) {
-		return;
+		return -1;
 	} else {
 		int selectedRow = lsm.getMinSelectionIndex();
-		qmodel.removeClause(selectedRow);
+		return selectedRow;
 	}
-}//GEN-LAST:event_bRemoveClauseActionPerformed
+	put this in jtypetable?
+}
+	
+	private void bAddClauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddClauseActionPerformed
+	model.insertClause(getSelectedRow(), new Clause());
+	}//GEN-LAST:event_bAddClauseActionPerformed
 
-private void bAddClauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddClauseActionPerformed
-	EQueryTableModel m = (EQueryTableModel)eQueryTable.getModel();
-	m.addClause();
-}//GEN-LAST:event_bAddClauseActionPerformed
-
-private void bRemoveElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveElementActionPerformed
-	ListSelectionModel lsm = eClauseTable.getSelectionModel();
-	if (lsm.isSelectionEmpty()) {
-		return;
-	} else {
-		int selectedRow = lsm.getMinSelectionIndex();
-		cmodel.removeElement(selectedRow);
-	}
-}//GEN-LAST:event_bRemoveElementActionPerformed
+	private void bRemoveRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveRowActionPerformed
+	model.removeRow(getSelectedRow());
+	}//GEN-LAST:event_bRemoveRowActionPerformed
 
 private void bAddElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddElementActionPerformed
-	EClauseTableModel m = (EClauseTableModel)eClauseTable.getModel();
-	m.addElement();
+	model.insertElement(getSelectedRow(), new Element());
 }//GEN-LAST:event_bAddElementActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAddClause;
     private javax.swing.JButton bAddElement;
-    private javax.swing.JButton bRemoveClause;
-    private javax.swing.JButton bRemoveElement;
+    private javax.swing.JButton bRemoveRow;
     private javax.swing.JScrollPane eClauseScrollPane;
-    private citibob.swing.JTypeTable eClauseTable;
     private offstage.equery.swing.EQueryTable eQueryTable;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JToolBar jToolBar2;
     // End of variables declaration//GEN-END:variables
 
 }
