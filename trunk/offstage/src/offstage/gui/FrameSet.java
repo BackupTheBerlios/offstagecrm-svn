@@ -18,7 +18,6 @@ import citibob.jschema.swing.*;
 import citibob.gui.*;
 import citibob.sql.*;
 import offstage.FrontApp;
-import offstage.EQueryBrowserApp;
 import offstage.config.*;
 
 /**

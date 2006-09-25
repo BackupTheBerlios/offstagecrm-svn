@@ -20,6 +20,7 @@ package offstage.equery;
 
 import java.util.*;
 import citibob.sql.*;
+import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import java.sql.*;
 import java.io.*;
@@ -31,8 +32,20 @@ public class EQuery
 
 // Info on the query
 ArrayList clauses = new ArrayList();
-
+java.util.Date lastUpdatedFirst;
+java.util.Date lastUpdatedNext;
 // ============================================
+
+public void setLastUpdatedFirst(java.util.Date dt)
+	{ this.lastUpdatedFirst = dt; }
+public void setLastUpdatedNext(java.util.Date dt)
+	{ this.lastUpdatedNext = dt; }
+public java.util.Date getLastUpdatedFirst()
+	{ return this.lastUpdatedFirst; }
+public java.util.Date getLastUpdatedNext()
+	{ return this.lastUpdatedNext; }
+
+
 /** Inserts clause before clause #ix */
 public void insertClause(int ix, Clause c)
 	{ clauses.add(ix, c); }
@@ -90,6 +103,10 @@ public void writeSqlQuery(EQuerySchema schema, SqlQuery sql)
 	}
 	cwhere = cwhere + ")";
 	sql.addWhereClause(cwhere);
+	
+	// Add where clause for lastupdated date range
+	if (lastUpdatedFirst != null) sql.addWhereClause("main.lastupdated >= " + SqlTimestamp.sql(lastUpdatedFirst));
+	if (lastUpdatedNext != null) sql.addWhereClause("main.lastupdated < " + SqlTimestamp.sql(lastUpdatedNext));
 }
 // ------------------------------------------------------
 public String getSql(EQuerySchema eqs)
@@ -102,44 +119,47 @@ public String getSql(EQuerySchema eqs)
 	return sql.getSelectSQL();	
 }
 // ------------------------------------------------------
-//public static void main(String[] args) throws Exception
-//{
-//	
-//	ColName a = new ColName("tab",  "col");
-//	HashMap map = new HashMap();
-//	map.put(a, a);
-//	ColName b = new ColName("tab.col");
-//	System.out.println(a.equals(b));
-//	System.out.println(map.get(b));
-//	System.out.println(map.get(a));
-//	if (true) return;
-//	
-//	Connection db = new TestConnPool().checkout();
-//	Statement st = db.createStatement();
-//	offstage.schema.OffstageSchemaSet sset = new offstage.schema.OffstageSchemaSet(st, null);
-//	EQuerySchema eqs = new EQuerySchema(st, sset);
-//	EQuery eq = new EQuery();
-//	eq.newClause();
-//	eq.addElement("phones", "phone", "=", "617-308-0436 yyy");
-//	eq.addElement("phones", "groupid", "=", new Integer(109));
-//	eq.newClause();
-//	eq.addElement("donations", "groupid", "=", new Integer(169));
-//	eq.newClause();
-//	eq.addElement("persons", "lastname", "like", "%Fischer%");
-//	SqlQuery sql = new SqlQuery();
-//	eq.writeSqlQuery(eqs, sql);
-//	sql.addTable("entities as main");
-//	sql.addColumn("main.entityid");
-//	sql.setDistinct(true);
-//	String ssql = sql.getSelectSQL();
-//	System.out.println(ssql);
-//
-//	// Serialize using XML
-//	FileWriter fout = new FileWriter("test.xml");
-//	XStream xs = new XStream();
-//	ObjectOutputStream oos = xs.createObjectOutputStream(fout);
-//	oos.writeObject(eq);
-//	oos.close();
-//
-//}
+/** Sets the value.  Same as method in JFormattedTextField.  Fires a
+ * propertyChangeEvent("value") when calling setValue() changes the value. */
+public static EQuery fromXML(String squery)
+{
+	if (squery == null) return null;
+	
+	Object obj = null;
+	try {
+		StringReader fin = new StringReader(squery);
+		EQueryXStream xs = new EQueryXStream();
+		ObjectInputStream ois = xs.createObjectInputStream(fin);
+		obj = ois.readObject();
+	} catch(ClassNotFoundException e) {
+		return null;
+//		throw new IOException("Class Not Found in Serialized File");
+	} catch(com.thoughtworks.xstream.io.StreamException se) {
+		return null;
+//		throw new IOException("Error reading serialized file");
+	} catch(IOException e) {}	// won't happen
+	
+	if (obj == null) {
+		return null;
+	} else if (!(obj instanceof EQuery)) {
+		return null;
+//		throw new IOException("Wrong object of class " + obj.getClass() + " found in EQuery file");
+	} else {
+		return (EQuery)obj;
+	}
+}
+
+public String toXML()
+{
+	// Serialize using XML
+	StringWriter fout = new StringWriter();
+	EQueryXStream xs = new EQueryXStream();
+	try {
+		ObjectOutputStream oos = xs.createObjectOutputStream(fout);
+		oos.writeObject(this);
+		oos.close();
+	} catch(IOException e) {}	// won't happen
+	return fout.getBuffer().toString();
+}
+
 }

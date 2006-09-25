@@ -40,7 +40,7 @@ import citibob.swing.JTypeColTable;
  *
  * @author citibob
  */
-public class MailingidsTable extends SchemaBufTable
+public class MailingidsTable extends StatusTable
 {
 	
 //MailingModel mailing;		// Sets the key on this object.  May be NULL.

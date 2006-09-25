@@ -30,7 +30,7 @@ import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
 import offstage.FrontApp;
-import offstage.EQueryBrowserApp;
+//import offstage.EQueryBrowserApp;
 
 /**
  *
@@ -56,7 +56,7 @@ FrontApp app;
 		try {
 			dbb = app.getPool().checkout();
 			st = dbb.createStatement();
-			EQueryBrowserApp eapp = app.getEqueryBrowserApp();
+			//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
 			people.initRuntime(st, app);
 			queries.initRuntime(app);
 			mailings.initRuntime(st, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
@@ -97,7 +97,7 @@ FrontApp app;
     private void initComponents() {
         tabs = new javax.swing.JTabbedPane();
         people = new offstage.gui.EditorPanel();
-        queries = new offstage.gui.EQueryBrowser();
+        queries = new offstage.equery.swing.EQueryBrowser2();
         mailings = new offstage.gui.MailingsEditor();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -210,7 +210,7 @@ private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JMenuItem miQuit;
     private javax.swing.JMenuItem miThrowException;
     private offstage.gui.EditorPanel people;
-    private offstage.gui.EQueryBrowser queries;
+    private offstage.equery.swing.EQueryBrowser2 queries;
     private javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
 	

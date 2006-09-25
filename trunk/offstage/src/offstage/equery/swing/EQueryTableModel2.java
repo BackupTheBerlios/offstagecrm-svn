@@ -36,6 +36,7 @@ import java.awt.*;
 import java.util.*;
 import citibob.jschema.*;
 import offstage.equery.*;
+import java.io.*;
 
 /**
  *
@@ -106,6 +107,58 @@ void makeRowSpecs()
 int baseRow(int row)
 {
 	return row - (getRow(row).eix + 1);
+}
+// ------------------------------------------------------
+/** Sets the value.  Same as method in JFormattedTextField.  Fires a
+ * propertyChangeEvent("value") when calling setValue() changes the value. */
+public EQuery setSQuery(String squery)
+{
+	if (squery == null) {	// Set to a blank query
+		setQuery(new EQuery());
+		return getQuery();
+	}
+	setQuery(EQuery.fromXML(squery));
+	return getQuery();
+	
+//	Object obj = null;
+//	try {
+//		StringReader fin = new StringReader(squery);
+//		EQueryXStream xs = new EQueryXStream();
+//		ObjectInputStream ois = xs.createObjectInputStream(fin);
+//		obj = ois.readObject();
+//	} catch(ClassNotFoundException e) {
+//		return null;
+////		throw new IOException("Class Not Found in Serialized File");
+//	} catch(com.thoughtworks.xstream.io.StreamException se) {
+//		return null;
+////		throw new IOException("Error reading serialized file");
+//	} catch(IOException e) {}	// won't happen
+//	
+//	if (obj == null) {
+//		setQuery(new EQuery());
+//	} else if (!(obj instanceof EQuery)) {
+//		return null;
+////		throw new IOException("Wrong object of class " + obj.getClass() + " found in EQuery file");
+//	} else {
+//		setQuery((EQuery)obj);
+//	}
+//	return getQuery();
+}
+
+public String getSQuery()
+{
+	EQuery q = getQuery();
+	if (q == null) return null;
+	return getQuery().toXML();
+//	// Serialize using XML
+//	StringWriter fout = new StringWriter();
+//	EQueryXStream xs = new EQueryXStream();
+//	try {
+//		ObjectOutputStream oos = xs.createObjectOutputStream(fout);
+//		oos.writeObject(getQuery());
+//		oos.close();
+//	} catch(IOException e) {}	// won't happen
+//	return fout.getBuffer().toString();
 }
 // ------------------------------------------------------
 /** Inserts clause before the row'th row of the overall table.  row = rows.size() if we wish to append to end... */

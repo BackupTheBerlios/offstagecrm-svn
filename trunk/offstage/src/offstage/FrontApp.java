@@ -30,6 +30,7 @@ import citibob.swing.typed.*;
 import offstage.schema.*;
 import citibob.mail.*;
 import javax.mail.internet.*;
+import offstage.equery.swing.EQueryModel2;
 
 public class FrontApp
 {
@@ -48,7 +49,7 @@ SwingerMap swingerMap;
 OffstageSchemaSet sset;
 
 FullEntityDbModel fullEntityDm;
-EQueryBrowserApp equeryBrowserApp;
+EQueryModel2 equeries;
 MailingModel2 mailings;
 EntityListTableModel simpleSearchResults;
 ActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
@@ -92,7 +93,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		fullEntityDm = new FullEntityDbModel(sset, appRunner);
 		mailings = new MailingModel2(st, sset);//, appRunner);
 //	mailings.refreshMailingids();
-		equeryBrowserApp = new EQueryBrowserApp(st, mailings, sset);
+		equeries = new EQueryModel2(st, mailings, sset);
 		simpleSearchResults = new EntityListTableModel();
 	} finally {
 		st.close();
@@ -112,8 +113,8 @@ public FullEntityDbModel getFullEntityDm()
 	{ return fullEntityDm; }
 public MailingModel2 getMailingModel()
 	{ return mailings; }
-public EQueryBrowserApp getEqueryBrowserApp()
-	{ return equeryBrowserApp; }
+public EQueryModel2 getEQueryModel2()
+	{ return equeries; }
 public DbChangeModel getDbChange()
 	{ return dbChange; }
 public OffstageSchemaSet getSchemaSet() { return sset; }
