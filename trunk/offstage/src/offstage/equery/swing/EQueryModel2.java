@@ -53,7 +53,7 @@ SchemaBufDbModel equeries;		// Set to entire equery info
 //protected SchemaBufDbModel oneQuery;		// Row currently being edited...
 protected SchemaBufRowModel oneQueryRow;		// Row currently being edited...
 protected EQueryTableModel2 oneQueryTableModel;	// Query editor model for row currently being edited...
-protected EQuerySchema schema;
+protected QuerySchema schema;
 protected String xmlBlankQuery;			// XML for a blank query to insert...
 MailingModel2 mailingModel;
 
@@ -70,7 +70,7 @@ throws SQLException
 	this.runner = runner;
 	
 	// Init XML for a blank query
-	Clause c = new Clause();
+	EClausee c = newEClausese();
 	c.elements.add(new Element());
 	EQuery q = new EQuery();
 	q.appendClause(c);

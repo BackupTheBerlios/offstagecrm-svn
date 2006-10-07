@@ -25,36 +25,19 @@ import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
 import offstage.schema.OffstageSchemaSet;
-import offstage.schema.OrgSchema;
-import offstage.schema.NotesSchema;
-import offstage.schema.PersonsSchema;
-import offstage.schema.PhonesSchema;
-import offstage.schema.EventsSchema;
-import offstage.schema.DonationsSchema;
-import offstage.schema.EntitiesSchema;
 import citibob.util.KeyedModel;
 
-public class EQuerySchema extends QuerySchema
+public class WizQuerySchema extends QuerySchema
 {
 
 // --------------------------------------------------
-public EQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
+public WizQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
 {
 	super(st);
-	addSchema(sset.entities,
-		"entities.entityid = main.entityid");
-	addSchema(sset.org,
-		"organizations.entityid = main.entityid");
-	addSchema(sset.persons,
-		"persons.entityid = main.entityid");
 	addSchema(sset.events,
 		"events.entityid = main.entityid");
 	addSchema(sset.donations,
 		"donations.entityid = main.entityid");
-	addSchema(sset.notes,
-		"notes.entityid = main.entityid");
-	addSchema(sset.phones,
-		"phones.entityid = main.entityid");
 	addSchema(sset.classes,
 		"classes.entityid = main.entityid");
 	addSchema(sset.interests,
@@ -63,39 +46,13 @@ public EQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
 		"tickets.entityid = main.entityid");
 	doAlias(alias);
 }
-
 // --------------------------------------------------------------------
 private static final String[] alias = {
-	"persons.firstname", "firstname",
-	"persons.middlename", "middlename",
-	"persons.lastname", "lastname",
-	"persons.gender", "gender",
-	"persons.email", "email",
-	"persons.occupation", "occupation",
-	"entities.address1", "address1",
-	"entities.address2", "address2",
-	"entities.city", "city",
-	"entities.state", "state",
-	"entities.zip", "zip",
-	"entities.country", "country",
-	"entities.lastupdated", "lastupdated",
-	"entities.sendmail", "sendmail",
-	"organizations.name", "org-name",
-	"events.groupid", "event-type",
-	"events.role", "event-role",
-	"donations.groupid", "donation-type",
-	"donations.date", "donation-date",
-	"donations.amount", "donation-amount",
-	"notes.groupid", "note-type",
-	"notes.date", "note-date",
-	"notes.note", "note",
-	"phones.groupid", "phone-type",
-	"phones.phone", "phone",
+	"events.groupid", "events",
+	"donations.groupid", "donations",
 	"classes.groupid", "classes",
 	"interests.groupid", "interests",
-	"tickets.groupid", "tickets",
-	"entities.entityid", "entityid",
-	"entities.obsolete", "obsolete",
+	"tickets.groupid", "tickets"
 };
 
 }

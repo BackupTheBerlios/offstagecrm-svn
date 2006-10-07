@@ -27,7 +27,7 @@ import java.io.*;
 import com.thoughtworks.xstream.*;
 import offstage.db.TestConnPool;
 
-public class EQuery
+public class WizQuery
 {
 
 // Info on the query
@@ -47,32 +47,20 @@ public java.util.Date getLastUpdatedNext()
 
 
 /** Inserts clause before clause #ix */
-public void insertClause(int ix, EClausee c)
+public void insertClause(int ix, WizClause c)
 	{ clauses.add(ix, c); }
-public void appendClauseEClausese c)
+public void appendClause(WizClause c)
 	{ clauses.add(c); }
-publiEClauseuse removeClause(int ix)
-	{ returEClauseause)clauses.remove(ix); }
-pubEClauselause getClause(int n)
+public WizClause removeClause(int ix)
+	{ return (WizClause)clauses.remove(ix); }
+public WizClause getClause(int n)
 {
-	retEClauseClause)clauses.get(n);
+	return (WizClause)clauses.get(n);
 }
 
 public int getNumClauses()
 	{ return clauses.size(); }
 
-///** Convenience: add an element to the last clause */
-//public void addElement(Element e)
-//{
-//	Clause clause = (Clause)clauses.get(clauses.size() - 1);
-//	clause.addElement(e);
-//}
-///** Convenience: add an element to the last clause */
-//public void addElement(String table, String col, String comparator, Object value)
-//{
-//	Element e = new Element(new ColName(table,col),comparator,value);
-//	addElement(e);
-//}
 public ArrayList getClauses()
 	{ return clauses; }
 // -----------------------------------------------
@@ -80,7 +68,8 @@ public ArrayList getClauses()
 public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 {
 	String cwhere = "(1=0";
-	for (Iterator ii=clauses.iterator(); ii.hasNext(); EClauseEClause claEClause(EClause)ii.next();
+	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
+		WizClause clause = (WizClause)ii.next();
 		List elements = clause.elements;
 		String ewhere = "(1=1";
 		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
@@ -97,7 +86,7 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 				" (" + c.getType().toSql(e.value) + ")";
 		}
 		ewhere = ewhere + ")";
-		String joiner = (clause.EClause.ADDlause.ADD ? "or" : "and not");
+		String joiner = (clause.type == WizClause.ADD ? "or" : "and not");
 		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere;
 	}
 	cwhere = cwhere + ")";
@@ -120,14 +109,14 @@ public String getSql(QuerySchema qs)
 // ------------------------------------------------------
 /** Sets the value.  Same as method in JFormattedTextField.  Fires a
  * propertyChangeEvent("value") when calling setValue() changes the value. */
-public static EQuery fromXML(String squery)
+public static WizQuery fromXML(String squery)
 {
 	if (squery == null) return null;
 	
 	Object obj = null;
 	try {
 		StringReader fin = new StringReader(squery);
-		EQueryXStream xs = new EQueryXStream();
+		WizQueryXStream xs = new WizQueryXStream();
 		ObjectInputStream ois = xs.createObjectInputStream(fin);
 		obj = ois.readObject();
 	} catch(ClassNotFoundException e) {
@@ -140,11 +129,11 @@ public static EQuery fromXML(String squery)
 	
 	if (obj == null) {
 		return null;
-	} else if (!(obj instanceof EQuery)) {
+	} else if (!(obj instanceof WizQuery)) {
 		return null;
-//		throw new IOException("Wrong object of class " + obj.getClass() + " found in EQuery file");
+//		throw new IOException("Wrong object of class " + obj.getClass() + " found in WizQuery file");
 	} else {
-		return (EQuery)obj;
+		return (WizQuery)obj;
 	}
 }
 
@@ -152,7 +141,7 @@ public String toXML()
 {
 	// Serialize using XML
 	StringWriter fout = new StringWriter();
-	EQueryXStream xs = new EQueryXStream();
+	WizQueryXStream xs = new WizQueryXStream();
 	try {
 		ObjectOutputStream oos = xs.createObjectOutputStream(fout);
 		oos.writeObject(this);

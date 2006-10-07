@@ -54,17 +54,17 @@ public static final String S_NAME = "Name";
 
 
 ArrayList rows;		// Description of what goes in each row
-EQuerySchema schema;			// Info on valid columns in the query
+QuerySchema schema;			// Info on valid columns in the query
 EQuery query;					// The query we're editing
 static JType[] jtypesQuery;
 static {
 	jtypesQuery = new JType[] {
 		new JEnum(new KeyedModel(
-			new Object[] {new Integer(Clause.ADD), new Integer(Clause.SUBTRACT)},
+			new Object[] {new Integer(EClause.ADDD), new IntegerEClause.SUBTRACTCT)},
 			new Object[] {"+", "-"})),
 		new JavaJType(String.class), null};
 }
-public EQueryTableModel2(EQuerySchema schema)
+public EQueryTableModel2(QuerySchema schema)
 {
 	rows = new ArrayList();
 	this.schema = schema;
@@ -85,7 +85,7 @@ static class RowSpec {
 }
 public Element getElement(RowSpec rs)
 	{ return query.getClause(rs.cix).getElement(rs.eix); }
-public Clause getClause(RowSpec rs)
+publiEClauseuse getClause(RowSpec rs)
 	{ return query.getClause(rs.cix); }
 // -------------------------------------------------------
 RowSpec getRow(int row)
@@ -93,8 +93,7 @@ RowSpec getRow(int row)
 void makeRowSpecs()
 {
 	rows.clear();
-	for (int ci=0; ci<query.getClauses().size(); ++ci) {
-		Clause c = (Clause)query.getClauses().get(ci);
+	for (int ci=0; ci<query.getClauses().size(); ++ci) {EClauseause cEClauselause)query.getClauses().get(ci);
 		rows.add(new RowSpec(ci, -1));
 		for (int ei=0; ei<c.getElements().size(); ++ei) {
 			Element e = (Element)c.elements.get(ei);
@@ -162,7 +161,7 @@ public String getSQuery()
 }
 // ------------------------------------------------------
 /** Inserts clause before the row'th row of the overall table.  row = rows.size() if we wish to append to end... */
-public void insertClause(int row, Clause clause)
+public void insertClause(int EClauseClause clause)
 {
 	if (row < 0) return;
 	RowSpec rs = getRow(row);
@@ -198,8 +197,7 @@ public void removeClause(int row)
 	if (!rs.isClause()) return;
 	
 	row = baseRow(row);
-	int cix = getRow(row).cix;
-	Clause clause = query.getClause(cix);
+	int cix = getRow(row).EClauseEClause clause = query.getClause(cix);
 
 	query.removeClause(cix);
 
@@ -220,8 +218,7 @@ public void removeElement(int row)
 	RowSpec rs = getRow(row);
 	if (!rs.isElement()) return;
 	
-//	row = baseRow(row);
-	Clause clause = query.getClause(rs.cix);
+//	row = baseRow(EClause	EClause clause = query.getClause(rs.cix);
 	clause.removeElement(rs.eix);
 
 	// Remove new rows from table model and shift old rows...
@@ -256,8 +253,8 @@ public void insertElement(int row, int cix, int eix, Element ele)
 //	int brow = baseRow(row - 1);
 //	int prow = row-1;		// Now on row to APPEND after, will always be legal
 
-	// Insert it in the clause
-	Clause clause = query.getClause(cix);
+	// Insert it in the EClause
+	EClause clause = query.getClause(cix);
 	clause.insertElement(eix, ele);		// Header rows have eix == -1, this is OK
 
 	// Insert it in the table model
@@ -370,16 +367,16 @@ public void setValueAt(Object val, int row, int col)
 	RowSpec rs = getRow(row);
 	if (rs.isDummy()) return;
 	if (rs.isClause()) {
-		if (query == null) return;
-		Clause c = query.getClause(rs.cix);
+		if (query == null) rEClause
+		EClause c = query.getClause(rs.cix);
 		switch(col) {
 			case C_ADDSUB : c.type = ((Integer)val).intValue(); break;
 			case C_NAME : c.name = (String)val; break;
 		}
 		// Redisplay the entire row!
 		this.fireTableCellUpdated(row, col);		
-	} else {	// Body (Element) row
-		Clause c = query.getClause(rs.cix);
+	} else {	// Body (ElemeEClausew
+		EClause c = query.getClause(rs.cix);
 		Element el = c.getElement(rs.eix);
 		//EQuery.Element el = getElement(row);
 		if (el == null) return;
@@ -398,7 +395,7 @@ public void setValueAt(Object val, int row, int col)
 					this.fireTableCellUpdated(row, C_COMPARE);
 				}
 				if (oldValueType == null || !oldValueType.equals(getJType(row, C_VALUE))) {
-					EQuerySchema.Col scol = schema.getCol(el.colName);
+					QuerySchema.Col scol = schema.getCol(el.colName);
 					if (scol == null || scol.col == null) el.value = null;
 					else el.value = scol.col.getDefault();
 					this.fireTableCellUpdated(row, C_VALUE);
@@ -430,8 +427,8 @@ public Object getValueAt(int row, int column)
 			case C_COLUMN : return "Append";
 		}
 		return null;
-	} else if (rs.isClause()) {
-		Clause c = query.getClause(rs.cix);
+	} else if (rs.isClaEClause {
+		EClause c = query.getClause(rs.cix);
 		switch(column) {
 			case C_ADDSUB : return new Integer(c.type);
 			case C_NAME : return c.name;
@@ -474,7 +471,7 @@ public JType getJType(int row, int column)
 	
 		Element el = getElement(rs);
 		if (el == null) return null;
-		EQuerySchema.Col col = schema.getCol(el.colName);
+		QuerySchema.Col col = schema.getCol(el.colName);
 		if (col == null) return null;
 		if (column == C_COMPARE) return col.comparators;
 		if (col.col == null) return null;
