@@ -64,7 +64,7 @@ implements TypedWidget
 		
 		JDateType jt = new citibob.swing.typed.JDate(true);
 		DateFormat fmt = new SimpleDateFormat("MM-dd-yyyy");
-		JTypeSwinger swinger = new JDateSwinger(jt, fmt);
+		Swinger swinger = new JDateSwinger(jt, fmt);
 		dtFirst.setJType(swinger);
 		dtNext.setJType(swinger);
 	}
@@ -263,7 +263,7 @@ public boolean isInstance(Object o)
 /** Set up widget to edit a specific SqlType.  Note that this widget does not
  have to be able to edit ALL SqlTypes... it can throw a ClassCastException
  if asked to edit a SqlType it doesn't like. */
-public void setJType(citibob.swing.typed.JTypeSwinger f) throws ClassCastException
+public void setJType(citibob.swing.typed.Swinger f) throws ClassCastException
 {
  }
 

@@ -74,7 +74,8 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 	Statement st = null;
 
 	this.mailSender = new citibob.mail.GuiMailSender();
-	this.swingerMap = new citibob.sql.pgsql.DefaultSwingerMap();
+//	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
+	this.swingerMap = new offstage.types.OffstageSwingerMap();
 	
 	this.pool = pool;
 	//pool = new DBConnPool();

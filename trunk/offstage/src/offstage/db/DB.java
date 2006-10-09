@@ -28,6 +28,9 @@ import java.sql.*;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
+import java.util.prefs.*;
+import offstage.config.*;
+import citibob.gui.DBPrefsDialog;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -36,7 +39,21 @@ import citibob.sql.pgsql.*;
  */
 public class DB {
 
-
+// -------------------------------------------------------------------------------
+public static ConnPool newConnPool()
+throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFoundException
+{
+		// Open the Database
+		Preferences dbPref = OffstageVersion.prefs.node("db");
+		Preferences dbGuiPref = OffstageVersion.prefs.node("db/gui");
+		DBPrefsDialog d = new DBPrefsDialog(null, dbPref, dbGuiPref);
+		d.setVisible(true);
+		if (!d.isOkPressed()) {	// User cancelled DB open
+			System.exit(0);
+		}
+		ConnPool pool = d.newConnPool();
+		return pool;
+}
 // -------------------------------------------------------------------------------
 /** Gets the next value from a sequence. */
 public static int r_nextval(Statement st, String sequence) throws SQLException

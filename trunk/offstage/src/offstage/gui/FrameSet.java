@@ -29,17 +29,12 @@ public class FrameSet {
 protected OffstageGui offstageGui;
 protected ConsoleFrame consoleFrame;
 
+
+
+
     /** Creates a new instance of FrameSet */
     public FrameSet() throws Exception {
-		// Open the Database
-		Preferences dbPref = OffstageVersion.prefs.node("db");
-		Preferences dbGuiPref = OffstageVersion.prefs.node("db/gui");
-		DBPrefsDialog d = new DBPrefsDialog(null, dbPref, dbGuiPref);
-		d.setVisible(true);
-		if (!d.isOkPressed()) {	// User cancelled DB open
-			System.exit(0);
-		}
-		ConnPool pool = d.newConnPool();
+		ConnPool pool = offstage.db.DB.newConnPool();
 		Connection dbb = pool.checkout();
 
 		// Get database version

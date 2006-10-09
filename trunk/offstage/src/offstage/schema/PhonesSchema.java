@@ -24,6 +24,7 @@ import citibob.jschema.*;
 import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.util.KeyedModel;
+import offstage.types.*;
 
 public class PhonesSchema extends ConstSchema
 {
@@ -38,7 +39,7 @@ throws SQLException
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),
 		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlString(50), "phone", false),
+		new Column(new SqlPhone(), "phone", false),
 	};
 }
 
