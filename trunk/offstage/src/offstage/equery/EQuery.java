@@ -47,15 +47,15 @@ public java.util.Date getLastUpdatedNext()
 
 
 /** Inserts clause before clause #ix */
-public void insertClause(int ix, EClausee c)
+public void insertClause(int ix, EClause c)
 	{ clauses.add(ix, c); }
-public void appendClauseEClausese c)
+public void appendClause(EClause c)
 	{ clauses.add(c); }
-publiEClauseuse removeClause(int ix)
-	{ returEClauseause)clauses.remove(ix); }
-pubEClauselause getClause(int n)
+public EClause removeClause(int ix)
+	{ return (EClause)clauses.remove(ix); }
+public EClause getClause(int n)
 {
-	retEClauseClause)clauses.get(n);
+	return (EClause)clauses.get(n);
 }
 
 public int getNumClauses()
@@ -80,7 +80,8 @@ public ArrayList getClauses()
 public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 {
 	String cwhere = "(1=0";
-	for (Iterator ii=clauses.iterator(); ii.hasNext(); EClauseEClause claEClause(EClause)ii.next();
+	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
+		EClause clause = (EClause)ii.next();
 		List elements = clause.elements;
 		String ewhere = "(1=1";
 		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
@@ -97,7 +98,7 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 				" (" + c.getType().toSql(e.value) + ")";
 		}
 		ewhere = ewhere + ")";
-		String joiner = (clause.EClause.ADDlause.ADD ? "or" : "and not");
+		String joiner = (clause.type == EClause.ADD ? "or" : "and not");
 		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere;
 	}
 	cwhere = cwhere + ")";
@@ -108,7 +109,7 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 	if (lastUpdatedNext != null) sql.addWhereClause("main.lastupdated < " + SqlTimestamp.sql(lastUpdatedNext));
 }
 // ------------------------------------------------------
-public String getSql(QuerySchema qs)
+public String getSql(EQuerySchema qs)
 {
 	SqlQuery sql = new SqlQuery();
 	this.writeSqlQuery(qs, sql);

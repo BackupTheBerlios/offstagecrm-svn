@@ -93,7 +93,7 @@ private static final String[] alias = {
 	"phones.phone", "phone",
 	"classes.groupid", "classes",
 	"interests.groupid", "interests",
-	"tickets.groupid", "tickets",
+	"ticketeventsales.groupid", "tickets",
 	"entities.entityid", "entityid",
 	"entities.obsolete", "obsolete",
 };

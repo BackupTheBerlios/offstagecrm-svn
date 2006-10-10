@@ -121,7 +121,8 @@ void parse()
 	firstName = getStringNull("firstname");
 	
 	// Parse out phone number
-	phone = offstage.types.PhoneFormatter.unformat(getStringNull("phone"));
+//	phone = offstage.types.PhoneFormatter.unformat(getStringNull("phone"));
+	phone = getStringNull("phone");
 	email = getStringNull("email");
 }
 // --------------------------------------------------------------

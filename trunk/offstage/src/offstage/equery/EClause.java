@@ -5,7 +5,7 @@ import java.util.*;
 
 public class EClause
 {
-// Clause types
+// EClause types
 public final static int ADD = 1;
 public final static int SUBTRACT = -1;
 

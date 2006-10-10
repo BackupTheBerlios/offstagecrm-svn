@@ -175,7 +175,7 @@ public int getSelectedRow()
 	private void bAddClauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddClauseActionPerformed
 		int row = getSelectedRow();
 		if (row < 0) row = eQueryTable.getModel().getRowCount() - 1;
-		model.insertClause(row, new EClausee());
+		model.insertClause(row, new EClause());
 	}//GEN-LAST:event_bAddClauseActionPerformed
 
 	private void bRemoveRowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveRowActionPerformed
