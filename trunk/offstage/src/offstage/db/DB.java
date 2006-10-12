@@ -147,6 +147,16 @@ throws SQLException
 	}
 }
 // -------------------------------------------------------------------------------
+public static int countIDList(Statement st, String idSql)
+throws SQLException
+{
+	String sql = "select count(*) from (" + idSql + ") xx";
+	ResultSet rs = st.executeQuery(sql);
+	rs.next();
+	int n = rs.getInt(1);
+	rs.close();
+	return n;
+}
 public static ResultSet rs_entities_namesByIDList(Statement st, String idSql, String orderBy)
 throws SQLException
 {

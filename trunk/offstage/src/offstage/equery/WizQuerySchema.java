@@ -43,7 +43,7 @@ public WizQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
 	addSchema(sset.interests,
 		"interests.entityid = main.entityid");
 	addSchema(sset.tickets,
-		"tickets.entityid = main.entityid");
+		"ticketeventsales.entityid = main.entityid");
 	doAlias(alias);
 }
 // --------------------------------------------------------------------

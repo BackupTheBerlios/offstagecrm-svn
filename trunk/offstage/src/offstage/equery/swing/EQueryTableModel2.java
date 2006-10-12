@@ -117,7 +117,7 @@ public EQuery setSQuery(String squery)
 		setQuery(new EQuery());
 		return getQuery();
 	}
-	setQuery(EQuery.fromXML(squery));
+	setQuery((EQuery)Query.fromXML(squery));
 	return getQuery();
 	
 //	Object obj = null;

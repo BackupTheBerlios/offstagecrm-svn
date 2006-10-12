@@ -36,6 +36,7 @@ import offstage.equery.*;
 import citibob.multithread.*;
 import offstage.gui.*;
 import citibob.swing.typed.*;
+import offstage.db.*;
 
 /**
  *
@@ -53,6 +54,8 @@ ActionRunner runner;
 public EQueryBrowser2() {
 	initComponents();
 }
+
+protected EQueryBrowser2 getThis() { return this; }
 
 public void initRuntime(FrontApp fapp)
 throws SQLException
@@ -120,6 +123,10 @@ throws SQLException
         bEditRecord = new javax.swing.JButton();
         bTransferEntities = new javax.swing.JButton();
         bMakeMailing = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lQuerySize = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -147,7 +154,7 @@ throws SQLException
 
         jToolBar1.add(bSaveQuery);
 
-        bTestQuery.setText("Test");
+        bTestQuery.setText("Apply");
         bTestQuery.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bTestQueryActionPerformed(evt);
@@ -157,7 +164,6 @@ throws SQLException
         jToolBar1.add(bTestQuery);
 
         bUndo.setText("Undo");
-        bUndo.setActionCommand("Undo");
         bUndo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bUndoActionPerformed(evt);
@@ -166,7 +172,7 @@ throws SQLException
 
         jToolBar1.add(bUndo);
 
-        bDelete.setText("Delete");
+        bDelete.setText("Delete Query");
         bDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bDeleteActionPerformed(evt);
@@ -259,6 +265,18 @@ throws SQLException
 
         jPanel1.add(jToolBar2, java.awt.BorderLayout.SOUTH);
 
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel1.setText("Number of Records Selected:");
+        jPanel2.add(jLabel1);
+
+        lQuerySize.setText("0");
+        jPanel2.add(lQuerySize);
+
+        jPanel2.add(jPanel4);
+
+        jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
+
         jSplitPane5.setRightComponent(jPanel1);
 
         jSplitPane4.setBottomComponent(jSplitPane5);
@@ -303,6 +321,10 @@ throws SQLException
 	private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
 		runner.doRun(new StRunnable() {
 		public void run(Statement st) throws Exception {
+			if (JOptionPane.showConfirmDialog(getThis(),
+				"Do you really want to delete the selected query?\nThis cannot be undone.",
+				"Delete Query?", JOptionPane.YES_NO_OPTION)
+				!= JOptionPane.YES_OPTION) return;
 			saveCurQuery(st);
 //			int row = tQueries.getSelectedRow();
 			int row = app.oneQueryRow.getCurRow();
@@ -330,6 +352,7 @@ private void bTestQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 		EQuery eqy = app.oneQueryTableModel.getQuery();
 		//EQuery eqy = app.getEQuery();
 		String sql = eqy.getSql(app.schema);
+		lQuerySize.setText(""+DB.countIDList(st, sql));
 		testResults.setRows(st, sql, null);
 	}});
 }//GEN-LAST:event_bTestQueryActionPerformed
@@ -378,8 +401,11 @@ private void bSaveQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JButton bUndo;
     private offstage.equery.swing.EQueryEditor eQueryEditor;
     private javax.swing.JPanel editorPanel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane4;
@@ -388,6 +414,7 @@ private void bSaveQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     private citibob.swing.typed.JTypedTextField jTypedTextField1;
+    private javax.swing.JLabel lQuerySize;
     private citibob.jschema.swing.SchemaBufTable tQueries;
     private offstage.gui.FamilyTable tTestResults;
     // End of variables declaration//GEN-END:variables

@@ -27,7 +27,7 @@ import java.io.*;
 import com.thoughtworks.xstream.*;
 import offstage.db.TestConnPool;
 
-public class EQuery
+public class EQuery extends Query
 {
 
 // Info on the query
@@ -61,18 +61,6 @@ public EClause getClause(int n)
 public int getNumClauses()
 	{ return clauses.size(); }
 
-///** Convenience: add an element to the last clause */
-//public void addElement(Element e)
-//{
-//	Clause clause = (Clause)clauses.get(clauses.size() - 1);
-//	clause.addElement(e);
-//}
-///** Convenience: add an element to the last clause */
-//public void addElement(String table, String col, String comparator, Object value)
-//{
-//	Element e = new Element(new ColName(table,col),comparator,value);
-//	addElement(e);
-//}
 public ArrayList getClauses()
 	{ return clauses; }
 // -----------------------------------------------
@@ -88,11 +76,12 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 			Element e = (Element)jj.next();
 			ColName cn = e.colName;
 			Column c = (((QuerySchema.Col) schema.getCol(cn)).col);
-			if (!sql.containsTable(e.colName.getTable())) {
-				String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
-				sql.addWhereClause(joinClause);
-				sql.addTable(cn.getTable());
-			}
+			addTable(schema, sql, cn);
+//			if (!sql.containsTable(e.colName.getTable())) {
+//				String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
+//				sql.addWhereClause(joinClause);
+//				sql.addTable(cn.getTable());
+//			}
 			ewhere = ewhere + " and\n" +
 				e.colName.toString() + " " + e.comparator + " " +
 				" (" + c.getType().toSql(e.value) + ")";
@@ -109,57 +98,5 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 	if (lastUpdatedNext != null) sql.addWhereClause("main.lastupdated < " + SqlTimestamp.sql(lastUpdatedNext));
 }
 // ------------------------------------------------------
-public String getSql(EQuerySchema qs)
-{
-	SqlQuery sql = new SqlQuery();
-	this.writeSqlQuery(qs, sql);
-	sql.addTable("entities as main");
-	sql.addColumn("main.entityid");
-	sql.setDistinct(true);
-	return sql.getSelectSQL();	
-}
-// ------------------------------------------------------
-/** Sets the value.  Same as method in JFormattedTextField.  Fires a
- * propertyChangeEvent("value") when calling setValue() changes the value. */
-public static EQuery fromXML(String squery)
-{
-	if (squery == null) return null;
-	
-	Object obj = null;
-	try {
-		StringReader fin = new StringReader(squery);
-		EQueryXStream xs = new EQueryXStream();
-		ObjectInputStream ois = xs.createObjectInputStream(fin);
-		obj = ois.readObject();
-	} catch(ClassNotFoundException e) {
-		return null;
-//		throw new IOException("Class Not Found in Serialized File");
-	} catch(com.thoughtworks.xstream.io.StreamException se) {
-		return null;
-//		throw new IOException("Error reading serialized file");
-	} catch(IOException e) {}	// won't happen
-	
-	if (obj == null) {
-		return null;
-	} else if (!(obj instanceof EQuery)) {
-		return null;
-//		throw new IOException("Wrong object of class " + obj.getClass() + " found in EQuery file");
-	} else {
-		return (EQuery)obj;
-	}
-}
-
-public String toXML()
-{
-	// Serialize using XML
-	StringWriter fout = new StringWriter();
-	EQueryXStream xs = new EQueryXStream();
-	try {
-		ObjectOutputStream oos = xs.createObjectOutputStream(fout);
-		oos.writeObject(this);
-		oos.close();
-	} catch(IOException e) {}	// won't happen
-	return fout.getBuffer().toString();
-}
 
 }

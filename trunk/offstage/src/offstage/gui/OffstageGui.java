@@ -120,6 +120,12 @@ FrontApp app;
 
         jMenu1.setText("File");
         miThrowException.setText("Throw Exception");
+        miThrowException.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miThrowExceptionActionPerformed(evt);
+            }
+        });
+
         jMenu1.add(miThrowException);
 
         jMenu1.add(jSeparator1);
@@ -164,6 +170,13 @@ FrontApp app;
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
+
+private void miThrowExceptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miThrowExceptionActionPerformed
+	app.getAppRunner().doRun(new citibob.multithread.StRunnable() {
+	public void run(Statement st) throws Exception {
+		throw new Exception("Hello");
+	}});
+}//GEN-LAST:event_miThrowExceptionActionPerformed
 
 	private void miMailPrefsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miMailPrefsActionPerformed
 		new citibob.mail.MailPrefsDialog(this).setVisible(true);
