@@ -26,9 +26,9 @@ public class OffstageWizard extends Wizard
 protected FrontApp fapp;
 
     /** Creates a new instance of OffstageWizard */
-    public OffstageWizard(FrontApp fapp, java.awt.Frame frame, String startState)
+    public OffstageWizard(String wizardName, FrontApp fapp, java.awt.Frame frame, String startState)
 	{
-		super(frame, startState);
+		super(wizardName, frame, startState);
 		this.fapp = fapp;
     }
 

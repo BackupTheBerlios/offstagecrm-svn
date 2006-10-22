@@ -11,7 +11,8 @@ import offstage.*;
 import citibob.multithread.*;
 import citibob.swing.typed.*;
 import java.sql.*;
-
+import citibob.swing.*;
+import citibob.swing.table.*;
 
 /**
  *
@@ -36,18 +37,45 @@ public IDListViewer() {
 //}
 
 public void initRuntime(Statement st,
-FullEntityDbModel entityDb,
+FullEntityDbModel xentityDb,
 String idSql, String orderBy,
-ActionRunner guiRunner, SwingerMap smap)
+final ActionRunner guiRunner, SwingerMap smap)
 throws SQLException
 {
 	dupsModel = new EntityListTableModel();
 	dupsModel.setRows(st, idSql, orderBy);
-	this.entityDb = entityDb;
-	dupsTable.setModel(dupsModel);
+	this.entityDb = xentityDb;
+	dupsTable.initRuntime(dupsModel);
 	mainEntityPanel.initRuntime(st, guiRunner, entityDb, smap);
+	DClickTableMouseListener dclick =
+		new DClickTableMouseListener(dupsTable) {
+		public void doubleClicked(final int row) {
+			guiRunner.doRun(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				// Make sure it's selected in the GUI
+				dupsTable.getSelectionModel().setSelectionInterval(row, row);
+
+				// Process the selection
+				int entityid = getSelectedEntityID(dupsTable);
+				if (entityid < 0) return;
+				entityDb.setKey(entityid);
+				entityDb.doSelect(st);
+			}});
+		}};
+	
+	// Double-clicking will go to selected person
+	dupsTable.addMouseListener(dclick);
+	dclick.doubleClicked(0);		// There's at least one row here, select it.
+
 }
 
+int getSelectedEntityID(CitibobJTable searchResultsTable)
+{
+	int selected = searchResultsTable.getSelectedRow();
+	if (selected < 0) return -1;
+	int entityID = dupsModel.getEntityID(selected);
+	return entityID;
+}
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -55,18 +83,14 @@ throws SQLException
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        info.clearthought.layout.TableLayout _tableLayoutInstance;
-
-        dupsTable = new citibob.swing.CitibobJTable();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        dupsTable = new offstage.gui.FamilyTable();
         mainEntityPanel = new offstage.gui.MainEntityPanel();
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{info.clearthought.layout.TableLayout.MINIMUM,info.clearthought.layout.TableLayout.MINIMUM});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.FILL});
-        setLayout(_tableLayoutInstance);
+        setLayout(new java.awt.BorderLayout());
 
+        jSplitPane2.setDividerLocation(200);
         dupsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -78,16 +102,22 @@ throws SQLException
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        add(dupsTable, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        jScrollPane1.setViewportView(dupsTable);
 
-        add(mainEntityPanel, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        jSplitPane2.setLeftComponent(jScrollPane1);
+
+        jSplitPane2.setRightComponent(mainEntityPanel);
+
+        add(jSplitPane2, java.awt.BorderLayout.CENTER);
 
     }
     // </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private citibob.swing.CitibobJTable dupsTable;
+    private offstage.gui.FamilyTable dupsTable;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane2;
     private offstage.gui.MainEntityPanel mainEntityPanel;
     // End of variables declaration//GEN-END:variables
 

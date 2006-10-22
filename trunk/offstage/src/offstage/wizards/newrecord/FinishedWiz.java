@@ -22,41 +22,17 @@ import citibob.swing.html.HtmlWiz;
  *
  * @author citibob
  */
-public class InitWiz extends HtmlWiz {
+public class FinishedWiz extends HtmlWiz {
 	
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public InitWiz(java.awt.Frame owner)
+public FinishedWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, "New Record", true);
-	
-	KeyedButtonGroup type = new KeyedButtonGroup();
-	JRadioButton b;
-	b = new JRadioButton("Person");
-		b.setOpaque(false);
-		type.add("person", b);
-		addWidget("person", b);
-	b = new JRadioButton("Organization");
-		b.setOpaque(false);
-		type.add("organization", b);
-		addWidget("organization", b);
-	html.getMap().put("type", type);
-	
+	addSubmitButton("next", "Finished");
 	loadHtml();
 }
 
-
-public static void main(String[] args)
-throws Exception
-{
-	JFrame f = new JFrame();
-	f.setVisible(true);
-	InitWiz wiz = new InitWiz(f);
-	wiz.setVisible(true);
-	System.out.println(wiz.getSubmitName());
-	
-	System.exit(0);
-}
 }

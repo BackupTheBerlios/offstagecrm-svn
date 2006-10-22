@@ -18,13 +18,17 @@ import javax.swing.*;
 import offstage.wizards.*;
 import offstage.*;
 import offstage.gui.*;
+import citibob.swing.html.HtmlWiz;
 
 /**
  *
  * @author citibob
  */
 public class DupsWiz extends HtmlWiz {
-	
+
+/** Should this Wiz screen be cached when "Back" is pressed? */
+public boolean getCacheWiz() { return false; }
+
 /**
  * Creates a new instance of NewRecordWiz2 
  */
@@ -33,13 +37,16 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "Possible Duplicate Name", true);
 
+	
 	IDListViewer listView = new IDListViewer();
 	listView.initRuntime(st, fapp.getFullEntityDm(),
 		idSql, null,
 		fapp.getGuiRunner(), fapp.getSwingerMap());
-	html.getMap().put("idlistviewer", listView);
+//	html.getMap().put("idlistviewer", listView);
+	html.addWidget("idlistviewer", listView);
 	addSubmitButton("dontadd", "Don't Add");
 	addSubmitButton("addanyway", "Add Anyway");
+	this.setSize(new java.awt.Dimension(750, 550));
 	loadHtml();
 }
 

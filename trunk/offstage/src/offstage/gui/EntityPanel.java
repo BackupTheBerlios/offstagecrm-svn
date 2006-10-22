@@ -76,13 +76,13 @@ public class EntityPanel extends javax.swing.JPanel {
 			new String[] {"groupid", "comments"}, smap);
 		dm.addListener(new FullEntityDbModel.Adapter() {
 		public void entityTypeChanged(int type) {
-			CardLayout cl = (CardLayout)(basicPanel.getLayout());
+			CardLayout cl = (CardLayout)(mainPanel.getLayout());
 			switch(type) {
 				case FullEntityDbModel.ORG :
-					cl.show(basicPanel, "org");
+					cl.show(mainPanel, "org");
 				break;
 				case FullEntityDbModel.PERSON :
-					cl.show(basicPanel, "person");
+					cl.show(mainPanel, "person");
 				break;
 			}
 		}});

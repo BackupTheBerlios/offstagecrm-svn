@@ -16,6 +16,7 @@ import citibob.swing.html.*;
 import offstage.types.*;
 import javax.swing.*;
 import offstage.wizards.*;
+import citibob.swing.html.HtmlWiz;
 
 /**
  *
@@ -33,10 +34,10 @@ throws org.xml.sax.SAXException, java.io.IOException
 	setSize(600,400);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addTextField("firstname", new JStringSwinger());
-	addTextField("middleinitial", new JStringSwinger());
+	addTextField("middlename", new JStringSwinger());
 	addTextField("lastname", new JStringSwinger());
-	addTextField("addr1", new JStringSwinger());
-	addTextField("addr2", new JStringSwinger());
+	addTextField("address1", new JStringSwinger());
+	addTextField("address2", new JStringSwinger());
 	addTextField("city", new JStringSwinger());
 	addTextField("state", new JStringSwinger());
 	addTextField("zip", new JStringSwinger());
