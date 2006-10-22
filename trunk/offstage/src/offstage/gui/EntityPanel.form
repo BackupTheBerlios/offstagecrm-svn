@@ -9,26 +9,6 @@
     <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,46,0,0,2,23"/>
   </AuxValues>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="basicPanel">
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignCardLayout"/>
-      <SubComponents>
-        <Component class="offstage.gui.PersonPanel" name="personPanel">
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="person"/>
-            </Constraint>
-          </Constraints>
-        </Component>
-        <Component class="offstage.gui.OrgPanel" name="orgPanel">
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="org"/>
-            </Constraint>
-          </Constraints>
-        </Component>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JTabbedPane" name="groupPanels">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -94,6 +74,8 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="offstage.gui.MainEntityPanel" name="mainPanel">
+    </Component>
   </SubComponents>
   <LayoutCode>
     <CodeStatement>
@@ -186,11 +168,11 @@
         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
       </StatementProvider>
       <Parameters>
-        <CodeExpression id="7_basicPanel">
-          <CodeVariable name="basicPanel" type="8194" declaredType="javax.swing.JPanel"/>
+        <CodeExpression id="7_groupPanels">
+          <CodeVariable name="groupPanels" type="8194" declaredType="javax.swing.JTabbedPane"/>
           <ExpressionOrigin>
             <ExpressionProvider type="ComponentRef">
-              <ComponentRef name="basicPanel"/>
+              <ComponentRef name="groupPanels"/>
             </ExpressionProvider>
           </ExpressionOrigin>
         </CodeExpression>
@@ -207,7 +189,7 @@
               </CodeExpression>
               <CodeExpression id="10">
                 <ExpressionOrigin>
-                  <Value type="int" value="0"/>
+                  <Value type="int" value="1"/>
                 </ExpressionOrigin>
               </CodeExpression>
               <CodeExpression id="11">
@@ -217,7 +199,7 @@
               </CodeExpression>
               <CodeExpression id="12">
                 <ExpressionOrigin>
-                  <Value type="int" value="0"/>
+                  <Value type="int" value="1"/>
                 </ExpressionOrigin>
               </CodeExpression>
               <CodeExpression id="13">
@@ -241,11 +223,11 @@
         <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
       </StatementProvider>
       <Parameters>
-        <CodeExpression id="15_groupPanels">
-          <CodeVariable name="groupPanels" type="8194" declaredType="javax.swing.JTabbedPane"/>
+        <CodeExpression id="15_mainPanel">
+          <CodeVariable name="mainPanel" type="8194" declaredType="offstage.gui.MainEntityPanel"/>
           <ExpressionOrigin>
             <ExpressionProvider type="ComponentRef">
-              <ComponentRef name="groupPanels"/>
+              <ComponentRef name="mainPanel"/>
             </ExpressionProvider>
           </ExpressionOrigin>
         </CodeExpression>
@@ -262,7 +244,7 @@
               </CodeExpression>
               <CodeExpression id="18">
                 <ExpressionOrigin>
-                  <Value type="int" value="1"/>
+                  <Value type="int" value="0"/>
                 </ExpressionOrigin>
               </CodeExpression>
               <CodeExpression id="19">
@@ -272,7 +254,7 @@
               </CodeExpression>
               <CodeExpression id="20">
                 <ExpressionOrigin>
-                  <Value type="int" value="1"/>
+                  <Value type="int" value="0"/>
                 </ExpressionOrigin>
               </CodeExpression>
               <CodeExpression id="21">

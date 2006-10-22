@@ -16,7 +16,8 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Try to find possible duplicate records
+ * Try to find possible duplicate records, given the data from one record
+ * (or prospective record)
  * @author citibob
  */
 public class DupCheck {
@@ -209,6 +210,7 @@ throws SQLException
 	scoreDups(st);
 }
 // --------------------------------------------------------------
+/** @param v a set of (name,value) pairs corresponding to wizard screen or database row. */
 public static String checkDups(Statement st, TypedHashMap v, int minScore, int maxDups)
 throws SQLException
 {

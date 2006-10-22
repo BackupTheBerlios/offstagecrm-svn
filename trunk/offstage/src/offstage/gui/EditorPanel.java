@@ -51,6 +51,7 @@ ActionRunner runner;
 		initComponents();
 	}
 	public void initRuntime(Statement st, FrontApp fapp)
+//ActionRunner guiRunner, FullEntityDbModel)
 	throws java.sql.SQLException
 	{
 		this.runner = fapp.getGuiRunner();

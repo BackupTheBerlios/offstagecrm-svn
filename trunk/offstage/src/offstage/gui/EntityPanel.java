@@ -55,8 +55,7 @@ public class EntityPanel extends javax.swing.JPanel {
 	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
 	throws java.sql.SQLException
 	{
-		personPanel.initRuntime(st, runner, dm, smap);
-		orgPanel.initRuntime(st, runner, dm, smap);
+		mainPanel.initRuntime(st, runner, dm, smap);
 		donationsPanel.initRuntime(st, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
 			new String[] {"groupid", "date", "amount"}, smap);
@@ -97,9 +96,6 @@ public class EntityPanel extends javax.swing.JPanel {
     private void initComponents() {
         info.clearthought.layout.TableLayout _tableLayoutInstance;
 
-        basicPanel = new javax.swing.JPanel();
-        personPanel = new offstage.gui.PersonPanel();
-        orgPanel = new offstage.gui.OrgPanel();
         groupPanels = new javax.swing.JTabbedPane();
         donationsPanel = new offstage.gui.GroupPanel();
         eventsPanel = new offstage.gui.GroupPanel();
@@ -107,6 +103,7 @@ public class EntityPanel extends javax.swing.JPanel {
         ticketsPanel = new offstage.gui.GroupPanel();
         interestsPanel = new offstage.gui.GroupPanel();
         classesPanel = new offstage.gui.GroupPanel();
+        mainPanel = new offstage.gui.MainEntityPanel();
 
         _tableLayoutInstance = new info.clearthought.layout.TableLayout();
         _tableLayoutInstance.setHGap(0);
@@ -114,14 +111,6 @@ public class EntityPanel extends javax.swing.JPanel {
         _tableLayoutInstance.setColumn(new double[]{535});
         _tableLayoutInstance.setRow(new double[]{330,info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.PREFERRED});
         setLayout(_tableLayoutInstance);
-
-        basicPanel.setLayout(new java.awt.CardLayout());
-
-        basicPanel.add(personPanel, "person");
-
-        basicPanel.add(orgPanel, "org");
-
-        add(basicPanel, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         groupPanels.setPreferredSize(new java.awt.Dimension(458, 200));
         groupPanels.addTab("Donations", donationsPanel);
@@ -138,20 +127,20 @@ public class EntityPanel extends javax.swing.JPanel {
 
         add(groupPanels, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
+        add(mainPanel, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+
     }
     // </editor-fold>//GEN-END:initComponents
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel basicPanel;
     private offstage.gui.GroupPanel classesPanel;
     private offstage.gui.GroupPanel donationsPanel;
     private offstage.gui.GroupPanel eventsPanel;
     private javax.swing.JTabbedPane groupPanels;
     private offstage.gui.GroupPanel interestsPanel;
+    private offstage.gui.MainEntityPanel mainPanel;
     private offstage.gui.GroupPanel notesPanel;
-    private offstage.gui.OrgPanel orgPanel;
-    private offstage.gui.PersonPanel personPanel;
     private offstage.gui.GroupPanel ticketsPanel;
     // End of variables declaration//GEN-END:variables
 
