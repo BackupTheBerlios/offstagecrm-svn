@@ -103,6 +103,13 @@
             <include name="jschema.jar"/>
             <include name="prefedit-0.7.jar"/>
         </fileset>
+        <fileset dir="../../prg/cobra/dist">
+            <include name="cobra.jar"/>
+        </fileset>
+        <fileset dir="../../prg/cobra/lib">
+            <include name="js.jar"/>
+            <include name="dom.jar"/>
+        </fileset>
     </copy>
 </target>
 
