@@ -47,7 +47,8 @@ FrontApp app;
 	}
 
 	public void initRuntime(final FrontApp app, FrameSet frameSet, Preferences guiPrefs)
-	throws java.sql.SQLException
+//	throws java.sql.SQLException
+	throws Exception
 	{
 		this.app = app;
 		this.frameSet = frameSet;
@@ -57,6 +58,7 @@ FrontApp app;
 			dbb = app.getPool().checkout();
 			st = dbb.createStatement();
 			//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
+			actions.initRuntime(app);
 			people.initRuntime(st, app);
 			queries.initRuntime(app);
 			mailings.initRuntime(st, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
@@ -96,6 +98,7 @@ FrontApp app;
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         tabs = new javax.swing.JTabbedPane();
+        actions = new offstage.gui.ActionPanel();
         people = new offstage.gui.EditorPanel();
         queries = new offstage.equery.swing.EQueryBrowser2();
         mailings = new offstage.gui.MailingsEditor();
@@ -110,6 +113,9 @@ FrontApp app;
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        tabs.addTab("Actions", actions);
+
         tabs.addTab("People", people);
 
         tabs.addTab("Queries", queries);
@@ -213,6 +219,7 @@ private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Console;
+    private offstage.gui.ActionPanel actions;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

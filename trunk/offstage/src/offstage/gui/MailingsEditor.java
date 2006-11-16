@@ -34,6 +34,7 @@ import offstage.FrontApp;
 import offstage.MailingModel2;
 //import offstage.MailingsDbModel;
 import citibob.swing.typed.*;
+import java.awt.Cursor;
 
 /**
  *
@@ -49,6 +50,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 	public MailingsEditor() {
 		initComponents();
 	}
+	public MailingsEditor getThis() { return this; }
 	public void initRuntime(Statement st, FrontApp app) throws SQLException
 	{
 		runner = app.getGuiRunner();
@@ -58,13 +60,14 @@ public class MailingsEditor extends javax.swing.JPanel {
 			mailing.getMailingidsDb(),
 			new String[] {"Name", "Create Date"},
 			new String[] {"name", "created"},
-			new boolean[] {true, false}, app.getSwingerMap());
+			new boolean[] {false, false}, app.getSwingerMap());
 		tMailingIds.setRenderU("created", new javax.swing.table.DefaultTableCellRenderer());
 //		tMailingIds.setSelectionModel(mailing.getMailingidsDb()SelectModel());
 		mailing.getMailingidsDb().setInstantUpdate(app.getAppRunner(), true);
 		
 		tMailingIds.addMouseListener(new DClickTableMouseListener(tMailingIds) {
 		public void doubleClicked(final int row) {
+			citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
 			runner.doRun(new StRunnable() {
 			public void run(Statement st) throws Exception {
 				// Make sure it's selected in the GUI
@@ -76,6 +79,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 				mailing.setKey(Mailingid.intValue());
 				mailing.doSelect(st);
 			}});
+			citibob.swing.SwingUtil.setCursor(getThis(), Cursor.DEFAULT_CURSOR);
 		}});
 		
 		tMailing.setModelU(mailing.getMailingsDb().getSchemaBuf(),
@@ -249,13 +253,16 @@ private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 	}//GEN-LAST:event_bDeleteActionPerformed
 
 	private void bViewLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bViewLabelsActionPerformed
+		citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
 		runner.doRun(new StRunnable() {
 		public void run(Statement st) throws Exception {
 //			throw new Exception("Bobs Exception");
 			bViewLabels.requestFocus();
 			mailing.doUpdate(st);
+System.out.println("MailingsEditor: done with doUpdate");
 			mailing.makeReport(st);
 		}});
+		citibob.swing.SwingUtil.setCursor(getThis(), Cursor.DEFAULT_CURSOR);
 		// TODO add your handling code here:
 	}//GEN-LAST:event_bViewLabelsActionPerformed
 

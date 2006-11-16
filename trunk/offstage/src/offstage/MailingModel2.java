@@ -119,9 +119,13 @@ public void makeReport(Statement st) throws SQLException, JRException
 			" order by country, zip";
 		rs = st.executeQuery(sql);
 		HashMap params = new HashMap();
+System.out.println("MailingModel2: AAA");
 		JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
+System.out.println("MailingModel2: BBB");
 		JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
+System.out.println("MailingModel2: CCC");
 		net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
+System.out.println("MailingModel2: DDD");
 	} finally {
 		try { rs.close(); } catch(Exception e) {}
 		try { in.close(); } catch(Exception e) {}		

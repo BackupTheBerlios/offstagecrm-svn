@@ -35,9 +35,10 @@ import offstage.equery.swing.EQueryModel2;
 public class FrontApp
 {
 
-public static final int PEOPLE_SCREEN = 0;
-public static final int QUERIES_SCREEN = 1;
-public static final int MAILINGS_SCREEN = 2;
+public static final int ACTIONS_SCREEN = 0;
+public static final int PEOPLE_SCREEN = 1;
+public static final int QUERIES_SCREEN = 2;
+public static final int MAILINGS_SCREEN = 3;
 int screen = PEOPLE_SCREEN;
 
 
