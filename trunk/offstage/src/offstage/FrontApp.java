@@ -82,7 +82,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	ExpHandler expHandler = new MailExpHandler(sender,
-			new InternetAddress("citibob@earthlink.net"), "OffstageCRM", stdoutDoc);
+			new InternetAddress("citibob@comcast.net"), "OffstageCRM", stdoutDoc);
 	guiRunner = appRunner = new SimpleDbActionRunner(pool, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
 	try {
