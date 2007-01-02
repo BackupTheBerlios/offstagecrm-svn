@@ -140,16 +140,9 @@ extends javax.swing.JPanel {
         info.clearthought.layout.TableLayout _tableLayoutInstance2;
         info.clearthought.layout.TableLayout _tableLayoutInstance3;
         info.clearthought.layout.TableLayout _tableLayoutInstance4;
+        java.awt.GridBagConstraints gridBagConstraints;
 
         genderButtonGroup = new citibob.swing.typed.KeyedButtonGroup();
-        FirstMiddleLast = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        salutation = new citibob.swing.typed.JTypedTextField();
-        firstname = new citibob.swing.typed.JTypedTextField();
-        middlename = new citibob.swing.typed.JTypedTextField();
-        lastname = new citibob.swing.typed.JTypedTextField();
         entitySubPanel1 = new offstage.gui.EntitySubPanel();
         MiscInfo = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -160,10 +153,8 @@ extends javax.swing.JPanel {
         title = new citibob.swing.typed.JTypedTextField();
         email = new citibob.swing.typed.JTypedTextField();
         dob = new citibob.swing.typed.JTypedDateChooser();
-        Gender = new javax.swing.JPanel();
-        maleButton = new javax.swing.JRadioButton();
-        femaleButton = new javax.swing.JRadioButton();
-        unknownGenderButton = new javax.swing.JRadioButton();
+        jLabel10 = new javax.swing.JLabel();
+        customaddressto = new citibob.swing.typed.JTypedTextField();
         FamilyPane = new javax.swing.JPanel();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         familyTable = new offstage.gui.FamilyTable();
@@ -171,111 +162,101 @@ extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         cbIsPrimary = new citibob.swing.typed.JBoolCheckbox();
         clearFamily = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        customaddressto = new citibob.swing.typed.JTypedTextField();
         phonePanel = new offstage.gui.GroupPanel();
-        jLabel11 = new javax.swing.JLabel();
-        spacer = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        lPhoneNumbers = new javax.swing.JLabel();
+        FirstMiddleLast = new javax.swing.JPanel();
+        lFirst = new javax.swing.JLabel();
+        lMiddle = new javax.swing.JLabel();
+        lLast = new javax.swing.JLabel();
+        salutation = new citibob.swing.typed.JTypedTextField();
+        firstname = new citibob.swing.typed.JTypedTextField();
+        middlename = new citibob.swing.typed.JTypedTextField();
+        lastname = new citibob.swing.typed.JTypedTextField();
+        lName = new javax.swing.JLabel();
+        Gender = new javax.swing.JPanel();
+        maleButton = new javax.swing.JRadioButton();
+        femaleButton = new javax.swing.JRadioButton();
+        unknownGenderButton = new javax.swing.JRadioButton();
 
         genderButtonGroup.setColName("gender");
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{200,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.PREFERRED});
-        setLayout(_tableLayoutInstance);
-
-        _tableLayoutInstance1 = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance1.setHGap(0);
-        _tableLayoutInstance1.setVGap(0);
-        _tableLayoutInstance1.setColumn(new double[]{40,info.clearthought.layout.TableLayout.FILL,30,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance1.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        FirstMiddleLast.setLayout(_tableLayoutInstance1);
-
-        jLabel1.setText("First");
-        FirstMiddleLast.add(jLabel1, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.LEFT, info.clearthought.layout.TableLayout.FULL));
-
-        jLabel2.setText("Middle");
-        FirstMiddleLast.add(jLabel2, new info.clearthought.layout.TableLayoutConstraints(2, 0, 2, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        jLabel3.setText("Last");
-        FirstMiddleLast.add(jLabel3, new info.clearthought.layout.TableLayoutConstraints(3, 0, 3, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        salutation.setColName("salutation");
-        FirstMiddleLast.add(salutation, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        firstname.setColName("firstname");
-        FirstMiddleLast.add(firstname, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        middlename.setColName("middlename");
-        FirstMiddleLast.add(middlename, new info.clearthought.layout.TableLayoutConstraints(2, 1, 2, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        lastname.setColName("lastname");
-        lastname.setPreferredSize(new java.awt.Dimension(10, 15));
-        FirstMiddleLast.add(lastname, new info.clearthought.layout.TableLayoutConstraints(3, 1, 3, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        add(FirstMiddleLast, new info.clearthought.layout.TableLayoutConstraints(0, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
         entitySubPanel1.setPreferredSize(null);
-        add(entitySubPanel1, new info.clearthought.layout.TableLayoutConstraints(0, 3, 0, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        _tableLayoutInstance2 = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance2.setHGap(0);
-        _tableLayoutInstance2.setVGap(0);
-        _tableLayoutInstance2.setColumn(new double[]{info.clearthought.layout.TableLayout.MINIMUM,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance2.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        MiscInfo.setLayout(_tableLayoutInstance2);
 
         jLabel4.setText("Occupation");
-        MiscInfo.add(jLabel4, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.RIGHT, info.clearthought.layout.TableLayout.FULL));
 
         jLabel5.setText("DOB");
-        MiscInfo.add(jLabel5, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.RIGHT, info.clearthought.layout.TableLayout.FULL));
 
         jLabel6.setText("Title");
-        MiscInfo.add(jLabel6, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 2, info.clearthought.layout.TableLayout.RIGHT, info.clearthought.layout.TableLayout.FULL));
 
         jLabel7.setText("Email");
-        MiscInfo.add(jLabel7, new info.clearthought.layout.TableLayoutConstraints(0, 3, 0, 3, info.clearthought.layout.TableLayout.RIGHT, info.clearthought.layout.TableLayout.FULL));
 
         occupation.setColName("occupation");
-        MiscInfo.add(occupation, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         title.setColName("title");
-        MiscInfo.add(title, new info.clearthought.layout.TableLayoutConstraints(1, 2, 1, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         email.setColName("email");
-        MiscInfo.add(email, new info.clearthought.layout.TableLayoutConstraints(1, 3, 1, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
         dob.setColName("dob");
-        MiscInfo.add(dob, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        dob.setPreferredSize(new java.awt.Dimension(122, 19));
 
-        add(MiscInfo, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        jLabel10.setText("To");
 
-        _tableLayoutInstance3 = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance3.setHGap(0);
-        _tableLayoutInstance3.setVGap(0);
-        _tableLayoutInstance3.setColumn(new double[]{info.clearthought.layout.TableLayout.PREFERRED});
-        _tableLayoutInstance3.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        Gender.setLayout(_tableLayoutInstance3);
+        customaddressto.setColName("customaddressto");
 
-        maleButton.setText("Male");
-        Gender.add(maleButton, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        femaleButton.setText("Female");
-        Gender.add(femaleButton, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.TOP));
-
-        unknownGenderButton.setText("Unknown");
-        Gender.add(unknownGenderButton, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        add(Gender, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.TOP));
+        org.jdesktop.layout.GroupLayout MiscInfoLayout = new org.jdesktop.layout.GroupLayout(MiscInfo);
+        MiscInfo.setLayout(MiscInfoLayout);
+        MiscInfoLayout.setHorizontalGroup(
+            MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, MiscInfoLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(jLabel4)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(occupation, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, MiscInfoLayout.createSequentialGroup()
+                .add(54, 54, 54)
+                .add(jLabel5)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(dob, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE))
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, MiscInfoLayout.createSequentialGroup()
+                .add(48, 48, 48)
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jLabel10)
+                    .add(jLabel7)
+                    .add(jLabel6))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(title, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .add(email, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                    .add(customaddressto, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
+        );
+        MiscInfoLayout.setVerticalGroup(
+            MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(MiscInfoLayout.createSequentialGroup()
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(occupation, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel4))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(dob, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jLabel5))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel6)
+                    .add(title, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel7)
+                    .add(email, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(MiscInfoLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jLabel10)
+                    .add(customaddressto, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         FamilyPane.setLayout(new java.awt.BorderLayout());
 
-        FamilyPane.setPreferredSize(new java.awt.Dimension(418, 132));
+        FamilyPane.setPreferredSize(new java.awt.Dimension(418, 100));
         FamilyScrollPanel.setPreferredSize(new java.awt.Dimension(300, 64));
         familyTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -295,11 +276,16 @@ extends javax.swing.JPanel {
         jLabel8.setText("Family Members");
         FamilyPane.add(jLabel8, java.awt.BorderLayout.NORTH);
 
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        cbIsPrimary.setText("Primary Family Contact");
+        cbIsPrimary.setText("Primary Contact");
         cbIsPrimary.setEnabled(false);
-        jPanel2.add(cbIsPrimary);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(cbIsPrimary, gridBagConstraints);
 
         clearFamily.setText("Make Primary");
         clearFamily.setToolTipText("");
@@ -309,40 +295,149 @@ extends javax.swing.JPanel {
             }
         });
 
-        jPanel2.add(clearFamily);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(clearFamily, gridBagConstraints);
 
         FamilyPane.add(jPanel2, java.awt.BorderLayout.NORTH);
 
-        add(FamilyPane, new info.clearthought.layout.TableLayoutConstraints(2, 0, 2, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        _tableLayoutInstance4 = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance4.setHGap(0);
-        _tableLayoutInstance4.setVGap(0);
-        _tableLayoutInstance4.setColumn(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance4.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED});
-        jPanel3.setLayout(_tableLayoutInstance4);
-
-        jLabel10.setText("To");
-        jPanel3.add(jLabel10, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        customaddressto.setColName("customaddressto");
-        jPanel3.add(customaddressto, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        add(jPanel3, new info.clearthought.layout.TableLayoutConstraints(0, 2, 0, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.BOTTOM));
-
         phonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
-        add(phonePanel, new info.clearthought.layout.TableLayoutConstraints(1, 4, 2, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
 
-        jLabel11.setText("Phone Numbers");
-        add(jLabel11, new info.clearthought.layout.TableLayoutConstraints(1, 3, 2, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        lPhoneNumbers.setText("Phone Numbers");
 
-        jLabel9.setText("label");
-        spacer.add(jLabel9);
+        FirstMiddleLast.setLayout(new java.awt.GridBagLayout());
 
-        add(spacer, new info.clearthought.layout.TableLayoutConstraints(0, 5, 2, 5, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        lFirst.setText("First");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FirstMiddleLast.add(lFirst, gridBagConstraints);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+        lMiddle.setText("Mid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FirstMiddleLast.add(lMiddle, gridBagConstraints);
+
+        lLast.setText("Last");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FirstMiddleLast.add(lLast, gridBagConstraints);
+
+        salutation.setColName("salutation");
+        salutation.setPreferredSize(new java.awt.Dimension(40, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        FirstMiddleLast.add(salutation, gridBagConstraints);
+
+        firstname.setColName("firstname");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        FirstMiddleLast.add(firstname, gridBagConstraints);
+
+        middlename.setColName("middlename");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        FirstMiddleLast.add(middlename, gridBagConstraints);
+
+        lastname.setColName("lastname");
+        lastname.setPreferredSize(new java.awt.Dimension(10, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        FirstMiddleLast.add(lastname, gridBagConstraints);
+
+        lName.setText("Name");
+
+        maleButton.setText("Male");
+
+        femaleButton.setText("Female");
+
+        unknownGenderButton.setText("Unknown");
+
+        org.jdesktop.layout.GroupLayout GenderLayout = new org.jdesktop.layout.GroupLayout(Gender);
+        Gender.setLayout(GenderLayout);
+        GenderLayout.setHorizontalGroup(
+            GenderLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(maleButton)
+            .add(femaleButton)
+            .add(unknownGenderButton)
+        );
+        GenderLayout.setVerticalGroup(
+            GenderLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(GenderLayout.createSequentialGroup()
+                .add(maleButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(femaleButton)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(unknownGenderButton)
+                .addContainerGap())
+        );
+
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .add(47, 47, 47)
+                        .add(lName)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                        .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(Gender, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(lPhoneNumbers))))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(FamilyPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                .addContainerGap())
+            .add(layout.createSequentialGroup()
+                .add(entitySubPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(lName)
+                    .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                    .add(layout.createSequentialGroup()
+                        .add(Gender, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(lPhoneNumbers))
+                    .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                    .add(phonePanel, 0, 0, Short.MAX_VALUE)
+                    .add(entitySubPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .add(FamilyPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 150, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        );
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void clearFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFamilyActionPerformed
 		runner.doRun(new StRunnable() { public void run(Statement st) throws Exception {
@@ -370,26 +465,24 @@ extends javax.swing.JPanel {
     private javax.swing.JRadioButton femaleButton;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lFirst;
+    private javax.swing.JLabel lLast;
+    private javax.swing.JLabel lMiddle;
+    private javax.swing.JLabel lName;
+    private javax.swing.JLabel lPhoneNumbers;
     private citibob.swing.typed.JTypedTextField lastname;
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JTypedTextField occupation;
     private offstage.gui.GroupPanel phonePanel;
     private citibob.swing.typed.JTypedTextField salutation;
-    private javax.swing.JPanel spacer;
     private citibob.swing.typed.JTypedTextField title;
     private javax.swing.JRadioButton unknownGenderButton;
     // End of variables declaration//GEN-END:variables

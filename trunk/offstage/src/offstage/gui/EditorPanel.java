@@ -67,7 +67,7 @@ ActionRunner runner;
 	 */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        info.clearthought.layout.TableLayout _tableLayoutInstance;
+        java.awt.GridBagConstraints gridBagConstraints;
 
         entityPanel = new offstage.gui.EntityPanel();
         simpleSearch = new offstage.gui.SimpleSearchPanel();
@@ -78,17 +78,21 @@ ActionRunner runner;
         bNewPerson = new javax.swing.JButton();
         bNewOrg = new javax.swing.JButton();
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.PREFERRED});
-        setLayout(_tableLayoutInstance);
+        setLayout(new java.awt.GridBagLayout());
 
-        add(entityPanel, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        entityPanel.setPreferredSize(new java.awt.Dimension(550, 586));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        add(entityPanel, gridBagConstraints);
 
         simpleSearch.setPreferredSize(new java.awt.Dimension(150, 400));
-        add(simpleSearch, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        add(simpleSearch, gridBagConstraints);
 
         bSave.setText("Save");
         bSave.addActionListener(new java.awt.event.ActionListener() {
@@ -136,10 +140,14 @@ ActionRunner runner;
 
         jToolBar1.add(bNewOrg);
 
-        add(jToolBar1, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        add(jToolBar1, gridBagConstraints);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 	runner.doRun(new StRunnable() {

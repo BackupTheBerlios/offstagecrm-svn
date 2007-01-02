@@ -181,12 +181,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 
         jPanel2.add(jToolBar1, java.awt.BorderLayout.SOUTH);
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.FILL});
-        jPanel1.setLayout(_tableLayoutInstance);
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.X_AXIS));
 
         lName.setColName("name");
         lName.addActionListener(new java.awt.event.ActionListener() {
@@ -195,7 +190,7 @@ public class MailingsEditor extends javax.swing.JPanel {
             }
         });
 
-        jPanel1.add(lName, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        jPanel1.add(lName);
 
         jPanel2.add(jPanel1, java.awt.BorderLayout.NORTH);
 
@@ -218,8 +213,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
 
 private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bInsertActionPerformed
 	runner.doRun(new StRunnable() {

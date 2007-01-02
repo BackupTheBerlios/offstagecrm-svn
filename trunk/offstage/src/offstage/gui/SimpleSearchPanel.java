@@ -114,7 +114,7 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 	 */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        info.clearthought.layout.TableLayout _tableLayoutInstance;
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
         searchWord = new javax.swing.JTextField();
@@ -127,12 +127,7 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.FILL});
-        jPanel1.setLayout(_tableLayoutInstance);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         searchWord.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -140,7 +135,11 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
             }
         });
 
-        jPanel1.add(searchWord, new info.clearthought.layout.TableLayoutConstraints(0, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(searchWord, gridBagConstraints);
 
         bSearch.setText("Search");
         bSearch.addActionListener(new java.awt.event.ActionListener() {
@@ -149,7 +148,12 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
             }
         });
 
-        jPanel1.add(bSearch, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        jPanel1.add(bSearch, gridBagConstraints);
 
         bGo.setText("Go");
         bGo.addActionListener(new java.awt.event.ActionListener() {
@@ -158,7 +162,12 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
             }
         });
 
-        jPanel1.add(bGo, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        jPanel1.add(bGo, gridBagConstraints);
 
         add(jPanel1, java.awt.BorderLayout.SOUTH);
 
@@ -189,8 +198,7 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 
         add(jToolBar1, java.awt.BorderLayout.NORTH);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void searchWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchWordActionPerformed
 // TODO add your handling code here:

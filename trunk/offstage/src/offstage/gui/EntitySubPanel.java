@@ -49,86 +49,142 @@ FullEntityDbModel dbModel;
     private void initComponents() {
         info.clearthought.layout.TableLayout _tableLayoutInstance;
         info.clearthought.layout.TableLayout _tableLayoutInstance1;
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new javax.swing.JLabel();
+        addressPanel = new javax.swing.JPanel();
         address1 = new citibob.swing.typed.JTypedTextField();
         address2 = new citibob.swing.typed.JTypedTextField();
         city = new citibob.swing.typed.JTypedTextField();
         state = new citibob.swing.typed.JTypedTextField();
         zip = new citibob.swing.typed.JTypedTextField();
-        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         entityid = new citibob.swing.typed.JTypedTextField();
         lastupdated = new citibob.swing.typed.JTypedTextField();
-        relprimarytypeid = new citibob.swing.typed.JKeyedComboBox();
+        jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{info.clearthought.layout.TableLayout.PREFERRED,30,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        setLayout(_tableLayoutInstance);
+        relprimarytypeid = new citibob.swing.typed.JKeyedComboBox();
 
         setPreferredSize(new java.awt.Dimension(200, 0));
-        jLabel1.setText("Address");
-        add(jLabel1, new info.clearthought.layout.TableLayoutConstraints(0, 0, 2, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        addressPanel.setLayout(new java.awt.GridBagLayout());
 
         address1.setColName("address1");
-        add(address1, new info.clearthought.layout.TableLayoutConstraints(0, 1, 2, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        addressPanel.add(address1, gridBagConstraints);
 
         address2.setColName("address2");
-        add(address2, new info.clearthought.layout.TableLayoutConstraints(0, 2, 2, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        addressPanel.add(address2, gridBagConstraints);
 
         city.setColName("city");
-        city.setPreferredSize(new java.awt.Dimension(120, 19));
-        add(city, new info.clearthought.layout.TableLayoutConstraints(0, 3, 0, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        addressPanel.add(city, gridBagConstraints);
 
         state.setColName("state");
-        add(state, new info.clearthought.layout.TableLayoutConstraints(1, 3, 1, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        state.setPreferredSize(new java.awt.Dimension(30, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        addressPanel.add(state, gridBagConstraints);
 
         zip.setColName("zip");
         zip.setPreferredSize(new java.awt.Dimension(80, 19));
-        add(zip, new info.clearthought.layout.TableLayoutConstraints(2, 3, 2, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        addressPanel.add(zip, gridBagConstraints);
 
-        _tableLayoutInstance1 = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance1.setHGap(0);
-        _tableLayoutInstance1.setVGap(0);
-        _tableLayoutInstance1.setColumn(new double[]{info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance1.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        jPanel1.setLayout(_tableLayoutInstance1);
+        jLabel1.setText("Address / City,State,Zip");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        addressPanel.add(jLabel1, gridBagConstraints);
+
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jLabel2.setText("ID");
-        jPanel1.add(jLabel2, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Last Modified");
-        jPanel1.add(jLabel3, new info.clearthought.layout.TableLayoutConstraints(1, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel2.add(jLabel3, gridBagConstraints);
 
         entityid.setEditable(false);
         entityid.setColName("entityid");
-        jPanel1.add(entityid, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        entityid.setPreferredSize(new java.awt.Dimension(100, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel2.add(entityid, gridBagConstraints);
 
         lastupdated.setEditable(false);
         lastupdated.setColName("lastupdated");
-        jPanel1.add(lastupdated, new info.clearthought.layout.TableLayoutConstraints(1, 1, 1, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(lastupdated, gridBagConstraints);
+
+        jPanel3.setLayout(new java.awt.GridLayout(2, 0));
+
+        jLabel4.setText("Relationship to Primary");
+        jPanel3.add(jLabel4);
 
         relprimarytypeid.setColName("relprimarytypeid");
+        relprimarytypeid.setPreferredSize(new java.awt.Dimension(32, 19));
         relprimarytypeid.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 relprimarytypeidActionPerformed(evt);
             }
         });
 
-        jPanel1.add(relprimarytypeid, new info.clearthought.layout.TableLayoutConstraints(0, 3, 1, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        jPanel3.add(relprimarytypeid);
 
-        jLabel4.setText("Relationship to Primary");
-        jPanel1.add(jLabel4, new info.clearthought.layout.TableLayoutConstraints(0, 2, 1, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        add(jPanel1, new info.clearthought.layout.TableLayoutConstraints(0, 4, 2, 4, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-    }
-    // </editor-fold>//GEN-END:initComponents
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+            .add(addressPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+            .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(addressPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
 
 private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relprimarytypeidActionPerformed
 // TODO add your handling code here:
@@ -138,13 +194,15 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private citibob.swing.typed.JTypedTextField address1;
     private citibob.swing.typed.JTypedTextField address2;
+    private javax.swing.JPanel addressPanel;
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedTextField entityid;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private citibob.swing.typed.JTypedTextField lastupdated;
     private citibob.swing.typed.JKeyedComboBox relprimarytypeid;
     private citibob.swing.typed.JTypedTextField state;

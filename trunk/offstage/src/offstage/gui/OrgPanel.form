@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.1" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.0" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,106,0,0,1,-30"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-56,0,0,2,104"/>
   </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
   <SubComponents>
-    <Component class="offstage.gui.EntitySubPanel" name="entitySubPanel1">
-      <Properties>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="null"/>
-        </Property>
-      </Properties>
-    </Component>
     <Container class="javax.swing.JPanel" name="FamilyPane">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="1" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.5" weightY="0.7"/>
+        </Constraint>
+      </Constraints>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
@@ -51,6 +52,7 @@
         <Component class="javax.swing.JLabel" name="jLabel8">
           <Properties>
             <Property name="text" type="java.lang.String" value="Family Members"/>
+            <Property name="horizontalTextPosition" type="int" value="2"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -58,16 +60,14 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Container class="javax.swing.JPanel" name="jPanel2">
+        <Container class="javax.swing.JToolBar" name="jToolBar1">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-              <BorderConstraints direction="East"/>
+              <BorderConstraints direction="South"/>
             </Constraint>
           </Constraints>
 
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
-            <Property name="axis" type="int" value="1"/>
-          </Layout>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
           <SubComponents>
             <Component class="javax.swing.JButton" name="gotoEntity">
               <Properties>
@@ -82,6 +82,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Make Head"/>
                 <Property name="toolTipText" type="java.lang.String" value="Make this person head of his/her own family."/>
+                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[80, 27]"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearFamilyActionPerformed"/>
@@ -91,582 +94,81 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="NamePanel">
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Organization Name"/>
-          </Properties>
-        </Component>
-        <Component class="citibob.swing.typed.JTypedTextField" name="name">
-          <Properties>
-            <Property name="colName" type="java.lang.String" value="name"/>
-          </Properties>
-        </Component>
-      </SubComponents>
-      <LayoutCode>
-        <CodeStatement>
-          <CodeExpression id="1__tableLayoutInstance5">
-            <CodeVariable name="_tableLayoutInstance5" type="20480" declaredType="info.clearthought.layout.TableLayout"/>
-            <ExpressionOrigin>
-              <ExpressionProvider type="CodeConstructor">
-                <CodeConstructor class="info.clearthought.layout.TableLayout" parameterTypes=""/>
-              </ExpressionProvider>
-            </ExpressionOrigin>
-          </CodeExpression>
-          <StatementProvider type="CodeExpression">
-            <CodeExpression id="1__tableLayoutInstance5"/>
-          </StatementProvider>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="1__tableLayoutInstance5"/>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="setHGap" class="info.clearthought.layout.TableLayout" parameterTypes="int"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="2">
-              <ExpressionOrigin>
-                <Value type="int" value="0"/>
-              </ExpressionOrigin>
-            </CodeExpression>
-          </Parameters>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="1__tableLayoutInstance5"/>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="setVGap" class="info.clearthought.layout.TableLayout" parameterTypes="int"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="3">
-              <ExpressionOrigin>
-                <Value type="int" value="0"/>
-              </ExpressionOrigin>
-            </CodeExpression>
-          </Parameters>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="1__tableLayoutInstance5"/>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="setColumn" class="info.clearthought.layout.TableLayout" parameterTypes="[D"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="4">
-              <ExpressionOrigin>
-                <Value type="[D" editor="de.berlios.nblayoutpack.tablelayout.TableLayoutSupport$ColumnsEditor">
-                  <Columns value="FILL"/>
-                </Value>
-              </ExpressionOrigin>
-            </CodeExpression>
-          </Parameters>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="1__tableLayoutInstance5"/>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="setRow" class="info.clearthought.layout.TableLayout" parameterTypes="[D"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="5">
-              <ExpressionOrigin>
-                <Value type="[D" editor="de.berlios.nblayoutpack.tablelayout.TableLayoutSupport$RowsEditor">
-                  <Rows value="PREFERRED,PREFERRED"/>
-                </Value>
-              </ExpressionOrigin>
-            </CodeExpression>
-          </Parameters>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="6_NamePanel">
-            <CodeVariable name="NamePanel" type="8194" declaredType="javax.swing.JPanel"/>
-            <ExpressionOrigin>
-              <ExpressionProvider type="ComponentRef">
-                <ComponentRef name="NamePanel"/>
-              </ExpressionProvider>
-            </ExpressionOrigin>
-          </CodeExpression>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="1__tableLayoutInstance5"/>
-          </Parameters>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="6_NamePanel"/>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="7_jLabel2">
-              <CodeVariable name="jLabel2" type="8194" declaredType="javax.swing.JLabel"/>
-              <ExpressionOrigin>
-                <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="jLabel2"/>
-                </ExpressionProvider>
-              </ExpressionOrigin>
-            </CodeExpression>
-            <CodeExpression id="8">
-              <ExpressionOrigin>
-                <ExpressionProvider type="CodeConstructor">
-                  <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-                </ExpressionProvider>
-                <Parameters>
-                  <CodeExpression id="9">
-                    <ExpressionOrigin>
-                      <Value type="int" value="0"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="10">
-                    <ExpressionOrigin>
-                      <Value type="int" value="0"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="11">
-                    <ExpressionOrigin>
-                      <Value type="int" value="0"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="12">
-                    <ExpressionOrigin>
-                      <Value type="int" value="0"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="13">
-                    <ExpressionOrigin>
-                      <Value type="int" value="2"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="14">
-                    <ExpressionOrigin>
-                      <Value type="int" value="2"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                </Parameters>
-              </ExpressionOrigin>
-            </CodeExpression>
-          </Parameters>
-        </CodeStatement>
-        <CodeStatement>
-          <CodeExpression id="6_NamePanel"/>
-          <StatementProvider type="CodeMethod">
-            <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-          </StatementProvider>
-          <Parameters>
-            <CodeExpression id="15_name">
-              <CodeVariable name="name" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
-              <ExpressionOrigin>
-                <ExpressionProvider type="ComponentRef">
-                  <ComponentRef name="name"/>
-                </ExpressionProvider>
-              </ExpressionOrigin>
-            </CodeExpression>
-            <CodeExpression id="16">
-              <ExpressionOrigin>
-                <ExpressionProvider type="CodeConstructor">
-                  <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-                </ExpressionProvider>
-                <Parameters>
-                  <CodeExpression id="17">
-                    <ExpressionOrigin>
-                      <Value type="int" value="0"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="18">
-                    <ExpressionOrigin>
-                      <Value type="int" value="1"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="19">
-                    <ExpressionOrigin>
-                      <Value type="int" value="0"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="20">
-                    <ExpressionOrigin>
-                      <Value type="int" value="1"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="21">
-                    <ExpressionOrigin>
-                      <Value type="int" value="2"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <CodeExpression id="22">
-                    <ExpressionOrigin>
-                      <Value type="int" value="2"/>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                </Parameters>
-              </ExpressionOrigin>
-            </CodeExpression>
-          </Parameters>
-        </CodeStatement>
-      </LayoutCode>
-    </Container>
     <Component class="offstage.gui.GroupPanel" name="phonePanel">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[453, 100]"/>
         </Property>
       </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="1" gridY="2" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.5" weightY="0.3"/>
+        </Constraint>
+      </Constraints>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel11">
       <Properties>
         <Property name="text" type="java.lang.String" value="Phone Numbers"/>
       </Properties>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="1" gridY="1" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+        </Constraint>
+      </Constraints>
     </Component>
+    <Container class="javax.swing.JPanel" name="orgPanel">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+          <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="3" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="11" weightX="0.5" weightY="0.0"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+      <SubComponents>
+        <Container class="javax.swing.JPanel" name="NamePanel">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="jLabel2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Organization Name"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                  <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="citibob.swing.typed.JTypedTextField" name="name">
+              <Properties>
+                <Property name="colName" type="java.lang.String" value="name"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                  <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.0"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="offstage.gui.EntitySubPanel" name="entitySubPanel1">
+          <Properties>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="null"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+      </SubComponents>
+    </Container>
   </SubComponents>
-  <LayoutCode>
-    <CodeStatement>
-      <CodeExpression id="23__tableLayoutInstance">
-        <CodeVariable name="_tableLayoutInstance" type="20480" declaredType="info.clearthought.layout.TableLayout"/>
-        <ExpressionOrigin>
-          <ExpressionProvider type="CodeConstructor">
-            <CodeConstructor class="info.clearthought.layout.TableLayout" parameterTypes=""/>
-          </ExpressionProvider>
-        </ExpressionOrigin>
-      </CodeExpression>
-      <StatementProvider type="CodeExpression">
-        <CodeExpression id="23__tableLayoutInstance"/>
-      </StatementProvider>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="23__tableLayoutInstance"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="setHGap" class="info.clearthought.layout.TableLayout" parameterTypes="int"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="24">
-          <ExpressionOrigin>
-            <Value type="int" value="0"/>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="23__tableLayoutInstance"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="setVGap" class="info.clearthought.layout.TableLayout" parameterTypes="int"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="25">
-          <ExpressionOrigin>
-            <Value type="int" value="0"/>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="23__tableLayoutInstance"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="setColumn" class="info.clearthought.layout.TableLayout" parameterTypes="[D"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="26">
-          <ExpressionOrigin>
-            <Value type="[D" editor="de.berlios.nblayoutpack.tablelayout.TableLayoutSupport$ColumnsEditor">
-              <Columns value="200,PREFERRED,FILL"/>
-            </Value>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="23__tableLayoutInstance"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="setRow" class="info.clearthought.layout.TableLayout" parameterTypes="[D"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="27">
-          <ExpressionOrigin>
-            <Value type="[D" editor="de.berlios.nblayoutpack.tablelayout.TableLayoutSupport$RowsEditor">
-              <Rows value="FILL,PREFERRED,PREFERRED,PREFERRED"/>
-            </Value>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="28">
-        <ExpressionOrigin>
-          <ExpressionProvider type="ComponentRef">
-            <ComponentRef name="."/>
-          </ExpressionProvider>
-        </ExpressionOrigin>
-      </CodeExpression>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="23__tableLayoutInstance"/>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="28"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="29_entitySubPanel1">
-          <CodeVariable name="entitySubPanel1" type="8194" declaredType="offstage.gui.EntitySubPanel"/>
-          <ExpressionOrigin>
-            <ExpressionProvider type="ComponentRef">
-              <ComponentRef name="entitySubPanel1"/>
-            </ExpressionProvider>
-          </ExpressionOrigin>
-        </CodeExpression>
-        <CodeExpression id="30">
-          <ExpressionOrigin>
-            <ExpressionProvider type="CodeConstructor">
-              <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-            </ExpressionProvider>
-            <Parameters>
-              <CodeExpression id="31">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="32">
-                <ExpressionOrigin>
-                  <Value type="int" value="3"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="33">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="34">
-                <ExpressionOrigin>
-                  <Value type="int" value="3"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="35">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="36">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-            </Parameters>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="28"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="37_FamilyPane">
-          <CodeVariable name="FamilyPane" type="8194" declaredType="javax.swing.JPanel"/>
-          <ExpressionOrigin>
-            <ExpressionProvider type="ComponentRef">
-              <ComponentRef name="FamilyPane"/>
-            </ExpressionProvider>
-          </ExpressionOrigin>
-        </CodeExpression>
-        <CodeExpression id="38">
-          <ExpressionOrigin>
-            <ExpressionProvider type="CodeConstructor">
-              <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-            </ExpressionProvider>
-            <Parameters>
-              <CodeExpression id="39">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="40">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="41">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="42">
-                <ExpressionOrigin>
-                  <Value type="int" value="1"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="43">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="44">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-            </Parameters>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="28"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="6_NamePanel"/>
-        <CodeExpression id="45">
-          <ExpressionOrigin>
-            <ExpressionProvider type="CodeConstructor">
-              <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-            </ExpressionProvider>
-            <Parameters>
-              <CodeExpression id="46">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="47">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="48">
-                <ExpressionOrigin>
-                  <Value type="int" value="1"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="49">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="50">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="51">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-            </Parameters>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="28"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="52_phonePanel">
-          <CodeVariable name="phonePanel" type="8194" declaredType="offstage.gui.GroupPanel"/>
-          <ExpressionOrigin>
-            <ExpressionProvider type="ComponentRef">
-              <ComponentRef name="phonePanel"/>
-            </ExpressionProvider>
-          </ExpressionOrigin>
-        </CodeExpression>
-        <CodeExpression id="53">
-          <ExpressionOrigin>
-            <ExpressionProvider type="CodeConstructor">
-              <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-            </ExpressionProvider>
-            <Parameters>
-              <CodeExpression id="54">
-                <ExpressionOrigin>
-                  <Value type="int" value="1"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="55">
-                <ExpressionOrigin>
-                  <Value type="int" value="3"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="56">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="57">
-                <ExpressionOrigin>
-                  <Value type="int" value="3"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="58">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="59">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-            </Parameters>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-    <CodeStatement>
-      <CodeExpression id="28"/>
-      <StatementProvider type="CodeMethod">
-        <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-      </StatementProvider>
-      <Parameters>
-        <CodeExpression id="60_jLabel11">
-          <CodeVariable name="jLabel11" type="8194" declaredType="javax.swing.JLabel"/>
-          <ExpressionOrigin>
-            <ExpressionProvider type="ComponentRef">
-              <ComponentRef name="jLabel11"/>
-            </ExpressionProvider>
-          </ExpressionOrigin>
-        </CodeExpression>
-        <CodeExpression id="61">
-          <ExpressionOrigin>
-            <ExpressionProvider type="CodeConstructor">
-              <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-            </ExpressionProvider>
-            <Parameters>
-              <CodeExpression id="62">
-                <ExpressionOrigin>
-                  <Value type="int" value="1"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="63">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="64">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="65">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="66">
-                <ExpressionOrigin>
-                  <Value type="int" value="2"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-              <CodeExpression id="67">
-                <ExpressionOrigin>
-                  <Value type="int" value="0"/>
-                </ExpressionOrigin>
-              </CodeExpression>
-            </Parameters>
-          </ExpressionOrigin>
-        </CodeExpression>
-      </Parameters>
-    </CodeStatement>
-  </LayoutCode>
 </Form>

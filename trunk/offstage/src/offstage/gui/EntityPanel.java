@@ -105,13 +105,6 @@ public class EntityPanel extends javax.swing.JPanel {
         classesPanel = new offstage.gui.GroupPanel();
         mainPanel = new offstage.gui.MainEntityPanel();
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{535});
-        _tableLayoutInstance.setRow(new double[]{330,info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.PREFERRED});
-        setLayout(_tableLayoutInstance);
-
         groupPanels.setPreferredSize(new java.awt.Dimension(458, 200));
         groupPanels.addTab("Donations", donationsPanel);
 
@@ -125,12 +118,21 @@ public class EntityPanel extends javax.swing.JPanel {
 
         groupPanels.addTab("Classes", classesPanel);
 
-        add(groupPanels, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        add(mainPanel, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-    }
-    // </editor-fold>//GEN-END:initComponents
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(mainPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+            .add(groupPanels, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(mainPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(groupPanels, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

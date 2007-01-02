@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.1" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.0" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <AuxValues>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
@@ -109,6 +109,8 @@
                   <BorderConstraints direction="North"/>
                 </Constraint>
               </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
               <SubComponents>
                 <Component class="citibob.swing.typed.JTypedTextField" name="lName">
                   <Properties>
@@ -119,148 +121,6 @@
                   </Events>
                 </Component>
               </SubComponents>
-              <LayoutCode>
-                <CodeStatement>
-                  <CodeExpression id="1__tableLayoutInstance">
-                    <CodeVariable name="_tableLayoutInstance" type="20480" declaredType="info.clearthought.layout.TableLayout"/>
-                    <ExpressionOrigin>
-                      <ExpressionProvider type="CodeConstructor">
-                        <CodeConstructor class="info.clearthought.layout.TableLayout" parameterTypes=""/>
-                      </ExpressionProvider>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <StatementProvider type="CodeExpression">
-                    <CodeExpression id="1__tableLayoutInstance"/>
-                  </StatementProvider>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="1__tableLayoutInstance"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setHGap" class="info.clearthought.layout.TableLayout" parameterTypes="int"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="2">
-                      <ExpressionOrigin>
-                        <Value type="int" value="0"/>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="1__tableLayoutInstance"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setVGap" class="info.clearthought.layout.TableLayout" parameterTypes="int"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="3">
-                      <ExpressionOrigin>
-                        <Value type="int" value="0"/>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="1__tableLayoutInstance"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setColumn" class="info.clearthought.layout.TableLayout" parameterTypes="[D"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="4">
-                      <ExpressionOrigin>
-                        <Value type="[D" editor="de.berlios.nblayoutpack.tablelayout.TableLayoutSupport$ColumnsEditor">
-                          <Columns value="FILL"/>
-                        </Value>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="1__tableLayoutInstance"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setRow" class="info.clearthought.layout.TableLayout" parameterTypes="[D"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="5">
-                      <ExpressionOrigin>
-                        <Value type="[D" editor="de.berlios.nblayoutpack.tablelayout.TableLayoutSupport$RowsEditor">
-                          <Rows value="FILL"/>
-                        </Value>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="6_jPanel1">
-                    <CodeVariable name="jPanel1" type="8194" declaredType="javax.swing.JPanel"/>
-                    <ExpressionOrigin>
-                      <ExpressionProvider type="ComponentRef">
-                        <ComponentRef name="jPanel1"/>
-                      </ExpressionProvider>
-                    </ExpressionOrigin>
-                  </CodeExpression>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="setLayout" class="java.awt.Container" parameterTypes="java.awt.LayoutManager"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="1__tableLayoutInstance"/>
-                  </Parameters>
-                </CodeStatement>
-                <CodeStatement>
-                  <CodeExpression id="6_jPanel1"/>
-                  <StatementProvider type="CodeMethod">
-                    <CodeMethod name="add" class="java.awt.Container" parameterTypes="java.awt.Component, java.lang.Object"/>
-                  </StatementProvider>
-                  <Parameters>
-                    <CodeExpression id="7_lName">
-                      <CodeVariable name="lName" type="8194" declaredType="citibob.swing.typed.JTypedTextField"/>
-                      <ExpressionOrigin>
-                        <ExpressionProvider type="ComponentRef">
-                          <ComponentRef name="lName"/>
-                        </ExpressionProvider>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                    <CodeExpression id="8">
-                      <ExpressionOrigin>
-                        <ExpressionProvider type="CodeConstructor">
-                          <CodeConstructor class="info.clearthought.layout.TableLayoutConstraints" parameterTypes="int, int, int, int, int, int"/>
-                        </ExpressionProvider>
-                        <Parameters>
-                          <CodeExpression id="9">
-                            <ExpressionOrigin>
-                              <Value type="int" value="0"/>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <CodeExpression id="10">
-                            <ExpressionOrigin>
-                              <Value type="int" value="0"/>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <CodeExpression id="11">
-                            <ExpressionOrigin>
-                              <Value type="int" value="0"/>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <CodeExpression id="12">
-                            <ExpressionOrigin>
-                              <Value type="int" value="0"/>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <CodeExpression id="13">
-                            <ExpressionOrigin>
-                              <Value type="int" value="2"/>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                          <CodeExpression id="14">
-                            <ExpressionOrigin>
-                              <Value type="int" value="2"/>
-                            </ExpressionOrigin>
-                          </CodeExpression>
-                        </Parameters>
-                      </ExpressionOrigin>
-                    </CodeExpression>
-                  </Parameters>
-                </CodeStatement>
-              </LayoutCode>
             </Container>
           </SubComponents>
         </Container>

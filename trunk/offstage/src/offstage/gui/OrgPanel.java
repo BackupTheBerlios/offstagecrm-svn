@@ -114,32 +114,24 @@ extends javax.swing.JPanel {
 	 */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
-        info.clearthought.layout.TableLayout _tableLayoutInstance;
-        info.clearthought.layout.TableLayout _tableLayoutInstance5;
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        entitySubPanel1 = new offstage.gui.EntitySubPanel();
         FamilyPane = new javax.swing.JPanel();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         familyTable = new offstage.gui.FamilyTable();
         jLabel8 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        jToolBar1 = new javax.swing.JToolBar();
         gotoEntity = new javax.swing.JButton();
         clearFamily = new javax.swing.JButton();
+        phonePanel = new offstage.gui.GroupPanel();
+        jLabel11 = new javax.swing.JLabel();
+        orgPanel = new javax.swing.JPanel();
         NamePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         name = new citibob.swing.typed.JTypedTextField();
-        phonePanel = new offstage.gui.GroupPanel();
-        jLabel11 = new javax.swing.JLabel();
+        entitySubPanel1 = new offstage.gui.EntitySubPanel();
 
-        _tableLayoutInstance = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance.setHGap(0);
-        _tableLayoutInstance.setVGap(0);
-        _tableLayoutInstance.setColumn(new double[]{200,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance.setRow(new double[]{info.clearthought.layout.TableLayout.FILL,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        setLayout(_tableLayoutInstance);
-
-        entitySubPanel1.setPreferredSize(null);
-        add(entitySubPanel1, new info.clearthought.layout.TableLayoutConstraints(0, 3, 0, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        setLayout(new java.awt.GridBagLayout());
 
         FamilyPane.setLayout(new java.awt.BorderLayout());
 
@@ -160,9 +152,8 @@ extends javax.swing.JPanel {
         FamilyPane.add(FamilyScrollPanel, java.awt.BorderLayout.CENTER);
 
         jLabel8.setText("Family Members");
+        jLabel8.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         FamilyPane.add(jLabel8, java.awt.BorderLayout.NORTH);
-
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
         gotoEntity.setText("Go");
         gotoEntity.setToolTipText("Edit Selected Family Member");
@@ -172,45 +163,86 @@ extends javax.swing.JPanel {
             }
         });
 
-        jPanel2.add(gotoEntity);
+        jToolBar1.add(gotoEntity);
 
         clearFamily.setText("Make Head");
         clearFamily.setToolTipText("Make this person head of his/her own family.");
+        clearFamily.setPreferredSize(new java.awt.Dimension(80, 27));
         clearFamily.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearFamilyActionPerformed(evt);
             }
         });
 
-        jPanel2.add(clearFamily);
+        jToolBar1.add(clearFamily);
 
-        FamilyPane.add(jPanel2, java.awt.BorderLayout.EAST);
+        FamilyPane.add(jToolBar1, java.awt.BorderLayout.SOUTH);
 
-        add(FamilyPane, new info.clearthought.layout.TableLayoutConstraints(2, 0, 2, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        _tableLayoutInstance5 = new info.clearthought.layout.TableLayout();
-        _tableLayoutInstance5.setHGap(0);
-        _tableLayoutInstance5.setVGap(0);
-        _tableLayoutInstance5.setColumn(new double[]{info.clearthought.layout.TableLayout.FILL});
-        _tableLayoutInstance5.setRow(new double[]{info.clearthought.layout.TableLayout.PREFERRED,info.clearthought.layout.TableLayout.PREFERRED});
-        NamePanel.setLayout(_tableLayoutInstance5);
-
-        jLabel2.setText("Organization Name");
-        NamePanel.add(jLabel2, new info.clearthought.layout.TableLayoutConstraints(0, 0, 0, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        name.setColName("name");
-        NamePanel.add(name, new info.clearthought.layout.TableLayoutConstraints(0, 1, 0, 1, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
-
-        add(NamePanel, new info.clearthought.layout.TableLayoutConstraints(0, 0, 1, 0, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.7;
+        add(FamilyPane, gridBagConstraints);
 
         phonePanel.setPreferredSize(new java.awt.Dimension(453, 100));
-        add(phonePanel, new info.clearthought.layout.TableLayoutConstraints(1, 3, 2, 3, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.FULL));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.3;
+        add(phonePanel, gridBagConstraints);
 
         jLabel11.setText("Phone Numbers");
-        add(jLabel11, new info.clearthought.layout.TableLayoutConstraints(1, 2, 2, 2, info.clearthought.layout.TableLayout.FULL, info.clearthought.layout.TableLayout.TOP));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(jLabel11, gridBagConstraints);
 
-    }
-    // </editor-fold>//GEN-END:initComponents
+        orgPanel.setLayout(new java.awt.GridBagLayout());
+
+        NamePanel.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Organization Name");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        NamePanel.add(jLabel2, gridBagConstraints);
+
+        name.setColName("name");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        NamePanel.add(name, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        orgPanel.add(NamePanel, gridBagConstraints);
+
+        entitySubPanel1.setPreferredSize(null);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        orgPanel.add(entitySubPanel1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.5;
+        add(orgPanel, gridBagConstraints);
+
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void clearFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFamilyActionPerformed
 		runner.doRun(new StRunnable() { public void run(Statement st) throws Exception {
@@ -242,8 +274,9 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JToolBar jToolBar1;
     private citibob.swing.typed.JTypedTextField name;
+    private javax.swing.JPanel orgPanel;
     private offstage.gui.GroupPanel phonePanel;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------
