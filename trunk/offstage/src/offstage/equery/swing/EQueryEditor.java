@@ -59,6 +59,7 @@ implements TypedWidget
 	throws SQLException
 	{
 		this.model = qm;
+//		eQueryTable.setModel(new EQueryTableModel2());
 		eQueryTable.setModel(qm);
 		eQueryTable.setSwingerMap(smap);
 		

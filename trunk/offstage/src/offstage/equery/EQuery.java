@@ -25,7 +25,7 @@ import citibob.jschema.*;
 import java.sql.*;
 import java.io.*;
 import com.thoughtworks.xstream.*;
-import offstage.db.TestConnPool;
+import offstage.db.*;
 
 public class EQuery extends Query
 {
@@ -71,7 +71,7 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
 		EClause clause = (EClause)ii.next();
 		List elements = clause.elements;
-		String ewhere = "(1=1";
+		StringBuffer ewhere = null;
 		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
 			Element e = (Element)jj.next();
 			ColName cn = e.colName;
@@ -82,13 +82,18 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 //				sql.addWhereClause(joinClause);
 //				sql.addTable(cn.getTable());
 //			}
-			ewhere = ewhere + " and\n" +
-				e.colName.toString() + " " + e.comparator + " " +
-				" (" + c.getType().toSql(e.value) + ")";
+			if (ewhere == null) ewhere = new StringBuffer("(");
+			else ewhere.append(" and\n");
+			if (clause.type == EClause.SUBTRACT) {
+				// subtle outer join semantics issue...
+				ewhere.append(e.colName.toString() + " is not null and ");
+			}
+			ewhere.append(e.colName.toString() + " " + e.comparator + " " +
+				" (" + c.getType().toSql(e.value) + ")");
 		}
-		ewhere = ewhere + ")";
+		ewhere.append(")");
 		String joiner = (clause.type == EClause.ADD ? "or" : "and not");
-		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere;
+		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere.toString();
 	}
 	cwhere = cwhere + ")";
 	sql.addWhereClause(cwhere);
@@ -98,5 +103,25 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 	if (lastUpdatedNext != null) sql.addWhereClause("main.lastupdated < " + SqlTimestamp.sql(lastUpdatedNext));
 }
 // ------------------------------------------------------
+public void makeMailing(Statement st, String queryName, EQuerySchema schema) throws SQLException
+{
+	EQuery eqy = this;
+//	if (eqy == null) return;
+	String eqXml = eqy.toXML();
+	String eqSql = eqy.getSql(schema);
+
+	String sql;
+
+	// Create the mailing list and insert EntityID records
+//	sql = "select w_mailingids_create(" + SqlString.sql(eqXml) + ", " + SqlString.sql(eqSql) + ")";
+//	int xmailingID = SQL.readInt(st, sql);
+	int xmailingID = DB.w_mailingids_create(st, eqXml, eqSql);
+System.out.println("Created Mailing list ID: " + xmailingID);
+	sql = "select w_mailings_correctlist(" + SqlInteger.sql(xmailingID) + ", FALSE)";
+	st.executeQuery(sql);
+	sql = "update mailingids set name = " + SqlString.sql(queryName) + " where groupid = " + xmailingID;
+	st.executeUpdate(sql);
+	
+}
 
 }

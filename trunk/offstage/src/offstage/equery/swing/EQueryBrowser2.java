@@ -55,7 +55,7 @@ public EQueryBrowser2() {
 	initComponents();
 }
 
-protected EQueryBrowser2 getThis() { return this; }
+protected EQueryWiz1 getThis() { return this; }
 
 public void initRuntime(FrontApp fapp)
 throws SQLException

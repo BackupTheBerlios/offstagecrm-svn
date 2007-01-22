@@ -18,7 +18,8 @@ import java.sql.*;
  *
  * @author citibob
  */
-public class OffstageSchemaSet {
+public class OffstageSchemaSet extends BaseSchemaSet
+{
 
 public Schema courseids;
 public Schema donations;
@@ -41,23 +42,23 @@ public Schema equeries;
 public OffstageSchemaSet(Statement st, DbChangeModel change)
 throws SQLException
 {
-	courseids = new CourseidsSchema();
-	donations = new DonationsSchema(st, change);
-	entities = new EntitiesSchema(st, change);
-	events = new EventsSchema(st, change);
-	groupids = new GroupidsSchema();
-	mailingids = new MailingidsSchema();
-	mailings = new MailingsSchema(st, change);
-	notes = new NotesSchema(st, change);
-	tickets = new TicketeventsSchema(st, change);
-	org = new OrgSchema(st, change);
-	persons = new PersonsSchema(st, change);
-	phones = new PhonesSchema(st, change);
-	termids = new TermidsSchema(st, change);
-	termtypes = new TermtypesSchema();
-	classes = new ClassesSchema(st, change);
-	interests = new InterestsSchema(st, change);
-	equeries = new EQueriesSchema();
+	map.put("courseids", courseids = new CourseidsSchema());
+	map.put("donations", donations = new DonationsSchema(st, change));
+	map.put("entities", entities = new EntitiesSchema(st, change));
+	map.put("events", events = new EventsSchema(st, change));
+	map.put("groupids", groupids = new GroupidsSchema());
+	map.put("mailingids", mailingids = new MailingidsSchema());
+	map.put("mailings", mailings = new MailingsSchema(st, change));
+	map.put("notes", notes = new NotesSchema(st, change));
+	map.put("tickets", tickets = new TicketeventsSchema(st, change));
+	map.put("org", org = new OrgSchema(st, change));
+	map.put("persons", persons = new PersonsSchema(st, change));
+	map.put("phones", phones = new PhonesSchema(st, change));
+	map.put("termids", termids = new TermidsSchema(st, change));
+	map.put("termtypes", termtypes = new TermtypesSchema());
+	map.put("classes", classes = new ClassesSchema(st, change));
+	map.put("interests", interests = new InterestsSchema(st, change));
+	map.put("equeries", equeries = new EQueriesSchema());
 }
 	
 }

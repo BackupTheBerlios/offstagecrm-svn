@@ -31,8 +31,9 @@ import offstage.schema.*;
 import citibob.mail.*;
 import javax.mail.internet.*;
 import offstage.equery.swing.EQueryModel2;
+import citibob.jschema.*;
 
-public class FrontApp
+public class FrontApp implements citibob.app.App
 {
 
 public static final int ACTIONS_SCREEN = 0;
@@ -59,9 +60,15 @@ ActionRunner appRunner;		// Run secondary events, in response to other events.  
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 // -------------------------------------------------------
 public ConnPool getPool() { return pool; }
+public void runGui(CBRunnable r) { guiRunner.doRun(r); }
+public void runApp(CBRunnable r) { appRunner.doRun(r); }
+public MailSender getMailSender() { return mailSender; }
+public Schema getSchema(String name) { return sset.get(name); }
+
+// Legacy...
 public ActionRunner getGuiRunner() { return guiRunner; }
 public ActionRunner getAppRunner() { return appRunner; }
-public MailSender getMailSender() { return mailSender; }
+
 //public Connection createConnection()
 //throws SQLException
 //{
@@ -95,7 +102,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		fullEntityDm = new FullEntityDbModel(sset, appRunner);
 		mailings = new MailingModel2(st, sset);//, appRunner);
 //	mailings.refreshMailingids();
-		equeries = new EQueryModel2(st, mailings, sset);
+//		equeries = new EQueryModel2(st, mailings, sset);
 		simpleSearchResults = new EntityListTableModel();
 	} finally {
 		st.close();

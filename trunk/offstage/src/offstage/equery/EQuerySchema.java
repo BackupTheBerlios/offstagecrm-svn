@@ -24,42 +24,34 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
-import offstage.schema.OffstageSchemaSet;
-import offstage.schema.OrgSchema;
-import offstage.schema.NotesSchema;
-import offstage.schema.PersonsSchema;
-import offstage.schema.PhonesSchema;
-import offstage.schema.EventsSchema;
-import offstage.schema.DonationsSchema;
-import offstage.schema.EntitiesSchema;
 import citibob.util.KeyedModel;
 
 public class EQuerySchema extends QuerySchema
 {
 
 // --------------------------------------------------
-public EQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
+public EQuerySchema(SchemaSet sset) throws SQLException
 {
-	super(st);
-	addSchema(sset.entities,
+	super();
+	addSchema(sset.get("entities"),
 		"entities.entityid = main.entityid");
-	addSchema(sset.org,
+	addSchema(sset.get("org"),
 		"organizations.entityid = main.entityid");
-	addSchema(sset.persons,
+	addSchema(sset.get("persons"),
 		"persons.entityid = main.entityid");
-	addSchema(sset.events,
+	addSchema(sset.get("events"),
 		"events.entityid = main.entityid");
-	addSchema(sset.donations,
+	addSchema(sset.get("donations"),
 		"donations.entityid = main.entityid");
-	addSchema(sset.notes,
+	addSchema(sset.get("notes"),
 		"notes.entityid = main.entityid");
-	addSchema(sset.phones,
+	addSchema(sset.get("phones"),
 		"phones.entityid = main.entityid");
-	addSchema(sset.classes,
+	addSchema(sset.get("classes"),
 		"classes.entityid = main.entityid");
-	addSchema(sset.interests,
+	addSchema(sset.get("interests"),
 		"interests.entityid = main.entityid");
-	addSchema(sset.tickets,
+	addSchema(sset.get("tickets"),
 		"ticketeventsales.entityid = main.entityid");
 	doAlias(alias);
 }

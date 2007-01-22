@@ -44,14 +44,9 @@
 // *
 // * @author citibob
 // */
-//public class EQueryModel2
+//public class EQueryModel3
 //{
 //
-//SchemaBufDbModel equeries;		// Set to entire equery info
-////IntKeyedDbModel oneQuery;		// One specific query...
-//
-////protected SchemaBufDbModel oneQuery;		// Row currently being edited...
-//protected SchemaBufRowModel oneQueryRow;		// Row currently being edited...
 //protected EQueryTableModel2 oneQueryTableModel;	// Query editor model for row currently being edited...
 //protected EQuerySchema schema;
 //protected String xmlBlankQuery;			// XML for a blank query to insert...
@@ -62,7 +57,7 @@
 ////	{ return equeries; }
 //
 ///** Creates a new instance of MailingDbModel */
-//public EQueryModel2(final Statement st, OffstageSchemaSet sset)
+//public EQueryModel3(final Statement st, OffstageSchemaSet sset)
 //throws SQLException
 //{
 //	this.runner = runner;

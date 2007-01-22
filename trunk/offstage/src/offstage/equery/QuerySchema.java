@@ -162,7 +162,7 @@ System.err.println("Looking in schema: " + cname + "(size = " + cols.getItemMap(
 //	}
 }
 // --------------------------------------------------------
-protected QuerySchema(Statement st)
+protected QuerySchema()
 {
 	addTypeComparator(SqlBool.class, new String[] {"="});
 	addTypeComparator(SqlDate.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
