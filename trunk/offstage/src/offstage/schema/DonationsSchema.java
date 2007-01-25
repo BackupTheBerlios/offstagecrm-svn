@@ -35,9 +35,10 @@ throws SQLException
 	KeyedModel kmodel = new DbKeyedModel(st, change,
 		"donationids", "groupid", "name", "name");
 	cols = new Column[] {
-		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new ColumnDefaultNow(new SqlDate(false), "date", true),
+		new Column(new SqlInteger(false), "serialid", true),
+		new Column(new SqlEnum(kmodel, false), "groupid", false),
+		new Column(new SqlInteger(false), "entityid", false),
+		new ColumnDefaultNow(new SqlDate(false), "date", false),
 		new Column(new SqlNumeric(9, 2), "amount", false)
 	};
 }
