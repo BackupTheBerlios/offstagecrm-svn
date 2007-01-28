@@ -214,16 +214,23 @@ public void setEnabled(boolean e)
 
 	
 // ================================================================
-/** Returns last legal value of the widget.  Same as method in JFormattedTextField */
-public Object getValue()
+/** Gets the EQuery value out */
+public EQuery getEQuery()
 {
 	EQuery q = model.getQuery();
 	if (q != null) {
 		q.setLastUpdatedFirst((java.util.Date)dtFirst.getValue());
 		q.setLastUpdatedNext((java.util.Date)dtNext.getValue());
 	}
+	return q;
+}
+/** Returns last legal value of the widget.  Same as method in JFormattedTextField */
+public String getValue()
+{
+	getEQuery();
 	return model.getSQuery();
 }
+
 
 /** Sets the value.  Same as method in JFormattedTextField.  Fires a
  * propertyChangeEvent("value") when calling setValue() changes the value. */

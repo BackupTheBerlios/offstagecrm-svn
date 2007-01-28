@@ -74,7 +74,7 @@ private static final String[] alias = {
 	"entities.sendmail", "sendmail",
 	"organizations.name", "org-name",
 	"events.groupid", "event-type",
-	"events.role", "event-role",
+//	"events.role", "event-role",
 	"donations.groupid", "donation-type",
 	"donations.date", "donation-date",
 	"donations.amount", "donation-amount",

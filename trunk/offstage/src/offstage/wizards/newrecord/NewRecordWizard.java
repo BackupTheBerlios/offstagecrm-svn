@@ -11,6 +11,7 @@ package offstage.wizards.newrecord;
 
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
+import citibob.wizard.*;
 import javax.swing.*;
 import java.sql.*;
 import offstage.db.*;

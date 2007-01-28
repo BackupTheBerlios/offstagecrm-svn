@@ -10,7 +10,7 @@
 
 package offstage.db;
 
-import citibob.swing.html.TypedHashMap;
+import citibob.wizard.*;
 import citibob.sql.pgsql.*;
 import java.sql.*;
 import java.util.*;

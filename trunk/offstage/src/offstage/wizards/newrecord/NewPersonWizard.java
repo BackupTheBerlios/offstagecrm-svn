@@ -11,6 +11,7 @@ package offstage.wizards.newrecord;
 
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
+import citibob.wizard.*;
 import javax.swing.*;
 import java.sql.*;
 import offstage.db.*;
@@ -62,7 +63,7 @@ addState(new State("person", null, null) {
 		if (state == null) {
 			// First: do a simple check of data entry
 			if (!isValid()) {
-				JOptionPane.showMessageDialog(wiz,
+				JOptionPane.showMessageDialog((JDialog)wiz,
 					"Invalid input.\nPlease fill in all the fields!");
 				state = "person";
 			} else {

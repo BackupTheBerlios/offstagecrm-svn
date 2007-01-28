@@ -1,5 +1,5 @@
 /*
- * NewRecordWiz2.java
+ * PersonWiz.java
  *
  * Created on October 8, 2006, 6:08 PM
  *
@@ -8,7 +8,7 @@
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package offstage.wizards.newrecord;
+package offstage.equery.swing;
 
 import citibob.swing.html.*;
 import java.util.*;
@@ -23,17 +23,21 @@ import citibob.wizard.*;
  *
  * @author citibob
  */
-public class FinishedWiz extends HtmlWiz {
+public class ReportTypeWiz extends HtmlWiz {
 	
 /**
- * Creates a new instance of NewRecordWiz2 
+ * Creates a new instance of PersonWiz 
  */
-public FinishedWiz(java.awt.Frame owner)
+public ReportTypeWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Record", true);
-	addSubmitButton("next", "Finished");
+	super(owner, "Report Selection", true);
+	setSize(600,400);
+//	TypedWidgetMap map = new TypedWidgetMap();
+//	addTextField("queryname", new JStringSwinger());
+	
 	loadHtml();
 }
+
 
 }

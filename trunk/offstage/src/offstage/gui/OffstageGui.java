@@ -60,7 +60,7 @@ FrontApp app;
 			//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
 			actions.initRuntime(app);
 			people.initRuntime(st, app);
-			queries.initRuntime(app);
+//			queries.initRuntime(app);
 			mailings.initRuntime(st, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
 
 			//JSchemaWidgetTree.initWithStatement(this, st);
@@ -68,12 +68,15 @@ FrontApp app;
 			app.addListener(new FrontApp.Adapter() {
 			public void screenChanged() {
 				switch(app.getScreen()) {
-					case FrontApp.PEOPLE_SCREEN :
+					case FrontApp.ACTIONS_SCREEN :
 						tabs.setSelectedIndex(0);
 					break;
-					case FrontApp.QUERIES_SCREEN :
+					case FrontApp.PEOPLE_SCREEN :
 						tabs.setSelectedIndex(1);
 					break;
+//					case FrontApp.QUERIES_SCREEN :
+//						tabs.setSelectedIndex(1);
+//					break;
 					case FrontApp.MAILINGS_SCREEN :
 						tabs.setSelectedIndex(2);
 					break;
@@ -81,8 +84,8 @@ FrontApp app;
 			}});
 
 			// Mess with preferences
-			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-			prefs = guiPrefs.node("OffstageGui");
+//			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+			Preferences prefs = app.userRoot().node("OffstageGui");
 			new SwingPrefs().setPrefs(this, "", prefs);
 		} finally {
 			st.close();
@@ -100,7 +103,6 @@ FrontApp app;
         tabs = new javax.swing.JTabbedPane();
         actions = new offstage.gui.ActionPanel();
         people = new offstage.gui.EditorPanel();
-        queries = new offstage.equery.swing.EQueryBrowser2();
         mailings = new offstage.gui.MailingsEditor();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -117,8 +119,6 @@ FrontApp app;
         tabs.addTab("Actions", actions);
 
         tabs.addTab("People", people);
-
-        tabs.addTab("Queries", queries);
 
         tabs.addTab("Mailings", mailings);
 
@@ -230,7 +230,6 @@ private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JMenuItem miQuit;
     private javax.swing.JMenuItem miThrowException;
     private offstage.gui.EditorPanel people;
-    private offstage.equery.swing.EQueryBrowser2 queries;
     private javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
 	

@@ -10,13 +10,14 @@
 
 package offstage.wizards.newrecord;
 
+import citibob.swing.html.*;
 import java.util.*;
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
 import offstage.types.*;
 import javax.swing.*;
 import offstage.wizards.*;
-import citibob.swing.html.HtmlWiz;
+import citibob.wizard.*;
 
 /**
  *

@@ -90,6 +90,7 @@ throws SQLException
 	mailingids.setWhereClause("created >= now() - interval '30 days'");
 	mailingids.setOrderClause("created desc");
 	mailingids.doSelect(st);
+	add(mailingids);
 	
 //	mailingids.setInstantUpdate(runner, true);
 

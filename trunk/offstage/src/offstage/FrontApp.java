@@ -24,14 +24,16 @@ import citibob.multithread.*;
 import offstage.db.FullEntityDbModel;
 import offstage.db.EntityListTableModel;
 import offstage.db.TestConnPool;
+import offstage.equery.*;
 import citibob.multithread.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
 import offstage.schema.*;
 import citibob.mail.*;
 import javax.mail.internet.*;
-import offstage.equery.swing.EQueryModel2;
+//import offstage.equery.swing.EQueryModel2;
 import citibob.jschema.*;
+import java.util.prefs.*;
 
 public class FrontApp implements citibob.app.App
 {
@@ -49,9 +51,10 @@ DbChangeModel dbChange;
 ConnPool pool;
 SwingerMap swingerMap;
 OffstageSchemaSet sset;
+EQuerySchema equerySchema;
 
 FullEntityDbModel fullEntityDm;
-EQueryModel2 equeries;
+//EQueryModel2 equeries;
 MailingModel2 mailings;
 EntityListTableModel simpleSearchResults;
 ActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
@@ -68,6 +71,22 @@ public Schema getSchema(String name) { return sset.get(name); }
 // Legacy...
 public ActionRunner getGuiRunner() { return guiRunner; }
 public ActionRunner getAppRunner() { return appRunner; }
+
+/** @returns Root user preferences node for this application */
+public java.util.prefs.Preferences userRoot()
+{
+	Preferences p = Preferences.userRoot();
+	p = p.node("offstage");
+	return p;
+}
+
+/** @returns Root system preferences node for this application */
+public java.util.prefs.Preferences systemRoot()
+{
+	return null;
+//	Preferences p = Preferences.systemRoot();
+//	p = p.node("offstage");
+}
 
 //public Connection createConnection()
 //throws SQLException
@@ -108,6 +127,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		st.close();
 		pool.checkin(dbb);
 	}
+	equerySchema = new EQuerySchema(getSchemaSet());
 }
 public EntityListTableModel getSimpleSearchResults()
 	{ return simpleSearchResults; }
@@ -122,12 +142,13 @@ public FullEntityDbModel getFullEntityDm()
 	{ return fullEntityDm; }
 public MailingModel2 getMailingModel()
 	{ return mailings; }
-public EQueryModel2 getEQueryModel2()
-	{ return equeries; }
+//public EQueryModel2 getEQueryModel2()
+//	{ return equeries; }
 public DbChangeModel getDbChange()
 	{ return dbChange; }
 public OffstageSchemaSet getSchemaSet() { return sset; }
 public SwingerMap getSwingerMap() { return swingerMap; }
+public EQuerySchema getEquerySchema() { return equerySchema;}
 // -------------------------------------------------
 public int getScreen()
 { return screen; }

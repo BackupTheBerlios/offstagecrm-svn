@@ -1,5 +1,5 @@
 /*
- * NewRecordWiz2.java
+ * PersonWiz.java
  *
  * Created on October 8, 2006, 6:08 PM
  *
@@ -8,7 +8,7 @@
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package offstage.wizards.newrecord;
+package offstage.equery.swing;
 
 import citibob.swing.html.*;
 import java.util.*;
@@ -23,27 +23,18 @@ import citibob.wizard.*;
  *
  * @author citibob
  */
-public class InitWiz extends HtmlWiz {
+public class NewQueryWiz extends HtmlWiz {
 	
 /**
- * Creates a new instance of NewRecordWiz2 
+ * Creates a new instance of PersonWiz 
  */
-public InitWiz(java.awt.Frame owner)
+public NewQueryWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Record", true);
-	
-	KeyedButtonGroup type = new KeyedButtonGroup();
-	JRadioButton b;
-	b = new JRadioButton("Person");
-		b.setOpaque(false);
-		type.add("person", b);
-		addWidget("person", b);
-	b = new JRadioButton("Organization");
-		b.setOpaque(false);
-		type.add("organization", b);
-		addWidget("organization", b);
-	html.getMap().put("type", type);
+	super(owner, "New Query", true);
+	setSize(600,400);
+//	TypedWidgetMap map = new TypedWidgetMap();
+	addTextField("queryname", new JStringSwinger());
 	
 	loadHtml();
 }
@@ -54,7 +45,11 @@ throws Exception
 {
 	JFrame f = new JFrame();
 	f.setVisible(true);
-	InitWiz wiz = new InitWiz(f);
+	NewQueryWiz wiz = new NewQueryWiz(f);
+	wiz.setVisible(true);
+	System.out.println(wiz.getSubmitName());
+	
+	wiz = new NewQueryWiz(f);
 	wiz.setVisible(true);
 	System.out.println(wiz.getSubmitName());
 	

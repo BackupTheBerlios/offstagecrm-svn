@@ -10,6 +10,8 @@
 
 package offstage.wizards.newrecord;
 
+import citibob.swing.html.HtmlWiz;
+import citibob.swing.html.HtmlWiz;
 import java.util.*;
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
@@ -18,7 +20,7 @@ import javax.swing.*;
 import offstage.wizards.*;
 import offstage.*;
 import offstage.gui.*;
-import citibob.swing.html.HtmlWiz;
+import citibob.wizard.*;
 
 /**
  *

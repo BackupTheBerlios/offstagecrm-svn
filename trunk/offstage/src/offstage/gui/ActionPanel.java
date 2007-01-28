@@ -10,6 +10,8 @@
 
 package offstage.gui;
 
+import citibob.wizard.Wizard;
+import citibob.wizard.Wizard;
 import offstage.*;
 import citibob.swing.html.*;
 import java.util.*;
@@ -46,10 +48,24 @@ public void initRuntime(FrontApp xfapp) throws Exception
 		wizard.runWizard();
 	}});
 
-	actionMap.put("amend", new StRunnable() {
+//	actionMap.put("amend", new StRunnable() {
+//	public void run(Statement st) throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+//		Wizard wizard = new AmendRecordWizard(fapp, st, root);
+//		wizard.runWizard();
+//	}});
+
+//	actionMap.put("newquery", new StRunnable() {
+//	public void run(Statement st) throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+//		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, st, root, "newquery");
+//		wizard.runWizard();
+//	}});
+
+	actionMap.put("editquery", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new AmendRecordWizard(fapp, st, root);
+		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, st, root, "listquery");
 		wizard.runWizard();
 	}});
 

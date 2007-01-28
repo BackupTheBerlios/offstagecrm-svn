@@ -31,9 +31,9 @@ public class WizQuerySchema extends QuerySchema
 {
 
 // --------------------------------------------------
-public WizQuerySchema(Statement st, OffstageSchemaSet sset) throws SQLException
+public WizQuerySchema(OffstageSchemaSet sset) throws SQLException
 {
-	super(st);
+	super();
 	addSchema(sset.events,
 		"events.entityid = main.entityid");
 	addSchema(sset.donations,

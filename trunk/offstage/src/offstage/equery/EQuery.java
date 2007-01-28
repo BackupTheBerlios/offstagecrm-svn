@@ -103,7 +103,8 @@ public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
 	if (lastUpdatedNext != null) sql.addWhereClause("main.lastupdated < " + SqlTimestamp.sql(lastUpdatedNext));
 }
 // ------------------------------------------------------
-public void makeMailing(Statement st, String queryName, EQuerySchema schema) throws SQLException
+/** Returns the mailing id */
+public int makeMailing(Statement st, String queryName, EQuerySchema schema) throws SQLException
 {
 	EQuery eqy = this;
 //	if (eqy == null) return;
@@ -121,7 +122,7 @@ System.out.println("Created Mailing list ID: " + xmailingID);
 	st.executeQuery(sql);
 	sql = "update mailingids set name = " + SqlString.sql(queryName) + " where groupid = " + xmailingID;
 	st.executeUpdate(sql);
-	
+	return xmailingID;
 }
 
 }

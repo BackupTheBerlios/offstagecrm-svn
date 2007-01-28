@@ -140,7 +140,7 @@ protected void doAlias(String[] alias)
 		ColName cname = new ColName(alias[i]);
 		String vname = alias[i+1];
 //System.out.println((cols.get(cname).getClass()));
-System.err.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
+System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
 		Col col = (Col)cols.get(cname).obj;
 		if (col == null) continue;
 		col.setViewName(vname);
