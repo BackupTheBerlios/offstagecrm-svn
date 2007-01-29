@@ -61,12 +61,14 @@ ActionRunner guiRunner;		// Run user-initiated actions; when user hits button, e
 	// This will put on queue, etc.
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
+SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
 // -------------------------------------------------------
 public ConnPool getPool() { return pool; }
 public void runGui(CBRunnable r) { guiRunner.doRun(r); }
 public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
 public Schema getSchema(String name) { return sset.get(name); }
+public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 
 // Legacy...
 public ActionRunner getGuiRunner() { return guiRunner; }
@@ -102,6 +104,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 
 	this.mailSender = new citibob.mail.GuiMailSender();
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
+	this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 	this.swingerMap = new offstage.types.OffstageSwingerMap();
 	
 	this.pool = pool;
