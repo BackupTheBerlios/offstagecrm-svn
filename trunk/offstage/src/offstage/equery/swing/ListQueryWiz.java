@@ -110,10 +110,13 @@ public void getAllValues(java.util.Map m)
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
+        java.awt.GridBagConstraints gridBagConstraints;
+
         jScrollPane3 = new javax.swing.JScrollPane();
         tQueries = new citibob.jschema.swing.SchemaBufTable();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
         bNewQuery = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -138,6 +141,11 @@ public void getAllValues(java.util.Map m)
         jLabel1.setText("Please select the query below you wish to edit.");
         add(jLabel1, java.awt.BorderLayout.NORTH);
 
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Please select the query you wish to edit, or click on \"Create New Query\"");
+        jPanel3.add(jLabel2, new java.awt.GridBagConstraints());
+
         bNewQuery.setText("Create New Query");
         bNewQuery.addActionListener(new java.awt.event.ActionListener()
         {
@@ -147,7 +155,10 @@ public void getAllValues(java.util.Map m)
             }
         });
 
-        jPanel3.add(bNewQuery);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanel3.add(bNewQuery, gridBagConstraints);
 
         add(jPanel3, java.awt.BorderLayout.NORTH);
 
@@ -162,6 +173,7 @@ public void getAllValues(java.util.Map m)
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bNewQuery;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane3;
     private citibob.jschema.swing.SchemaBufTable tQueries;
