@@ -59,6 +59,8 @@ throws SQLException
 	map.put("classes", classes = new ClassesSchema(st, change));
 	map.put("interests", interests = new InterestsSchema(st, change));
 	map.put("equeries", equeries = new EQueriesSchema());
+	map.put("donationids", new DonationidsSchema());
+	map.put("phoneids", new PhoneidsSchema());
 }
 	
 }
