@@ -13,7 +13,6 @@ import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.multithread.*;
 import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
-import offstage.gui.MultiSBTest;
 
 /**
  *
@@ -35,18 +34,19 @@ JoinedSchemaBufDbModel mdm;
 		this.app = app;
 //		SchemaBuf persons = new SchemaBuf(app.getSchema("persons"));
 //		SchemaBuf phones = new SchemaBuf(app.getSchema("phones"));
-		
-
-		mdm = new JoinedSchemaBufDbModel(null, new TableSpec[] {
-			new TableSpec(app.getSchema("persons")),
-			new TableSpec(app.getSchema("phones"))
-		});
-		
-		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
-		
-		jTypeTable1.setSwingerMap(app.getSwingerMap());
-		jTypeTable1.setModel(mdm.newJTypeTableModel());
-		mdm.doSelect(st);
+		DonorReport report = new DonorReport(app,
+			"select entityid from persons where lastname = 'Fischer'");
+//		mdm = new JoinedSchemaBufDbModel(null, new TableSpec[] {
+//			new TableSpec(app.getSchema("persons")),
+//			new TableSpec(app.getSchema("phones"))
+//		});
+//		
+//		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
+//		
+//		jTypeTable1.setSwingerMap(app.getSwingerMap());
+//		jTypeTable1.setModel(mdm.newJTypeTableModel());
+		jTypeTable1.setModel(report.getTableModel());
+		report.doSelect(st);
 	}
 	
 	/** This method is called from within the constructor to
@@ -129,7 +129,7 @@ public static void main(String[] args) throws Exception
 	Statement st = pool.checkout().createStatement();
 	FrontApp fapp = new FrontApp(pool,null);
 	
-	MultiSBTest frame = new MultiSBTest();
+	DonorReportXX frame = new DonorReportXX();
 	frame.initRuntime(fapp, st);
 	frame.setVisible(true);
 }

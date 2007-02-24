@@ -26,13 +26,13 @@ package offstage.db;
 
 import citibob.swing.*;
 import java.sql.*;
-import citibob.swing.table.RSTableModel;
+import citibob.sql.SqlTableModel;
 
 /**
  *
  * @author citibob
  */
-public class EntityListTableModel extends RSTableModel {
+public class EntityListTableModel extends SqlTableModel {
 
 	
 //public EntityListTableModel()

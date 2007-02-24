@@ -147,6 +147,16 @@ throws SQLException
 	}
 }
 // -------------------------------------------------------------------------------
+public static void createIDList(Statement st, String idSql, String idTable)
+throws SQLException
+{
+	String sql =
+		" create temporary table " + idTable + " (entityid int)" +
+		" delete from " + idTable + ";\n" +
+		" insert into " + idTable + " (entityid) " + idSql + ";\n";
+	st.executeUpdate(sql);
+}
+// -------------------------------------------------------------------------------
 public static int countIDList(Statement st, String idSql)
 throws SQLException
 {

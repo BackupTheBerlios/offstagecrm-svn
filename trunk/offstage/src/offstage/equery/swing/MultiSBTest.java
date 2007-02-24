@@ -12,7 +12,7 @@ import java.sql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.multithread.*;
-import static citibob.jschema.MultiSchemaBufDbModel.TableSpec;
+//9import static citibob.jschema.MultiSchemaBufDbModel.TableSpec;
 
 /**
  *
@@ -21,7 +21,7 @@ import static citibob.jschema.MultiSchemaBufDbModel.TableSpec;
 public class MultiSBTest extends javax.swing.JFrame
 {
 App app;
-MultiSchemaBufDbModel mdm;
+//MultiSchemaBufDbModel mdm;
 
 	/** Creates new form MultiSBTest */
 	public MultiSBTest()
@@ -36,16 +36,16 @@ MultiSchemaBufDbModel mdm;
 //		SchemaBuf phones = new SchemaBuf(app.getSchema("phones"));
 		
 
-		mdm = new MultiSchemaBufDbModel(null, new TableSpec[] {
-			new TableSpec(app.getSchema("persons")),
-			new TableSpec(app.getSchema("phones"))
-		});
+//		mdm = new MultiSchemaBufDbModel(null, new TableSpec[] {
+//			new TableSpec(app.getSchema("persons")),
+//			new TableSpec(app.getSchema("phones"))
+//		});
 		
-		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
-		
-		jTypeTable1.setSwingerMap(app.getSwingerMap());
-		jTypeTable1.setModel(mdm.newJTypeTableModel());
-		mdm.doSelect(st);
+//		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
+//		
+//		jTypeTable1.setSwingerMap(app.getSwingerMap());
+//		jTypeTable1.setModel(mdm.newJTypeTableModel());
+//		mdm.doSelect(st);
 	}
 	
 	/** This method is called from within the constructor to
@@ -96,7 +96,7 @@ MultiSchemaBufDbModel mdm;
 	{//GEN-HEADEREND:event_jButton1ActionPerformed
 	app.runGui(new StRunnable() {
 	public void run(Statement st) throws Exception {
-		mdm.doUpdate(st);
+//		mdm.doUpdate(st);
 	}});
 
 // TODO add your handling code here:
