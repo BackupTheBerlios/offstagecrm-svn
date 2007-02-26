@@ -13,6 +13,7 @@ import citibob.swing.typed.*;
 import java.sql.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
+import citibob.app.*;
 
 /**
  *
@@ -39,14 +40,17 @@ public IDListViewer() {
 public void initRuntime(Statement st,
 FullEntityDbModel xentityDb,
 String idSql, String orderBy,
-final ActionRunner guiRunner, SwingerMap smap)
+App app)
+//final ActionRunner guiRunner, SwingerMap smap)
 throws SQLException
 {
-	dupsModel = new EntityListTableModel();
+//	final App app = xapp;
+	final ActionRunner guiRunner = app.getGuiRunner();
+	dupsModel = new EntityListTableModel(app.getSqlTypeSet());
 	dupsModel.setRows(st, idSql, orderBy);
 	this.entityDb = xentityDb;
 	dupsTable.initRuntime(dupsModel);
-	mainEntityPanel.initRuntime(st, guiRunner, entityDb, smap);
+	mainEntityPanel.initRuntime(st, guiRunner, entityDb, app.getSwingerMap());
 	DClickTableMouseListener dclick =
 		new DClickTableMouseListener(dupsTable) {
 		public void doubleClicked(final int row) {

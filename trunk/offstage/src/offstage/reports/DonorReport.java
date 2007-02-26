@@ -22,6 +22,7 @@ import java.util.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;
 import offstage.db.*;
+import citibob.sql.pgsql.*;
 
 /**
  
@@ -49,7 +50,7 @@ public DonorReport(App app, String idSql)
 
 	String sql;
 	sql =
-		" select p.* from persons p, ids where p.entityid = ids.entityid";
+		" select p.* from persons p, ids_donor ids where p.entityid = ids.entityid";
 		int x=5;
 	MainSqlTableModel main = new MainSqlTableModel(
 		app.getSqlTypeSet(), "entityid", sql);
@@ -58,10 +59,11 @@ public DonorReport(App app, String idSql)
 	// Outer Join the Fiscal Year summaries
 	final int[] years = new int[] {1989, 1990, 1991, 2000, 2001, 2002, 2003};
 	Col[] cols = new Col[years.length];
-	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
+//	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
+	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new SqlNumeric(10,2,true));
 	sql =
 		" select d.entityid, di.fiscalyear, sum(amount) as amount" +
-		" from donations d, donationids di, ids" +
+		" from donations d, donationids di, ids_donor ids" +
 		" where d.entityid = ids.entityid" +
 		" and d.groupid = di.groupid" +
 		" and di.fiscalyear in (1989, 1990, 1991, 2000, 2001, 2002, 2003)" +
@@ -79,5 +81,6 @@ public DonorReport(App app, String idSql)
 			}
 		});
 	this.add(model);
+//	setTableModel();
 }
 }

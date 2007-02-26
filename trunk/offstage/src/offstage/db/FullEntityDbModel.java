@@ -128,12 +128,12 @@ public SchemaBuf getTicketsSb()
 	{ return tickets.getSchemaBuf(); }
 //public FamilyTableModel getFamily()
 //	{ return family; }
-public FullEntityDbModel(OffstageSchemaSet osset, ActionRunner appRunner)
+public FullEntityDbModel(OffstageSchemaSet osset, citibob.app.App app)
 {
 //	add(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityID", false));
 //	add(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityID", false));
-	add(onePerson = new EntityDbModel(osset.persons, appRunner));
-	add(oneOrg = new EntityDbModel(osset.org, appRunner));
+	add(onePerson = new EntityDbModel(osset.persons, app));
+	add(oneOrg = new EntityDbModel(osset.org, app));
 	add(phones = new IntKeyedDbModel(osset.phones, "entityID"));
 	add(donations = new IntKeyedDbModel(osset.donations, "entityID"));
 	add(notes = new IntKeyedDbModel(osset.notes, "entityID"));

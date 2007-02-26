@@ -151,10 +151,11 @@ public static void createIDList(Statement st, String idSql, String idTable)
 throws SQLException
 {
 	String sql =
-		" create temporary table " + idTable + " (entityid int)" +
+		" create temporary table " + idTable + " (entityid int);\n" +
 		" delete from " + idTable + ";\n" +
 		" insert into " + idTable + " (entityid) " + idSql + ";\n";
-	st.executeUpdate(sql);
+System.out.println(sql);	
+	st.execute(sql);
 }
 // -------------------------------------------------------------------------------
 public static int countIDList(Statement st, String idSql)

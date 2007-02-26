@@ -24,6 +24,7 @@ import citibob.swing.*;
 import java.sql.*;
 import citibob.sql.*;
 import citibob.multithread.*;
+import citibob.app.*;
 
 /**
  *
@@ -35,7 +36,8 @@ implements RowModel.ColListener //, SchemaRowModelBindable
 
 /** Creates a new instance of FamilyTableModel
  @param runner should be a raw runner (for db, not app). */
-public FamilyTableModel(ActionRunner runner) {
+public FamilyTableModel(ActionRunner runner, SqlTypeSet tset) {
+	super(tset);
 	this.runner = runner;
 }
 

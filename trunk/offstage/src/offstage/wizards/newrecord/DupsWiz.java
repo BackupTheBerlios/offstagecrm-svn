@@ -42,8 +42,8 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 	
 	IDListViewer listView = new IDListViewer();
 	listView.initRuntime(st, fapp.getFullEntityDm(),
-		idSql, null,
-		fapp.getGuiRunner(), fapp.getSwingerMap());
+		idSql, null, fapp);
+//		fapp.getGuiRunner(), fapp.getSwingerMap());
 //	html.getMap().put("idlistviewer", listView);
 	html.addWidget("idlistviewer", listView);
 	addSubmitButton("dontadd", "Don't Add");

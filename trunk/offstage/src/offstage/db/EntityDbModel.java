@@ -14,6 +14,7 @@ import java.sql.*;
 import citibob.jschema.*;
 import citibob.multithread.*;
 import citibob.swing.table.*;
+import citibob.app.*;
 
 /**
  *
@@ -25,10 +26,10 @@ public class EntityDbModel extends IntKeyedDbModel
 	FamilyTableModel family;	// List of family members of current entity.
 	
 	/** Creates a new instance of EntityDbModel */
-	public EntityDbModel(Schema schema, ActionRunner appRunner) {
+	public EntityDbModel(Schema schema, App app) {
 		super(new EntityBuf(schema), "entityid", false, null);
 		
-		family = new FamilyTableModel(appRunner);
+		family = new FamilyTableModel(app.getAppRunner(), app.getSqlTypeSet());
 		SchemaBufRowModel rm = new SchemaBufRowModel(this.getSchemaBuf());
 		family.bind(rm);
 	}

@@ -85,7 +85,7 @@ throws SQLException
 	equeryDm.setWhereClause("equeryid = " + equeryID);
 	equeryDm.doSelect(st);
 	
-	testResults = new EntityListTableModel();
+	testResults = new EntityListTableModel(fapp.getSqlTypeSet());
 	tTestResults.initRuntime(testResults);
 }
 

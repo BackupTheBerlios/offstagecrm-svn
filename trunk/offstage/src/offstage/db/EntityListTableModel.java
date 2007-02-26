@@ -27,6 +27,7 @@ package offstage.db;
 import citibob.swing.*;
 import java.sql.*;
 import citibob.sql.SqlTableModel;
+import citibob.sql.*;
 
 /**
  *
@@ -34,9 +35,9 @@ import citibob.sql.SqlTableModel;
  */
 public class EntityListTableModel extends SqlTableModel {
 
-	
-//public EntityListTableModel()
-//{
+
+public EntityListTableModel(SqlTypeSet tset)
+{ super(tset); }
 //	super();
 //	setPrototypes(new String[] {"101010", "organizations", "Johan Sebastian Bach"});
 //}

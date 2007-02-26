@@ -1,4 +1,4 @@
-/*
+/*sw
 Offstage CRM: Enterprise Database for Arts Organizations
 This file Copyright (c) 2006 by Robert Fischer
 
@@ -34,6 +34,7 @@ import javax.mail.internet.*;
 //import offstage.equery.swing.EQueryModel2;
 import citibob.jschema.*;
 import java.util.prefs.*;
+import citibob.text.*;
 
 public class FrontApp implements citibob.app.App
 {
@@ -50,6 +51,7 @@ int screen = PEOPLE_SCREEN;
 DbChangeModel dbChange;
 ConnPool pool;
 SwingerMap swingerMap;
+SFormatterMap sFormatterMap;
 OffstageSchemaSet sset;
 EQuerySchema equerySchema;
 
@@ -106,6 +108,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
 	this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 	this.swingerMap = new offstage.types.OffstageSwingerMap();
+	this.sFormatterMap = new offstage.types.OffstageSFormatterMap();
 	
 	this.pool = pool;
 	//pool = new DBConnPool();
@@ -121,11 +124,11 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 
 		dbChange = new DbChangeModel();
 		this.sset = new OffstageSchemaSet(st, dbChange);
-		fullEntityDm = new FullEntityDbModel(sset, appRunner);
+		fullEntityDm = new FullEntityDbModel(sset, this);
 		mailings = new MailingModel2(st, sset);//, appRunner);
 //	mailings.refreshMailingids();
 //		equeries = new EQueryModel2(st, mailings, sset);
-		simpleSearchResults = new EntityListTableModel();
+		simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 	} finally {
 		st.close();
 		pool.checkin(dbb);
@@ -151,6 +154,7 @@ public DbChangeModel getDbChange()
 	{ return dbChange; }
 public OffstageSchemaSet getSchemaSet() { return sset; }
 public SwingerMap getSwingerMap() { return swingerMap; }
+public SFormatterMap getSFormatterMap() { return sFormatterMap; }
 public EQuerySchema getEquerySchema() { return equerySchema;}
 // -------------------------------------------------
 public int getScreen()

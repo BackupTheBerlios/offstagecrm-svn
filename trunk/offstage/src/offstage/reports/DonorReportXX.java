@@ -13,6 +13,8 @@ import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.multithread.*;
 import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
+import citibob.swing.typed.*;
+import citibob.sql.pgsql.*;
 
 /**
  *
@@ -43,10 +45,16 @@ JoinedSchemaBufDbModel mdm;
 //		
 //		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
 //		
-//		jTypeTable1.setSwingerMap(app.getSwingerMap());
-//		jTypeTable1.setModel(mdm.newJTypeTableModel());
-		jTypeTable1.setModel(report.getTableModel());
+//		jTypeColTable1.setSwingerMap(app.getSwingerMap());
+//		jTypeColTable1.setModel(mdm.newJTypeTableModel());
 		report.doSelect(st);
+//		jTypeColTable1.setSwingerMap(app.getSwingerMap());
+//		jTypeColTable1.setModel(report.newTableModel());
+		Swinger dtSwinger = new JDateSwinger(new SqlDate(), "yyyy-MM-dd");
+		jTypeColTable1.setModelU(report.newTableModel(),
+			null, null, null,
+			app.getSwingerMap());
+		jTypeColTable1.setRenderEditU("created", dtSwinger);
 	}
 	
 	/** This method is called from within the constructor to
@@ -57,12 +65,23 @@ JoinedSchemaBufDbModel mdm;
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTypeTable1 = new citibob.swing.JTypeTable();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTypeColTable1 = new citibob.swing.JTypeColTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        jTypeTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jButton1.setText("Update");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        getContentPane().add(jButton1, java.awt.BorderLayout.SOUTH);
+
+        jTypeColTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
                 {null, null, null, null},
@@ -75,20 +94,9 @@ JoinedSchemaBufDbModel mdm;
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTypeTable1);
+        jScrollPane1.setViewportView(jTypeColTable1);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        jButton1.setText("Update");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        getContentPane().add(jButton1, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -120,7 +128,7 @@ JoinedSchemaBufDbModel mdm;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private citibob.swing.JTypeTable jTypeTable1;
+    private citibob.swing.JTypeColTable jTypeColTable1;
     // End of variables declaration//GEN-END:variables
 	
 public static void main(String[] args) throws Exception
