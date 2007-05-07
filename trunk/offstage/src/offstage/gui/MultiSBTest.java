@@ -45,7 +45,7 @@ JoinedSchemaBufDbModel mdm;
 		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
 		
 		jTypeTable1.setSwingerMap(app.getSwingerMap());
-		jTypeTable1.setModel(mdm.newJTypeTableModel());
+		jTypeTable1.setModel(mdm.getTableModel());
 		mdm.doSelect(st);
 	}
 	
