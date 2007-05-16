@@ -65,7 +65,7 @@ public ArrayList getClauses()
 	{ return clauses; }
 // -----------------------------------------------
 /** Creates a standard SqlQuery out of the data in this query. */
-public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
+public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
 {
 	String cwhere = "(1=0";
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
@@ -116,12 +116,12 @@ public int makeMailing(Statement st, String queryName, EQuerySchema schema) thro
 	// Create the mailing list and insert EntityID records
 //	sql = "select w_mailingids_create(" + SqlString.sql(eqXml) + ", " + SqlString.sql(eqSql) + ")";
 //	int xmailingID = SQL.readInt(st, sql);
-	int xmailingID = DB.w_mailingids_create(st, eqXml, eqSql);
+	int xmailingID = DB.w_mailingids_create(st, queryName, eqXml, eqSql);
 System.out.println("Created Mailing list ID: " + xmailingID);
-	sql = "select w_mailings_correctlist(" + SqlInteger.sql(xmailingID) + ", FALSE)";
-	st.executeQuery(sql);
-	sql = "update mailingids set name = " + SqlString.sql(queryName) + " where groupid = " + xmailingID;
-	st.executeUpdate(sql);
+//	sql = "select w_mailings_correctlist(" + SqlInteger.sql(xmailingID) + ", FALSE)";
+//	st.executeQuery(sql);
+//	sql = "update mailingids set name = " + SqlString.sql(queryName) + " where groupid = " + xmailingID;
+//	st.executeUpdate(sql);
 	return xmailingID;
 }
 

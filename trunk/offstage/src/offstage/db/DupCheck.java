@@ -186,7 +186,7 @@ throws SQLException
 String getIDSql(int minScore, int maxDups)
 {
 	StringBuffer sql = new StringBuffer(
-		"select entityid from entities where entityid in (-1");
+		"select entityid as id from entities where entityid in (-1");
 	int nid = 0;
 	for (Iterator ii=scores.entrySet().iterator(); ii.hasNext(); ) {
 		Map.Entry e = (Map.Entry)ii.next();

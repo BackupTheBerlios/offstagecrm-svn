@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.text.*;
 
 /**
- *
+ *strin
  * @author citibob
  */
 public class PhoneFormatter extends JFormattedTextField.AbstractFormatter

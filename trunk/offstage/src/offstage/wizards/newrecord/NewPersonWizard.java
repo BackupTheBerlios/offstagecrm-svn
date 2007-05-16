@@ -111,7 +111,7 @@ addState(new State("finished", null, null) {
 }
 
 // ====================================================
-private void addSCol(SqlQuery q, String col)
+private void addSCol(ConsSqlQuery q, String col)
 {
 	String val = v.getString(col);
 	if (val != null) q.addColumn(col, SqlString.sql(val));
@@ -120,8 +120,9 @@ void createPerson() throws SQLException
 {
 	// Make main record
 	int id = DB.r_nextval(st, "entities_entityid_seq");
-	SqlQuery q = new SqlQuery("persons", SqlQuery.INSERT);
+	ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
 	q.addColumn("entityid", SqlInteger.sql(id));
+	q.addColumn("primaryentityid", SqlInteger.sql(id));
 	addSCol(q, "lastname");
 	addSCol(q, "middlename");
 	addSCol(q, "firstname");
@@ -131,18 +132,18 @@ void createPerson() throws SQLException
 	addSCol(q, "state");
 	addSCol(q, "zip");
 	addSCol(q, "email");
-	String sql = q.getInsertSQL();
+	String sql = q.getSql();
 System.out.println(sql);
 	st.execute(sql);
 	
 	// Make phone record --- first dig for keyed model...
 	String phone = v.getString("phone");
 	if (phone != null) {
-		q = new SqlQuery("phones", SqlQuery.INSERT);
+		q = new ConsSqlQuery("phones", ConsSqlQuery.INSERT);
 		q.addColumn("entityid", SqlInteger.sql(id));
 		q.addColumn("groupid", "(select groupid from phoneids where name = 'home')");
 		q.addColumn("phone", SqlString.sql(phone));
-		sql = q.getInsertSQL();
+		sql = q.getSql();
 System.out.println(sql);
 		st.execute(sql);
 	}
@@ -151,6 +152,8 @@ System.out.println(sql);
 //	SqlEnum type = (SqlEnum)col.getType();
 //	KeyedModel kmodel = type.getKeyedModel();
 //	kmodel.
+	
+	
 }
 
 boolean notnull(String field)

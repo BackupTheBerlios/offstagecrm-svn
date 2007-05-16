@@ -40,6 +40,8 @@ protected ConsoleFrame consoleFrame;
 		// Get database version
 		Statement st = dbb.createStatement();
 		OffstageVersion.fetchDbVersion(st);
+// TODO: This should not be needed.  But run for now until upgrade is in place.
+st.execute("update entities set primaryentityid=entityid where primaryentityid is null");
 		st.close();
 		pool.checkin(dbb);
 

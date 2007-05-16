@@ -1,99 +1,118 @@
-///*
-// * CSVReport.java
-// *
-// * Created on February 14, 2007, 11:35 PM
-// *
-// * To change this template, choose Tools | Template Manager
-// * and open the template in the editor.
-// */
-//
-//package offstage.reports;
-//
-//import java.sql.*;
-//import citibob.text.*;
-//import citibob.swing.table.*;
-//import java.io.*;
-//
-///**
-// *
-// * @author citibob
-// */
-//public class CSVReport {
-//
-//SFormatter[] formatters;
-//ColPermuteTableModel mod;
-//SFormatterMap sfmap;
-//
-//public CSVReport(JTypeTableModel uModel,
-//String[] colNames, String[] sColMap,
-//SFormatterMap sfmap)
-//{
-//	int ncol = mod.getColumnCount();
-//
-//	mod = new ColPermuteTableModel(uModel, colNames, sColMap, null);
-//
-//	// Set up formatter for each column
-//	formatters = new SFormatter[ncol];
-//	for (int i=0; i<ncol; ++i)
-//		formatters[i] = sfmap.newSFormatter(mod.getJType(0, i));
-//}
-//public void setSFormatterU(String uname, SFormatter fmt)
-//{
-//	int col = mod.findColumnU(uname);
-//	formatters[col] = fmt;
-//}
-//
-//
-///** Creates a new instance of CSVReport */
-//public void writeReport(JTypeTableModel mod, File fout, SFormatterMap sfmap){}
-//
-///** Creates a new instance of CSVReport */
-//public void writeReport(JTypeTableModel mod, File fout, SFormatterMap sfmap)
-//{
-//	int ncol = mod.getColumnCount();
-//
-//	// Set up formatter for each column
-//	formatters = new SFormatter[ncol];
-//	for (int i=0; i<ncol; ++i)
-//		formatters[i] = sfmap.newSFormatter(mod.getJType(0, i));
-//
-//	// Start the output
-//	PrintWriter out = new PrintWriter(new FileWriter(fout));
-//	for (int i=0; i<ncol; ++i) {
-//		if (i>0) out.print(",");
-//		out.print(meta.getColumnLabel(i+1));
-//	}
-//	out.println();
-//
-//	// Do each row
-//	for (int j=0; j<mod.getRowCount(); ++j) {
-//		for (int i=0; i<ncol; ++i) {
-//			Object o = mod.getValueAt(i,j);
-//			String s = (o == null ? "" : formatters[i].valueToString(o));
-//			if (s.indexOf('"') >= 0) {
-//				// Quote only if needed
-//				s = '"' + s.replace("\"", "\\\"") + '"';
-//			}
-//			out.print(s);
-//		}
-//		out.println();
-//	}
-//	out.close();
-//}
-//
-//public static void main(String[] args) throws Exception
-//{
-//	String ss = "\"hoi\"";
-//	System.out.println(ss.replace("\"", "\\\""));
-//
-//
-//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-//	Statement st = pool.checkout().createStatement();
-//	citibob.text.SFormatterMap sfmap = new offstage.types.OffstageSFormatterMap();
-//	citibob.sql.SqlTypeSet tset = new citibob.sql.pgsql.PgsqlTypeSet();
-//
-//	String sql =
-//		" select * from mailings where groupid=295";
+/*
+ * CSVReport.java
+ *
+ * Created on February 14, 2007, 11:35 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package offstage.reports;
+
+import java.sql.*;
+import citibob.text.*;
+import citibob.swing.table.*;
+import citibob.sql.*;
+import java.io.*;
+
+/**
+ *
+ * @author citibob
+ */
+public class CSVReport {
+
+SFormatter[] formatters;
+ColPermuteTableModel mod;
+SFormatterMap sfmap;
+
+/** @param colNames Name of each column in finished report --- Null if use underlying column names
+ @param sColMap Name of each column in underlying uModel. */
+public CSVReport(JTypeTableModel uModel,
+String[] colNames, String[] sColMap,
+SFormatterMap sfmap)
+{
+
+	mod = new ColPermuteTableModel(uModel, colNames, sColMap, null);
+
+	// Set up formatter for each column
+	int ncol = mod.getColumnCount();
+	formatters = new SFormatter[ncol];
+	for (int i=0; i<ncol; ++i) {
+		int ucol = mod.getColMap(i);
+		formatters[i] = sfmap.newSFormatter(uModel.getJType(0, ucol));
+	}
+}
+
+/** Used to set a special (non-default) formatter for a particular column. */
+public void setSFormatterU(String uname, SFormatter fmt)
+{
+	int col = mod.findColumnU(uname);
+	formatters[col] = fmt;
+}
+
+
+/** Creates a new instance of CSVReport */
+public void writeReport(File f) throws IOException, java.text.ParseException
+{
+	FileWriter out = null;
+	try {
+		writeReport(new FileWriter(f));
+	} finally {
+		try { out.close(); } catch(Exception e) {}
+	}
+}
+
+/** Creates a new instance of CSVReport */
+public void writeReport(Writer out) throws IOException, java.text.ParseException
+{
+	int ncol = mod.getColumnCount();
+
+	// Start the output
+	PrintWriter pout = new PrintWriter(out);
+	for (int i=0; i<ncol; ++i) {
+		if (i>0) pout.print(",");
+		pout.print(mod.getColumnName(i));
+	}
+	pout.println();
+
+	// Do each row
+	for (int j=0; j<mod.getRowCount(); ++j) {
+		for (int i=0; i<ncol; ++i) {
+			Object o = mod.getValueAt(j,i);
+//System.out.println("Column " + i + ": Formatting " + o + " with formatter: " + formatters[i]);
+			String s = (o == null ? "" : formatters[i].valueToString(o));
+			if (s.indexOf('"') >= 0) {
+				// Quote only if needed
+				s = '"' + s.replace("\"", "\\\"") + '"';
+			}
+			if (i>0) pout.print(",");
+			pout.print(s);
+		}
+		pout.println();
+	}
+	pout.flush();
+}
+
+public static void main(String[] args) throws Exception
+{
+	String ss = "\"hoi\"";
+	System.out.println(ss.replace("\"", "\\\""));
+
+
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	Statement st = pool.checkout().createStatement();
+	citibob.text.SFormatterMap sfmap = new offstage.types.OffstageSFormatterMap();
+	citibob.sql.SqlTypeSet tset = new citibob.sql.pgsql.PgsqlTypeSet();
+
+	String sql =
+		" select * from mailings where groupid=295";
+	RSTableModel rst = new RSTableModel(tset);
+	rst.executeQuery(st, sql);
+
+	CSVReport rpt = new CSVReport(rst, null, null, sfmap);
+	rpt.setSFormatterU("phone", new offstage.types.PhoneFormatter());
+	rpt.writeReport(new File("/export/home/citibob/x.csv"));
+	
 //	ResultSet rs = st.executeQuery(sql);
 //	ResultSetMetaData meta = rs.getMetaData();
 //	int ncol = meta.getColumnCount();
@@ -117,6 +136,6 @@
 //		}
 //		System.out.println();
 //	}
-//}
-//
-//}
+}
+
+}

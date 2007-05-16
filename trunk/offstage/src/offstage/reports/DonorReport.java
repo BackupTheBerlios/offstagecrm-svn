@@ -50,7 +50,7 @@ public DonorReport(App app, String idSql)
 
 	String sql;
 	sql =
-		" select p.* from persons p, ids_donor ids where p.entityid = ids.entityid";
+		" select p.* from persons p, ids_donor ids where p.entityid = ids.id";
 		int x=5;
 	MainSqlTableModel main = new MainSqlTableModel(
 		app.getSqlTypeSet(), "entityid", sql);
@@ -64,7 +64,7 @@ public DonorReport(App app, String idSql)
 	sql =
 		" select d.entityid, di.fiscalyear, sum(amount) as amount" +
 		" from donations d, donationids di, ids_donor ids" +
-		" where d.entityid = ids.entityid" +
+		" where d.entityid = ids.id" +
 		" and d.groupid = di.groupid" +
 		" and di.fiscalyear in (1989, 1990, 1991, 2000, 2001, 2002, 2003)" +
 		" group by d.entityid, di.fiscalyear";

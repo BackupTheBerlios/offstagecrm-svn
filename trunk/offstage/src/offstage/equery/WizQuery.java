@@ -63,7 +63,7 @@ public ArrayList getClauses()
 	{ return clauses; }
 // -----------------------------------------------
 /** Creates a standard SqlQuery out of the data in this query. */
-public void writeSqlQuery(QuerySchema schema, SqlQuery sql)
+public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
 {
 	String cwhere = "(1=0";
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {

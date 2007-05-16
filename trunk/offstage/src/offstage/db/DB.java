@@ -61,7 +61,34 @@ public static int r_nextval(Statement st, String sequence) throws SQLException
 	return SQL.readInt(st, "select nextval('" + sequence + "')");
 }
 // -------------------------------------------------------------------------------
-public static int w_mailingids_create(Statement st, String eqXml, String eqSql)
+//public static int w_mailingids_create(Statement st, String eqXml, String eqSql)
+//throws SQLException
+//{
+//	int groupID = r_nextval(st, "groupids_groupid_seq");
+//	//SQL.readInt(st, "select nextval('groupids_groupid_seq')");
+//	try { st.executeUpdate("drop table _ids"); } catch(SQLException sqe) {}
+//	String sql;
+//	sql =
+//		// Create Mailing List 
+//		" insert into mailingids" + 
+//		" (groupid, name, created, equery) values" + 
+//		" (" + groupID + ", 'Mailing', now(),\n" + SqlString.sql(eqXml) + "\n);" + 
+//
+//		// Create temporary table of IDs for this mailing list
+//		" create temporary table _ids (id int);" + 
+//		" delete from _ids;" + 
+//		" insert into _ids (id) " + eqSql + ";" +
+//
+//		// Insert into Mailing List
+//		" insert into mailings (groupid, entityid) select " + groupID + ", id from _ids;" + 
+//		" drop table _ids";
+//System.out.println(sql);
+//	st.executeUpdate(sql);
+//	return groupID;
+//}
+// -------------------------------------------------------------------------------
+/** @param eqSql an idSql that selects the entityids we wish to mail to. */
+public static int w_mailingids_create(Statement st, String queryName, String eqXml, String eqSql)
 throws SQLException
 {
 	int groupID = r_nextval(st, "groupids_groupid_seq");
@@ -72,16 +99,65 @@ throws SQLException
 		// Create Mailing List 
 		" insert into mailingids" + 
 		" (groupid, name, created, equery) values" + 
-		" (" + groupID + ", 'Mailing', now(),\n" + SqlString.sql(eqXml) + "\n);" + 
+		" (" + groupID + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
 
 		// Create temporary table of IDs for this mailing list
-		" create temporary table _ids (entityid int);" + 
+		// These are primaryentityids (i.e. the people we REALLY want to send to)
+		" create temporary table _ids (id int);" + 
 		" delete from _ids;" + 
-		" insert into _ids (entityid) " + eqSql + ";" +
+		" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
 
 		// Insert into Mailing List
-		" insert into mailings (groupid, entityid) select " + groupID + ", entityid from _ids;" + 
-		" drop table _ids";
+		" insert into mailings (groupid, entityid) select " + groupID + ", id from _ids;" + 
+		" drop table _ids;\n" +
+	
+		// ========= Set addressto from multiple sources
+		// 1. Try customaddressto
+		"	update mailings\n" +
+		"	set addressto = customaddressto\n" +
+		"	from entities p\n" +
+		"	where p.entityid = mailings.entityid\n" +
+		"	and p.customaddressto is not null\n" +
+		"	and addressto is null\n" +
+		"	and mailings.groupid = " + groupID + ";\n" +
+		
+		// 2. Try pre-computed names
+		"	update mailings\n" +
+		"	set addressto = ename\n" +
+		"	where addressto is null and ename is not null\n" +
+		"	and groupid = " + groupID + ";\n" +
+		
+		// 3. Try addressto as name of person
+		"	update mailings\n" +
+		"	set addressto = \n" +
+		"		coalesce(p.firstname || ' ', '') ||\n" +
+		"		coalesce(p.middlename || ' ', '') ||\n" +
+		"		coalesce(p.lastname, '')\n" +
+		"	from entities p\n" +
+		"	where mailings.entityid = p.entityid\n" +
+		"	and mailings.groupid = " + groupID + "\n" +
+		"	and addressto is null;\n" +
+		
+		// 4. Try addressto as name of organization
+		"	update mailings\n" +
+		"	set addressto = p.name\n" +
+		"	from organizations p\n" +
+		"	where mailings.entityid = p.entityid\n" +
+		"	and mailings.groupid = " + groupID + "\n" +
+		"	and addressto is null;\n" +
+
+		// Set the rest of the address\n" +
+		"	update mailings\n" +
+		"	set address1 = e.address1,\n" +
+		"	address2 = e.address2,\n" +
+		"	city = e.city,\n" +
+		"	state = e.state,\n" +
+		"	zip = e.zip,\n" +
+		"	country = e.country\n" +
+		"	from entities e\n" +
+		"	where mailings.entityid = e.entityid\n" +
+		"	and mailings.groupid = " + groupID + ";\n";
+	
 System.out.println(sql);
 	st.executeUpdate(sql);
 	return groupID;
@@ -102,10 +178,16 @@ throws SQLException
 	st.executeUpdate(
 		" update mailings set line1=null, line2=trim(addressto), line3=trim(address1)" +
 		" where groupid = " + mailingID +
-		" and address1 is not null and address2 is null");
-	st.executeUpdate(
-		" update mailings set isgood = true where groupid = " + mailingID);
-	st.executeUpdate(
+		" and address1 is not null and address2 is null;" +
+		
+		" update mailings set isgood = true where groupid = " + mailingID + ";\n" +
+
+		" update mailings set address1=null where address1='';\n" +
+		" update mailings set address2=null where address2='';\n" +
+		" update mailings set zip=null where zip='';\n" +
+		" update mailings set city=null where city='';\n" +
+		" update mailings set state=null where state='';\n" +
+		
 		" update mailings set isgood = false where" +
 		" groupid = " + mailingID + " and (" +
 		" addressto is null" +
@@ -113,7 +195,7 @@ throws SQLException
 		" or (zip is null and trim(country) = 'USA')" +
 		" or city is null" +
 		" or state is null" +
-		")");
+		");");
 }
 // -------------------------------------------------------------------------------
 public static int getPrimaryEntityID(Statement st, int eid)
@@ -147,27 +229,57 @@ throws SQLException
 	}
 }
 // -------------------------------------------------------------------------------
+/** Creates a temporary table full of entity id's from an SQL query designed
+ to select those IDs. */
 public static void createIDList(Statement st, String idSql, String idTable)
 throws SQLException
 {
 	String sql =
-		" create temporary table " + idTable + " (entityid int);\n" +
+		" create temporary table " + idTable + " (id int);\n" +
 		" delete from " + idTable + ";\n" +
-		" insert into " + idTable + " (entityid) " + idSql + ";\n";
-System.out.println(sql);	
+		" insert into " + idTable + " (id) " + idSql + ";\n";
+//System.out.println(sql);	
 	st.execute(sql);
 }
 // -------------------------------------------------------------------------------
+/** Creates a temporary table full of entity id's from a list of IDs. */
+public static void createIDList(Statement st, int[] ids, String idTable)
+throws SQLException
+{
+	StringBuffer sbuf = new StringBuffer();
+	sbuf.append(
+		" create temporary table " + idTable + " (entityid int);\n" +
+		" COPY " + idTable + " (entityid) FROM stdin;\n");
+	for (int i=0; i<ids.length; ++i) sbuf.append("" + ids[i] + "\n");
+	sbuf.append("\\.\n");
+	st.execute(sbuf.toString());
+}
+// -------------------------------------------------------------------------------
+/** Counts the number of items in an ID table. */
 public static int countIDList(Statement st, String idSql)
 throws SQLException
 {
 	String sql = "select count(*) from (" + idSql + ") xx";
+System.out.println(sql);
 	ResultSet rs = st.executeQuery(sql);
 	rs.next();
 	int n = rs.getInt(1);
 	rs.close();
 	return n;
 }
+// -------------------------------------------------------------------------------
+/** Removes duplicates (multiple people in same home) from a list of IDs to mail... replaces with sendentityid */
+public static String removeDupsIDSql(String idSql)
+{
+	String sql =
+		" select distinct e.primaryentityid as id from (\n" +
+			idSql +
+		" ) xx, entities e\n" +
+		" where xx.id = e.entityid\n" +
+		" and e.sendmail"; // and e.primaryentityid is not null\n";
+	return sql;
+}
+// -------------------------------------------------------------------------------
 public static ResultSet rs_entities_namesByIDList(Statement st, String idSql, String orderBy)
 throws SQLException
 {
@@ -175,13 +287,16 @@ throws SQLException
 //orderBy = "relation, name";
 	// Construct sql query to covert IDs to names
 	String sql =
-		" create temporary table _ids (entityid int); delete from _ids;\n" +
+		" create temporary table _ids (id int); delete from _ids;\n" +
+
 		" delete from _ids;\n" +
-		" insert into _ids (entityid) " + idSql + ";\n" +
+
+		" insert into _ids (id) " + idSql + ";\n" +
+		
 		" (select o.entityid, 'organizations' as relation, name as name" +
 		" , o.entityid = o.primaryentityid as isprimary" +
 		" from organizations o, _ids" +
-		" where o.entityid = _ids.entityid\n" +
+		" where o.entityid = _ids.id\n" +
 		"   union\n" +
 		" select p.entityid, 'persons' as relation," +
 		" (case when lastname is null then '' else lastname || ', ' end ||" +
@@ -189,8 +304,9 @@ throws SQLException
 		" case when middlename is null then '' else middlename end) as name" +
 		" , p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, _ids" +
-		" where p.entityid = _ids.entityid)" +
+		" where p.entityid = _ids.id)" +
 		" order by " + orderBy + ";\n" +
+		
 		" drop table _ids";
 
 	/*
@@ -223,3 +339,111 @@ throws SQLException
 	return null;
 }
 }
+
+
+
+
+//-- Function: w_mailings_correctlist(int4, bool)
+//
+//-- DROP FUNCTION w_mailings_correctlist(int4, bool);
+//
+//CREATE OR REPLACE FUNCTION w_mailings_correctlist(int4, bool)
+//  RETURNS void AS
+//$BODY$DECLARE
+//	vgroupid alias for $1;			-- Mailing to work on
+//	vkeepnosend alias for $2;	-- Keep "no send" people from list?
+//BEGIN
+//	-- Clear...
+//	update mailings set addressto = null
+//	where groupid = vgroupid;
+//
+//	-- Send to the primary
+//	update mailings
+//	set sendentityid = e.primaryentityid, ename = null
+//	from entities e
+//	where mailings.entityid = e.entityid
+//	and mailings.groupid = vgroupid;
+//
+//	-- Eliminate duplicates
+//	update mailings
+//	set minoid = xx.minoid
+//	from (
+//		select sendentityid, min(oid) as minoid
+//		from mailings m
+//		where m.groupid = vgroupid
+//		group by sendentityid
+//	) xx
+//	where mailings.sendentityid = xx.sendentityid
+//	and groupid = vgroupid;
+//
+//	delete from mailings
+//	where groupid = vgroupid
+//	and oid <> minoid;
+//
+//	-- Keep "no send" people
+//	if (not vkeepnosend) then
+//		update mailings
+//		set groupid = -2
+//		from entities e
+//		where mailings.sendentityid = e.entityid
+//		and not e.sendmail
+//		and mailings.groupid = vgroupid;
+//
+//		delete from mailings where groupid = -2;
+//	end if;
+//	
+//	-- ========= Set addressto from multiple sources
+//	-- Set addressto by custom address to
+//	update mailings
+//	set addressto = customaddressto
+//	from entities p
+//	where p.entityid = sendentityid
+//	and p.customaddressto is not null
+//	and addressto is null
+//	and mailings.groupid = vgroupid;
+//
+//	-- Use pre-computed names
+//	update mailings
+//	set addressto = ename
+//	where addressto is null and ename is not null
+//	and groupid = vgroupid;
+//
+//	-- Set addressto as name of person
+//	update mailings
+//	set addressto = 
+//		coalesce(p.firstname || ' ', '') ||
+//		coalesce(p.middlename || ' ', '') ||
+//		coalesce(p.lastname, '')
+//	from entities p
+//	where mailings.sendentityid = p.entityid
+//	and mailings.groupid = vgroupid
+//	and addressto is null;
+//
+//	-- Set addressto as name of organization
+//	update mailings
+//	set addressto2 = p.name
+//	from organizations p
+//	where mailings.sendentityid = p.entityid
+//	and mailings.groupid = vgroupid;
+//--	and addressto is null;
+//
+//
+//update mailings set addressto = addressto2
+//where addressto is null;
+//
+//	-- ==================================
+//
+//	-- Set the rest of the address
+//	update mailings
+//	set address1 = e.address1,
+//	address2 = e.address2,
+//	city = e.city,
+//	state = e.state,
+//	zip = e.zip,
+//	country = e.country
+//	from entities e
+//	where mailings.sendentityid = e.entityid
+//	and mailings.groupid = vgroupid;
+//
+//	return;
+//END

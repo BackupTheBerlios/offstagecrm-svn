@@ -31,7 +31,7 @@ public abstract class Query {
 //{ this.schema = schema; }
 
 /** Used in constructing queries... */
-protected void addTable(QuerySchema schema, SqlQuery sql, ColName cn)
+protected void addTable(QuerySchema schema, ConsSqlQuery sql, ColName cn)
 {
 	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
 	String tabString = " left outer join " + cn.getTable() + " on (" + joinClause + ")";
@@ -39,17 +39,17 @@ protected void addTable(QuerySchema schema, SqlQuery sql, ColName cn)
 		sql.addTable(tabString);
 	}
 }
-/** Creates a standard SqlQuery out of the data in this query. */
-public abstract void writeSqlQuery(QuerySchema schema, SqlQuery sql);
+/** Creates a standard ConsSqlQuery out of the data in this query. */
+public abstract void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql);
 // ------------------------------------------------------
 public String getSql(QuerySchema qs)
 {
-	SqlQuery sql = new SqlQuery();
+	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
 	sql.addTable("entities as main");
 	this.writeSqlQuery(qs, sql);
-	sql.addColumn("main.entityid");
+	sql.addColumn("main.entityid as id");
 	sql.setDistinct(true);
-	String ssql = sql.getSelectSQL();
+	String ssql = sql.getSql();
 System.out.println("ssql = " + ssql);
 	return ssql;
 }

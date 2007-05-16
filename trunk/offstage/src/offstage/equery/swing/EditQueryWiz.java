@@ -195,7 +195,9 @@ throws SQLException
 			eQueryEditor.commitValue();
 			EQuery eqy = eQueryEditor.getEQuery();
 			String sql = eqy.getSql(fapp.getEquerySchema());
-			lQuerySize.setText(""+DB.countIDList(st, sql));
+			int fullSize = DB.countIDList(st, sql);
+			int nodupSize = DB.countIDList(st, DB.removeDupsIDSql(sql));
+			lQuerySize.setText(""+fullSize + " (" + nodupSize + " for mailing)");
 			testResults.setRows(st, sql, null);
 		}});
 	}//GEN-LAST:event_bApplyActionPerformed

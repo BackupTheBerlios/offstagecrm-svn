@@ -116,7 +116,7 @@ public void makeReport(Statement st) throws SQLException, JRException
 		String sql =
 			"select * from mailings" +
 			" where groupid=" + mailings.getKey() +
-			" and isgood = 't'" +
+			" and isgood" +
 			" order by country, zip";
 		rs = st.executeQuery(sql);
 		HashMap params = new HashMap();
