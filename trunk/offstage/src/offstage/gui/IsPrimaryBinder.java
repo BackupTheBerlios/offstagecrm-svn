@@ -55,7 +55,12 @@ protected void finalize()
 	bufRow = null;
 }
 // --------------------------------------------------------------
-/** Binds this widget to listen/edit a particular column in a RowModel, using the type for that column derived from the associated Schema.  NOTE: This requires a correspondence in the numbering of columns in the Schema and in the RowModel.  No permutions inbetween are allowed!  This should not be a problem, just make sure the TableRowModel binds DIRECTLY to the source SchemaBuf, not to some permutation thereof. */
+/** Binds this widget to listen/edit a particular column in a RowModel,
+ using the type for that column derived from the associated Schema.
+ NOTE: This requires a correspondence in the numbering of columns in
+ the Schema and in the RowModel.  No permutions inbetween are allowed!
+ This should not be a problem, just make sure the TableRowModel binds DIRECTLY
+ to the source SchemaBuf, not to some permutation thereof. */
 public void bind(TypedWidget tw, SchemaRowModel bufRow)
 {
 	this.tw = tw;

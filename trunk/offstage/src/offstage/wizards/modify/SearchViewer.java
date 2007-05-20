@@ -44,8 +44,7 @@ FrontApp fapp)
 throws SQLException
 {
 	searchPanel.initRuntime(fapp);
-	mainEntityPanel.initRuntime(st, fapp.getGuiRunner(),
-		fapp.getFullEntityDm(), fapp.getSwingerMap());
+	mainEntityPanel.initRuntime(st, fapp, fapp.getFullEntityDm());
 	entityDb = fapp.getFullEntityDm();
 //entityDb, smap);
 //

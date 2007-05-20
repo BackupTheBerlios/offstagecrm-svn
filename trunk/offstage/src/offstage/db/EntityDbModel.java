@@ -29,7 +29,7 @@ public class EntityDbModel extends IntKeyedDbModel
 	public EntityDbModel(Schema schema, App app) {
 		super(new EntityBuf(schema), "entityid", false, null);
 		
-		family = new FamilyTableModel(app.getAppRunner(), app.getSqlTypeSet());
+		family = new FamilyTableModel(app);//.getAppRunner(), app.getSqlTypeSet());
 		SchemaBufRowModel rm = new SchemaBufRowModel(this.getSchemaBuf());
 		family.bind(rm);
 	}

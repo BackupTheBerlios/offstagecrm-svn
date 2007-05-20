@@ -40,21 +40,21 @@ public IDListViewer() {
 public void initRuntime(Statement st,
 FullEntityDbModel xentityDb,
 String idSql, String orderBy,
-App app)
+final App app)
 //final ActionRunner guiRunner, SwingerMap smap)
 throws SQLException
 {
 //	final App app = xapp;
-	final ActionRunner guiRunner = app.getGuiRunner();
+//	final ActionRunner guiRunner = app.getGuiRunner();
 	dupsModel = new EntityListTableModel(app.getSqlTypeSet());
 	dupsModel.setRows(st, idSql, orderBy);
 	this.entityDb = xentityDb;
 	dupsTable.initRuntime(dupsModel);
-	mainEntityPanel.initRuntime(st, guiRunner, entityDb, app.getSwingerMap());
+	mainEntityPanel.initRuntime(st, app, entityDb);
 	DClickTableMouseListener dclick =
 		new DClickTableMouseListener(dupsTable) {
 		public void doubleClicked(final int row) {
-			guiRunner.doRun(new StRunnable() {
+			app.runGui(IDListViewer.this, new StRunnable() {
 			public void run(Statement st) throws Exception {
 				// Make sure it's selected in the GUI
 				dupsTable.getSelectionModel().setSelectionInterval(row, row);

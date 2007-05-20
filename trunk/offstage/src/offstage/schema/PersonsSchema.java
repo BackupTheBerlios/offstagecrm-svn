@@ -34,16 +34,11 @@ throws SQLException
 	super(st, change);
 	table = "persons";
 	appendCols(new Column[] {
-		new Column(new SqlString(30), "title", false),
-		new Column(new SqlString(50), "occupation", false),
-		new Column(new SqlString(30), "salutation", false),
-		new Column(new SqlString(50), "firstname", false),
-		new Column(new SqlString(50), "middlename", false),
-		new Column(new SqlString(50), "lastname", false),
-		new Column(new SqlString(1), "gender", false),
+//		new Column(new SqlString(1), "gender", false),
+		new Column(new SqlChar(), "gender", false),
 		new Column(new SqlDate(true), "dob", false),
-		new Column(new SqlString(100), "customaddressto", false),
-		new Column(new SqlString(100), "email", false)
+		new Column(new SqlString(100), "email", false),
+		new Column(new SqlString(200), "url", false)
 	});
 }
 // ------------------------------------------

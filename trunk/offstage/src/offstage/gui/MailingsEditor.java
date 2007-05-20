@@ -43,7 +43,8 @@ import java.awt.Cursor;
 public class MailingsEditor extends javax.swing.JPanel {
 
 	MailingModel2 mailing;
-	ActionRunner runner;
+	citibob.app.App app;
+//	ActionRunner runner;
 //	Statement st;
 	
 	/** Creates new form MailingsEditor */
@@ -51,10 +52,10 @@ public class MailingsEditor extends javax.swing.JPanel {
 		initComponents();
 	}
 	public MailingsEditor getThis() { return this; }
-	public void initRuntime(Statement st, FrontApp app) throws SQLException
+	public void initRuntime(Statement st, FrontApp xapp) throws SQLException
 	{
-		runner = app.getGuiRunner();
-		mailing = app.getMailingModel();
+		this.app = xapp;
+		mailing = xapp.getMailingModel();
 //		tMailingIds.initRuntime(mailing);
 		tMailingIds.setModelU(
 			mailing.getMailingidsDb(),
@@ -68,7 +69,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 		tMailingIds.addMouseListener(new DClickTableMouseListener(tMailingIds) {
 		public void doubleClicked(final int row) {
 			citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
-			runner.doRun(new StRunnable() {
+			app.runGui(MailingsEditor.this, new StRunnable() {
 			public void run(Statement st) throws Exception {
 				// Make sure it's selected in the GUI
 				tMailingIds.getSelectionModel().setSelectionInterval(row, row);
@@ -216,14 +217,14 @@ public class MailingsEditor extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bInsertActionPerformed
-	runner.doRun(new StRunnable() {
+	app.runGui(MailingsEditor.this, new StRunnable() {
 	public void run(Statement st) throws Exception {
 		mailing.newAddress();
 	}});
 }//GEN-LAST:event_bInsertActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
-		runner.doRun(new StRunnable() {
+		app.runGui(MailingsEditor.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			bUndo.requestFocus();
 			mailing.doSelect(st);
@@ -231,7 +232,7 @@ private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 	}//GEN-LAST:event_bUndoActionPerformed
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-		runner.doRun(new StRunnable() {
+		app.runGui(MailingsEditor.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			bSave.requestFocus();
 			mailing.doUpdate(st);
@@ -248,7 +249,7 @@ private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 	private void bViewLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bViewLabelsActionPerformed
 		citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
-		runner.doRun(new StRunnable() {
+		app.runGui(MailingsEditor.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 //			throw new Exception("Bobs Exception");
 			bViewLabels.requestFocus();

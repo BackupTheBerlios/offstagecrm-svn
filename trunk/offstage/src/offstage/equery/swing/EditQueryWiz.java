@@ -190,7 +190,7 @@ throws SQLException
 
 	private void bApplyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bApplyActionPerformed
 	{//GEN-HEADEREND:event_bApplyActionPerformed
-		fapp.runGui(new StRunnable() {
+		fapp.runGui(this, new StRunnable() {
 		public void run(Statement st) throws SQLException {
 			eQueryEditor.commitValue();
 			EQuery eqy = eQueryEditor.getEQuery();
@@ -209,7 +209,7 @@ public void nextPressed()
 
 void saveCurQuery()
 {
-	fapp.runGui(new StRunnable() {
+	fapp.runGui(this, new StRunnable() {
 	public void run(Statement st) throws SQLException {
 		eQueryEditor.commitValue();
 		equeryDm.doUpdate(st);

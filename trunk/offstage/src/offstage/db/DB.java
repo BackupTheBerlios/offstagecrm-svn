@@ -301,11 +301,20 @@ throws SQLException
 		" select p.entityid, 'persons' as relation," +
 		" (case when lastname is null then '' else lastname || ', ' end ||" +
 		" case when firstname is null then '' else firstname || ' ' end ||" +
-		" case when middlename is null then '' else middlename end) as name" +
+		" case when middlename is null then '' else middlename end ||" +
+		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
 		" , p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, _ids" +
-		" where p.entityid = _ids.id)" +
-		" order by " + orderBy + ";\n" +
+		" where p.entityid = _ids.id" +
+//		" and not p.isorg" +
+//		"   union\n" +
+//		" select p.entityid, 'persons' as relation," +
+//		" orgname as name" +
+//		" , p.entityid = p.primaryentityid as isprimary" +
+//		" from persons p, _ids" +
+//		" where p.entityid = _ids.id" +
+//		" and p.isorg)" +
+		" ) order by " + orderBy + ";\n" +
 		
 		" drop table _ids";
 

@@ -52,28 +52,28 @@ public class EntityPanel extends javax.swing.JPanel {
 
 	EntityPanel getThis() { return this; }
 	
-	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
+	public void initRuntime(Statement st, citibob.app.App app, FullEntityDbModel dm)
 	throws java.sql.SQLException
 	{
-		mainPanel.initRuntime(st, runner, dm, smap);
+		mainPanel.initRuntime(st, app, dm);
 		donationsPanel.initRuntime(st, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
-			new String[] {"groupid", "date", "amount"}, smap);
+			new String[] {"groupid", "date", "amount"}, app.getSwingerMap());
 		eventsPanel.initRuntime(st, dm.getEventsSb(),
 			new String[] {"Event", "Role"},
-			new String[] {"groupid", "role"}, smap);
+			new String[] {"groupid", "role"}, app.getSwingerMap());
 		notesPanel.initRuntime(st, dm.getNotesSb(),
 			new String[] {"Type", "Date", "Note"},
-			new String[] {"groupid", "date", "note"}, smap);
+			new String[] {"groupid", "date", "note"}, app.getSwingerMap());
 		ticketsPanel.initRuntime(st, dm.getTicketsSb(),
 			new String[] {"Event", "Type", "#Tix", "Payment"},
-			new String[] {"groupid", "tickettypeid", "numberoftickets", "payment"}, smap);
+			new String[] {"groupid", "tickettypeid", "numberoftickets", "payment"}, app.getSwingerMap());
 		interestsPanel.initRuntime(st, dm.getInterestsSb(),
 			new String[] {"Interest", "By Person", "Referred By"},
-			new String[] {"groupid", "byperson", "referredby"}, smap);
+			new String[] {"groupid", "byperson", "referredby"}, app.getSwingerMap());
 		classesPanel.initRuntime(st, dm.getClassesSb(),
 			new String[] {"Class", "Comments"},
-			new String[] {"groupid", "comments"}, smap);
+			new String[] {"groupid", "comments"}, app.getSwingerMap());
 		dm.addListener(new FullEntityDbModel.Adapter() {
 		public void entityTypeChanged(int type) {
 			CardLayout cl = (CardLayout)(mainPanel.getLayout());

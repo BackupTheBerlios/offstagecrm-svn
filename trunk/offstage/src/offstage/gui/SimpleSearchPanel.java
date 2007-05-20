@@ -41,7 +41,8 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 //	Statement st;
 	FullEntityDbModel dm;
 	EntityListTableModel searchResults;
-	ActionRunner runner;
+	//ActionRunner runner;
+	citibob.app.App app;
 	
 	/** Creates new form SimpleSearchPanel */
 	public SimpleSearchPanel() {
@@ -50,7 +51,7 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 		// Double-clicking will go to selected person
 		searchResultsTable.addMouseListener(new DClickTableMouseListener(searchResultsTable) {
 		public void doubleClicked(final int row) {
-			runner.doRun(new StRunnable() {
+			app.runGui(SimpleSearchPanel.this, new StRunnable() {
 			public void run(Statement st) throws Exception {
 				// Make sure it's selected in the GUI
 				searchResultsTable.getSelectionModel().setSelectionInterval(row, row);
@@ -71,12 +72,12 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 		}});
 		
 	}
-	public void initRuntime(FrontApp app) //Statement st, FullEntityDbModel dm)
+	public void initRuntime(FrontApp fapp) //Statement st, FullEntityDbModel dm)
 	{
 		//this.st = app.createStatement();
-		this.runner = app.getGuiRunner();
-		this.dm = app.getFullEntityDm();
-		searchResults = app.getSimpleSearchResults();
+		this.app = fapp;
+		this.dm = fapp.getFullEntityDm();
+		searchResults = fapp.getSimpleSearchResults();
 		// searchResults = new EntityListTableModel();
 		searchResultsTable.initRuntime(searchResults);
 	}
@@ -90,13 +91,18 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 	}
 	
 	private void runSearch() {
-		runner.doRun(new StRunnable() {
+		app.runGui(this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			String text = searchWord.getText();
 			if (text == null || "".equals(text)) return;		// no query
 			String ssearch = SqlString.sql(text, false);
+//			String sql = "select entityid from persons where firstname ilike '%" + ssearch + "%'" +
+//				" or lastname ilike '%" + ssearch + "%'" +
+//				"    union " +
+//				" select entityid from organizations where name ilike '%" + ssearch + "%'";
 			String sql = "select entityid from persons where firstname ilike '%" + ssearch + "%'" +
 				" or lastname ilike '%" + ssearch + "%'" +
+				" or orgname ilike '%" + ssearch + "%'" +
 				"    union " +
 				" select entityid from organizations where name ilike '%" + ssearch + "%'";
 	System.out.println(sql);
@@ -205,7 +211,7 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 	}//GEN-LAST:event_searchWordActionPerformed
 
 	private void bSetFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSetFamilyActionPerformed
-		runner.doRun(new StRunnable() {
+		app.runGui(this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			int entityid = getSelectedEntityID();
 			if (entityid < 0) return;
@@ -218,7 +224,7 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 	}//GEN-LAST:event_bSetFamilyActionPerformed
 
 	private void bGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoActionPerformed
-		runner.doRun(new StRunnable() {
+		app.runGui(this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			int entityid = getSelectedEntityID();
 			if (entityid < 0) return;

@@ -26,6 +26,9 @@ package offstage.gui;
 
 import java.sql.*;
 import citibob.jschema.*;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.util.Calendar;
 import offstage.db.FullEntityDbModel;
 
 /**
@@ -38,6 +41,22 @@ FullEntityDbModel dbModel;
 	/** Creates new form PersonPanel */
 	public EntitySubPanel() {
 		initComponents();
+	}
+	public void initRuntime()
+	{
+//		entityid.setJType(Integer.class,
+//			new citibob.swing.typed.FormatFormatter(java.text.NumberFormat.getInstance()));
+//		entityid.setColName("entityid");
+//		lastupdated.setJType(java.util.Date.class,
+//			new citibob.swing.typed.FormatFormatter(new java.text.SimpleDateFormat("MM-dd-yyyy")));
+		
+//		lastupdated.setJType(new citibob.sql.pgsql.SqlDate(),
+//			new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("MM-dd-yyyy")));
+//		lastupdated.setJType(new citibob.sql.pgsql.SqlDate(),
+//			new citibob.swing.typed.FormatFormatter(new java.text.SimpleDateFormat("MM-dd-yyyy")));
+//		lastupdated.setJType(new citibob.swing.typed.JDateSwinger(
+//				new citibob.sql.pgsql.SqlDate(), "MM-dd-yyyy"));
+//lastupdated.setValue(new java.util.Date());
 	}
 	
 	/** This method is called from within the constructor to

@@ -49,7 +49,8 @@ extends javax.swing.JPanel {
 	//TableModel family;
 	FullEntityDbModel dm;
 //	Statement st;
-	ActionRunner runner;
+//	ActionRunner runner;
+	citibob.app.App app;
 	
 //    public static void main(String[] args) throws Exception
 //    {
@@ -82,10 +83,10 @@ extends javax.swing.JPanel {
 		initComponents();
 	}
 	
-	public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
+	public void initRuntime(Statement st, citibob.app.App app, FullEntityDbModel dm)
 	throws java.sql.SQLException
 	{
-		this.runner = runner;
+		this.app = app;
 		this.dm = dm;
 		//SchemaBufRowModel model = dm.getOrgRm();
 		SchemaBufRowModel model = new SchemaBufRowModel(dm.getOrgSb());
@@ -94,12 +95,12 @@ extends javax.swing.JPanel {
 		//this.phonesSb = phonesSb;
 		this.model = model;
 		
-		TypedWidgetBinder.bindRecursive(this, model, smap);
+		TypedWidgetBinder.bindRecursive(this, model, app.getSwingerMap());
 		//JSchemaWidgetTree.bindToPool(this, pool);
 		//JEnum phoneEnum = (JEnum)dm.getPhonesSb().getSchema().getCol("groupid").getType();
 		phonePanel.initRuntime(st, dm.getPhonesSb(),
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, smap);
+			new String[] {"groupid", "phone"}, app.getSwingerMap());
 		// phonesTable.setModel(new ColPermuteTableModel(phonesSb,
 		//	new String[] {"Type", "Phone"},
 		//	new String[] {"groupid", "phone"}));
@@ -245,7 +246,7 @@ extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void clearFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFamilyActionPerformed
-		runner.doRun(new StRunnable() { public void run(Statement st) throws Exception {
+		app.runGui(this, new StRunnable() { public void run(Statement st) throws Exception {
 			dm.getEntitySb().clearFamily();
 			dm.doUpdate(st);
 			dm.doSelect(st);
@@ -254,7 +255,7 @@ extends javax.swing.JPanel {
 	}//GEN-LAST:event_clearFamilyActionPerformed
 
 	private void gotoEntityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gotoEntityActionPerformed
-		runner.doRun(new StRunnable() { public void run(Statement st) throws Exception {
+		app.runGui(this, new StRunnable() { public void run(Statement st) throws Exception {
 			int selected = familyTable.getSelectedRow();
 			int entityID = dm.getEntity().getFamily().getEntityID(selected);
 			dm.setKey(entityID);

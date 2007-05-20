@@ -94,7 +94,7 @@ App app;
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
 	{//GEN-HEADEREND:event_jButton1ActionPerformed
-	app.runGui(new StRunnable() {
+	app.runGui(this,new StRunnable() {
 	public void run(Statement st) throws Exception {
 //		mdm.doUpdate(st);
 	}});

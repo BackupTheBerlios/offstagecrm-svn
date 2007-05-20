@@ -32,11 +32,11 @@ public class MainEntityPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-public void initRuntime(Statement st, ActionRunner runner, FullEntityDbModel dm, SwingerMap smap)
+public void initRuntime(Statement st, citibob.app.App app, FullEntityDbModel dm)
 throws SQLException
 {
-	personPanel.initRuntime(st, runner, dm, smap);
-	orgPanel.initRuntime(st, runner, dm, smap);
+	personPanel.initRuntime(st, app, dm);
+	orgPanel.initRuntime(st, app, dm);
 }
 
     /** This method is called from within the constructor to

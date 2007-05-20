@@ -82,7 +82,7 @@ public void linkSelected(java.net.URL href, String target)
 	int slash = url.lastIndexOf('/');
 	if (slash > 0) url = url.substring(slash+1);
 	
-	fapp.getGuiRunner().doRun((CBRunnable)actionMap.get(url));
+	fapp.runGui(this, (CBRunnable)actionMap.get(url));
 
 }
 }

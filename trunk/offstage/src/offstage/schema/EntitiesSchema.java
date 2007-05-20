@@ -50,7 +50,16 @@ throws SQLException
 			new citibob.jschema.Column(new SqlEnum(kmodel, true), "relprimarytypeid", false),
 			//new citibob.jschema.Column(new SqlBool(), "isquery", false),
 			new Column(new SqlBool(), "sendmail", false),
-			new Column(new SqlBool(), "obsolete", false)
+			new Column(new SqlBool(), "obsolete", false),
+		new Column(new SqlString(30), "title", false),
+		new Column(new SqlString(50), "occupation", false),
+		new Column(new SqlString(30), "salutation", false),
+		new Column(new SqlString(50), "firstname", false),
+		new Column(new SqlString(50), "middlename", false),
+		new Column(new SqlString(50), "lastname", false),
+		new Column(new SqlString(100), "customaddressto", false),
+		new Column(new SqlString(100), "orgname", false),
+		new Column(new SqlBool(), "isorg", false)
 	};
 }	
 // ------------------------------------------

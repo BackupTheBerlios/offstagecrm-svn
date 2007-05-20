@@ -58,12 +58,14 @@ public EQuerySchema(SchemaSet sset) throws SQLException
 
 // --------------------------------------------------------------------
 private static final String[] alias = {
+	"persons.isorg", "isorg",
 	"persons.firstname", "firstname",
 	"persons.middlename", "middlename",
 	"persons.lastname", "lastname",
 	"persons.gender", "gender",
 	"persons.email", "email",
 	"persons.occupation", "occupation",
+	"persons.orgname", "orgname",
 	"entities.address1", "address1",
 	"entities.address2", "address2",
 	"entities.city", "city",
@@ -72,7 +74,7 @@ private static final String[] alias = {
 	"entities.country", "country",
 	"entities.lastupdated", "lastupdated",
 	"entities.sendmail", "sendmail",
-	"organizations.name", "org-name",
+//	"organizations.name", "org-name",
 	"events.groupid", "event-type",
 //	"events.role", "event-role",
 	"donations.groupid", "donation-type",

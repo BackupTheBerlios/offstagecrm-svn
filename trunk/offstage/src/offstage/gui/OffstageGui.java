@@ -178,7 +178,7 @@ FrontApp app;
     // </editor-fold>//GEN-END:initComponents
 
 private void miThrowExceptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miThrowExceptionActionPerformed
-	app.getAppRunner().doRun(new citibob.multithread.StRunnable() {
+	app.runGui(this, new citibob.multithread.StRunnable() {
 	public void run(Statement st) throws Exception {
 		throw new Exception("Hello");
 	}});

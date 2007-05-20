@@ -59,21 +59,22 @@ FullEntityDbModel fullEntityDm;
 //EQueryModel2 equeries;
 MailingModel2 mailings;
 EntityListTableModel simpleSearchResults;
-ActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
+SwingActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
 // -------------------------------------------------------
 public ConnPool getPool() { return pool; }
-public void runGui(CBRunnable r) { guiRunner.doRun(r); }
+public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
+//public void runGui(CBRunnable r) { guiRunner.doRun(null, r); }
 public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
 public Schema getSchema(String name) { return sset.get(name); }
 public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 
-// Legacy...
-public ActionRunner getGuiRunner() { return guiRunner; }
+//// Legacy...
+//public SwingActionRunner getGuiRunner() { return guiRunner; }
 public ActionRunner getAppRunner() { return appRunner; }
 
 /** @returns Root user preferences node for this application */
@@ -114,8 +115,9 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	ExpHandler expHandler = new MailExpHandler(sender,
-			new InternetAddress("citibob@comcast.net"), "OffstageCRM", stdoutDoc);
-	guiRunner = appRunner = new SimpleDbActionRunner(pool, expHandler);
+			new InternetAddress("citibob@comcast.net"), "OffstageArts", stdoutDoc);
+	guiRunner = new BusybeeDbActionRunner(pool, expHandler);
+	appRunner = new SimpleDbActionRunner(pool, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
 	try {
 		dbb = pool.checkout();
