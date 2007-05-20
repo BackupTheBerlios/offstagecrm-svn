@@ -64,7 +64,7 @@ addState(new State("person", null, null) {
 			// First: do a simple check of data entry
 			if (!isValid()) {
 				JOptionPane.showMessageDialog((JDialog)wiz,
-					"Invalid input.\nPlease fill in all the fields!");
+					"Invalid input.\nPlease fill in all required (starred) fields!");
 				state = "person";
 			} else {
 				String idSql = offstage.db.DupCheck.checkDups(st, v, 3, 20);
@@ -131,7 +131,12 @@ void createPerson() throws SQLException
 	addSCol(q, "city");
 	addSCol(q, "state");
 	addSCol(q, "zip");
+	addSCol(q, "occupation");
+	addSCol(q, "title");
+	addSCol(q, "orgname");
 	addSCol(q, "email");
+	addSCol(q, "url");
+	q.addColumn("isorg", SqlBool.sql(v.getBool("isorg")));
 	String sql = q.getSql();
 System.out.println(sql);
 	st.execute(sql);

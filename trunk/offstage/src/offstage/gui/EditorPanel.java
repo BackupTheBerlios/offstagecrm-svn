@@ -118,8 +118,7 @@ citibob.app.App app;
 
         jToolBar1.add(bUndo);
 
-        bDelete.setText("Delete Entity");
-        bDelete.setEnabled(false);
+        bDelete.setText("Delete");
         bDelete.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -130,7 +129,7 @@ citibob.app.App app;
 
         jToolBar1.add(bDelete);
 
-        bNewPerson.setText("New Contact");
+        bNewPerson.setText("New");
         bNewPerson.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -160,7 +159,12 @@ citibob.app.App app;
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
 	app.runGui(this, new StRunnable() {
 	public void run(Statement st) throws Exception {
-		model.doDelete(st);
+		if (JOptionPane.showConfirmDialog(EditorPanel.this,
+			"Are you sure you wish to permanently delete this record?",
+			"Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				model.doDelete(st);
+		}
+//		this.simpleSearch.runSearch();
 	}});
 }//GEN-LAST:event_bDeleteActionPerformed
 

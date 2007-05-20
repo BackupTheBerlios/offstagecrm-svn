@@ -65,10 +65,13 @@ addState(new OState("newquery", null, "editquery") {
 	}
 	public void process() throws Exception
 	{
-		String sql = "insert into equeries (name, lastmodified) values ("
-			+ citibob.sql.pgsql.SqlString.sql(v.getString("queryname"))
-			+ ", now())";
+		int equeryID = DB.r_nextval(st, "equeries_equeryid_seq");
+		String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
+			SqlInteger.sql(equeryID) + ", " +
+			SqlString.sql(v.getString("queryname")) +
+			", '', now())";
 		st.executeUpdate(sql);
+		v.put("equeryid", equeryID);
 //		System.out.println(sql);
 	}
 });
@@ -80,6 +83,12 @@ addState(new OState("editquery", "listquery", "reporttype") {
 	}
 	public void process() throws Exception
 	{
+		if ("deletequery".equals(v.get("submit"))) {
+//			equeryDm.doDelete(st);
+			st.executeUpdate("delete from equeries where equeryid = " + SqlInteger.sql(v.getInt("equeryid")));
+			state = stateRec.back;
+		}
+
 	}
 });
 // ---------------------------------------------

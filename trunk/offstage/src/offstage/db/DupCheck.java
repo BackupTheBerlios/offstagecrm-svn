@@ -155,7 +155,7 @@ System.out.println("DupCheck: " + sql);
 void addScores(Statement st, String whereClause)
 throws SQLException
 {
-	addScores(st, "entities", whereClause);
+	addScores(st, "entities", "not obsolete and " + whereClause);
 }
 /** Returns entityid of possible dups */
 void scoreDups(Statement st)

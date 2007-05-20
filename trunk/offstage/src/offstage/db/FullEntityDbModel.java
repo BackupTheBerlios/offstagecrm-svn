@@ -21,6 +21,7 @@ package offstage.db;
 import citibob.jschema.*;
 import citibob.multithread.*;
 import citibob.sql.*;
+import citibob.sql.pgsql.SqlInteger;
 import java.util.*;
 import java.sql.*;
 import offstage.schema.*;
@@ -171,10 +172,19 @@ throws java.sql.SQLException
 public void doDelete(Statement st)
 throws java.sql.SQLException
 {
+	// Delete the immediate record
 	SchemaBufDbModel dm = getEntity();
 	SchemaBuf sb = dm.getSchemaBuf();
 	sb.setValueAt(Boolean.TRUE, 0, sb.findColumn("obsolete"));
 	dm.doUpdate(st);
+
+	// Reassign any other family members
+	st.executeUpdate("update entities set primaryentityid=entityid" +
+		" where primaryentityid = " + SqlInteger.sql(this.getEntityId()));
+	
+	// Stop displaying it
+	this.setKey(-1);
+	this.doSelect(st);
 }
 
 /** Sets up the SchemaBufs for a new person,
@@ -191,8 +201,8 @@ public void newEntity(Statement st, int entityType) throws java.sql.SQLException
 	// Insert a blank record with that entityID
 	try {
 		SchemaBuf sb = (entityType == PERSON ? getPersonSb() : getOrgSb());
-		sb.insertRow(-1, new String[] {"entityid"},
-			new Integer[] {new Integer(entityID)});
+		sb.insertRow(-1, new String[] {"entityid", "primaryentityid", "isorg"},
+			new Object[] {new Integer(entityID), new Integer(entityID), Boolean.FALSE});
 	} catch(KeyViolationException e) {}	// can't happen, buffer is clear.
 
 	// Switch to person view.

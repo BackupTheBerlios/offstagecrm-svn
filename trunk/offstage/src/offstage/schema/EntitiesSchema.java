@@ -59,7 +59,7 @@ throws SQLException
 		new Column(new SqlString(50), "lastname", false),
 		new Column(new SqlString(100), "customaddressto", false),
 		new Column(new SqlString(100), "orgname", false),
-		new Column(new SqlBool(), "isorg", false)
+		new Column(new SqlBool(false), "isorg", false)
 	};
 }	
 // ------------------------------------------

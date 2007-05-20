@@ -32,7 +32,7 @@ public PersonWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, "New Record", true);
-	setSize(600,400);
+	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addTextField("firstname", new JStringSwinger());
 	addTextField("middlename", new JStringSwinger());
@@ -43,8 +43,14 @@ throws org.xml.sax.SAXException, java.io.IOException
 	addTextField("state", new JStringSwinger());
 	addTextField("zip", new JStringSwinger());
 	addTextField("phone", new PhoneSwinger());
+	addTextField("occupation", new JStringSwinger());
+	addTextField("title", new JStringSwinger());
+	addTextField("orgname", new JStringSwinger());
 	addTextField("email", new JStringSwinger());
-	
+	addTextField("url", new JStringSwinger());
+	JBoolCheckbox isorg = new JBoolCheckbox();
+		isorg.setText("is Organization?");
+		addWidget("isorg", isorg);
 	loadHtml();
 }
 

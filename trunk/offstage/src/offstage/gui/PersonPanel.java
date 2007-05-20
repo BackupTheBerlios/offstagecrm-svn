@@ -157,6 +157,8 @@ extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         email1 = new citibob.swing.typed.JTypedTextField();
         jLabel11 = new javax.swing.JLabel();
+        bLaunchEmail = new javax.swing.JButton();
+        bLaunchBrowser = new javax.swing.JButton();
         FamilyPane = new javax.swing.JPanel();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         familyTable = new offstage.gui.FamilyTable();
@@ -225,6 +227,7 @@ extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
@@ -234,6 +237,7 @@ extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
@@ -253,6 +257,7 @@ extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
@@ -262,6 +267,7 @@ extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
@@ -291,6 +297,32 @@ extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
         MiscInfo.add(jLabel11, gridBagConstraints);
+
+        bLaunchEmail.setText("*");
+        bLaunchEmail.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        bLaunchEmail.setPreferredSize(new java.awt.Dimension(14, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        MiscInfo.add(bLaunchEmail, gridBagConstraints);
+
+        bLaunchBrowser.setText("*");
+        bLaunchBrowser.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        bLaunchBrowser.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchBrowser.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bLaunchBrowserActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        MiscInfo.add(bLaunchBrowser, gridBagConstraints);
 
         FamilyPane.setLayout(new java.awt.BorderLayout());
 
@@ -509,6 +541,11 @@ extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+	private void bLaunchBrowserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchBrowserActionPerformed
+	{//GEN-HEADEREND:event_bLaunchBrowserActionPerformed
+		citibob.gui.BareBonesBrowserLaunch.openURL((String)url.getValue());
+	}//GEN-LAST:event_bLaunchBrowserActionPerformed
+
 	private void clearFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFamilyActionPerformed
 		app.runGui(this, new StRunnable() { public void run(Statement st) throws Exception {
 			dm.getEntitySb().clearFamily();
@@ -525,6 +562,8 @@ extends javax.swing.JPanel {
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel Gender;
     private javax.swing.JPanel MiscInfo;
+    private javax.swing.JButton bLaunchBrowser;
+    private javax.swing.JButton bLaunchEmail;
     private citibob.swing.typed.JBoolCheckbox cbIsPrimary;
     private javax.swing.JButton clearFamily;
     private citibob.swing.typed.JTypedTextField customaddressto;

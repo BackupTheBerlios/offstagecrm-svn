@@ -63,8 +63,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="bDelete">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Delete Entity"/>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bDeleteActionPerformed"/>
@@ -72,7 +71,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="bNewPerson">
           <Properties>
-            <Property name="text" type="java.lang.String" value="New Contact"/>
+            <Property name="text" type="java.lang.String" value="New"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bNewPersonActionPerformed"/>

@@ -51,7 +51,8 @@ throws SQLException
 	// Now do the read-only stuff
 	String sql =
 		" select pe.entityid from entities pe" +
-		" where pe.primaryentityid = " + primaryEntityID;
+		" where pe.primaryentityid = " + primaryEntityID +
+		" and not obsolete";
 	String orderBy = "isprimary desc, relation, name";
 	
 //System.out.println("*****************\n" + sql);

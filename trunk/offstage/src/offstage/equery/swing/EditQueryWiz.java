@@ -114,6 +114,8 @@ throws SQLException
         jPanel6 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTypedTextField1 = new citibob.swing.typed.JTypedTextField();
+        jToolBar1 = new javax.swing.JToolBar();
+        bDeleteQuery = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -182,11 +184,40 @@ throws SQLException
 
         editorPanel.add(jPanel6, java.awt.BorderLayout.NORTH);
 
+        bDeleteQuery.setText("Delete Query");
+        bDeleteQuery.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bDeleteQueryActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bDeleteQuery);
+
+        editorPanel.add(jToolBar1, java.awt.BorderLayout.SOUTH);
+
         jSplitPane4.setTopComponent(editorPanel);
 
         add(jSplitPane4, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bDeleteQueryActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteQueryActionPerformed
+	{//GEN-HEADEREND:event_bDeleteQueryActionPerformed
+//		fapp.runGui(EditQueryWiz.this, new StRunnable() {
+//		public void run(Statement st) throws Exception {
+			
+			if (JOptionPane.showConfirmDialog(EditQueryWiz.this,
+				"Are you sure you wish to permanently\n" +
+				"delete the current query?",
+				"Delete Confirmation",
+			JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
+			this.wrapper.doSubmit("deletequery");
+//		}});
+
+// TODO add your handling code here:
+	}//GEN-LAST:event_bDeleteQueryActionPerformed
 
 	private void bApplyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bApplyActionPerformed
 	{//GEN-HEADEREND:event_bApplyActionPerformed
@@ -229,6 +260,7 @@ public void getAllValues(java.util.Map map)
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bApply;
+    private javax.swing.JButton bDeleteQuery;
     private offstage.equery.swing.EQueryEditor eQueryEditor;
     private javax.swing.JPanel editorPanel;
     private javax.swing.JLabel jLabel1;
@@ -240,6 +272,7 @@ public void getAllValues(java.util.Map map)
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane4;
+    private javax.swing.JToolBar jToolBar1;
     private citibob.swing.typed.JTypedTextField jTypedTextField1;
     private javax.swing.JLabel lQuerySize;
     private offstage.gui.FamilyTable tTestResults;

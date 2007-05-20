@@ -48,6 +48,7 @@ public String getSql(QuerySchema qs)
 	sql.addTable("entities as main");
 	this.writeSqlQuery(qs, sql);
 	sql.addColumn("main.entityid as id");
+	sql.addWhereClause("not main.obsolete");
 	sql.setDistinct(true);
 	String ssql = sql.getSql();
 System.out.println("ssql = " + ssql);
