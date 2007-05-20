@@ -15,6 +15,7 @@ import citibob.swing.table.*;
 import citibob.sql.*;
 import java.io.*;
 import citibob.swing.typed.JType;
+import com.Ostermiller.util.*;
 
 /**
  *
@@ -70,25 +71,30 @@ public void writeReport(Writer out) throws IOException, java.text.ParseException
 {
 	int ncol = mod.getColumnCount();
 
-	// Start the output
-	PrintWriter pout = new PrintWriter(out);
+//	// Start the output
+//	PrintWriter pout = new PrintWriter(out);
+//	for (int i=0; i<ncol; ++i) {
+//		if (i>0) pout.print(",");
+//		pout.print(mod.getColumnName(i));
+//	}
+//	pout.println();
+
+	CSVPrinter pout = new com.Ostermiller.util.CSVPrinter(out);
 	for (int i=0; i<ncol; ++i) {
-		if (i>0) pout.print(",");
 		pout.print(mod.getColumnName(i));
 	}
 	pout.println();
-
+	
 	// Do each row
 	for (int j=0; j<mod.getRowCount(); ++j) {
 		for (int i=0; i<ncol; ++i) {
 			Object o = mod.getValueAt(j,i);
 //System.out.println("Column " + i + ": Formatting " + o + " with formatter: " + formatters[i]);
 			String s = (o == null ? "" : formatters[i].valueToString(o));
-			if (s.indexOf('"') >= 0) {
-				// Quote only if needed
-				s = '"' + s.replace("\"", "\\\"") + '"';
-			}
-			if (i>0) pout.print(",");
+//			if (s.indexOf('"') >= 0) {
+//				// Quote only if needed
+//				s = '"' + s.replace("\"", "\\\"") + '"';
+//			}
 			pout.print(s);
 		}
 		pout.println();

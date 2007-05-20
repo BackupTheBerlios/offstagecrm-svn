@@ -57,7 +57,7 @@ public DonationReport(App app, String idSql)
 	this.add(new SqlDbModel(main));
 
 	// Outer Join the Fiscal Year summaries
-	final int[] years = new int[] {1989, 1990, 1991, 2000, 2001, 2002, 2003};
+	final int[] years = new int[] {1989, 1990, 1991, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007};
 	Col[] cols = new Col[years.length];
 //	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
 	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new SqlNumeric(10,2,true));
@@ -66,7 +66,7 @@ public DonationReport(App app, String idSql)
 		" from donations d, donationids di, ids_donor ids" +
 		" where d.entityid = ids.id" +
 		" and d.groupid = di.groupid" +
-		" and di.fiscalyear in (1989, 1990, 1991, 2000, 2001, 2002, 2003)" +
+		" and di.fiscalyear in (1989, 1990, 1991, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007)" +
 		" group by d.entityid, di.fiscalyear";
 
 	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(
