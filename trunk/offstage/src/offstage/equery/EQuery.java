@@ -75,7 +75,10 @@ public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
 		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
 			Element e = (Element)jj.next();
 			ColName cn = e.colName;
-			Column c = (((QuerySchema.Col) schema.getCol(cn)).col);
+System.out.println("cn = " + cn);
+			QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
+System.out.println("qsc = " + qsc);
+			Column c = qsc.col;
 			addTable(schema, sql, cn);
 //			if (!sql.containsTable(e.colName.getTable())) {
 //				String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;

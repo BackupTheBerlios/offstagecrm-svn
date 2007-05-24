@@ -34,6 +34,7 @@ protected ConsoleFrame consoleFrame;
 
     /** Creates a new instance of FrameSet */
     public FrameSet() throws Exception {
+new com.Ostermiller.util.CSVPrinter(System.out);
 		ConnPool pool = offstage.db.DB.newConnPool();
 		Connection dbb = pool.checkout();
 

@@ -59,7 +59,10 @@ throws SQLException
 		new Column(new SqlString(50), "lastname", false),
 		new Column(new SqlString(100), "customaddressto", false),
 		new Column(new SqlString(100), "orgname", false),
-		new Column(new SqlBool(false), "isorg", false)
+		new Column(new SqlBool(false), "isorg", false),
+		new Column(new SqlEnum(
+			new DbKeyedModel(st, change, "mailprefids", "mailprefid", "name", "mailprefid"),
+			"<No Preference>"), "mailprefid")
 	};
 }	
 // ------------------------------------------

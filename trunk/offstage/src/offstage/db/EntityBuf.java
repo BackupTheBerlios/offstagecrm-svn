@@ -53,12 +53,6 @@ public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged)
 
 // ==================================================================
 // Custom edits to data in the buffer...
-public void setFamilySameAs(Statement st, int entityid)
-throws SQLException
-{
-	int peid = DB.getPrimaryEntityID(st, entityid);
-	setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
-}
 		
 public void clearFamily()
 {

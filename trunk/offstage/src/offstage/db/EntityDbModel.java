@@ -15,6 +15,7 @@ import citibob.jschema.*;
 import citibob.multithread.*;
 import citibob.swing.table.*;
 import citibob.app.*;
+import citibob.sql.pgsql.*;
 
 /**
  *
@@ -60,4 +61,20 @@ public class EntityDbModel extends IntKeyedDbModel
 		super.doClear();
 		family.setRowCount(0);
 	}
+	
+	
+	/** Adds entityid to the family of person currently in entity editor */
+	public void addToFamily(Statement st, int entityid)
+	throws SQLException
+	{
+	//	int peid = DB.getPrimaryEntityID(st, entityid);
+	//	setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
+		SchemaBuf sb = getSchemaBuf();
+		int peid = (Integer)sb.getValueAt(0, sb.findColumn("primaryentityid"));
+		st.executeUpdate("update entities set primaryentityid = " + SqlInteger.sql(peid) +
+			" where entityid = " + SqlInteger.sql(entityid));
+//		this.doUpdate(st);
+//		this.doSelect(st);
+	}
+
 }

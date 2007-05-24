@@ -64,11 +64,13 @@ EntityDbModel onePerson;
 EntityDbModel oneOrg;
 IntKeyedDbModel phones;
 IntKeyedDbModel donations;
+IntKeyedDbModel flags;
 IntKeyedDbModel notes;
 IntKeyedDbModel tickets;
 IntKeyedDbModel events;
 IntKeyedDbModel classes;
 IntKeyedDbModel interests;
+
 //FamilyTableModel family;
 
 //SchemaBufRowModel onePersonRm;
@@ -84,6 +86,7 @@ public void setKey(int entityID)
 	oneOrg.setKey(entityID);
 	phones.setKey(entityID);
 	donations.setKey(entityID);
+	flags.setKey(entityID);
 	notes.setKey(entityID);
 	tickets.setKey(entityID);
 	events.setKey(entityID);
@@ -117,6 +120,8 @@ public SchemaBuf getPhonesSb()
 	{ return phones.getSchemaBuf(); }
 public SchemaBuf getDonationSb()
 	{ return donations.getSchemaBuf(); }
+public SchemaBuf getFlagSb()
+	{ return flags.getSchemaBuf(); }
 public SchemaBuf getEventsSb()
 	{ return events.getSchemaBuf(); }
 public SchemaBuf getClassesSb()
@@ -137,6 +142,7 @@ public FullEntityDbModel(OffstageSchemaSet osset, citibob.app.App app)
 	add(oneOrg = new EntityDbModel(osset.org, app));
 	add(phones = new IntKeyedDbModel(osset.phones, "entityID"));
 	add(donations = new IntKeyedDbModel(osset.donations, "entityID"));
+	add(flags = new IntKeyedDbModel(osset.get("flags"), "entityID"));
 	add(notes = new IntKeyedDbModel(osset.notes, "entityID"));
 	add(tickets = new IntKeyedDbModel(osset.tickets, "entityID"));
 	add(events = new IntKeyedDbModel(osset.events, "entityID"));

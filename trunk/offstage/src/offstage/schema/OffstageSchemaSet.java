@@ -23,6 +23,7 @@ public class OffstageSchemaSet extends BaseSchemaSet
 
 public Schema courseids;
 public Schema donations;
+//public Schema flags;
 public Schema entities;
 public Schema events;
 public Schema groupids;
@@ -44,6 +45,7 @@ throws SQLException
 {
 	map.put("courseids", courseids = new CourseidsSchema());
 	map.put("donations", donations = new DonationsSchema(st, change));
+	map.put("flags", new FlagsSchema(st, change));
 	map.put("entities", entities = new EntitiesSchema(st, change));
 	map.put("events", events = new EventsSchema(st, change));
 	map.put("groupids", groupids = new GroupidsSchema());

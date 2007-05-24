@@ -177,11 +177,15 @@ extends javax.swing.JPanel {
         middlename = new citibob.swing.typed.JTypedTextField();
         lastname = new citibob.swing.typed.JTypedTextField();
         lName = new javax.swing.JLabel();
+        GenderX = new javax.swing.JPanel();
+        isorg = new citibob.swing.typed.JBoolCheckbox();
+        mailprefid = new citibob.swing.typed.JKeyedComboBox();
         Gender = new javax.swing.JPanel();
         maleButton = new javax.swing.JRadioButton();
         femaleButton = new javax.swing.JRadioButton();
         unknownGenderButton = new javax.swing.JRadioButton();
-        isorg = new citibob.swing.typed.JBoolCheckbox();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         customaddressto = new citibob.swing.typed.JTypedTextField();
         jLabel10 = new javax.swing.JLabel();
 
@@ -442,41 +446,72 @@ extends javax.swing.JPanel {
 
         lName.setText("Name");
 
-        maleButton.setText("Male");
-
-        femaleButton.setText("Female");
-
-        unknownGenderButton.setText("Unknown");
+        GenderX.setLayout(new java.awt.GridBagLayout());
 
         isorg.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         isorg.setText("is Org. Record?");
         isorg.setColName("isorg");
         isorg.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 0, 0);
+        GenderX.add(isorg, gridBagConstraints);
 
-        org.jdesktop.layout.GroupLayout GenderLayout = new org.jdesktop.layout.GroupLayout(Gender);
-        Gender.setLayout(GenderLayout);
-        GenderLayout.setHorizontalGroup(
-            GenderLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(GenderLayout.createSequentialGroup()
-                .add(GenderLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(maleButton)
-                    .add(femaleButton)
-                    .add(unknownGenderButton)
-                    .add(isorg, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        GenderLayout.setVerticalGroup(
-            GenderLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(GenderLayout.createSequentialGroup()
-                .add(maleButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(femaleButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(unknownGenderButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(isorg, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(47, Short.MAX_VALUE))
-        );
+        mailprefid.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        mailprefid.setColName("mailprefid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        GenderX.add(mailprefid, gridBagConstraints);
+
+        Gender.setLayout(new javax.swing.BoxLayout(Gender, javax.swing.BoxLayout.Y_AXIS));
+
+        maleButton.setText("Male");
+        maleButton.setMargin(null);
+        maleButton.setPreferredSize(new java.awt.Dimension(54, 19));
+        Gender.add(maleButton);
+
+        femaleButton.setText("Female");
+        femaleButton.setMargin(null);
+        femaleButton.setPreferredSize(new java.awt.Dimension(69, 19));
+        Gender.add(femaleButton);
+
+        unknownGenderButton.setText("Unknown");
+        unknownGenderButton.setMargin(null);
+        unknownGenderButton.setPreferredSize(new java.awt.Dimension(85, 19));
+        Gender.add(unknownGenderButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        GenderX.add(Gender, gridBagConstraints);
+
+        jLabel1.setText("Mail Preference");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 0, 0);
+        GenderX.add(jLabel1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        GenderX.add(jLabel2, gridBagConstraints);
 
         customaddressto.setColName("customaddressto");
 
@@ -487,18 +522,18 @@ extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(47, 47, 47)
                         .add(lName)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
                         .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 262, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(Gender, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .add(GenderX, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 155, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(FamilyPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE))
+                .add(FamilyPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
@@ -512,7 +547,7 @@ extends javax.swing.JPanel {
                     .add(layout.createSequentialGroup()
                         .add(lPhoneNumbers)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
-                    .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE))
+                    .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -524,9 +559,9 @@ extends javax.swing.JPanel {
                             .add(lName)
                             .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                         .add(9, 9, 9)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(Gender, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(MiscInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(GenderX, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                            .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(FamilyPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 181, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -561,6 +596,7 @@ extends javax.swing.JPanel {
     private javax.swing.JScrollPane FamilyScrollPanel;
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel Gender;
+    private javax.swing.JPanel GenderX;
     private javax.swing.JPanel MiscInfo;
     private javax.swing.JButton bLaunchBrowser;
     private javax.swing.JButton bLaunchEmail;
@@ -575,8 +611,10 @@ extends javax.swing.JPanel {
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
     private citibob.swing.typed.JBoolCheckbox isorg;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -590,6 +628,7 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel lName;
     private javax.swing.JLabel lPhoneNumbers;
     private citibob.swing.typed.JTypedTextField lastname;
+    private citibob.swing.typed.JKeyedComboBox mailprefid;
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JTypedTextField occupation;
