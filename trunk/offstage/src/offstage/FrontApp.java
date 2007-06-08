@@ -21,9 +21,6 @@ import java.sql.*;
 import java.util.*;
 import citibob.sql.*;
 import citibob.multithread.*;
-import offstage.db.FullEntityDbModel;
-import offstage.db.EntityListTableModel;
-import offstage.db.TestConnPool;
 import offstage.equery.*;
 import citibob.multithread.*;
 import citibob.sql.*;
@@ -36,6 +33,8 @@ import citibob.jschema.*;
 import java.util.prefs.*;
 import citibob.text.*;
 import citibob.sql.pgsql.*;
+import offstage.db.*;
+import citibob.jschema.log.*;
 
 public class FrontApp implements citibob.app.App
 {
@@ -68,8 +67,10 @@ SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
 
 int loginID;			// entityID of logged-in database application user
 TreeSet<String> loginGroups;	// Groups to which logged-in user belongs (by name)
+citibob.jschema.log.QueryLogger logger;			// Log all changes to database
 // -------------------------------------------------------
-//public int getLoginID() { return loginID; }
+public QueryLogger getLogger() { return logger; }
+public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
 /** Only runs the action if logged-in user is a member of the correct group */
@@ -151,12 +152,6 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		dbb = pool.checkout();
 		st = dbb.createStatement();
 	
-
-		dbChange = new DbChangeModel();
-		this.sset = new OffstageSchemaSet(st, dbChange);
-		fullEntityDm = new FullEntityDbModel(sset, this);
-		mailings = new MailingModel2(st, sset);//, appRunner);
-		
 		// Figure out who we're logged in as
 		String sql = "select entityid from dblogins where username = " +
 			SqlString.sql(System.getProperty("user.name"));
@@ -176,6 +171,13 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		rs = st.executeQuery(sql);
 		while (rs.next()) loginGroups.add(rs.getString("name"));
 		rs.close();
+
+		dbChange = new DbChangeModel();
+		this.sset = new OffstageSchemaSet(st, dbChange);
+		logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
+		fullEntityDm = new FullEntityDbModel(sset, this);
+		mailings = new MailingModel2(st, sset);//, appRunner);
+		
 //	mailings.refreshMailingids();
 //		equeries = new EQueryModel2(st, mailings, sset);
 		simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
@@ -184,7 +186,6 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		pool.checkin(dbb);
 	}
 	equerySchema = new EQuerySchema(getSchemaSet());
-	
 }
 public EntityListTableModel getSimpleSearchResults()
 	{ return simpleSearchResults; }

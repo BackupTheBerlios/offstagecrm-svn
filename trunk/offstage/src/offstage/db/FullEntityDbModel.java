@@ -25,6 +25,7 @@ import citibob.sql.pgsql.SqlInteger;
 import java.util.*;
 import java.sql.*;
 import offstage.schema.*;
+import citibob.jschema.log.*;
 
 /** Query one person record and all the stuff related to it. */
 
@@ -60,6 +61,7 @@ public int getEntityType()
 	{ return entityType; }
 // -------------------------------------------------------
 
+QueryLogger logger;
 EntityDbModel onePerson;
 EntityDbModel oneOrg;
 IntKeyedDbModel phones;
@@ -134,20 +136,28 @@ public SchemaBuf getTicketsSb()
 	{ return tickets.getSchemaBuf(); }
 //public FamilyTableModel getFamily()
 //	{ return family; }
-public FullEntityDbModel(OffstageSchemaSet osset, citibob.app.App app)
+
+void logadd(SchemaBufDbModel m)
 {
-//	add(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityID", false));
-//	add(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityID", false));
-	add(onePerson = new EntityDbModel(osset.persons, app));
-	add(oneOrg = new EntityDbModel(osset.org, app));
-	add(phones = new IntKeyedDbModel(osset.phones, "entityID"));
-	add(donations = new IntKeyedDbModel(osset.donations, "entityID"));
-	add(flags = new IntKeyedDbModel(osset.get("flags"), "entityID"));
-	add(notes = new IntKeyedDbModel(osset.notes, "entityID"));
-	add(tickets = new IntKeyedDbModel(osset.tickets, "entityID"));
-	add(events = new IntKeyedDbModel(osset.events, "entityID"));
-	add(classes = new IntKeyedDbModel(osset.classes, "entityID"));
-	add(interests = new IntKeyedDbModel(osset.interests, "entityID"));
+	add(m);
+	m.setLogger(logger);
+}
+public FullEntityDbModel(OffstageSchemaSet osset, offstage.FrontApp fapp)
+{
+	citibob.app.App app = fapp;
+	logger = fapp.getLogger();
+//	logadd(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityID", false));
+//	logadd(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityID", false));
+	logadd(onePerson = new EntityDbModel(osset.persons, app));
+	logadd(oneOrg = new EntityDbModel(osset.org, app));
+	logadd(phones = new IntKeyedDbModel(osset.phones, "entityID"));
+	logadd(donations = new IntKeyedDbModel(osset.donations, "entityID"));
+	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityID"));
+	logadd(notes = new IntKeyedDbModel(osset.notes, "entityID"));
+	logadd(tickets = new IntKeyedDbModel(osset.tickets, "entityID"));
+	logadd(events = new IntKeyedDbModel(osset.events, "entityID"));
+	logadd(classes = new IntKeyedDbModel(osset.classes, "entityID"));
+	logadd(interests = new IntKeyedDbModel(osset.interests, "entityID"));
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

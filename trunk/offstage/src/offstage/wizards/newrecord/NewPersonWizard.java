@@ -20,6 +20,7 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.jschema.log.*;
 
 /**
  *
@@ -38,7 +39,7 @@ addState(new State("", "", "") {
 	}
 });
 */
-	
+
 public NewPersonWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
 {
 	super("New Person", xfapp, xframe, "person");
@@ -140,6 +141,7 @@ void createPerson() throws SQLException
 	String sql = q.getSql();
 System.out.println(sql);
 	st.execute(sql);
+	fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("persons")));
 	
 	// Make phone record --- first dig for keyed model...
 	String phone = v.getString("phone");
@@ -151,6 +153,8 @@ System.out.println(sql);
 		sql = q.getSql();
 System.out.println(sql);
 		st.execute(sql);
+		
+		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
 	}
 //	Schema phones = fapp.getSchemaSet().phones;
 //	Column col = phones.getCol(phones.findCol("groupid"));
