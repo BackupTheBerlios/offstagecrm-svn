@@ -32,7 +32,7 @@ implements ObjHtmlPanel.Listener
 {
 
 FrontApp fapp;
-HashMap actionMap = new HashMap();
+HashMap<String,CBTask> actionMap = new HashMap();
 
 ActionPanel getThis() { return this; }
 
@@ -41,12 +41,12 @@ public void initRuntime(FrontApp xfapp) throws Exception
 {
 	this.fapp = xfapp;
 
-	actionMap.put("newperson", new StRunnable() {
+	actionMap.put("newperson", new CBTask("", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new NewPersonWizard(fapp, st, root);
 		wizard.runWizard();
-	}});
+	}}));
 
 //	actionMap.put("amend", new StRunnable() {
 //	public void run(Statement st) throws Exception {
@@ -62,13 +62,19 @@ public void initRuntime(FrontApp xfapp) throws Exception
 //		wizard.runWizard();
 //	}});
 
-	actionMap.put("editquery", new StRunnable() {
+	actionMap.put("editquery", new CBTask("", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, st, root, "listquery");
 		wizard.runWizard();
-	}});
+	}}));
 
+	actionMap.put("newcategory", new CBTask("", "admin", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.wizards.newgroupid.NewGroupidWizard(fapp, st, root);
+		wizard.runWizard();
+	}}));
 
 	addListener(this);
 	loadHtml();
@@ -82,7 +88,7 @@ public void linkSelected(java.net.URL href, String target)
 	int slash = url.lastIndexOf('/');
 	if (slash > 0) url = url.substring(slash+1);
 	
-	fapp.runGui(this, (CBRunnable)actionMap.get(url));
-
+	CBTask t = actionMap.get(url);
+	fapp.runGui(this, t.getPermissions(), t.getCBRunnable());
 }
 }

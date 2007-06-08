@@ -1,0 +1,132 @@
+package offstage.wizards.newgroupid;
+/*
+ * NewRecordWizard.java
+ *
+ * Created on October 8, 2006, 11:27 PM
+ *
+ * To change this template, choose Tools | Options and locate the template under
+ * the Source Creation and Management node. Right-click the template and choose
+ * Open. You can then make changes to the template in the Source Editor.
+ */
+
+import citibob.sql.pgsql.SqlInteger;
+import citibob.swing.html.*;
+import citibob.wizard.*;
+import javax.swing.*;
+import java.sql.*;
+import offstage.db.*;
+import offstage.wizards.*;
+import offstage.*;
+import citibob.sql.*;
+import citibob.sql.pgsql.*;
+import citibob.jschema.*;
+
+/**
+ *
+ * @author citibob
+ */
+public class NewGroupidWizard extends OffstageWizard {
+
+	Statement st;		// Datbase connection
+	/*
+addState(new State("", "", "") {
+	public HtmlWiz newWiz()
+		{ return new }
+	public void process()
+	{
+		
+	}
+});
+*/
+	
+public NewGroupidWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+{
+	super("New Category", xfapp, xframe, "grouplist");
+	this.st = xst;
+// ---------------------------------------------
+//addState(new State("init", "init", "init") {
+//	public HtmlWiz newWiz() throws Exception
+//		{ return new InitWiz(frame); }
+//	public void process() throws Exception
+//	{
+//		String s = v.getString("type");
+//		if (s != null) state = s;
+//	}
+//});
+//// ---------------------------------------------
+//addState(new State("person", "init", null) {
+addState(new State("grouplist", null, "catname") {
+	public HtmlWiz newWiz() throws Exception
+		{ return new GroupListWiz(frame); }
+	public void process() throws Exception
+	{
+		String table = v.getString("submit");
+		v.put("table", table);
+		if ("donationids".equals(table)) state = "donationname";
+		else state = "catname";
+	}
+});
+// ---------------------------------------------
+// Query for name of new category
+addState(new State("catname", "grouplist", "finished") {
+	public HtmlWiz newWiz() throws Exception
+		{ return new CatNameWiz(frame, v.getString("table")); }
+	public void process() throws Exception
+	{
+		String catname = v.getString("catname");
+		if (catname == null || "".equals(catname)) return;
+		String table = v.getString("table");
+		String sql =
+			" insert into " + table +
+			" (name) values (" + SqlString.sql(catname) + ")";
+System.out.println(sql);
+		st.executeUpdate(sql);
+		fapp.getDbChange().fireTableChanged(st, table);
+	}
+});
+// ---------------------------------------------
+// Query for name of new donation category
+addState(new State("donationname", "grouplist", "finished") {
+	public HtmlWiz newWiz() throws Exception
+		{ return new DonationNameWiz(frame); }
+	public void process() throws Exception
+	{
+		String catname = v.getString("catname");
+		if (catname == null || "".equals(catname)) return;
+		int fiscalyear = (int)v.getLong("fiscalyear");
+		String sql =
+			" insert into donationids" +
+			" (name, fiscalyear) values (" +
+			SqlString.sql(catname) + ", " + SqlInteger.sql(fiscalyear) + ")";
+System.out.println(sql);
+		st.executeUpdate(sql);
+		fapp.getDbChange().fireTableChanged(st, "donationids");
+	}
+});
+// ---------------------------------------------
+// Query for name of new donation category
+addState(new State("finished", null, null) {
+	public HtmlWiz newWiz() throws Exception
+		{ return new FinishedWiz(frame); }
+	public void process() throws Exception
+	{
+	}
+});
+// ---------------------------------------------
+}
+// =========================================================================
+
+
+
+
+
+public static void main(String[] args) throws Exception
+{
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	Statement st = pool.checkout().createStatement();
+	FrontApp fapp = new FrontApp(pool,null);
+	Wizard wizard = new NewGroupidWizard(fapp, st, null);
+	wizard.runWizard();
+}
+
+}
