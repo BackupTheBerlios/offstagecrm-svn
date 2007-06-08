@@ -157,7 +157,7 @@ citibob.app.App app;
 	}//GEN-LAST:event_bUndoActionPerformed
 
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-	app.runGui(this, new StRunnable() {
+	app.runGui(this, "admin", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		if (JOptionPane.showConfirmDialog(EditorPanel.this,
 			"Are you sure you wish to permanently delete this record?",

@@ -35,6 +35,7 @@ import javax.mail.internet.*;
 import citibob.jschema.*;
 import java.util.prefs.*;
 import citibob.text.*;
+import citibob.sql.pgsql.*;
 
 public class FrontApp implements citibob.app.App
 {
@@ -64,9 +65,36 @@ SwingActionRunner guiRunner;		// Run user-initiated actions; when user hits butt
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
+
+int loginID;			// entityID of logged-in database application user
+TreeSet<String> loginGroups;	// Groups to which logged-in user belongs (by name)
 // -------------------------------------------------------
+//public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
+/** Only runs the action if logged-in user is a member of the correct group */
+public void runGui(java.awt.Component c, String group, CBRunnable r) {
+	if (loginGroups.contains(group)) {
+		runGui(c,r);
+	} else {
+		javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
+	}
+}
+public void runGui(java.awt.Component c, String[] groups, CBRunnable r)
+{
+	if (groups == null) {
+		runGui(c, r);
+		return;
+	}
+	for (String g : groups) {
+		if (loginGroups.contains(g)) {
+			runGui(c,r);
+			return;
+		}
+	}
+	javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
+}
+
 //public void runGui(CBRunnable r) { guiRunner.doRun(null, r); }
 public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
@@ -128,6 +156,26 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		this.sset = new OffstageSchemaSet(st, dbChange);
 		fullEntityDm = new FullEntityDbModel(sset, this);
 		mailings = new MailingModel2(st, sset);//, appRunner);
+		
+		// Figure out who we're logged in as
+		String sql = "select entityid from dblogins where username = " +
+			SqlString.sql(System.getProperty("user.name"));
+		ResultSet rs = st.executeQuery(sql);
+		if (rs.next()) {
+			loginID = rs.getInt("entityid");
+		} else {
+			loginID = -1;
+		}
+		rs.close();
+		
+		// Figure out what groups we belong to (for action permissions)
+		loginGroups = new TreeSet();
+		sql = " select distinct name from dblogingroups g, dblogingroupids gid" +
+			" where g.entityid=" + SqlInteger.sql(loginID) +
+			" and g.groupid = gid.groupid";
+		rs = st.executeQuery(sql);
+		while (rs.next()) loginGroups.add(rs.getString("name"));
+		rs.close();
 //	mailings.refreshMailingids();
 //		equeries = new EQueryModel2(st, mailings, sset);
 		simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
@@ -136,6 +184,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		pool.checkin(dbb);
 	}
 	equerySchema = new EQuerySchema(getSchemaSet());
+	
 }
 public EntityListTableModel getSimpleSearchResults()
 	{ return simpleSearchResults; }
