@@ -46,7 +46,7 @@ throws SQLException
 			new Column(new SqlString(50), "recordsource", false),
 			new Column(new SqlInteger(), "sourcekey", false),
 			//new Column(new SqlInteger(), "ipeopleid", false),
-			new Column(new SqlTimestamp(), "lastupdated", false),
+			new Column(new SqlTimestamp("GMT",true), "lastupdated", false),
 			new citibob.jschema.Column(new SqlEnum(kmodel, true), "relprimarytypeid", false),
 			//new citibob.jschema.Column(new SqlBool(), "isquery", false),
 			new Column(new SqlBool(), "sendmail", false),

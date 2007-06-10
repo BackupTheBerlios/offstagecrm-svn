@@ -36,8 +36,8 @@ throws SQLException
 		"flagids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new ColumnDefaultNow(new SqlDate(false), "date", false)
+		new Column(new SqlInteger(false), "entityid", true)
+//		new ColumnDefaultNow(new SqlDate(tz, false), "date", false)
 	};
 }
 // ------------------------------------------

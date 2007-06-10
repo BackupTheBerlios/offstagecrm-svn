@@ -29,7 +29,7 @@ import citibob.util.KeyedModel;
 public class TermidsSchema extends ConstSchema
 {
 
-public TermidsSchema(Statement st, DbChangeModel change)
+public TermidsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	table = "termids";
 	KeyedModel kmodel = new DbKeyedModel(st, change,
@@ -40,9 +40,9 @@ throws SQLException{
 		new Column(new SqlString(), "name", false),
 //		new Column(new SqlDate(), "firstdate", false),
 //		new Column(new SqlDate(), "nextdate", false)
-		new ColumnDefaultNow(new SqlDate(false), "firstdate", false),
-		new ColumnDefaultNow(new SqlDate(false), "nextdate", false),
-		new Column(new SqlBool(), "iscurrent", false)
+		new ColumnDefaultNow(new SqlDate(tz, false), "firstdate", false),
+		new ColumnDefaultNow(new SqlDate(tz, false), "nextdate", false),
+		new Column(new SqlBool(false), "iscurrent", false)
 	};
 }
 

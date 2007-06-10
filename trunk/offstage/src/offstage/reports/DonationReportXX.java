@@ -50,7 +50,9 @@ JoinedSchemaBufDbModel mdm;
 		report.doSelect(st);
 //		jTypeColTable1.setSwingerMap(app.getSwingerMap());
 //		jTypeColTable1.setModel(report.newTableModel());
-		Swinger dtSwinger = new JDateSwinger(new SqlDate(), "yyyy-MM-dd");
+		Swinger dtSwinger = new JDateSwinger(
+			new SqlDate(app.getTimeZone(), true),
+			app.getTimeZone(), "yyyy-MM-dd");
 		jTypeColTable1.setModelU(report.newTableModel(),
 			null, null, null,
 			app.getSwingerMap());

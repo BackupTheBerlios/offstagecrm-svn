@@ -146,18 +146,18 @@ public FullEntityDbModel(OffstageSchemaSet osset, offstage.FrontApp fapp)
 {
 	citibob.app.App app = fapp;
 	logger = fapp.getLogger();
-//	logadd(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityID", false));
-//	logadd(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityID", false));
+//	logadd(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityid", false));
+//	logadd(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityid", false));
 	logadd(onePerson = new EntityDbModel(osset.persons, app));
 	logadd(oneOrg = new EntityDbModel(osset.org, app));
-	logadd(phones = new IntKeyedDbModel(osset.phones, "entityID"));
-	logadd(donations = new IntKeyedDbModel(osset.donations, "entityID"));
-	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityID"));
-	logadd(notes = new IntKeyedDbModel(osset.notes, "entityID"));
-	logadd(tickets = new IntKeyedDbModel(osset.tickets, "entityID"));
-	logadd(events = new IntKeyedDbModel(osset.events, "entityID"));
-	logadd(classes = new IntKeyedDbModel(osset.classes, "entityID"));
-	logadd(interests = new IntKeyedDbModel(osset.interests, "entityID"));
+	logadd(phones = new IntKeyedDbModel(osset.phones, "entityid"));
+	logadd(donations = new IntKeyedDbModel(osset.donations, "entityid"));
+	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityid"));
+	logadd(notes = new IntKeyedDbModel(osset.notes, "entityid"));
+	logadd(tickets = new IntKeyedDbModel(osset.tickets, "entityid"));
+	logadd(events = new IntKeyedDbModel(osset.events, "entityid"));
+	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
+	logadd(interests = new IntKeyedDbModel(osset.interests, "entityid"));
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

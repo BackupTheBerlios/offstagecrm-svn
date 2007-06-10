@@ -57,7 +57,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 		this.app = xapp;
 		mailing = xapp.getMailingModel();
 //		tMailingIds.initRuntime(mailing);
-		tMailingIds.setModelU(
+		tMailingIds.setDbModelU(
 			mailing.getMailingidsDb(),
 			new String[] {"Name", "Create Date"},
 			new String[] {"name", "created"},

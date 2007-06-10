@@ -32,7 +32,7 @@ public EQueriesSchema()
 	cols = new Column[] {
 		new Column(new SqlSerial("equeries_equeryid_seq", false), "equeryid", true),
 		new Column(new SqlString(), "equery", false),
-		new Column(new SqlTimestamp(), "lastmodified", false),
+		new Column(new SqlTimestamp("GMT", true), "lastmodified", false),
 //		new Column(new SqlTimestamp(), "lastaccessed", false),
 		new Column(new SqlString(100), "name", false)
 	};

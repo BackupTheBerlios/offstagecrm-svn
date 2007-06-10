@@ -31,7 +31,7 @@ public MailingidsSchema()
 	super();
 	table = "mailingids";
 	appendCols(new Column[] {
-		new Column(new SqlTimestamp(), "created", false),
+		new Column(new SqlTimestamp("gmt",true), "created", false),
 		new Column(new SqlString(), "equery", false)
 	});
 }

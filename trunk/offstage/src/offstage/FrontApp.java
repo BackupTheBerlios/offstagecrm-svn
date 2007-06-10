@@ -35,8 +35,9 @@ import citibob.text.*;
 import citibob.sql.pgsql.*;
 import offstage.db.*;
 import citibob.jschema.log.*;
+import citibob.swing.prefs.*;
 
-public class FrontApp implements citibob.app.App
+public class FrontApp extends citibob.app.AbstractApp
 {
 
 public static final int ACTIONS_SCREEN = 0;
@@ -68,7 +69,14 @@ SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
 int loginID;			// entityID of logged-in database application user
 TreeSet<String> loginGroups;	// Groups to which logged-in user belongs (by name)
 citibob.jschema.log.QueryLogger logger;			// Log all changes to database
+SwingPrefs swingPrefs = new SwingPrefs();
+
+/** TODO: This is temporary. */
+public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
 // -------------------------------------------------------
+public TimeZone getTimeZone() { return timeZone; }
+
+public SwingPrefs getSwingPrefs() { return swingPrefs; }
 public QueryLogger getLogger() { return logger; }
 public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
@@ -137,7 +145,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 	this.mailSender = new citibob.mail.GuiMailSender();
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
 	this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
-	this.swingerMap = new offstage.types.OffstageSwingerMap();
+	this.swingerMap = new offstage.types.OffstageSwingerMap(getTimeZone());
 	this.sFormatterMap = new offstage.types.OffstageSFormatterMap();
 	
 	this.pool = pool;
@@ -173,7 +181,7 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 		rs.close();
 
 		dbChange = new DbChangeModel();
-		this.sset = new OffstageSchemaSet(st, dbChange);
+		this.sset = new OffstageSchemaSet(st, dbChange, getTimeZone());
 		logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
 		fullEntityDm = new FullEntityDbModel(sset, this);
 		mailings = new MailingModel2(st, sset);//, appRunner);

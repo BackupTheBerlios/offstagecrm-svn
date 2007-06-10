@@ -20,8 +20,8 @@ public class OffstageSwingerMap extends citibob.sql.pgsql.SqlSwingerMap
 {
 	
 /** Creates a new instance of OffstageSwingerMap */
-public OffstageSwingerMap() {
-	super();
+public OffstageSwingerMap(java.util.TimeZone tz) {
+	super(tz);
 	
 	// SqlPhone
 	this.addMaker(SqlPhone.class, new SwingerMap.Maker() {

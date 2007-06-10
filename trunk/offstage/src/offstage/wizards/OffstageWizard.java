@@ -55,7 +55,7 @@ protected abstract class OState extends citibob.swing.SwingWizard.State
     public OffstageWizard(String wizardName, FrontApp fapp, java.awt.Frame frame, String startState)
 	{
 		super(wizardName, frame, startState);
-		wizardPref = Preferences.userRoot();
+//		wizardPref = Preferences.userRoot();
 		wizardPref = fapp.userRoot().node("wizard").node(wizardName);
 		this.fapp = fapp;
     }

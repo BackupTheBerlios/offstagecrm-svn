@@ -41,6 +41,19 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 		// Get database version
 		Statement st = dbb.createStatement();
 		OffstageVersion.fetchDbVersion(st);
+		
+//ResultSet rs = st.executeQuery("select dtime from querylog");
+//rs.next();
+//java.util.Date dt = rs.getTimestamp(1);
+//String s = rs.getString(1);
+//
+//
+////java.util.Date dt2 = new java.util.Date(ms);
+//System.out.println(dt);
+//System.out.println(s);
+
+
+
 // TODO: This should not be needed.  But run for now until upgrade is in place.
 st.execute("update entities set primaryentityid=entityid where primaryentityid is null");
 		st.close();

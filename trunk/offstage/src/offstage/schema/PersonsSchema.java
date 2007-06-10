@@ -28,7 +28,7 @@ import java.sql.*;
 public class PersonsSchema extends EntitiesSchema
 {
 
-public PersonsSchema(Statement st, DbChangeModel change)
+public PersonsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super(st, change);
@@ -36,7 +36,7 @@ throws SQLException
 	appendCols(new Column[] {
 //		new Column(new SqlString(1), "gender", false),
 		new Column(new SqlChar(), "gender", false),
-		new Column(new SqlDate(true), "dob", false),
+		new Column(new SqlDate(tz, true), "dob", false),
 		new Column(new SqlString(100), "email", false),
 		new Column(new SqlString(200), "url", false)
 	});

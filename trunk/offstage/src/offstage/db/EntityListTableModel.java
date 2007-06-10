@@ -46,6 +46,7 @@ public EntityListTableModel(SqlTypeSet tset)
 private void addAllRows(Statement st, String idSql, String orderBy) throws SQLException
 {
 	ResultSet rs = DB.rs_entities_namesByIDList(st, idSql, orderBy);
+	super.setColHeaders(rs);
 	super.addAllRows(rs);
 	rs.close();
 }

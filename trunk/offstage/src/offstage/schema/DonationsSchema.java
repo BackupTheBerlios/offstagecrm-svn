@@ -28,7 +28,7 @@ import citibob.util.KeyedModel;
 public class DonationsSchema extends ConstSchema
 {
 
-public DonationsSchema(Statement st, DbChangeModel change)
+public DonationsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	table = "donations";
@@ -38,7 +38,7 @@ throws SQLException
 		new Column(new SqlInteger(false), "serialid", true),
 		new Column(new SqlEnum(kmodel, false), "groupid", false),
 		new Column(new SqlInteger(false), "entityid", false),
-		new ColumnDefaultNow(new SqlDate(false), "date", false),
+		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
 		new Column(new SqlNumeric(9, 2), "amount", false)
 	};
 }

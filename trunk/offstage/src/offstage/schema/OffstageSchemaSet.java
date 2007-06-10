@@ -40,23 +40,23 @@ public Schema classes, interests;
 public Schema equeries;
 
 /** Creates a new instance of OffstageSchema */
-public OffstageSchemaSet(Statement st, DbChangeModel change)
+public OffstageSchemaSet(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	map.put("courseids", courseids = new CourseidsSchema());
-	map.put("donations", donations = new DonationsSchema(st, change));
+	map.put("donations", donations = new DonationsSchema(st, change, tz));
 	map.put("flags", new FlagsSchema(st, change));
 	map.put("entities", entities = new EntitiesSchema(st, change));
 	map.put("events", events = new EventsSchema(st, change));
 	map.put("groupids", groupids = new GroupidsSchema());
 	map.put("mailingids", mailingids = new MailingidsSchema());
 	map.put("mailings", mailings = new MailingsSchema(st, change));
-	map.put("notes", notes = new NotesSchema(st, change));
+	map.put("notes", notes = new NotesSchema(st, change, tz));
 	map.put("tickets", tickets = new TicketeventsSchema(st, change));
 	map.put("org", org = new OrgSchema(st, change));
-	map.put("persons", persons = new PersonsSchema(st, change));
+	map.put("persons", persons = new PersonsSchema(st, change, tz));
 	map.put("phones", phones = new PhonesSchema(st, change));
-	map.put("termids", termids = new TermidsSchema(st, change));
+	map.put("termids", termids = new TermidsSchema(st, change, tz));
 	map.put("termtypes", termtypes = new TermtypesSchema());
 	map.put("classes", classes = new ClassesSchema(st, change));
 	map.put("interests", interests = new InterestsSchema(st, change));

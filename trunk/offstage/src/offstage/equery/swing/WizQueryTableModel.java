@@ -68,8 +68,8 @@ static {
 			new Object[] {"+", "-"})),
 		null,
 		null,
-		new citibob.sql.pgsql.SqlDate(true),
-		new citibob.sql.pgsql.SqlDate(true)};
+		new citibob.sql.pgsql.SqlDate(offstage.FrontApp.timeZone, true),
+		new citibob.sql.pgsql.SqlDate(offstage.FrontApp.timeZone, true)};
 }
 public WizQueryTableModel(QuerySchema schema)
 {

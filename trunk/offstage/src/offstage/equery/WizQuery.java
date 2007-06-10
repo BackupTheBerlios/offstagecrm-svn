@@ -72,8 +72,8 @@ public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
 		Column c = (((QuerySchema.Col) schema.getCol(cn)).col);
 		addTable(schema, sql, cn);
 		String ewhere = cn.toString() + " = " + c.getType().toSql(clause.value);
-		if (clause.firstDt != null) ewhere += " and main.lastupdated >= " + SqlTimestamp.sql(clause.firstDt);
-		if (clause.nextDt != null) ewhere += " and main.lastupdated >= " + SqlTimestamp.sql(clause.nextDt);
+		if (clause.firstDt != null) ewhere += " and main.lastupdated >= " + SqlTimestamp.gmt(clause.firstDt);
+		if (clause.nextDt != null) ewhere += " and main.lastupdated >= " + SqlTimestamp.gmt(clause.nextDt);
 		String joiner = (clause.type == WizClause.ADD ? " or " : " and not ");
 		cwhere = cwhere + joiner + "(" + ewhere + ")";
 	}

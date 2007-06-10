@@ -102,8 +102,10 @@ System.out.println("qsc = " + qsc);
 	sql.addWhereClause(cwhere);
 	
 	// Add where clause for lastupdated date range
-	if (lastUpdatedFirst != null) sql.addWhereClause("main.lastupdated >= " + SqlTimestamp.sql(lastUpdatedFirst));
-	if (lastUpdatedNext != null) sql.addWhereClause("main.lastupdated < " + SqlTimestamp.sql(lastUpdatedNext));
+	if (lastUpdatedFirst != null) sql.addWhereClause(
+		"main.lastupdated >= " + SqlTimestamp.gmt(lastUpdatedFirst));
+	if (lastUpdatedNext != null) sql.addWhereClause(
+		"main.lastupdated < " + SqlTimestamp.gmt(lastUpdatedNext));
 }
 // ------------------------------------------------------
 /** Returns the mailing id */

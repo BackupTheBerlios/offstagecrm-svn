@@ -21,19 +21,22 @@ package offstage.schema;
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
 
-public class CourseidsSchema extends GroupidsSchema
+public class CourseidsSchema extends ConstSchema
 {
 
 public CourseidsSchema()
 {
 	super();
 	table = "courseids";
-	appendCols(new Column[] {
+	cols = new Column[] {
+		new Column(new SqlSerial("courseids_courseid_seq"), "courseid", true),
+		new Column(new SqlString(), "name"),
 		new Column(new SqlInteger(false), "termid", false),
 		new Column(new SqlInteger(), "dayofweek", false),
-		new Column(new SqlTime(), "tstart", false),
-		new Column(new SqlTime(), "tend", false)
-	});
+		new Column(new SqlInteger(), "tstart_s", false),
+		new Column(new SqlInteger(), "tnext_s", false),
+		new Column(new SqlInteger(true), "enrolllimit")
+	};
 }
 
 }
