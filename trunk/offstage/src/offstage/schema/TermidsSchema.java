@@ -35,7 +35,7 @@ throws SQLException{
 	KeyedModel kmodel = new DbKeyedModel(st, change,
 		"termtypes", "termtypeid", "name", "orderid");
 	cols = new Column[] {
-		new Column(new SqlInteger(false), "termid", true),
+		new Column(new SqlSerial("termids_termid_seq", false), "termid", true),
 		new Column(new SqlEnum(kmodel, false), "termtypeid", false),
 		new Column(new SqlString(), "name", false),
 //		new Column(new SqlDate(), "firstdate", false),

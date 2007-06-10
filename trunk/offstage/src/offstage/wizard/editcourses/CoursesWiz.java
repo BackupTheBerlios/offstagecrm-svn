@@ -4,7 +4,7 @@
  * Created on June 8, 2007, 10:08 PM
  */
 
-package offstage.school.gui;
+package offstage.wizard.editcourses;
 
 import java.sql.*;
 import citibob.jschema.*;
@@ -29,21 +29,18 @@ import citibob.sql.*;
  *
  * @author  citibob
  */
-public class CoursesEditor extends javax.swing.JPanel
+public class CoursesWiz extends citibob.swing.JPanelWiz
 {
 
 IntKeyedDbModel coursesSb;
 FrontApp fapp;
 
 	/** Creates new form CompleteStatusPanel */
-	public CoursesEditor() {
-		initComponents();
-	}
-	
-	
-	public void initRuntime(Statement xst, FrontApp xfapp)
+	public CoursesWiz(FrontApp xfapp, Statement xst, int termid)
 	throws SQLException
 	{
+		super("Edit Courses");
+		initComponents();
 		this.fapp = xfapp;
 		
 		// Set up terms selector
@@ -87,17 +84,29 @@ FrontApp fapp;
 //		KeyedRenderEdit tkre = new KeyedRenderEdit(new TimeSKeyedModel(7,0, 23,0, 15*60));
 //		courses.setRenderEditU("tstart_s", tkre);
 //		courses.setRenderEditU("tnext_s", tkre);
-
+		terms.setValue(termid);
 	}
 	
-//	public StatusTable getTable() { return table; }
-//
-//	/** Convenience Function */
-//	ColPermuteTableModel getTableModel()
-//	{
-//		ColPermuteTableModel model = (ColPermuteTableModel)getTable().getModel();
-//		return model;
-//	}
+	/** After the Wiz is done running, report its output into a Map. */
+	public void getAllValues(java.util.Map map)
+	{
+		Object courseid = courses.getOneSelectedValU("courseid");
+		map.put("courseid", courseid);
+	}
+
+	public void backPressed() { saveCur(); }
+	public void nextPressed() { saveCur(); }
+
+	public void saveCur()
+	{
+		fapp.runGui(CoursesWiz.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			if (coursesSb.valueChanged()) {
+				coursesSb.doUpdate(st);
+				coursesSb.doSelect(st);
+			}
+		}});
+	}
 	
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -214,29 +223,29 @@ FrontApp fapp;
 
 	private void bMeetingsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMeetingsActionPerformed
 	{//GEN-HEADEREND:event_bMeetingsActionPerformed
-		fapp.runGui(CoursesEditor.this, new StRunnable() {
+		fapp.runGui(CoursesWiz.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			  coursesSb.doUpdate(st);
 			  coursesSb.doSelect(st);
-			  citibob.swing.WidgetTree.getRoot(CoursesEditor.this).setVisible(false);
+			  citibob.swing.WidgetTree.getRoot(CoursesWiz.this).setVisible(false);
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bMeetingsActionPerformed
 
 	private void bDoneActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDoneActionPerformed
 	{//GEN-HEADEREND:event_bDoneActionPerformed
-		fapp.runGui(CoursesEditor.this, new StRunnable() {
+		fapp.runGui(CoursesWiz.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			  coursesSb.doUpdate(st);
 //			  coursesSb.doSelect(st);
-			  citibob.swing.WidgetTree.getRoot(CoursesEditor.this).setVisible(false);
+			  citibob.swing.WidgetTree.getRoot(CoursesWiz.this).setVisible(false);
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bDoneActionPerformed
 
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
-		fapp.runGui(CoursesEditor.this, new StRunnable()
+		fapp.runGui(CoursesWiz.this, new StRunnable()
 		{ public void run(Statement st) throws Exception
 		  {
 			  coursesSb.doSelect(st);
@@ -246,7 +255,7 @@ FrontApp fapp;
 
 	private void bDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelActionPerformed
 	{//GEN-HEADEREND:event_bDelActionPerformed
-		fapp.runGui(CoursesEditor.this, new ERunnable()
+		fapp.runGui(CoursesWiz.this, new ERunnable()
 		{ public void run() throws Exception
 		  {
 			  int selected = courses.getSelectedRow();
@@ -258,7 +267,7 @@ FrontApp fapp;
 
 	private void bAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddActionPerformed
 	{//GEN-HEADEREND:event_bAddActionPerformed
-		fapp.runGui(CoursesEditor.this, new ERunnable()
+		fapp.runGui(CoursesWiz.this, new ERunnable()
 		{ public void run() throws Exception
 		  {
 			  coursesSb.getSchemaBuf().insertRow(-1);

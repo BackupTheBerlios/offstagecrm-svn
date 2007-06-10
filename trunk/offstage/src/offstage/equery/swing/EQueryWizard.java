@@ -49,7 +49,7 @@ public EQueryWizard(offstage.FrontApp xfapp, Statement xst, javax.swing.JFrame x
 // ---------------------------------------------
 addState(new OState("listquery", null, "editquery") {
 	public Wiz newWiz() throws Exception
-		{ return new JPanelWizWrapper(frame, false, true,
+		{ return new JPanelWizWrapper(frame, null, "",
 			  new ListQueryWiz(st, fapp)); }
 	public void process() throws Exception
 	{
@@ -79,7 +79,7 @@ addState(new OState("newquery", null, "editquery") {
 addState(new OState("editquery", "listquery", "reporttype") {
 	public Wiz newWiz() throws Exception {
 		EditQueryWiz eqw = new EditQueryWiz(st, fapp, v.getInt("equeryid"));
-		return new JPanelWizWrapper(frame, true, true, eqw);
+		return new JPanelWizWrapper(frame, "", "", eqw);
 	}
 	public void process() throws Exception
 	{
