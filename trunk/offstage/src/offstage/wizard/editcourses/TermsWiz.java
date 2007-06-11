@@ -44,15 +44,15 @@ offstage.FrontApp fapp;
 	/** Override to take action when the "<< Back" button is pressed. */
 	public void backPressed() { termPNC.doSave(); }
 	public void nextPressed() {
-		// Save but don't update; so we can still go to the selected row.
-		fapp.runGui(TermsWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
-			SchemaBufDbModel dbm = termPNC.getDbModel();
-			if (dbm.valueChanged()) {
-				dbm.doUpdate(st);
-			}
-		}});
-//		termPNC.doSave();
+//		// Save but don't update; so we can still go to the selected row.
+//		fapp.runGui(TermsWiz.this, new StRunnable() {
+//		public void run(Statement st) throws Exception {
+//			SchemaBufDbModel dbm = termPNC.getDbModel();
+//			if (dbm.valueChanged()) {
+//				dbm.doUpdate(st);
+//			}
+//		}});
+		termPNC.doSave();
 	}
 //	public void cancelPressed() {}
 	

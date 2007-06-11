@@ -64,6 +64,21 @@ addState(new State("courselist", "termlist", "meetings") {
 			  new CoursesWiz(fapp, st, Termid));
 	}
 	public void process() throws Exception
+	{
+		Integer Termid = (Integer)v.get("courseid");
+		if (Termid == null) state = "courselist";
+	}
+});
+// ---------------------------------------------
+addState(new State("meetings", "courselist", null) {
+	public Wiz newWiz() throws Exception
+	{
+		Integer Termid = (Integer)v.get("termid");
+		Integer Courseid = (Integer)v.get("courseid");
+		return new JPanelWizWrapper(frame, "", "Finished",
+			  new MeetingsWiz(fapp, st, Termid, Courseid));
+	}
+	public void process() throws Exception
 		{}
 });
 // ---------------------------------------------

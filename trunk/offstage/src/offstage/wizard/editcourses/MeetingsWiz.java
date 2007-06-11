@@ -29,72 +29,58 @@ import citibob.sql.*;
  *
  * @author  citibob
  */
-public class CoursesWiz extends citibob.swing.JPanelWiz
+public class MeetingsWiz extends citibob.swing.JPanelWiz
 {
 
-IntKeyedDbModel coursesSb;
+IntKeyedDbModel meetingsSb;
 FrontApp fapp;
+int courseid;
 
 	/** Creates new form CompleteStatusPanel */
-	public CoursesWiz(FrontApp xfapp, Statement xst, int termid)
+	public MeetingsWiz(FrontApp xfapp, Statement xst, int termid, int courseid)
 	throws SQLException
 	{
-		super("Edit Courses");
+		super("Edit Meetings");
+		this.courseid = courseid;
 		initComponents();
 		this.fapp = xfapp;
 		
 		// Set up terms selector
-		terms.setKeyedModel(new DbKeyedModel(xst, fapp.getDbChange(), "termids",
-			"select termid, name from termids where iscurrent order by firstdate"));
-		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent evt) {
-			fapp.runApp(new StRunnable() {
-			public void run(Statement st) throws Exception {
-				coursesSb.doUpdate(st);
-				coursesSb.setKey((Integer)terms.getValue());
-				coursesSb.doSelect(st);
-			}});
-		}});
+		ResultSet rs;
+		rs = xst.executeQuery("select name from termids where termid = " + SqlInteger.sql(termid));	
+		rs.next();
+		term.setText(rs.getString(1));
+		rs.close();
+		rs = xst.executeQuery("select name from courseids where courseid = " + SqlInteger.sql(courseid));	
+		rs.next();
+		course.setText(rs.getString(1));
+		rs.close();
+		
+//		term.setJType(new DbKeyedModel(xst, fapp.getDbChange(), "termids",
+//			"select termid, name from termids where iscurrent order by firstdate"), "<none>");
+//		course.setJType(new DbKeyedModel(xst, fapp.getDbChange(), "courseids",
+//			"select courseid, name from termids where termid = " + termid + " order by name"), "<none>");
 		
 		// Set up courses editor
-		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-			"termid", fapp.getDbChange());
-		terms.setSelectedIndex(0);		// Should throw a value changed event
-		courses.setModelU(coursesSb.getSchemaBuf(),
-			new String[] {"Name", "Day", "Start", "End", "Enroll Limit"},
-			new String[] {"name", "dayofweek", "tstart", "tnext", "enrolllimit"},
+		meetingsSb = new IntKeyedDbModel(fapp.getSchema("meetings"),
+			"courseid", fapp.getDbChange());
+		meetingsSb.setKey(courseid);
+		meetingsSb.setOrderClause("dtstart");
+		meetings.setModelU(meetingsSb.getSchemaBuf(),
+			new String[] {"Start", "End"},
+			new String[] {"dtstart", "dtnext"},
 			null, fapp.getSwingerMap());
-//		courses.setRowSelectionAllowed(false);
 
-//courses.setRowSelectionAllowed(false);
-//courses.setColumnSelectionAllowed(false);
-//courses.setCellSelectionEnabled(false);
-
-//		public void setModelU(SchemaBuf schemaBuf,
-//String[] xColNames, String[] xSColMap,
-//boolean[] xEditable, SwingerMap swingers)
-
-		KeyedModel dkm = new DayOfWeekKeyedModel();
-		courses.setRenderEditU("dayofweek", new KeyedRenderEdit(dkm));
-
-		Swinger swing = new SqlTimeSwinger(true, "HH:mm");
-		courses.setRenderEditU("tstart", swing);
-		courses.setRenderEditU("tnext", swing);
+		Swinger swing = new SqlTimestampSwinger("GMT", fapp.getTimeZone(), "EEE MMM dd HH:mm");
+		meetings.setRenderEditU("dtstart", swing);
+		meetings.setRenderEditU("dtnext", swing);
 		
-//		KeyedRenderEdit tkre = new KeyedRenderEdit(new TimeSKeyedModel(7,0, 23,0, 15*60));
-//		courses.setRenderEditU("tstart_s", tkre);
-//		courses.setRenderEditU("tnext_s", tkre);
-		terms.setValue(termid);
-		
-		if (courses.getModelU().getRowCount() > 0) courses.setRowSelectionInterval(0,0);
-
+		meetingsSb.doSelect(xst);
 	}
 	
 	/** After the Wiz is done running, report its output into a Map. */
 	public void getAllValues(java.util.Map map)
 	{
-		Object courseid = courses.getOneSelectedValU("courseid");
-		map.put("courseid", courseid);
 	}
 
 	public void backPressed() { saveCur(); }
@@ -102,11 +88,11 @@ FrontApp fapp;
 
 	public void saveCur()
 	{
-		fapp.runGui(CoursesWiz.this, new StRunnable() {
+		fapp.runGui(MeetingsWiz.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
-			if (coursesSb.valueChanged()) {
-				coursesSb.doUpdate(st);
-				coursesSb.doSelect(st);
+			if (meetingsSb.valueChanged()) {
+				meetingsSb.doUpdate(st);
+				meetingsSb.doSelect(st);
 			}
 		}});
 	}
@@ -119,18 +105,19 @@ FrontApp fapp;
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
-        java.awt.GridBagConstraints gridBagConstraints;
-
         jPanel1 = new javax.swing.JPanel();
         bAdd = new javax.swing.JButton();
         bDel = new javax.swing.JButton();
         bRestore = new javax.swing.JButton();
         bSave = new javax.swing.JButton();
+        bAutoFill = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        courses = new citibob.jschema.swing.StatusTable();
+        meetings = new citibob.jschema.swing.StatusTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        terms = new citibob.swing.typed.JKeyedComboBox();
+        term = new citibob.swing.typed.JTypedLabel();
+        jLabel2 = new javax.swing.JLabel();
+        course = new citibob.swing.typed.JTypedLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -178,9 +165,20 @@ FrontApp fapp;
 
         jPanel1.add(bSave);
 
+        bAutoFill.setText("Auto Fill");
+        bAutoFill.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bAutoFillActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(bAutoFill);
+
         add(jPanel1, java.awt.BorderLayout.SOUTH);
 
-        courses.setModel(new javax.swing.table.DefaultTableModel(
+        meetings.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
                 {null, null, null, null},
@@ -193,7 +191,7 @@ FrontApp fapp;
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(courses);
+        jScrollPane1.setViewportView(meetings);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -202,55 +200,68 @@ FrontApp fapp;
         jLabel1.setText("Term: ");
         jPanel2.add(jLabel1, new java.awt.GridBagConstraints());
 
-        terms.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(terms, gridBagConstraints);
+        term.setText("jTypedLabel1");
+        jPanel2.add(term, new java.awt.GridBagConstraints());
+
+        jLabel2.setText("   Course: ");
+        jPanel2.add(jLabel2, new java.awt.GridBagConstraints());
+
+        course.setText("jTypedLabel1");
+        jPanel2.add(course, new java.awt.GridBagConstraints());
 
         add(jPanel2, java.awt.BorderLayout.NORTH);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bAutoFillActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAutoFillActionPerformed
+	{//GEN-HEADEREND:event_bAutoFillActionPerformed
+		fapp.runGui(MeetingsWiz.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			offstage.db.DB.w_meetings_autofill(st, courseid, fapp.getTimeZone());
+			meetingsSb.doSelect(st);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bAutoFillActionPerformed
 	
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		saveCur();
-//		fapp.runGui(CoursesWiz.this, new StRunnable() {
+//		fapp.runGui(MeetingsWiz.this, new StRunnable() {
 //		public void run(Statement st) throws Exception {
-//			  coursesSb.doUpdate(st);
-//			  coursesSb.doSelect(st);
+//			  meetingsSb.doUpdate(st);
+//			  meetingsSb.doSelect(st);
 //		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bSaveActionPerformed
 
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
-		fapp.runGui(CoursesWiz.this, new StRunnable()
-		{ public void run(Statement st) throws Exception
+		fapp.runGui(MeetingsWiz.this, new StRunnable() {
+		public void run(Statement st) throws Exception
 		  {
-			  coursesSb.doSelect(st);
+			  meetingsSb.doSelect(st);
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bRestoreActionPerformed
 
 	private void bDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelActionPerformed
 	{//GEN-HEADEREND:event_bDelActionPerformed
-		fapp.runGui(CoursesWiz.this, new ERunnable()
+		fapp.runGui(MeetingsWiz.this, new ERunnable()
 		{ public void run() throws Exception
 		  {
-			  int selected = courses.getSelectedRow();
+			  int selected = meetings.getSelectedRow();
 			  if (selected != -1) {
-				  coursesSb.getSchemaBuf().deleteRow(selected);
+				  meetingsSb.getSchemaBuf().deleteRow(selected);
 			  }
 		  }});
 	}//GEN-LAST:event_bDelActionPerformed
 
 	private void bAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddActionPerformed
 	{//GEN-HEADEREND:event_bAddActionPerformed
-		fapp.runGui(CoursesWiz.this, new ERunnable()
+		fapp.runGui(MeetingsWiz.this, new ERunnable()
 		{ public void run() throws Exception
 		  {
-			  coursesSb.getSchemaBuf().insertRow(-1);
+			  meetingsSb.getSchemaBuf().insertRow(-1);
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bAddActionPerformed
@@ -258,15 +269,18 @@ FrontApp fapp;
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAdd;
+    private javax.swing.JButton bAutoFill;
     private javax.swing.JButton bDel;
     private javax.swing.JButton bRestore;
     private javax.swing.JButton bSave;
-    private citibob.jschema.swing.StatusTable courses;
+    private citibob.swing.typed.JTypedLabel course;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private citibob.swing.typed.JKeyedComboBox terms;
+    private citibob.jschema.swing.StatusTable meetings;
+    private citibob.swing.typed.JTypedLabel term;
     // End of variables declaration//GEN-END:variables
 	
 }
