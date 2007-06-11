@@ -338,6 +338,50 @@ System.out.println(sql);
 //	super.addAllRows(rs);
 //	rs.close();
 }
+// -------------------------------------------------------------------------------
+public static void w_meetings_autofill(Statement st, int courseid, TimeZone tz)
+throws SQLException
+{
+	SqlTimestamp sts = new SqlTimestamp("GMT");
+	SqlDate sdt = new SqlDate(tz, true);
+	SqlTime stm = new SqlTime();
+
+	int dayofweek;			// Day of week for the class
+	java.util.Date day0, day1;		// First and last day of term range
+	long tstartMS, tnextMS;
+	ResultSet rs;
+	String sql;
+	
+	// Get basic parameters
+	sql = "select t.firstdate, t.nextdate, c.dayofweek, c.tstart, c.tnext" +
+		" from termids t, courseids c" +
+		" where t.termid = c.termid" +
+		" and c.courseid = " + SqlInteger.sql(courseid);
+	rs = st.executeQuery(sql);
+	rs.next();
+	day0 = sdt.get(rs, 1);
+	day1 = sdt.get(rs, 2);
+	dayofweek = rs.getInt(3);
+	tstartMS = stm.get(rs, 4).getTime();
+	tnextMS = stm.get(rs, 5).getTime();
+	rs.close();
+	
+	// Start generating the timestamps...
+	StringBuffer sbuf = new StringBuffer("delete from meetings where courseid = " + SqlInteger.sql(courseid) + ";\n");
+	Calendar cal = Calendar.getInstance(tz);
+	cal.setTime(day0);
+	cal.set(Calendar.DAY_OF_WEEK, dayofweek);
+	while (cal.getTimeInMillis() < day1.getTime()) {
+		java.util.Date ts0 = new java.util.Date(cal.getTimeInMillis() + tstartMS);
+		java.util.Date ts1 = new java.util.Date(cal.getTimeInMillis() + tnextMS);
+		sbuf.append("insert into meetings (courseid, dtstart, dtnext)" +
+			" values (" + SqlInteger.sql(courseid) + ", " +
+			sts.toSql(ts0) + ", " +
+			sts.toSql(ts1) + ");\n");
+		cal.add(Calendar.WEEK_OF_YEAR, 1);
+	}
+	st.executeUpdate(sbuf.toString());
+}
 // --------------------------------------------------
 public static String dbversion(Statement st)
 throws SQLException
