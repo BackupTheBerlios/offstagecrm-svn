@@ -42,8 +42,12 @@ FullEntityDbModel dbModel;
 	public EntitySubPanel() {
 		initComponents();
 	}
-	public void initRuntime()
+	public void initRuntime(citibob.app.App app)
 	{
+//		lastupdated.setJType(new citibob.swing.typed.JDateSwinger(
+//			new citibob.sql.pgsql.SqlTimestamp("GMT"),
+//			app.getTimeZone(), "MM-dd-yyyy HH:mm:ss"));
+		
 //		entityid.setJType(Integer.class,
 //			new citibob.swing.typed.FormatFormatter(java.text.NumberFormat.getInstance()));
 //		entityid.setColName("entityid");
