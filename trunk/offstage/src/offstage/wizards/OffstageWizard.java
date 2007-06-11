@@ -33,22 +33,23 @@ SwingPrefs swingPrefs = new SwingPrefs();
 
 //	public Wiz createWiz() throws Exception { return newWiz(); }		// Override this to post-process wiz after it's created
 
-protected abstract class OState extends citibob.swing.SwingWizard.State
+public Wiz createWiz(State state) throws Exception
 {
-	public Wiz createWiz() throws Exception
-	{
-		// Overridden to post-process wiz after it's created
-		Wiz wiz = super.createWiz();
-		Preferences wizPref = wizardPref.node(name);
-		swingPrefs.setPrefs((Component)wiz, "", wizPref);
-		return wiz;
-	}
-	public abstract void process() throws Exception;
-	
-	public OState(String name, String back, String next) {
-		super(name, back, next);
-	}
+	// Overridden to post-process wiz after it's created
+	Wiz wiz = super.createWiz(state);
+	Preferences wizPref = wizardPref.node(state.name);
+	swingPrefs.setPrefs((Component)wiz, "", wizPref);
+	return wiz;
 }
+	
+//protected abstract class OState extends citibob.swing.SwingWizard.State
+//{
+//	public abstract void process() throws Exception;
+//	
+//	public OState(String name, String back, String next) {
+//		super(name, back, next);
+//	}
+//}
 
 
     /** Creates a new instance of OffstageWizard */

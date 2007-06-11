@@ -47,7 +47,7 @@ public EQueryWizard(offstage.FrontApp xfapp, Statement xst, javax.swing.JFrame x
 	super("Query Wizard", xfapp, xframe, startState);
 	this.st = xst;
 // ---------------------------------------------
-addState(new OState("listquery", null, "editquery") {
+addState(new State("listquery", null, "editquery") {
 	public Wiz newWiz() throws Exception
 		{ return new JPanelWizWrapper(frame, null, "",
 			  new ListQueryWiz(st, fapp)); }
@@ -57,7 +57,7 @@ addState(new OState("listquery", null, "editquery") {
 	}
 });
 // ---------------------------------------------
-addState(new OState("newquery", null, "editquery") {
+addState(new State("newquery", null, "editquery") {
 	public Wiz newWiz() throws Exception
 	{
 		NewQueryWiz w = new NewQueryWiz(frame);
@@ -76,7 +76,7 @@ addState(new OState("newquery", null, "editquery") {
 	}
 });
 // ---------------------------------------------
-addState(new OState("editquery", "listquery", "reporttype") {
+addState(new State("editquery", "listquery", "reporttype") {
 	public Wiz newWiz() throws Exception {
 		EditQueryWiz eqw = new EditQueryWiz(st, fapp, v.getInt("equeryid"));
 		return new JPanelWizWrapper(frame, "", "", eqw);
@@ -92,7 +92,7 @@ addState(new OState("editquery", "listquery", "reporttype") {
 	}
 });
 // ---------------------------------------------
-addState(new OState("reporttype", "editquery", null) {
+addState(new State("reporttype", "editquery", null) {
 	public Wiz newWiz() throws Exception
 		{ return new ReportTypeWiz(frame); }
 	public void process() throws Exception
