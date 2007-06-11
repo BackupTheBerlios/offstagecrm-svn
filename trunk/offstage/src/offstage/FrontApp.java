@@ -72,8 +72,8 @@ citibob.jschema.log.QueryLogger logger;			// Log all changes to database
 SwingPrefs swingPrefs = new SwingPrefs();
 
 /** TODO: This is temporary. */
-//public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
-public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
+public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
+//public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------
 public TimeZone getTimeZone() { return timeZone; }

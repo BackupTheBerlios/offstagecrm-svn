@@ -36,6 +36,7 @@ import java.awt.event.*;
 import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
 import citibob.multithread.*;
+import offstage.school.gui.*;
 
 /**
  *
@@ -45,7 +46,8 @@ public class EditorPanel extends javax.swing.JPanel {
 
 FullEntityDbModel model;
 //ActionRunner runner;
-citibob.app.App app;
+//citibob.app.App app;
+FrontApp app;
 
 	/** Creates new form EditorPanel */
 	public EditorPanel() {
@@ -79,6 +81,7 @@ citibob.app.App app;
         bUndo = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
         bNewPerson = new javax.swing.JButton();
+        bSchool = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -140,6 +143,17 @@ citibob.app.App app;
 
         jToolBar1.add(bNewPerson);
 
+        bSchool.setText("School");
+        bSchool.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bSchoolActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bSchool);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -148,6 +162,18 @@ citibob.app.App app;
         add(jToolBar1, gridBagConstraints);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bSchoolActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSchoolActionPerformed
+	{//GEN-HEADEREND:event_bSchoolActionPerformed
+	app.runGui(this, new StRunnable() {
+	public void run(Statement st) throws Exception {
+		PersonSchool ps = new PersonSchool();
+		ps.initRuntime(app, st, model.getEntityId());
+		citibob.gui.GuiUtil.showJPanel(EditorPanel.this, ps, app,
+			"School Info for Person", "personschool", true);
+	}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bSchoolActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 	app.runGui(this, new StRunnable() {
@@ -188,6 +214,7 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private javax.swing.JButton bDelete;
     private javax.swing.JButton bNewPerson;
     private javax.swing.JButton bSave;
+    private javax.swing.JButton bSchool;
     private javax.swing.JButton bUndo;
     private offstage.gui.EntityPanel entityPanel;
     private javax.swing.JToolBar jToolBar1;

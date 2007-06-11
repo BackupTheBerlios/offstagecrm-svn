@@ -77,6 +77,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bNewPersonActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JButton" name="bSchool">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="School"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bSchoolActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
