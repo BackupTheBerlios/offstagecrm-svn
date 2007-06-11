@@ -117,7 +117,7 @@ extends javax.swing.JPanel {
 		new TypedWidgetBinder().bind(genderButtonGroup, model);
 		new IsPrimaryBinder().bind(cbIsPrimary, model);
 
-		this.entitySubPanel1.initRuntime();
+		this.entitySubPanel1.initRuntime(app);
 		
 		phonePanel.initRuntime(st, dm.getPhonesSb(),
 			new String[] {"Type", "Number"},
