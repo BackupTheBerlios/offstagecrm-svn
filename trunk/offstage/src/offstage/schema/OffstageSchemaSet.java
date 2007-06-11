@@ -63,6 +63,7 @@ throws SQLException
 	map.put("equeries", equeries = new EQueriesSchema());
 	map.put("donationids", new DonationidsSchema());
 	map.put("phoneids", new PhoneidsSchema());
+	map.put("meetings", new MeetingsSchema());
 }
 	
 }
