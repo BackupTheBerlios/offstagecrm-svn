@@ -79,40 +79,43 @@ public void initRuntime(FrontApp xfapp) throws Exception
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("editterms", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
-		SchemaBufDbModel tm = new SchemaBufDbModel(
-			fapp.getSchema("termids"), fapp.getDbChange());
-		tm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent)");
-		tm.setOrderClause("firstdate");
-		tm.doSelect(st);
-		
-		StatusPNC panel = new StatusPNC();
-		panel.initRuntime(tm,
- 			new String[] {"Type", "Name", "From", "To (+1)", "Is Current"},
-			new String[] {"termtypeid", "name", "firstdate", "nextdate", "iscurrent"},
-			null, fapp);
-//		JFrame frame = new JFrame();
-		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(ActionPanel.this);
-		JDialog frame = new JDialog(root, true);
-		frame.setSize(500,300);
-		frame.getContentPane().add(panel);
-		fapp.setUserPrefs(frame, "editterms");
-		frame.setVisible(true);
-	}}));
-
 	actionMap.put("editcourses", new CBTask("", "admin", new StRunnable() {
 	public void run(Statement st) throws Exception {
-		CoursesEditor panel = new CoursesEditor();
-		panel.initRuntime(st, fapp);
-		
-		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(ActionPanel.this);
-		JDialog frame = new JDialog(root, true);
-		frame.setSize(500,300);
-		frame.getContentPane().add(panel);
-		fapp.setUserPrefs(frame, "editcourses");
-		frame.setVisible(true);
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.wizard.editcourses.EditCoursesWizard(fapp, st, root);
+		wizard.runWizard();
+//		SchemaBufDbModel tm = new SchemaBufDbModel(
+//			fapp.getSchema("termids"), fapp.getDbChange());
+//		tm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent)");
+//		tm.setOrderClause("firstdate");
+//		tm.doSelect(st);
+//		
+//		StatusPNC panel = new StatusPNC();
+//		panel.initRuntime(tm,
+// 			new String[] {"Type", "Name", "From", "To (+1)", "Is Current"},
+//			new String[] {"termtypeid", "name", "firstdate", "nextdate", "iscurrent"},
+//			null, fapp);
+////		JFrame frame = new JFrame();
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(ActionPanel.this);
+//		JDialog frame = new JDialog(root, true);
+//		frame.setSize(500,300);
+//		frame.getContentPane().add(panel);
+//		fapp.setUserPrefs(frame, "editterms");
+//		frame.setVisible(true);
 	}}));
+
+//	actionMap.put("editcourses", new CBTask("", "admin", new StRunnable() {
+//	public void run(Statement st) throws Exception {
+//		CoursesEditor panel = new CoursesEditor();
+//		panel.initRuntime(st, fapp);
+//		
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(ActionPanel.this);
+//		JDialog frame = new JDialog(root, true);
+//		frame.setSize(500,300);
+//		frame.getContentPane().add(panel);
+//		fapp.setUserPrefs(frame, "editcourses");
+//		frame.setVisible(true);
+//	}}));
 	
 	addListener(this);
 	loadHtml();
