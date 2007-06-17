@@ -31,7 +31,7 @@
                           <Component id="firstname" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="5" pref="5" max="5" attributes="0"/>
                           <Component id="lastname" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="134" max="32767" attributes="0"/>
+                          <EmptySpace pref="113" max="32767" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="lentityid" min="-2" max="-2" attributes="0"/>
@@ -39,7 +39,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="terms" pref="394" max="32767" attributes="0"/>
+                          <Component id="terms" pref="384" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>

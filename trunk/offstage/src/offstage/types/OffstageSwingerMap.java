@@ -11,6 +11,9 @@
 package offstage.types;
 
 import citibob.swing.typed.*;
+import citibob.sql.*;
+import citibob.sql.pgsql.*;
+import citibob.swing.pgsql.*;
 
 /**
  *
@@ -28,6 +31,13 @@ public OffstageSwingerMap(java.util.TimeZone tz) {
 	public Swinger newSwinger(JType sqlType) {
 		return new PhoneSwinger();
 	}});
+
+	// OVERRIDE: SqlTime
+	this.addMaker(SqlTime.class, new SwingerMap.Maker() {
+	public Swinger newSwinger(JType sqlType) {
+		return new SqlTimeSwinger((SqlTime)sqlType, "HH:mm");
+	}});
+	
 }
 	
 }

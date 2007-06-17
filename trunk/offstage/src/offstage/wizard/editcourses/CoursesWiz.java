@@ -50,16 +50,15 @@ FrontApp fapp;
 	    public void propertyChange(PropertyChangeEvent evt) {
 			fapp.runApp(new StRunnable() {
 			public void run(Statement st) throws Exception {
-				coursesSb.doUpdate(st);
-				coursesSb.setKey((Integer)terms.getValue());
-				coursesSb.doSelect(st);
+				termChanged(st);
 			}});
 		}});
 		
 		// Set up courses editor
 		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
 			"termid", fapp.getDbChange());
-		terms.setSelectedIndex(0);		// Should throw a value changed event
+		termChanged(xst);
+//		terms.setSelectedIndex(0);		// Should throw a value changed event
 		courses.setModelU(coursesSb.getSchemaBuf(),
 			new String[] {"Name", "Day", "Start", "End", "Enroll Limit"},
 			new String[] {"name", "dayofweek", "tstart", "tnext", "enrolllimit"},
@@ -77,9 +76,9 @@ FrontApp fapp;
 		KeyedModel dkm = new DayOfWeekKeyedModel();
 		courses.setRenderEditU("dayofweek", new KeyedRenderEdit(dkm));
 
-		Swinger swing = new SqlTimeSwinger(true, "HH:mm");
-		courses.setRenderEditU("tstart", swing);
-		courses.setRenderEditU("tnext", swing);
+//		Swinger swing = new SqlTimeSwinger(true, "HH:mm");
+//		courses.setRenderEditU("tstart", swing);
+//		courses.setRenderEditU("tnext", swing);
 		
 //		KeyedRenderEdit tkre = new KeyedRenderEdit(new TimeSKeyedModel(7,0, 23,0, 15*60));
 //		courses.setRenderEditU("tstart_s", tkre);
@@ -89,6 +88,13 @@ FrontApp fapp;
 		if (courses.getModelU().getRowCount() > 0) courses.setRowSelectionInterval(0,0);
 
 	}
+
+void termChanged(Statement st) throws SQLException
+{
+	coursesSb.doUpdate(st);
+	coursesSb.setKey((Integer)terms.getValue());
+	coursesSb.doSelect(st);
+}
 	
 	/** After the Wiz is done running, report its output into a Map. */
 	public void getAllValues(java.util.Map map)

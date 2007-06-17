@@ -71,6 +71,7 @@ public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
 		EClause clause = (EClause)ii.next();
 		List elements = clause.elements;
+		if (elements.size() == 0) continue;
 		StringBuffer ewhere = null;
 		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
 			Element e = (Element)jj.next();

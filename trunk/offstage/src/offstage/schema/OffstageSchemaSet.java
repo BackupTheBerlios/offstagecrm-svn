@@ -64,6 +64,7 @@ throws SQLException
 	map.put("donationids", new DonationidsSchema());
 	map.put("phoneids", new PhoneidsSchema());
 	map.put("meetings", new MeetingsSchema());
+	map.put("enrollments", new EnrollmentsSchema(st, change, tz));
 }
 	
 }
