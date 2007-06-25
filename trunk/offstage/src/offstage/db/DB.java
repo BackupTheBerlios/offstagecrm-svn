@@ -339,6 +339,35 @@ System.out.println(sql);
 //	rs.close();
 }
 // -------------------------------------------------------------------------------
+public static String sql_entities_namesByIDList2(String idSql, String orderBy)
+throws SQLException
+{
+	if (orderBy == null) orderBy = "relation, name";
+	String sql =
+		" create temporary table _ids (id int); delete from _ids;\n" +
+
+		" delete from _ids;\n" +
+
+		" insert into _ids (id) " + idSql + ";\n" +
+		
+		" select p.entityid, 'persons' as relation," +
+		" (case when lastname is null then '' else lastname || ', ' end ||" +
+		" case when firstname is null then '' else firstname || ' ' end ||" +
+		" case when middlename is null then '' else middlename end ||" +
+		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
+		" , p.entityid = p.primaryentityid as isprimary" +
+		", p.city, p.state, p.occupation, p.email" +
+		" from persons p, _ids" +
+		" where p.entityid = _ids.id" +
+		" ) order by " + orderBy + ";\n" +
+		
+		" drop table _ids";
+	return sql;
+//System.out.println(sql);
+//	ResultSet rs = st.executeQuery(sql);
+//	return rs;
+}
+// -------------------------------------------------------------------------------
 public static void w_meetings_autofill(Statement st, int courseid, TimeZone tz)
 throws SQLException
 {

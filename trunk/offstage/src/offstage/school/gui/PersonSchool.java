@@ -49,6 +49,9 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 	this.fapp = xfapp;
 	this.entityid = entityid;
 	
+	// Make sure we have a student record
+	SchoolDB.w_students_create(st, entityid);
+	
 	// Read person info
 	ResultSet rs = st.executeQuery("select * from persons where entityid = " + SqlInteger.sql(entityid));
 	rs.next();
@@ -72,6 +75,7 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 			new TableSpec(fapp.getSchema("enrollments")),
 			new TableSpec(fapp.getSchema("courseids"))
 		});
+//	enrolledDb.s
 	enrolledDb.setOrderClause("courseids_dayofweek, courseids_tstart, courseids_name");
 	enrollments.setModelU(enrolledDb.getTableModel(),
 		new String[] {"Course", "Day", "Start", "Finish",
@@ -93,7 +97,7 @@ void termChanged(Statement st) throws SQLException
 	String stermid = SqlInteger.sql((Integer)terms.getValue());
 	// Populate student's enrollment for this term
 	enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
-		" and courseids.termid = " + stermid);
+		" and courseids.termid = " + stermid + " and enrollments.entityid = " + entityid);
 	enrolledDb.doSelect(st);
 
 	// Populate available courses for adding
@@ -334,6 +338,9 @@ public void refreshEnroll(Statement st) throws SQLException
 		public void run(Statement st) throws Exception {
 			enrolledDb.doUpdate(st);
 			enrolledDb.doSelect(st);
+			
+			int termid = (Integer)terms.getValue();
+			SchoolDB.w_tuitiontrans_calcTuition(st, termid, entityid);
 		}});
 	}//GEN-LAST:event_bSaveActionPerformed
 	

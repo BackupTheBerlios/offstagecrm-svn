@@ -48,5 +48,15 @@ public void initRuntime(CitibobTableModel family)
 		new String[] {"name"}, new boolean[] {false});
 	setModel(model);
 }
-	
+
+//public Component prepareRenderer(TableCellRenderer renderer,
+//								 int rowIndex, int vColIndex) {
+//	Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
+//	if (c instanceof JComponent) {
+//		JComponent jc = (JComponent)c;
+//		jc.setToolTipText((String)getValueAt(rowIndex, vColIndex));
+//	}
+//	return c;
+//}
+
 }
