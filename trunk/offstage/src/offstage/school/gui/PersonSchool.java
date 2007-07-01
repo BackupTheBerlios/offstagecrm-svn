@@ -60,13 +60,15 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid, java.awt.Win
 	// Make sure we have a school record
 	SchoolDB.w_students_create(st, entityid);
 
+	lAdult.initRuntime(fapp, root);
+
 	// Bind widgets to the school record
 	entitiesSchoolDb = new IntKeyedDbModel(fapp.getSchema("entities_school"), "entityid");
-	TypedWidgetBinder.bindRecursive(this,
-		new SchemaBufRowModel(entitiesSchoolDb.getSchemaBuf()),
-		fapp.getSwingerMap());
+	entitiesSchoolDb.setKey(entityid);
+	SchemaBufRowModel rowModel = new SchemaBufRowModel(entitiesSchoolDb.getSchemaBuf());
+	TypedWidgetBinder.bindRecursive(this, rowModel, fapp.getSwingerMap());
 	entitiesSchoolDb.doSelect(st);
-	lAdult.initRuntime(fapp, root);
+	rowModel.setCurRow(0);	// Must be done after above doSelect() this is cumbersome.
 
 	// Read person info
 	ResultSet rs = st.executeQuery(

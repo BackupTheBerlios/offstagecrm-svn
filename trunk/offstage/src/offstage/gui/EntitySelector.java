@@ -119,7 +119,7 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 		new boolean[] {false},
 		app.getSwingerMap(), app.getSFormatterMap());
 	searchResultsTable.setValueColU("entityid");
-	super.subTypedWidget = searchResultsTable;
+	super.setSubWidget(searchResultsTable);
 
 	
 	// Pressing ENTER will initiate search.
@@ -143,6 +143,12 @@ public void runSearch() {
 public JTypedSelectTable getSearchTable()
 	{ return searchResultsTable; }
 // ----------------------------------------------------------------------
+
+public void requestTextFocus()
+{
+	searchWord.setText("");
+	searchWord.requestFocus();
+}
 
 /** This method is called from within the constructor to
 	 * initialize the form.

@@ -48,41 +48,25 @@ public class EntityIDLabel extends JTypedEditableLabel
 public EntityIDLabel() {}
 
 App app;
-java.awt.Window root;
-EntitySelector panel;
+EntitySelector sel;
 
 public void setJType(Swinger swing) {}
 
 public void initRuntime(App app, java.awt.Window root)
 {
 	this.app = app;
-	this.root = root;
 	super.setJType(new SqlInteger(), new EntityIDFormatter(app.getPool()));
-
-
-	panel = new EntitySelector();
-	panel.initRuntime(app);
-
+	sel = new EntitySelector();
+	sel.initRuntime(app);
+	super.setPopupWidget(sel);
 }
 
-public Object selectValue()
+protected void showPopup()
 {
-	JDialog frame;
-
-	// Initialize our selector frame to pop up as needed
-	if (root instanceof Dialog) frame = new javax.swing.JDialog((Dialog)root);
-	else frame = new JDialog((Frame)root);
-
-	frame.getContentPane().add(panel);
-	frame.setSize(200,400);
-	frame.pack();
-	frame.setVisible(true);
-	return panel.getValue();
+	sel.setValue(null);
+	super.showPopup();
+	sel.requestTextFocus();
 }
-
-
-
-
 // =======================================================
 static class EntityIDFormatter extends DBFormatter
 {
@@ -93,10 +77,16 @@ public EntityIDFormatter(ConnPool pool)
 public String valueToString(Statement st, Object value)
 throws java.sql.SQLException
 {
-	return SQL.readString(st,
-		" select firstname + ' ' + lastname + " +
+	String s = SQL.readString(st,
+		" select " +
+			" (case when firstname is null then '' else firstname || ' ' end ||" +
+			" case when middlename is null then '' else middlename || ' ' end ||" +
+			" case when lastname is null then '' else lastname end" +
+//			" case when orgname is null then '' else ' (' || orgname || ')' end" +
+			" ) as name" +
 		" from entities" +
 		" where entityid = " + SqlInteger.sql((Integer)value));
+	return s;
 }
 
 }
