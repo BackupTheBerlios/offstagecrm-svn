@@ -49,8 +49,6 @@ citibob.app.App app;
 /** Creates new form SimpleSearchPanel */
 public EntitySelector() {
 	initComponents();
-
-
 }
 public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel dm)
 {
