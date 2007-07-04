@@ -50,12 +50,16 @@ public EntityIDLabel() {}
 App app;
 EntitySelector sel;
 
-public void setJType(Swinger swing) {}
+public void setJType(Swinger swing)
+{
+	super.setJType(swing.getJType(), new EntityIDFormatter(app.getPool()));
+	super.setNullText("<No Person>");
+}
 
-public void initRuntime(App app, java.awt.Window root)
+public void initRuntime(App app)
 {
 	this.app = app;
-	super.setJType(new SqlInteger(), new EntityIDFormatter(app.getPool()));
+//	super.setJType(new SqlInteger(), ));
 	sel = new EntitySelector();
 	sel.initRuntime(app);
 	super.setPopupWidget(sel);
@@ -72,7 +76,10 @@ static class EntityIDFormatter extends DBFormatter
 {
 
 public EntityIDFormatter(ConnPool pool)
-{ super(pool); }
+{
+	super(pool);
+//	nullText = "<No Person Selected>";
+}
 
 public String valueToString(Statement st, Object value)
 throws java.sql.SQLException

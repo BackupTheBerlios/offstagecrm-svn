@@ -168,8 +168,8 @@ FrontApp app;
 	app.runGui(this, new StRunnable() {
 	public void run(Statement st) throws Exception {
 		PersonSchool ps = new PersonSchool();
-		java.awt.Window root = (java.awt.Window)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
-		ps.initRuntime(app, st, model.getEntityId(), root);
+//		java.awt.Window root = (java.awt.Window)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
+		ps.initRuntime(app, st, model.getEntityId());
 		citibob.gui.GuiUtil.showJPanel(EditorPanel.this, ps, app,
 			"School Info for Person", "personschool", true);
 	}});

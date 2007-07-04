@@ -235,6 +235,14 @@ public void requestTextFocus()
     private citibob.swing.typed.JTypedSelectTable searchResultsTable;
     private javax.swing.JTextField searchWord;
     // End of variables declaration//GEN-END:variables
+// ===========================================================
+///** Pass along change in value from underlying typed widget --- but only
+// if new value is non-null.   This widget can onl*/
+//public void propertyChange(java.beans.PropertyChangeEvent evt) {
+//	Object newval = evt.getNewValue();
+//	firePropertyChange("value", evt.getOldValue(), newval);
+//}	
+// ===========================================================
 
 	
 public static void main(String[] args) throws Exception
