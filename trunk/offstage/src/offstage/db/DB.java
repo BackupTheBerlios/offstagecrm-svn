@@ -368,6 +368,40 @@ throws SQLException
 //	return rs;
 }
 // -------------------------------------------------------------------------------
+public static double r_acct_balance(Statement st, int entityid, int actypeid)
+throws SQLException
+{
+	String sql;
+	double bal = 0;
+	
+	// Figure out latest balance
+	sql =
+		" select dtime, bal from acbal" +
+		" where entityid = " + SqlInteger.sql(entityid) +
+		" and actypeid = " + SqlInteger.sql(actypeid) +
+		" order by dtime desc";
+	ResultSet rs = st.executeQuery(sql);
+	String sdtime = null;
+	if (rs.next()) {
+		bal = rs.getDouble("bal");
+		sdtime = rs.getString("dtime");
+	}
+	rs.close();
+	
+	// Get transactions since then
+	sql =
+		" select sum(amount) from actrans" +
+		" where entityid = " + SqlInteger.sql(entityid) +
+		" and actypeid = " + SqlInteger.sql(actypeid) +
+		(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
+	rs = st.executeQuery(sql);
+	rs.next();
+	bal += rs.getDouble(1);
+	rs.close();
+	
+	return bal;
+}
+// -------------------------------------------------------------------------------
 public static void w_meetings_autofill(Statement st, int courseid, TimeZone tz)
 throws SQLException
 {

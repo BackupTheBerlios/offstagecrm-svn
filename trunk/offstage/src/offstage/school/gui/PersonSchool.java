@@ -42,6 +42,7 @@ int entityid;
 JoinedSchemaBufDbModel enrolledDb;
 IntKeyedDbModel entitiesSchoolDb;
 IntKeyedDbModel actransDb;
+int actypeid = ActransSchema.AC_SCHOOL;
 
 	/** Creates new form PersonSchool */
 	public PersonSchool()
@@ -49,10 +50,6 @@ IntKeyedDbModel actransDb;
 		initComponents();
 	}
 
-void setAdultID(int adultid)
-{
-
-}
 
 	
 public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLException
@@ -66,10 +63,39 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 
 	lAdult.initRuntime(fapp);
 
+	// Set up transactions table
+	actransDb = new IntKeyedDbModel(fapp.getSchema("actrans"), "entityid");
+	actransDb.setOrderClause("dtime desc");
+//	actransDb.setWhereClause("actypeid = (select actypeid from actypes where name = 'school')");
+	actransDb.setWhereClause("actypeid = " + SqlInteger.sql(actypeid));
+	trans.setModelU(actransDb.getSchemaBuf(),
+		new String[] {"Type", "Date", "Amount", "Description"},
+		new String[] {"tableoid", "dtime", "amount", "description"},
+		new String[] {null, null, null, "description"},
+		new boolean[] {false, false, false, false},
+		fapp.getSwingerMap(), fapp.getSFormatterMap());
+	
 	// Bind widgets to the school record
 	entitiesSchoolDb = new IntKeyedDbModel(fapp.getSchema("entities_school"), "entityid");
 	entitiesSchoolDb.setKey(entityid);
-	SchemaBufRowModel rowModel = new SchemaBufRowModel(entitiesSchoolDb.getSchemaBuf());
+	final SchemaBufRowModel rowModel = new SchemaBufRowModel(entitiesSchoolDb.getSchemaBuf());
+	rowModel.addColListener(rowModel.findColumn("adultid"),
+	new citibob.swing.RowModel.ColAdapter() {
+		public void valueChanged(final int col) {
+			if (rowModel.get(col) == null) return;
+			fapp.runApp(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				adultidChanged(st, (Integer)rowModel.get(col));
+			}});
+		}
+		public void curRowChanged(final int col) {
+			if (rowModel.get(col) == null) return;
+			fapp.runApp(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				adultidChanged(st, (Integer)rowModel.get(col));
+			}});
+		}
+	});
 	TypedWidgetBinder.bindRecursive(this, rowModel, fapp.getSwingerMap());
 	entitiesSchoolDb.doSelect(st);
 	rowModel.setCurRow(0);	// Must be done after above doSelect() this is cumbersome.
@@ -117,27 +143,26 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 			true, true, true, false}, fapp.getSwingerMap());
 	enrollments.setRenderEditU("courseids_dayofweek", new KeyedRenderEdit(new DayOfWeekKeyedModel()));
 	enrolledDb.doSelect(st);
-
-	// Set up transactions table
-	actransDb = new IntKeyedDbModel(fapp.getSchema("actrans"), "entityid");
-	actransDb.setOrderClause("dtime desc");
-	actransDb.setWhereClause("actypeid = (select actypeid from actypes where name = 'school')");
-	trans.setModelU(actransDb.getSchemaBuf(),
-		new String[] {"Type", "Date", "Amount", "Description"},
-		new String[] {"tableoid", "dtime", "amount", "description"},
-		new String[] {null, null, null, "description"},
-		new boolean[] {false, false, false, false},
-		fapp.getSwingerMap(), fapp.getSFormatterMap());
-	actransDb.setKey(entityid);
-	actransDb.doSelect(st);
-
+	
 	// Set up dropdown
 	ActransSchema schema = (ActransSchema)fapp.getSchema("actrans");
 	translist.setKeyedModel(schema.tableKmodel);
 	
+	
 //	new JoinedSchemaBufDbModel(fapp.getDbChange(), specs);
 //	terms.setSelectedIndex(0);		// Should throw a value changed event
 	termChanged(st);
+}
+
+void adultidChanged(Statement st, int adultid) throws SQLException
+{
+	actransDb.setKey(adultid);
+	actransDb.doSelect(st);
+
+	// Set up account balance
+	acbal.setJType(new JavaJType(Double.class),
+		new FormatFormatter(java.text.NumberFormat.getCurrencyInstance()));
+	acbal.setValue(new Double(offstage.db.DB.r_acct_balance(st, adultid, actypeid)));	
 }
 
 void termChanged(Statement st) throws SQLException
@@ -168,6 +193,8 @@ public void refreshEnroll(Statement st) throws SQLException
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
+        java.awt.GridBagConstraints gridBagConstraints;
+
         jPanel3 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
@@ -195,7 +222,6 @@ public void refreshEnroll(Statement st) throws SQLException
         jLabel5 = new javax.swing.JLabel();
         lAdult = new offstage.gui.EntityIDLabel();
         jPanel7 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
         GroupScrollPanel1 = new javax.swing.JScrollPane();
         trans = new citibob.jschema.swing.StatusTable();
         controller1 = new javax.swing.JPanel();
@@ -203,6 +229,10 @@ public void refreshEnroll(Statement st) throws SQLException
         jPanel8 = new javax.swing.JPanel();
         addTransaction = new javax.swing.JButton();
         delTransaction = new javax.swing.JButton();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        acbal = new citibob.swing.typed.JTypedLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -368,9 +398,6 @@ public void refreshEnroll(Statement st) throws SQLException
 
         jPanel7.setLayout(new java.awt.BorderLayout());
 
-        jLabel6.setText("Account History");
-        jPanel7.add(jLabel6, java.awt.BorderLayout.NORTH);
-
         trans.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
@@ -418,6 +445,31 @@ public void refreshEnroll(Statement st) throws SQLException
 
         jPanel7.add(controller1, java.awt.BorderLayout.SOUTH);
 
+        jPanel9.setLayout(new java.awt.GridBagLayout());
+
+        jLabel6.setText("Account History");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
+        jPanel9.add(jLabel6, gridBagConstraints);
+
+        jLabel7.setText("Balance: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel9.add(jLabel7, gridBagConstraints);
+
+        acbal.setText("2500");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel9.add(acbal, gridBagConstraints);
+
+        jPanel7.add(jPanel9, java.awt.BorderLayout.NORTH);
+
         jSplitPane1.setRightComponent(jPanel7);
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
@@ -440,6 +492,7 @@ public void refreshEnroll(Statement st) throws SQLException
 					wizard.runWizard("cashpayment");
 				break;
 			}
+			actransDb.doSelect(st);
 		}});
 	}//GEN-LAST:event_addTransactionActionPerformed
 
@@ -504,6 +557,7 @@ public void refreshEnroll(Statement st) throws SQLException
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane GroupScrollPanel;
     private javax.swing.JScrollPane GroupScrollPanel1;
+    private citibob.swing.typed.JTypedLabel acbal;
     private javax.swing.JButton addEnrollment;
     private javax.swing.JButton addTransaction;
     private javax.swing.JButton bSave;
@@ -521,6 +575,7 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -529,6 +584,7 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar2;
     private offstage.gui.EntityIDLabel lAdult;

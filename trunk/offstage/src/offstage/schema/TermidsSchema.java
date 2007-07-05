@@ -42,6 +42,7 @@ throws SQLException{
 //		new Column(new SqlDate(), "nextdate", false)
 		new ColumnDefaultNow(new SqlDate(tz, false), "firstdate", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "nextdate", false),
+		new ColumnDefaultNow(new SqlTimestamp("GMT", true), "billdtime", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "paymentdue", false),
 		new Column(new SqlBool(false), "iscurrent", false)
 	};

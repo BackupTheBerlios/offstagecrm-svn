@@ -28,6 +28,11 @@ import citibob.util.KeyedModel;
 public class ActransSchema extends ConstSchema
 {
 
+public static final int AC_SCHOOL = 1;
+public static final int AC_TICKET = 2;
+public static final int AC_PLEDGE = 3;
+public static final int AC_OPENCLASS = 4;
+	
 public static final int T_ACTRANS = 0;
 public static final int T_INVOICES = 1;
 public static final int T_TUITIONTRANS = 2;

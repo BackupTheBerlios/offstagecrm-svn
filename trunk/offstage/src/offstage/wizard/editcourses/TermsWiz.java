@@ -35,8 +35,8 @@ offstage.FrontApp fapp;
 		
 //		termPNC = new StatusPNC();
 		termPNC.initRuntime(tm,
- 			new String[] {"Type", "Name", "From", "To (+1)", "Pymt Due", "Is Current"},
-			new String[] {"termtypeid", "name", "firstdate", "nextdate", "paymentdue", "iscurrent"},
+ 			new String[] {"Type", "Name", "From", "To (+1)", "Bill as of", "Pymt Due", "Is Current"},
+			new String[] {"termtypeid", "name", "firstdate", "nextdate", "billdtime", "paymentdue", "iscurrent"},
 			null, fapp);
 		if (tm.getSchemaBuf().getRowCount() > 0) termPNC.getTable().setRowSelectionInterval(0,0);
 	}

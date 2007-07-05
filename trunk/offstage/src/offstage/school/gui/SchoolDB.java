@@ -60,6 +60,11 @@ public static void w_tuitiontrans_calcTuition(Statement st, int termid, int stud
 throws SQLException
 {
 	ResultSet rs;
+
+	// Remove previous tuition invoice records, jut for this student
+	st.executeUpdate(
+		" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
+		" and studentid = " + SqlInteger.sql(studentid));
 	
 	// Find responsible paying party for this student
 	int adultid = SQL.readInt(st,
@@ -81,10 +86,11 @@ throws SQLException
 	
 	// Get name of the term
 	rs = st.executeQuery(
-		" select name, paymentdue from termids" +
+		" select name, billdtime, paymentdue from termids" +
 		" where termid = " + SqlInteger.sql(termid));
 	rs.next();
 	String termName = rs.getString("name");
+	String sBillDtime = rs.getString("billdtime");
 	String sPaymentdue = rs.getString("paymentdue");
 	rs.close();
 	
@@ -117,9 +123,10 @@ throws SQLException
 			if (studentid != -1) {
 				// This student's records have ended; write out
 				sqlOut.append(" insert into tuitiontrans" +
-					" (entityid, actypeid, amount, description, ddue, studentid, termid)" +
+					" (entityid, actypeid, dtime, amount, description, ddue, studentid, termid)" +
 					" values (" + SqlInteger.sql(adultid) + ", " +
 					" (select actypeid from actypes where name = 'school'), " +
+					"'" + sBillDtime + "', " +
 					money.sql(tuition) + ", " + SqlString.sql(description) + ", " +
 					"'" + sPaymentdue + "', " +
 					SqlInteger.sql(studentid) + ", " + SqlInteger.sql(termid) + ");\n");
