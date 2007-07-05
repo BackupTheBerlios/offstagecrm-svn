@@ -41,6 +41,7 @@ int entityid;
 //int termid;
 JoinedSchemaBufDbModel enrolledDb;
 IntKeyedDbModel entitiesSchoolDb;
+SchemaBufRowModel entitiesSchoolRm;
 IntKeyedDbModel actransDb;
 int actypeid = ActransSchema.AC_SCHOOL;
 
@@ -78,27 +79,27 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 	// Bind widgets to the school record
 	entitiesSchoolDb = new IntKeyedDbModel(fapp.getSchema("entities_school"), "entityid");
 	entitiesSchoolDb.setKey(entityid);
-	final SchemaBufRowModel rowModel = new SchemaBufRowModel(entitiesSchoolDb.getSchemaBuf());
-	rowModel.addColListener(rowModel.findColumn("adultid"),
+	entitiesSchoolRm = new SchemaBufRowModel(entitiesSchoolDb.getSchemaBuf());
+	entitiesSchoolRm.addColListener(entitiesSchoolRm.findColumn("adultid"),
 	new citibob.swing.RowModel.ColAdapter() {
 		public void valueChanged(final int col) {
-			if (rowModel.get(col) == null) return;
+			if (entitiesSchoolRm.get(col) == null) return;
 			fapp.runApp(new StRunnable() {
 			public void run(Statement st) throws Exception {
-				adultidChanged(st, (Integer)rowModel.get(col));
+				adultidChanged(st, (Integer)entitiesSchoolRm.get(col));
 			}});
 		}
 		public void curRowChanged(final int col) {
-			if (rowModel.get(col) == null) return;
+			if (entitiesSchoolRm.get(col) == null) return;
 			fapp.runApp(new StRunnable() {
 			public void run(Statement st) throws Exception {
-				adultidChanged(st, (Integer)rowModel.get(col));
+				adultidChanged(st, (Integer)entitiesSchoolRm.get(col));
 			}});
 		}
 	});
-	TypedWidgetBinder.bindRecursive(this, rowModel, fapp.getSwingerMap());
+	TypedWidgetBinder.bindRecursive(this, entitiesSchoolRm, fapp.getSwingerMap());
 	entitiesSchoolDb.doSelect(st);
-	rowModel.setCurRow(0);	// Must be done after above doSelect() this is cumbersome.
+	entitiesSchoolRm.setCurRow(0);	// Must be done after above doSelect() this is cumbersome.
 
 	// Read person info
 	ResultSet rs = st.executeQuery(
@@ -219,8 +220,6 @@ public void refreshEnroll(Statement st) throws SQLException
         lentityid = new citibob.swing.typed.JTypedLabel();
         jLabel3 = new javax.swing.JLabel();
         terms = new citibob.swing.typed.JKeyedComboBox();
-        jLabel5 = new javax.swing.JLabel();
-        lAdult = new offstage.gui.EntityIDLabel();
         jPanel7 = new javax.swing.JPanel();
         GroupScrollPanel1 = new javax.swing.JScrollPane();
         trans = new citibob.jschema.swing.StatusTable();
@@ -233,6 +232,8 @@ public void refreshEnroll(Statement st) throws SQLException
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         acbal = new citibob.swing.typed.JTypedLabel();
+        jLabel5 = new javax.swing.JLabel();
+        lAdult = new offstage.gui.EntityIDLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -264,6 +265,7 @@ public void refreshEnroll(Statement st) throws SQLException
 
         add(jPanel3, java.awt.BorderLayout.SOUTH);
 
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jPanel6.setLayout(new java.awt.BorderLayout());
 
         jPanel2.setLayout(new java.awt.BorderLayout());
@@ -341,10 +343,6 @@ public void refreshEnroll(Statement st) throws SQLException
 
         terms.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel5.setText("Adult (payer):");
-
-        lAdult.setColName("adultid");
-
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -352,20 +350,18 @@ public void refreshEnroll(Statement st) throws SQLException
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel1)
-                    .add(jLabel5)
                     .add(jLabel3))
-                .add(13, 13, 13)
+                .add(51, 51, 51)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(firstname, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(5, 5, 5)
                         .add(lastname, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 324, Short.MAX_VALUE)
                         .add(jLabel2)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(lentityid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(terms, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                    .add(lAdult, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE))
+                    .add(terms, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -379,14 +375,7 @@ public void refreshEnroll(Statement st) throws SQLException
                     .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                         .add(lentityid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                         .add(jLabel2)))
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(10, 10, 10)
-                        .add(jLabel5))
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(lAdult, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(41, 41, 41)
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel3)
                     .add(terms, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
@@ -456,17 +445,31 @@ public void refreshEnroll(Statement st) throws SQLException
         jLabel7.setText("Balance: ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         jPanel9.add(jLabel7, gridBagConstraints);
 
         acbal.setText("2500");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         jPanel9.add(acbal, gridBagConstraints);
+
+        jLabel5.setText("Adult (payer): ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanel9.add(jLabel5, gridBagConstraints);
+
+        lAdult.setColName("adultid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        jPanel9.add(lAdult, gridBagConstraints);
 
         jPanel7.add(jPanel9, java.awt.BorderLayout.NORTH);
 
@@ -541,6 +544,10 @@ public void refreshEnroll(Statement st) throws SQLException
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		fapp.runGui(PersonSchool.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
+			int col = entitiesSchoolRm.findColumn("adultid");
+			Integer Oldadultid = (Integer)entitiesSchoolRm.getOrigValue(col);
+			Integer Adultid = (Integer)entitiesSchoolRm.get(col);
+
 			entitiesSchoolDb.doUpdate(st);
 			entitiesSchoolDb.doSelect(st);
 			enrolledDb.doUpdate(st);
@@ -548,7 +555,9 @@ public void refreshEnroll(Statement st) throws SQLException
 
 			actransDb.doUpdate(st);			
 			int termid = (Integer)terms.getValue();
-			SchoolDB.w_tuitiontrans_calcTuition(st, termid, entityid);
+//			SchoolDB.w_tuitiontrans_calcTuition(st, termid, entityid);
+			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(st, termid, Oldadultid);
+			if (Adultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(st, termid, Adultid);
 			actransDb.doSelect(st);
 		}});
 	}//GEN-LAST:event_bSaveActionPerformed

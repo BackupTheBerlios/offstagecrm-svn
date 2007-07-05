@@ -30,7 +30,7 @@ public class EntitiesSchoolSchema extends ConstSchema
 public EntitiesSchoolSchema(Statement st, DbChangeModel change)
 throws SQLException
 {
-	table = "entities";
+	table = "entities_school";
 
 //	KeyedModel kmodel = new DbKeyedModel(st, change,
 //		"relprimarytypes", "relprimarytypeid", "name", "name");

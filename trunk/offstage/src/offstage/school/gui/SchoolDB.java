@@ -55,24 +55,37 @@ public static void w_students_create(Statement st, int studentid)
 	}	// ignore if already in DB
 }
 
-/** Recalculate tuition for adultid associated with this student. */
-public static void w_tuitiontrans_calcTuition(Statement st, int termid, int studentid)
-throws SQLException
-{
-	ResultSet rs;
-
-	// Remove previous tuition invoice records, jut for this student
-	st.executeUpdate(
-		" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
-		" and studentid = " + SqlInteger.sql(studentid));
-	
-	// Find responsible paying party for this student
-	int adultid = SQL.readInt(st,
-		" select adultid from entities_school" +
-		" where entityid = " + SqlInteger.sql(studentid));
-	
-	w_tuitiontrans_calcTuitionByAdult(st, termid, adultid);
-}
+///** Recalculate tuition for adultid associated with this student. */
+//public static void w_tuitiontrans_calcTuition(Statement st, int termid, int studentid)
+//throws SQLException
+//{
+//	ResultSet rs;
+//
+//	// Find responsible paying party for this student
+//	int adultid = SQL.readInt(st,
+//		" select adultid from entities_school" +
+//		" where entityid = " + SqlInteger.sql(studentid));
+//	
+//	// Find old responsible paying party
+//	int oldadultid = -1;
+//	try {
+//		oldadultid = SQL.readInt(st,
+//			" select distinct entityid from tuitiontrans where termid = " + SqlInteger.sql(termid) +
+//			" and studentid = " + SqlInteger.sql(studentid));
+////		w_tuitiontrans_calcTuitionByAdult(st, termid, oldadultid);
+//	} catch(SQLException e) {}	// There is no old adultid; it's OK.
+//
+//	// Recalculate tuition on both accounts
+//	if (oldadultid >= 0 && oldadultid != adultid) w_tuitiontrans_calcTuitionByAdult(st, termid, oldadultid);
+//	w_tuitiontrans_calcTuitionByAdult(st, termid, adultid);
+//
+////	// Remove previous tuition invoice records, just for this student
+////	st.executeUpdate(
+////		" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
+////		" and studentid = " + SqlInteger.sql(studentid));
+//	
+//	
+//}
 
 public static void w_tuitiontrans_calcTuitionByAdult(Statement st, int termid, int adultid)
 throws SQLException
@@ -97,9 +110,10 @@ throws SQLException
 	// Remove previous tuition invoice records
 	sqlOut.append(
 		" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
-		" and studentid in" +
-		" (select studentid from entities_school" +
-		"  where adultid = " + SqlInteger.sql(adultid) + ");\n");
+		" and entityid = " + SqlInteger.sql(adultid) + ";\n");
+//		" and studentid in" +
+//		" (select studentid from entities_school" +
+//		"  where adultid = " + SqlInteger.sql(adultid) + ");\n");
 	
 	// Recalculate all tuition records for that paying party
 	sql =
@@ -133,10 +147,12 @@ throws SQLException
 			}
 			
 			// Make up description for this next student record.
-			studentid = rs.getInt("studentid");
-			description = termName + ": Tuition for " +
-				rs.getString("firstname") + " " + rs.getString("lastname");
-			tuition = 0;
+			if (hasNext) {
+				studentid = rs.getInt("studentid");
+				description = termName + ": Tuition for " +
+					rs.getString("firstname") + " " + rs.getString("lastname");
+				tuition = 0;
+			}
 		}
 		if (!hasNext) break;
 System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
@@ -158,11 +174,11 @@ System.out.println(sqlOut);
 	st.executeUpdate(sqlOut.toString());
 }
 // -------------------------------------------------------------------------------
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	w_tuitiontrans_calcTuition(st, 8, 12633);
-
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	Statement st = pool.checkout().createStatement();
+//	w_tuitiontrans_calcTuition(st, 8, 12633);
+//
+//}
 }
