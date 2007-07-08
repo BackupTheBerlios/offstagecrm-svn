@@ -58,26 +58,47 @@ int xentityid, int xactypeid)
 //		if (s != null) state = s;
 //	}
 //});
-//// ---------------------------------------------
-//addState(new State("person", "init", null) {
+// ---------------------------------------------
 addState(new State("cashpayment", null, null) {
 	public HtmlWiz newWiz() throws Exception
 		{ return new CashpaymentWiz(frame, fapp); }
 	public void process() throws Exception
 	{
-		Schema schema = fapp.getSchema("actrans");
-		boolean hasDtime = (v.get("dtime") != null);
-		String sql =
-			" insert into cashpayments (entityid, actypeid," +
-			(hasDtime ? "dtime, " : "") +
-			"amount, description) values (" +
-			SqlInteger.sql(entityid) + ", " + SqlInteger.sql(actypeid) + ", " +
-			(hasDtime ? vsql("dtime", schema) + ", " : "") +
-			vsql(new Integer(-((Number)v.get("amount")).intValue()), "amount", schema) + ", " +
-			vsql("description", schema) + ")";
-		st.executeUpdate(sql);
+		double namount = ((Number)v.get("namount")).doubleValue();
+		v.put("amount", new Double(-namount));
+		ConsSqlQuery sql = newInsertQuery("cashpayments");
+		sql.addColumn("entityid", SqlInteger.sql(entityid));
+		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+		st.executeUpdate(sql.getSql());
 	}
 });
+addState(new State("checkpayment", null, null) {
+	public HtmlWiz newWiz() throws Exception
+		{ return new CheckpaymentWiz(frame, fapp); }
+	public void process() throws Exception
+	{
+		double namount = ((Number)v.get("namount")).doubleValue();
+		v.put("amount", new Double(-namount));
+		ConsSqlQuery sql = newInsertQuery("checkpayments");
+		sql.addColumn("entityid", SqlInteger.sql(entityid));
+		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+		st.executeUpdate(sql.getSql());
+	}
+});
+addState(new State("ccpayment", null, null) {
+	public HtmlWiz newWiz() throws Exception
+		{ return new CcpaymentWiz(frame, fapp); }
+	public void process() throws Exception
+	{
+		double namount = ((Number)v.get("namount")).doubleValue();
+		v.put("amount", new Double(-namount));
+		ConsSqlQuery sql = newInsertQuery("ccpayments");
+		sql.addColumn("entityid", SqlInteger.sql(entityid));
+		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+		st.executeUpdate(sql.getSql());
+	}
+});
+// ---------------------------------------------
 }
 // ---------------------------------------------
 

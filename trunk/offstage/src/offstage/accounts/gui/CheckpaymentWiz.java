@@ -37,12 +37,12 @@ throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, "New Check Payment", app.getSwingerMap(), true);
 	
-	Schema schema = app.getSchema("actrans");
+	Schema schema = app.getSchema("checkpayments");
 //	SwingerMap swingers = app.getSwingerMap();
 	
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addTextField("amount", schema);
+	addWidget("namount", "amount", schema);
 	addTextField("description", schema);
 	addTextField("name", schema);
 	addTextField("checknumber", schema);

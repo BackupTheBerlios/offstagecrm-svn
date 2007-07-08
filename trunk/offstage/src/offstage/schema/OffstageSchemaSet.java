@@ -67,6 +67,9 @@ throws SQLException
 	map.put("enrollments", new EnrollmentsSchema(st, change, tz));
 	map.put("entities_school", new EntitiesSchoolSchema(st, change));
 	map.put("actrans", new ActransSchema(st, change));
+	map.put("cashpayments", new CashpaymentsSchema(st, change));
+	map.put("checkpayments", new CheckpaymentsSchema(st, change));
+	map.put("ccpayments", new CcpaymentsSchema(st, change));
 }
 	
 }

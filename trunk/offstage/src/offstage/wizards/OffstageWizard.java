@@ -60,5 +60,12 @@ public Wiz createWiz(State state) throws Exception
 		wizardPref = fapp.userRoot().node("wizard").node(wizardName);
 		this.fapp = fapp;
     }
+	
+/** Creates an INSERT query from the values of the HashMap v, and the schema. */
+protected citibob.sql.ConsSqlQuery newInsertQuery(String maintable)
+{
+	return citibob.sql.SQL.newInsertQuery(maintable, v, fapp.getSchema(maintable));
+	
+}
 
 }

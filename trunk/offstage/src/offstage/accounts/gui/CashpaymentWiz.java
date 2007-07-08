@@ -42,7 +42,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addTextField("amount", schema);
+	addWidget("namount", "amount", schema);		// Negative of amount...
 	addTextField("description", schema);
 	addWidget("dtime", schema).setValue(null);
 	loadHtml();

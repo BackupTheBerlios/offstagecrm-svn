@@ -145,9 +145,9 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 	enrollments.setRenderEditU("courseids_dayofweek", new KeyedRenderEdit(new DayOfWeekKeyedModel()));
 	enrolledDb.doSelect(st);
 	
-	// Set up dropdown
-	ActransSchema schema = (ActransSchema)fapp.getSchema("actrans");
-	translist.setKeyedModel(schema.tableKmodel);
+//	// Set up dropdown
+//	ActransSchema schema = (ActransSchema)fapp.getSchema("actrans");
+//	translist.setKeyedModel(schema.tableKmodel);
 	
 	
 //	new JoinedSchemaBufDbModel(fapp.getDbChange(), specs);
@@ -196,10 +196,6 @@ public void refreshEnroll(Statement st) throws SQLException
     {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel3 = new javax.swing.JPanel();
-        jToolBar2 = new javax.swing.JToolBar();
-        bSave = new javax.swing.JButton();
-        bUndo = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel6 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -220,14 +216,20 @@ public void refreshEnroll(Statement st) throws SQLException
         lentityid = new citibob.swing.typed.JTypedLabel();
         jLabel3 = new javax.swing.JLabel();
         terms = new citibob.swing.typed.JKeyedComboBox();
+        jPanel3 = new javax.swing.JPanel();
+        jToolBar2 = new javax.swing.JToolBar();
+        bSave = new javax.swing.JButton();
+        bUndo = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         GroupScrollPanel1 = new javax.swing.JScrollPane();
         trans = new citibob.jschema.swing.StatusTable();
         controller1 = new javax.swing.JPanel();
-        translist = new citibob.swing.typed.JKeyedComboBox();
         jPanel8 = new javax.swing.JPanel();
-        addTransaction = new javax.swing.JButton();
-        delTransaction = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        bCash = new javax.swing.JButton();
+        bCheck = new javax.swing.JButton();
+        bCc = new javax.swing.JButton();
+        bAdjust = new javax.swing.JButton();
         jPanel9 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -236,34 +238,6 @@ public void refreshEnroll(Statement st) throws SQLException
         lAdult = new offstage.gui.EntityIDLabel();
 
         setLayout(new java.awt.BorderLayout());
-
-        jPanel3.setLayout(new java.awt.BorderLayout());
-
-        bSave.setText("Save");
-        bSave.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bSaveActionPerformed(evt);
-            }
-        });
-
-        jToolBar2.add(bSave);
-
-        bUndo.setText("Undo");
-        bUndo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bUndoActionPerformed(evt);
-            }
-        });
-
-        jToolBar2.add(bUndo);
-
-        jPanel3.add(jToolBar2, java.awt.BorderLayout.CENTER);
-
-        add(jPanel3, java.awt.BorderLayout.SOUTH);
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jPanel6.setLayout(new java.awt.BorderLayout());
@@ -383,6 +357,34 @@ public void refreshEnroll(Statement st) throws SQLException
         );
         jPanel6.add(jPanel1, java.awt.BorderLayout.NORTH);
 
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        bSave.setText("Save");
+        bSave.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bSaveActionPerformed(evt);
+            }
+        });
+
+        jToolBar2.add(bSave);
+
+        bUndo.setText("Undo");
+        bUndo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bUndoActionPerformed(evt);
+            }
+        });
+
+        jToolBar2.add(bUndo);
+
+        jPanel3.add(jToolBar2, java.awt.BorderLayout.CENTER);
+
+        jPanel6.add(jPanel3, java.awt.BorderLayout.SOUTH);
+
         jSplitPane1.setLeftComponent(jPanel6);
 
         jPanel7.setLayout(new java.awt.BorderLayout());
@@ -406,31 +408,56 @@ public void refreshEnroll(Statement st) throws SQLException
 
         controller1.setLayout(new java.awt.BorderLayout());
 
-        controller1.add(translist, java.awt.BorderLayout.CENTER);
+        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        addTransaction.setText("Add");
-        addTransaction.addActionListener(new java.awt.event.ActionListener()
+        jLabel8.setText("Add Transaction:");
+        jPanel8.add(jLabel8);
+
+        bCash.setText("Cash");
+        bCash.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                addTransactionActionPerformed(evt);
+                bCashActionPerformed(evt);
             }
         });
 
-        jPanel8.add(addTransaction);
+        jPanel8.add(bCash);
 
-        delTransaction.setText("Del");
-        delTransaction.addActionListener(new java.awt.event.ActionListener()
+        bCheck.setText("Check");
+        bCheck.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                delTransactionActionPerformed(evt);
+                bCheckActionPerformed(evt);
             }
         });
 
-        jPanel8.add(delTransaction);
+        jPanel8.add(bCheck);
 
-        controller1.add(jPanel8, java.awt.BorderLayout.EAST);
+        bCc.setText("Credit Card");
+        bCc.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bCcActionPerformed(evt);
+            }
+        });
+
+        jPanel8.add(bCc);
+
+        bAdjust.setText("Adjustment");
+        bAdjust.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bAdjustActionPerformed(evt);
+            }
+        });
+
+        jPanel8.add(bAdjust);
+
+        controller1.add(jPanel8, java.awt.BorderLayout.CENTER);
 
         jPanel7.add(controller1, java.awt.BorderLayout.SOUTH);
 
@@ -475,29 +502,52 @@ public void refreshEnroll(Statement st) throws SQLException
 
         jSplitPane1.setRightComponent(jPanel7);
 
-        add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        add(jSplitPane1, java.awt.BorderLayout.EAST);
 
     }// </editor-fold>//GEN-END:initComponents
 
-	private void delTransactionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_delTransactionActionPerformed
-	{//GEN-HEADEREND:event_delTransactionActionPerformed
-// TODO add your handling code here:
-	}//GEN-LAST:event_delTransactionActionPerformed
-
-	private void addTransactionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_addTransactionActionPerformed
-	{//GEN-HEADEREND:event_addTransactionActionPerformed
+	private void bAdjustActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAdjustActionPerformed
+	{//GEN-HEADEREND:event_bAdjustActionPerformed
 		fapp.runGui(PersonSchool.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
-			Wizard wizard = new TransactionWizard(fapp, st, null, entityid, 1);
-			int ttype = (Integer)translist.getValue();
-			switch(ttype) {
-				case ActransSchema.T_CASHPAYMENTS :
-					wizard.runWizard("cashpayment");
-				break;
-			}
+			Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
+			wizard.runWizard("adjustment");
 			actransDb.doSelect(st);
 		}});
-	}//GEN-LAST:event_addTransactionActionPerformed
+// TODO add your handling code here:
+	}//GEN-LAST:event_bAdjustActionPerformed
+
+	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
+	{//GEN-HEADEREND:event_bCcActionPerformed
+		fapp.runGui(PersonSchool.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
+			wizard.runWizard("ccpayment");
+			actransDb.doSelect(st);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bCcActionPerformed
+
+	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
+	{//GEN-HEADEREND:event_bCheckActionPerformed
+		fapp.runGui(PersonSchool.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
+			wizard.runWizard("checkpayment");
+			actransDb.doSelect(st);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bCheckActionPerformed
+
+	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
+	{//GEN-HEADEREND:event_bCashActionPerformed
+		fapp.runGui(PersonSchool.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
+			wizard.runWizard("cashpayment");
+			actransDb.doSelect(st);
+		}});
+	}//GEN-LAST:event_bCashActionPerformed
 
 	private void delEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_delEnrollmentActionPerformed
 	{//GEN-HEADEREND:event_delEnrollmentActionPerformed
@@ -568,14 +618,16 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JScrollPane GroupScrollPanel1;
     private citibob.swing.typed.JTypedLabel acbal;
     private javax.swing.JButton addEnrollment;
-    private javax.swing.JButton addTransaction;
+    private javax.swing.JButton bAdjust;
+    private javax.swing.JButton bCash;
+    private javax.swing.JButton bCc;
+    private javax.swing.JButton bCheck;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
     private javax.swing.JPanel controller;
     private javax.swing.JPanel controller1;
     private citibob.swing.typed.JKeyedComboBox courselist;
     private javax.swing.JButton delEnrollment;
-    private javax.swing.JButton delTransaction;
     private citibob.jschema.swing.StatusTable enrollments;
     private citibob.swing.typed.JTypedLabel firstname;
     private javax.swing.JLabel jLabel1;
@@ -585,6 +637,7 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -601,7 +654,6 @@ public void refreshEnroll(Statement st) throws SQLException
     private citibob.swing.typed.JTypedLabel lentityid;
     private citibob.swing.typed.JKeyedComboBox terms;
     private citibob.jschema.swing.StatusTable trans;
-    private citibob.swing.typed.JKeyedComboBox translist;
     // End of variables declaration//GEN-END:variables
 	
 }
