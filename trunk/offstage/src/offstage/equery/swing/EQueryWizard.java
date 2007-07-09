@@ -9,6 +9,8 @@ package offstage.equery.swing;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
+import citibob.jschema.CSVReportOutput;
+import citibob.jschema.CSVReportOutput;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.*;
 import citibob.wizard.*;
@@ -23,6 +25,7 @@ import citibob.jschema.*;
 import offstage.equery.*;
 import offstage.reports.*;
 import java.io.*;
+import offstage.gui.*;
 
 /**
  *
@@ -128,47 +131,60 @@ addState(new State("reporttype", "editquery", null) {
 	}
 });
 // ---------------------------------------------
+
+
+
+
+
+
 }
 // ==================================================================
 public boolean doDonationReport(String title, String sql) throws Exception
 {
 	DonationReport report = new DonationReport(fapp, sql);
 	report.doSelect(st);
-	String dir = fapp.userRoot().get("saveReportDir", null);
-	JFileChooser chooser = new JFileChooser(dir);
-	chooser.setDialogTitle("Save " + title);
-	chooser.addChoosableFileFilter(
-		new javax.swing.filechooser.FileFilter() {
-		public boolean accept(File file) {
-			String filename = file.getName();
-			return filename.endsWith(".csv");
-		}
-		public String getDescription() {
-			return "*.csv";
-		}
-	});
-	String path = null;
-	String fname = null;
-	for (;;) {
-		chooser.showSaveDialog(frame);
-
-		path = chooser.getCurrentDirectory().getAbsolutePath();
-		if (chooser.getSelectedFile() == null) return false;
-		fname = chooser.getSelectedFile().getPath();
-		if (!fname.endsWith(".csv")) fname = fname + ".csv";
-		File f = new File(fname);
-		if (!f.exists()) break;
-		if (JOptionPane.showConfirmDialog(
-			frame, "The file " + f.getName() + " already exists.\nWould you like to ovewrite it?",
-			"Overwrite File?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) break;
-	}
-	fapp.userRoot().put("saveReportDir", path);
-
-	CSVReportOutput csv = new CSVReportOutput(report.newTableModel(), null, null,
-		fapp.getSFormatterMap());
-	csv.writeReport(new File(fname));
+	OffstageGuiUtil.saveCSVReport(report.newTableModel(), "Save" + title,
+		fapp, frame);
 	return true;
 }
+//		
+//	DonationReport report = new DonationReport(fapp, sql);
+//	report.doSelect(st);	
+//	String dir = fapp.userRoot().get("saveReportDir", null);
+//	JFileChooser chooser = new JFileChooser(dir);
+//	chooser.setDialogTitle("Save " + title);
+//	chooser.addChoosableFileFilter(
+//		new javax.swing.filechooser.FileFilter() {
+//		public boolean accept(File file) {
+//			String filename = file.getName();
+//			return filename.endsWith(".csv");
+//		}
+//		public String getDescription() {
+//			return "*.csv";
+//		}
+//	});
+//	String path = null;
+//	String fname = null;
+//	for (;;) {
+//		chooser.showSaveDialog(frame);
+//
+//		path = chooser.getCurrentDirectory().getAbsolutePath();
+//		if (chooser.getSelectedFile() == null) return false;
+//		fname = chooser.getSelectedFile().getPath();
+//		if (!fname.endsWith(".csv")) fname = fname + ".csv";
+//		File f = new File(fname);
+//		if (!f.exists()) break;
+//		if (JOptionPane.showConfirmDialog(
+//			frame, "The file " + f.getName() + " already exists.\nWould you like to ovewrite it?",
+//			"Overwrite File?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) break;
+//	}
+//	fapp.userRoot().put("saveReportDir", path);
+//
+//	CSVReportOutput csv = new CSVReportOutput(report.newTableModel(), null, null,
+//		fapp.getSFormatterMap());
+//	csv.writeReport(new File(fname));
+//	return true;
+//}
 // ==================================================================
 
 public static void main(String[] args) throws Exception

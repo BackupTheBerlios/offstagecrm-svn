@@ -133,3 +133,20 @@ public void linkSelected(java.net.URL href, String target)
 	fapp.runGui(this, t.getPermissions(), t.getCBRunnable());
 }
 }
+
+
+//public boolean doTicketSalesReport(String title, int groupid) throws Exception
+//{
+//	SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
+//		" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +
+//		" t.numberoftickets,t.payment,tt.tickettype\n" +
+//		" from persons p, ticketeventsales t, tickettypes tt\n" +
+//		" where p.entityid = t.entityid\n" +
+//		" and t.tickettypeid = tt.tickettypeid\n" +
+//		" and t.groupid in (314,315)\n" +
+//		" order by p.lastname,p.firstname\n");
+//	report.executeQuery(st);
+//	OffstageGuiUtil.saveCSVReport(report.newTableModel(), "Save" + title,
+//		fapp, frame);
+//	return true;
+//}
