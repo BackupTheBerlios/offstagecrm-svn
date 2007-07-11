@@ -256,6 +256,9 @@ throws SQLException
 }
 // -------------------------------------------------------------------------------
 /** Counts the number of items in an ID table. */
+//"select entityid from entities where lastname = 'Fischer'"
+//"select e.entityid from entities e, donations d where e.entityid = d.entityid and d.amount > 500"
+
 public static int countIDList(Statement st, String idSql)
 throws SQLException
 {

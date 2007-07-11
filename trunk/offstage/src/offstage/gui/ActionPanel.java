@@ -72,6 +72,13 @@ public void initRuntime(FrontApp xfapp) throws Exception
 		wizard.runWizard();
 	}}));
 
+	actionMap.put("editquery", new CBTask("", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, st, root, "listquery");
+		wizard.runWizard();
+	}}));
+
 	actionMap.put("newcategory", new CBTask("", "admin", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
@@ -135,18 +142,18 @@ public void linkSelected(java.net.URL href, String target)
 }
 
 
-//public boolean doTicketSalesReport(String title, int groupid) throws Exception
-//{
-//	SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
-//		" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +
-//		" t.numberoftickets,t.payment,tt.tickettype\n" +
-//		" from persons p, ticketeventsales t, tickettypes tt\n" +
-//		" where p.entityid = t.entityid\n" +
-//		" and t.tickettypeid = tt.tickettypeid\n" +
-//		" and t.groupid in (314,315)\n" +
-//		" order by p.lastname,p.firstname\n");
-//	report.executeQuery(st);
-//	OffstageGuiUtil.saveCSVReport(report.newTableModel(), "Save" + title,
-//		fapp, frame);
-//	return true;
-//}
+public boolean doTicketSalesReport(String title, int groupid) throws Exception
+{
+	SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
+		" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +
+		" t.numberoftickets,t.payment,tt.tickettype\n" +
+		" from persons p, ticketeventsales t, tickettypes tt\n" +
+		" where p.entityid = t.entityid\n" +
+		" and t.tickettypeid = tt.tickettypeid\n" +
+		" and t.groupid in (314,315)\n" +
+		" order by p.lastname,p.firstname\n");
+	report.executeQuery(st);
+	OffstageGuiUtil.saveCSVReport(report.newTableModel(), "Save" + title,
+		fapp, frame);
+	return true;
+}
