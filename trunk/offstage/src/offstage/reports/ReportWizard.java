@@ -52,7 +52,7 @@ public ReportWizard(offstage.FrontApp xfapp, Statement xst, javax.swing.JFrame x
 // ---------------------------------------------
 addState(new State("ticketparams", null, "editquery") {
 	public Wiz newWiz() throws Exception
-		{ return new TicketParamsWiz(frame); }
+		{ return new TicketParamsWiz(frame, fapp); }
 	public void process() throws Exception
 	{
 		int groupid = v.getInt("groupid");
@@ -212,7 +212,7 @@ public static void main(String[] args) throws Exception
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	Statement st = pool.checkout().createStatement();
 	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new ReportWizard(fapp, st, null, "listquery");
+	Wizard wizard = new ReportWizard(fapp, st, null, "ticketparams");
 	wizard.runWizard();
 	System.exit(0);
 }

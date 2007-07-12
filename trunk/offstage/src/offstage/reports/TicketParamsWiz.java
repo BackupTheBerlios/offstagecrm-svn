@@ -18,6 +18,7 @@ import offstage.types.*;
 import javax.swing.*;
 import offstage.wizards.*;
 import citibob.wizard.*;
+import citibob.app.*;
 
 /**
  *
@@ -28,31 +29,34 @@ public class TicketParamsWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public TicketParamsWiz(java.awt.Frame owner)
+public TicketParamsWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Query", true);
+	super(owner, "New Query", app.getSwingerMap(), true);
 	setSize(600,400);
+	citibob.jschema.Schema schema = app.getSchema("tickets");
+	addWidget("groupid", schema);
+//.getCol("tickettypeid").getType()
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addTextField("queryname", new JStringSwinger());
+//	addTextField("queryname", new JStringSwinger());
 	
 	loadHtml();
 }
 
-
-public static void main(String[] args)
-throws Exception
-{
-	JFrame f = new JFrame();
-	f.setVisible(true);
-	TicketParamsWiz wiz = new TicketParamsWiz(f);
-	wiz.setVisible(true);
-	System.out.println(wiz.getSubmitName());
-	
-	wiz = new TicketParamsWiz(f);
-	wiz.setVisible(true);
-	System.out.println(wiz.getSubmitName());
-	
-	System.exit(0);
-}
+//
+//public static void main(String[] args)
+//throws Exception
+//{
+//	JFrame f = new JFrame();
+//	f.setVisible(true);
+//	TicketParamsWiz wiz = new TicketParamsWiz(f);
+//	wiz.setVisible(true);
+//	System.out.println(wiz.getSubmitName());
+//	
+//	wiz = new TicketParamsWiz(f);
+//	wiz.setVisible(true);
+//	System.out.println(wiz.getSubmitName());
+//	
+//	System.exit(0);
+//}
 }
