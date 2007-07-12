@@ -1,6 +1,6 @@
 /*
-JSchema: library for GUI-based database applications
-This file Copyright (c) 2006-2007 by Robert Fischer
+OffstageArts: Enterprise Database for Arts Organizations
+This file Copyright (c) 2005-2007 by Robert Fischer
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
