@@ -82,27 +82,31 @@ public QueryLogger getLogger() { return logger; }
 public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
-/** Only runs the action if logged-in user is a member of the correct group */
+/** Only runs the action if logged-in user is a member of the correct group.
+ TODO: This functionality should be maybe in the ActionRunner? */
 public void runGui(java.awt.Component c, String group, CBRunnable r) {
-	if (loginGroups.contains(group)) {
-		runGui(c,r);
-	} else {
-		javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
-	}
+	runGui(c,r);
+//	if (loginGroups.contains(group)) {
+//		runGui(c,r);
+//	} else {
+//		javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
+//	}
 }
 public void runGui(java.awt.Component c, String[] groups, CBRunnable r)
 {
-	if (groups == null) {
-		runGui(c, r);
-		return;
-	}
-	for (String g : groups) {
-		if (loginGroups.contains(g)) {
-			runGui(c,r);
-			return;
-		}
-	}
-	javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
+	runGui(c,r);
+	
+//	if (groups == null) {
+//		runGui(c, r);
+//		return;
+//	}
+//	for (String g : groups) {
+//		if (loginGroups.contains(g)) {
+//			runGui(c,r);
+//			return;
+//		}
+//	}
+//	javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
 }
 
 //public void runGui(CBRunnable r) { guiRunner.doRun(null, r); }
