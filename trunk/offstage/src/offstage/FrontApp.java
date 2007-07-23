@@ -35,6 +35,8 @@ import citibob.sql.pgsql.*;
 import offstage.db.*;
 import citibob.jschema.log.*;
 import citibob.swing.prefs.*;
+import java.io.*;
+import offstage.crypt.*;
 
 public class FrontApp extends citibob.app.AbstractApp
 {
@@ -48,6 +50,8 @@ int screen = PEOPLE_SCREEN;
 
 /** Connection to our SQL database. */
 //Connection db;
+Properties props;
+KeyRing keyRing;
 DbChangeModel dbChange;
 ConnPool pool;
 SwingerMap swingerMap;
@@ -75,6 +79,7 @@ public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------
+public Properties getProps() { return props; }
 public TimeZone getTimeZone() { return timeZone; }
 
 public SwingPrefs getSwingPrefs() { return swingPrefs; }
@@ -141,11 +146,52 @@ public java.util.prefs.Preferences systemRoot()
 //	return DBConnection.getConnection();
 //}
 // -------------------------------------------------------
+InputStream openPropFile(String name) throws IOException
+{
+	// First: try loading external file
+	String dir = System.getProperty("user.dir");
+	File f = new File(dir, name);
+	if (f.exists()) return new FileInputStream(f);
+
+	// File doesn't exist; read from inside JAR file instead.
+	Class klass = offstage.config.OffstageVersion.class;
+	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
+	return klass.getClassLoader().getResourceAsStream(resourceName);
+
+}
+Properties loadProps() throws IOException
+{
+	Properties props;
+
+	props = new Properties();
+	InputStream in = openPropFile("app.properties");
+	props.load(in);
+
+
+//	props = new Properties(props);
+//	props.load(openPropFile("site.properties"));
+
+	props = new Properties(props);
+	String os = System.getProperty("os.name");
+	props.load(openPropFile(os + ".properties"));
+
+	return props;
+}
+// -------------------------------------------------------
 public FrontApp(ConnPool pool, javax.swing.text.Document stdoutDoc)
 throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 {
 	Connection dbb = null;
 	Statement st = null;
+
+	props = loadProps();
+
+	// Load the crypto keys
+	File userDir = new File(System.getProperty("user.dir"));
+	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
+	File privDir = new File(userDir, props.getProperty("crypt.privdir")); 
+	keyRing = new KeyRing(pubDir, privDir);
+
 
 	this.mailSender = new citibob.mail.GuiMailSender();
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
