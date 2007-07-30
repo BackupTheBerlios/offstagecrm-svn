@@ -456,6 +456,13 @@ throws SQLException
 //	citibob.sql.SqlQuery.
 	return null;
 }
+// --------------------------------------------------
+/** Re-encrypts all encrypted data in the database, after a master key has been changed. */
+public static void rekeyEncryptedData(Statement st, offstage.crypt.KeyRing kr)
+{
+
+}
+// --------------------------------------------------
 }
 
 

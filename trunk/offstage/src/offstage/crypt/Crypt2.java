@@ -12,7 +12,8 @@ public class Crypt2 {
 
 public static void main (String[] args) throws Exception
 {
-	File keyFile = new File("/export/home/citibob/tmp");
+	File keyFile = new File("/Users/citibob/tmp");
+//	File keyFile = new File("/export/home/citibob/tmp");
 
 	// Set up a KeyStore
 	KeyStore ks = KeyStore.getInstance("JKS");

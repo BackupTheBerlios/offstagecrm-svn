@@ -80,6 +80,7 @@ public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------
 public Properties getProps() { return props; }
+public KeyRing getKeyRing() { return keyRing; }
 public TimeZone getTimeZone() { return timeZone; }
 
 public SwingPrefs getSwingPrefs() { return swingPrefs; }
@@ -179,7 +180,8 @@ Properties loadProps() throws IOException
 }
 // -------------------------------------------------------
 public FrontApp(ConnPool pool, javax.swing.text.Document stdoutDoc)
-throws SQLException, java.io.IOException, javax.mail.internet.AddressException
+throws SQLException, java.io.IOException, javax.mail.internet.AddressException,
+java.security.GeneralSecurityException
 {
 	Connection dbb = null;
 	Statement st = null;
@@ -188,8 +190,14 @@ throws SQLException, java.io.IOException, javax.mail.internet.AddressException
 
 	// Load the crypto keys
 	File userDir = new File(System.getProperty("user.dir"));
-	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
-	File privDir = new File(userDir, props.getProperty("crypt.privdir")); 
+//	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
+	String pubLeaf = props.getProperty("crypt.pubdir");
+	File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
+		new File(pubLeaf) : new File(userDir, pubLeaf)); 
+
+	String privLeaf = props.getProperty("crypt.privdir");
+	File privDir = (privLeaf.charAt(0) == File.separatorChar ?
+		new File(privLeaf) : new File(userDir, privLeaf)); 
 	keyRing = new KeyRing(pubDir, privDir);
 
 

@@ -38,7 +38,8 @@ static String readFile(File f) throws IOException
 	
 public static void main (String[] args) throws Exception
 {
-	File keyFile = new File("/export/home/citibob/tmp");
+//	File keyFile = new File("/export/home/citibob/tmp");
+	File keyFile = new File("/Users/citibob/tmp");
 	KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
 	// read public key DER file
@@ -55,6 +56,7 @@ public static void main (String[] args) throws Exception
 	ecipher.init(Cipher.ENCRYPT_MODE, pubKey);
 	
 	String plainString = "Hello World!  How are you today?";
+plainString = plainString + plainString + plainString + plainString + plainString;
 	byte[] plainText = plainString.getBytes("UTF8");
 	byte[] cipherText = ecipher.doFinal(plainText);
 	

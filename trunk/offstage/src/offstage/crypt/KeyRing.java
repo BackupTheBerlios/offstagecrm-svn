@@ -21,7 +21,11 @@ import org.mozilla.javascript.JavaAdapter;
 import pubdomain.*;
 
 /**
- *
+ * User Wizards:
+0. Format USB key
+1. Create or change master key
+2. Duplicate key
+3. Load master key
  * @author citibob
  */
 public class KeyRing {
@@ -33,6 +37,7 @@ PrivKeyFile privKeys[];
 KeyFactory keyFactory;
 SecureRandom rnd;
 File pubDir;
+static final int BLOCKLEN = 115;		// Total bytes to be encrypted
 
 static class PrivKeyFile
 {
@@ -40,8 +45,12 @@ static class PrivKeyFile
 	public PrivateKey key;			// The actual key
 }
 
-public static final int EXTRABYTES = 8;		// Add this many random bytes to end of each message before encrypting
+//public static final int EXTRABYTES = 8;		// Add this many random bytes to end of each message before encrypting
 public static final byte[] MAGIC = new byte[]{(byte)23,(byte)19,(byte)215,(byte)154,(byte)128,(byte)146,(byte)171,(byte)94};
+
+/** Checks to see if the USB key is inserted. */
+public boolean isUsbInserted()
+	{ return privDir.exists(); }
 
 /** Creates a new instance of KeyRing */
 public KeyRing(File pubDir, File privDir)
@@ -73,12 +82,19 @@ throws GeneralSecurityException, IOException
 	Collections.sort(keyFiles);
 
 	// Get most recent public key
-	File keyFile = new File(pubDir, keyFiles.get(keyFiles.size()-1));
+	int nkey = keyFiles.size();
+	if (nkey == 0) return;
+	File keyFile = new File(pubDir, keyFiles.get(nkey-1));
 
 	// Read and decode public key
 	byte[] bytes = pubdomain.Base64.readBase64File(keyFile);
 	X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(bytes);
 	pubKey = (RSAPublicKey) keyFactory.generatePublic(pubSpec);
+}
+
+public void clearPrivKeys()
+{
+	privKeys = null;
 }
 
 /** Returns: fals if USB drive was not inserted. */
@@ -143,12 +159,13 @@ throws GeneralSecurityException, IOException
 
 	// Convert text to bytes, and pad with random extra bytes
 	byte[] plainText = msg.getBytes("UTF8");
-	byte[] rndBytes = new byte[EXTRABYTES];
-	rnd.nextBytes(rndBytes);
-	byte[] padded = new byte[MAGIC.length + plainText.length + EXTRABYTES];
+	byte[] padded = new byte[BLOCKLEN];
 	int j=0;
 	for (int i=0; i<MAGIC.length; ++i) padded[j++] = MAGIC[i];
 	for (int i=0; i<plainText.length; ++i) padded[j++] = plainText[i];
+	padded[j++] = '\0';
+	byte[] rndBytes = new byte[BLOCKLEN - j];
+	rnd.nextBytes(rndBytes);
 	for (int i=0; i<plainText.length; ++i) padded[j++] = rndBytes[i];
 
 	// Encrypt!
@@ -166,21 +183,26 @@ throws GeneralSecurityException
 	byte[] cipherText = pubdomain.Base64.decode(emsg);
 
 	// Decrypt, trying each key in turn
+outer:
 	for (int i=0; i<privKeys.length; ++i) {
 		PrivateKey key = privKeys[i].key;
 		Cipher decipher = Cipher.getInstance("RSA");
 		decipher.init(Cipher.DECRYPT_MODE, key);
 
-		byte[] decodeText = decipher.doFinal(cipherText);
+		byte[] decodeBytes = decipher.doFinal(cipherText);
 
 		// Check the magic bytes to see if we used the right key
-		for (int j=0; i<MAGIC.length; ++j) {
-			if (decodeText[j] != MAGIC[j]) continue;
+		int j;
+		for (j=0; j<MAGIC.length; ++j) {
+			if (decodeBytes[j] != MAGIC[j]) continue outer;
 		}
 
+		// Scan to the terminating null byte
+		for (; decodeBytes[j] != '\0'; ++j) ;
+		int nbytes = j - MAGIC.length;
+
 		// Decode, removing the extra bytes and the magic first
-		String msg = new String(decodeText, MAGIC.length,
-			decodeText.length - MAGIC.length - EXTRABYTES);
+		String msg = new String(decodeBytes, MAGIC.length, nbytes);
 		return msg;
 	}
 	return null;		// Could not decipher the message; no key available
@@ -350,8 +372,8 @@ public static void main (String[] args) throws Exception
 
 	Cipher decipher = Cipher.getInstance("RSA");
 	decipher.init(Cipher.DECRYPT_MODE, privKey);
-	byte[] decodeText = decipher.doFinal(cipherText);
-	String cipherString = new String(decodeText, "UTF8");
+	byte[] decodeBytes = decipher.doFinal(cipherText);
+	String cipherString = new String(decodeBytes, "UTF8");
 	
 	System.out.println("decoded: " + cipherString);
 }
