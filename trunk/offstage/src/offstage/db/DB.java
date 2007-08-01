@@ -463,6 +463,58 @@ public static void rekeyEncryptedData(Statement st, offstage.crypt.KeyRing kr)
 
 }
 // --------------------------------------------------
+/** Given something the user typed into a simple search box, generate a SQL search query. */
+public static String simpleSearchSql(String text)
+{
+	if (text == null || "".equals(text)) return null;		// no query
+	
+	int space = text.indexOf(" ");
+	int comma = text.indexOf(",");
+	boolean numeric = true;
+	for (int i=0; i<text.length(); ++i) {
+		char c = text.charAt(i);
+		if (c < '0' || c > '9') {
+			numeric = false;
+			break;
+		}
+	}
+	
+	if (numeric) {
+		// entityid
+		return "select entityid from persons where entityid = " + text + " and not obsolete";
+	} else if (comma >= 0) {
+		// lastname, firstname
+		String lastname = text.substring(0,comma).trim();
+		String firstname = text.substring(comma+1).trim();
+		String idSql = "select entityid from persons where (" +
+			" firstname ilike '%" + firstname + "%'" +
+			" and lastname ilike '%" + lastname + "%'" +
+			" ) and not obsolete";
+		return idSql;
+	} else if (space >= 0) {
+		// firstname lastname
+		String firstname = text.substring(0,space).trim();
+		String lastname = text.substring(space+1).trim();
+		String idSql = "select entityid from persons where (" +
+			" firstname ilike '%" + firstname + "%'" +
+			" and lastname ilike '%" + lastname + "%'" +
+			" ) and not obsolete";
+		return idSql;
+	} else {
+		String ssearch = SqlString.sql(text, false);
+		String idSql = "select entityid from persons where (" +
+			" firstname ilike '%" + ssearch + "%'" +
+			" or lastname ilike '%" + ssearch + "%'" +
+			" or orgname ilike '%" + ssearch + "%'" +
+			" or email ilike '%" + ssearch + "%'" +
+			" or url ilike '%" + ssearch + "%'" +
+			" ) and not obsolete";
+		return idSql;
+	}
+}
+// --------------------------------------------------
+
+
 }
 
 

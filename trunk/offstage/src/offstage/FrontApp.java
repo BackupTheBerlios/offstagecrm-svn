@@ -174,7 +174,8 @@ Properties loadProps() throws IOException
 
 	props = new Properties(props);
 	String os = System.getProperty("os.name");
-	props.load(openPropFile(os + ".properties"));
+	InputStream inn = openPropFile(os + ".properties");
+	if (inn != null) props.load(inn);
 
 	return props;
 }

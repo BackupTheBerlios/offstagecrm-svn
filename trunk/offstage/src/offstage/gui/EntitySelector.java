@@ -49,6 +49,8 @@ citibob.app.App app;
 public EntitySelector() {
 	initComponents();
 }
+
+
 public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel dm)
 {
 	this.app = xapp;
@@ -56,17 +58,8 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 	searchResults = new RSTableModel(app.getSqlTypeSet()) {
 	public void executeQuery(Statement st, String text) throws SQLException {
 		// Convert text to a search query for entityid's
-		if (text == null) return;		// no query
-		text = text.trim();
-		if ("".equals(text)) return;		// no query
-		String ssearch = SqlString.sql(text, false);
-		String idSql = "select entityid from persons where (" +
-			" firstname ilike '%" + ssearch + "%'" +
-			" or lastname ilike '%" + ssearch + "%'" +
-			" or orgname ilike '%" + ssearch + "%'" +
-			" or email ilike '%" + ssearch + "%'" +
-			" or url ilike '%" + ssearch + "%'" +
-			" ) and not obsolete";
+		String idSql = DB.simpleSearchSql(text);
+		if (idSql == null) return;		// no query
 
 		// Search for appropriate set of columns, given that list of IDs.
 		String sql =

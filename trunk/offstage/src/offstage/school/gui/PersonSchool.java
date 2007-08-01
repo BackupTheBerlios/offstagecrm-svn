@@ -32,6 +32,7 @@ import citibob.multithread.*;
 import citibob.jschema.swing.StatusTable;
 import citibob.sql.*;
 import citibob.app.*;
+import javax.swing.JOptionPane;
 import offstage.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
@@ -193,7 +194,12 @@ void termChanged(Statement st) throws SQLException
 
 	// Populate available courses for adding
 	courselist.setKeyedModel(new DbKeyedModel(st, fapp.getDbChange(), "courseids",
-		"select courseid, name from courseids where termid = " + stermid));
+		" select courseid, c.name || ' (' || dw.shortname || ')'" +
+		" from courseids c, daysofweek dw" +
+		" where c.dayofweek = dw.javaid" +
+		" and termid = " + stermid));
+
+
 }
 
 public void refreshEnroll(Statement st) throws SQLException
@@ -233,6 +239,9 @@ public void refreshEnroll(Statement st) throws SQLException
         lentityid = new citibob.swing.typed.JTypedLabel();
         jLabel3 = new javax.swing.JLabel();
         terms = new citibob.swing.typed.JKeyedComboBox();
+        lSpace = new javax.swing.JLabel();
+        programs = new citibob.swing.typed.JKeyedComboBox();
+        jLabel9 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jToolBar2 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
@@ -282,6 +291,14 @@ public void refreshEnroll(Statement st) throws SQLException
 
         controller.setLayout(new java.awt.BorderLayout());
 
+        courselist.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                courselistActionPerformed(evt);
+            }
+        });
+
         controller.add(courselist, java.awt.BorderLayout.CENTER);
 
         addEnrollment.setText("Add");
@@ -313,65 +330,81 @@ public void refreshEnroll(Statement st) throws SQLException
         jLabel4.setText("Enrollments");
         jPanel4.add(jLabel4, java.awt.BorderLayout.NORTH);
 
-        jPanel2.add(jPanel4, java.awt.BorderLayout.CENTER);
+        jPanel2.add(jPanel4, java.awt.BorderLayout.NORTH);
 
         jPanel6.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        jLabel1.setText("Person:");
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setText("Person: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        jPanel1.add(jLabel1, gridBagConstraints);
 
         firstname.setText("FirstName");
         firstname.setColName("firstname");
+        jPanel1.add(firstname, new java.awt.GridBagConstraints());
 
         lastname.setText("jTypedLabel1");
         lastname.setColName("lastname");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        jPanel1.add(lastname, gridBagConstraints);
 
-        jLabel2.setText("ID:");
+        jLabel2.setText("ID: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(jLabel2, gridBagConstraints);
 
         lentityid.setText("jTypedLabel1");
         lentityid.setColName("entityid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        jPanel1.add(lentityid, gridBagConstraints);
 
-        jLabel3.setText("Term:");
+        jLabel3.setText("Term: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel1.add(jLabel3, gridBagConstraints);
 
         terms.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(terms, gridBagConstraints);
 
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jLabel1)
-                    .add(jLabel3))
-                .add(51, 51, 51)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(firstname, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(5, 5, 5)
-                        .add(lastname, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 296, Short.MAX_VALUE)
-                        .add(jLabel2)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(lentityid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(terms, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(firstname, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(jLabel1))
-                    .add(lastname, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                        .add(lentityid, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(jLabel2)))
-                .add(41, 41, 41)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jLabel3)
-                    .add(terms, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+        lSpace.setText(" ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel1.add(lSpace, gridBagConstraints);
+
+        programs.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        programs.setColName("programid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel1.add(programs, gridBagConstraints);
+
+        jLabel9.setText("Level: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel1.add(jLabel9, gridBagConstraints);
+
         jPanel6.add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
@@ -523,6 +556,11 @@ public void refreshEnroll(Statement st) throws SQLException
 
     }// </editor-fold>//GEN-END:initComponents
 
+	private void courselistActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_courselistActionPerformed
+	{//GEN-HEADEREND:event_courselistActionPerformed
+// TODO add your handling code here:
+	}//GEN-LAST:event_courselistActionPerformed
+
 	private void bAdjustActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAdjustActionPerformed
 	{//GEN-HEADEREND:event_bAdjustActionPerformed
 		fapp.runGui(PersonSchool.this, new StRunnable() {
@@ -587,7 +625,13 @@ public void refreshEnroll(Statement st) throws SQLException
 				SqlInteger.sql((Integer)courselist.getValue()) +
 				", (select courseroleid from courseroles where name = 'student')" + 
 				", now())";
-			st.executeUpdate(sql);
+			try {
+				st.executeUpdate(sql);
+			} catch(SQLException e) {
+				String msg = "Error in enrollment.  Are you trying\n" +
+					"to enroll someone in the same course twice?";
+				JOptionPane.showMessageDialog(PersonSchool.this, msg);
+			}
 			enrolledDb.doSelect(st);
 // TODO: Status col isn't showing due to lack of functionality for JoinedSchema...
 // in StatusSchemaBuf and StatusTable
@@ -655,6 +699,7 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -667,8 +712,10 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar2;
     private offstage.gui.EntityIDLabel lAdult;
+    private javax.swing.JLabel lSpace;
     private citibob.swing.typed.JTypedLabel lastname;
     private citibob.swing.typed.JTypedLabel lentityid;
+    private citibob.swing.typed.JKeyedComboBox programs;
     private citibob.swing.typed.JKeyedComboBox terms;
     private citibob.jschema.swing.StatusTable trans;
     // End of variables declaration//GEN-END:variables

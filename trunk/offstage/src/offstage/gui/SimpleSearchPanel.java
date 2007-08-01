@@ -92,28 +92,8 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 	private void runSearch() {
 		app.runGui(this, new StRunnable() {
 		public void run(Statement st) throws Exception {
-			String text = searchWord.getText();
-			if (text == null) return;		// no query
-			text = text.trim();
-			if ("".equals(text)) return;		// no query
-			String ssearch = SqlString.sql(text, false);
-//			String sql = "select entityid from persons where firstname ilike '%" + ssearch + "%'" +
-//				" or lastname ilike '%" + ssearch + "%'" +
-//				"    union " +
-//				" select entityid from organizations where name ilike '%" + ssearch + "%'";
-			String sql = "select entityid from persons where (" +
-				" firstname ilike '%" + ssearch + "%'" +
-				" or lastname ilike '%" + ssearch + "%'" +
-				" or orgname ilike '%" + ssearch + "%'" +
-				" or email ilike '%" + ssearch + "%'" +
-				" or url ilike '%" + ssearch + "%'" +
-				" ) and not obsolete";
-//				"    union " +
-//				" select entityid from organizations where name ilike '%" + ssearch + "%'";
-	System.out.println(sql);
-			//ResultSet rs = st.executeQuery(sql);
-			searchResults.setRows(st, sql, null);
-			//rs.close();
+			String sql = DB.simpleSearchSql(searchWord.getText());
+			if (sql != null) searchResults.setRows(st, sql, null);
 		}});
 	}                                       
 
