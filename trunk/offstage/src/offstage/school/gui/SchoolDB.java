@@ -86,6 +86,19 @@ public static void w_students_create(Statement st, int studentid)
 //	
 //}
 
+private static class TuitionRec implements Comparable<TuitionRec>
+{
+	public int studentid;
+	public String description;
+	public double tuition;
+	public int compareTo(TuitionRec o) {
+		double d = o.tuition - tuition;		// Sort descending
+		if (d > 0) return 1;
+		if (d < 0) return -1;
+		return 0;
+	}
+}
+
 public static void w_tuitiontrans_calcTuitionByAdult(Statement st, int termid, int adultid)
 throws SQLException
 {
@@ -127,30 +140,23 @@ throws SQLException
 	rs = st.executeQuery(sql);
 	
 	// Calculate sum of hours in enrolled courses, per student
-	int studentid = -1;
-	String description = null;
-	double tuition = 0;		// Tuition for one student
+//	int studentid = -1;
+//	String description = null;
+//	double tuition = 0;		// Tuition for one student
+	TuitionRec tr = null;
+	ArrayList<TuitionRec> tuitions = new ArrayList();
 	for (;;) {
 		boolean hasNext = rs.next();
-		if (!hasNext || (studentid != rs.getInt("studentid"))) {
-			if (studentid != -1) {
-				// This student's records have ended; write out
-				sqlOut.append(" insert into tuitiontrans" +
-					" (entityid, actypeid, dtime, amount, description, ddue, studentid, termid)" +
-					" values (" + SqlInteger.sql(adultid) + ", " +
-					" (select actypeid from actypes where name = 'school'), " +
-					"'" + sBillDtime + "', " +
-					money.sql(tuition) + ", " + SqlString.sql(description) + ", " +
-					"'" + sPaymentdue + "', " +
-					SqlInteger.sql(studentid) + ", " + SqlInteger.sql(termid) + ");\n");
-			}
+		if (!hasNext || tr == null || (tr.studentid != rs.getInt("studentid"))) {
+			if (tr != null) tuitions.add(tr);
 			
 			// Make up description for this next student record.
 			if (hasNext) {
-				studentid = rs.getInt("studentid");
-				description = termName + ": Tuition for " +
+				tr = new TuitionRec();
+				tr.studentid = rs.getInt("studentid");
+				tr.description = termName + ": Tuition for " +
 					rs.getString("firstname") + " " + rs.getString("lastname");
-				tuition = 0;
+				tr.tuition = 0;
 			}
 		}
 		if (!hasNext) break;
@@ -165,9 +171,33 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 			int lengthS = (int)(tnext - tstart) / 1000;
 			price = (double)lengthS * (100.0 / 3600.0);	// $100/hr
 		}
-		tuition += price;
+		tr.tuition += price;
 	}
 	rs.close();
+
+	// Give sibling discounts
+	if (tuitions.size() > 1) {
+		Collections.sort(tuitions);
+		Iterator<TuitionRec> ii = tuitions.iterator();
+		ii.next();
+		while (ii.hasNext()) {
+			TuitionRec trx = ii.next();
+			trx.tuition *= .9;
+			trx.description += " (w/ sibling discount)";
+		}
+	}
+	
+	for (TuitionRec trx : tuitions) {
+		// This student's records have ended; write out
+		sqlOut.append(" insert into tuitiontrans" +
+			" (entityid, actypeid, dtime, amount, description, ddue, studentid, termid)" +
+			" values (" + SqlInteger.sql(adultid) + ", " +
+			" (select actypeid from actypes where name = 'school'), " +
+			"'" + sBillDtime + "', " +
+			money.sql(trx.tuition) + ", " + SqlString.sql(trx.description) + ", " +
+			"'" + sPaymentdue + "', " +
+			SqlInteger.sql(trx.studentid) + ", " + SqlInteger.sql(termid) + ");\n");
+	}
 	
 System.out.println(sqlOut);
 	st.executeUpdate(sqlOut.toString());

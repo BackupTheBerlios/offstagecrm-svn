@@ -74,6 +74,8 @@ FrontApp fapp;
 		// Set up courses editor
 		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
 			"termid", fapp.getDbChange());
+		coursesSb.setOrderClause("dayofweek, tstart, name");
+		
 		termChanged(xst);
 //		terms.setSelectedIndex(0);		// Should throw a value changed event
 		courses.setModelU(coursesSb.getSchemaBuf(),

@@ -222,7 +222,7 @@ public void refreshEnroll(Statement st) throws SQLException
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel6 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
         GroupScrollPanel = new javax.swing.JScrollPane();
         enrollments = new citibob.jschema.swing.StatusTable();
         controller = new javax.swing.JPanel();
@@ -230,7 +230,6 @@ public void refreshEnroll(Statement st) throws SQLException
         jPanel5 = new javax.swing.JPanel();
         addEnrollment = new javax.swing.JButton();
         delEnrollment = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         firstname = new citibob.swing.typed.JTypedLabel();
@@ -270,7 +269,8 @@ public void refreshEnroll(Statement st) throws SQLException
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jLabel4.setText("Enrollments");
+        jPanel2.add(jLabel4, java.awt.BorderLayout.NORTH);
 
         enrollments.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
@@ -287,7 +287,7 @@ public void refreshEnroll(Statement st) throws SQLException
         ));
         GroupScrollPanel.setViewportView(enrollments);
 
-        jPanel4.add(GroupScrollPanel, java.awt.BorderLayout.CENTER);
+        jPanel2.add(GroupScrollPanel, java.awt.BorderLayout.CENTER);
 
         controller.setLayout(new java.awt.BorderLayout());
 
@@ -325,12 +325,7 @@ public void refreshEnroll(Statement st) throws SQLException
 
         controller.add(jPanel5, java.awt.BorderLayout.EAST);
 
-        jPanel4.add(controller, java.awt.BorderLayout.SOUTH);
-
-        jLabel4.setText("Enrollments");
-        jPanel4.add(jLabel4, java.awt.BorderLayout.NORTH);
-
-        jPanel2.add(jPanel4, java.awt.BorderLayout.NORTH);
+        jPanel2.add(controller, java.awt.BorderLayout.SOUTH);
 
         jPanel6.add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -703,7 +698,6 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
