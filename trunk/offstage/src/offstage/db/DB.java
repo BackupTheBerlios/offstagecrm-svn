@@ -468,8 +468,9 @@ public static String simpleSearchSql(String text)
 {
 	if (text == null || "".equals(text)) return null;		// no query
 	
-	int space = text.indexOf(" ");
-	int comma = text.indexOf(",");
+	int space = text.indexOf(' ');
+	int comma = text.indexOf(',');
+	int at = text.indexOf('@');
 	boolean numeric = true;
 	for (int i=0; i<text.length(); ++i) {
 		char c = text.charAt(i);
@@ -482,6 +483,9 @@ public static String simpleSearchSql(String text)
 	if (numeric) {
 		// entityid
 		return "select entityid from persons where entityid = " + text + " and not obsolete";
+	} else if (at >= 0) {
+		return "select entityid from persons" +
+			" where email ilike '%" + text.trim() + "%'";
 	} else if (comma >= 0) {
 		// lastname, firstname
 		String lastname = text.substring(0,comma).trim();

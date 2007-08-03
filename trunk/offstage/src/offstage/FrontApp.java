@@ -200,7 +200,11 @@ java.security.GeneralSecurityException
 	File privDir = (privLeaf.charAt(0) == File.separatorChar ?
 		new File(privLeaf) : new File(userDir, privLeaf)); 
 	keyRing = new KeyRing(pubDir, privDir);
-
+	if (!keyRing.pubKeyLoaded()) {
+		javax.swing.JOptionPane.showMessageDialog(null,
+			"The public key failed to load.\n" +
+			"You will be unable to enter credit card details.");
+	}
 
 	this.mailSender = new citibob.mail.GuiMailSender();
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();

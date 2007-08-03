@@ -64,14 +64,20 @@ throws GeneralSecurityException, IOException
 	// only when user inserts the USB drive containing the private keys.
 	this.privDir = privDir;
 
-	loadPubKey();
+	try {
+		loadPubKey(pubDir);
+	} catch(Exception e) {
+		// Key not loaded
+	}
 }
 
-public void loadPubKey()
-throws GeneralSecurityException, IOException
+public boolean pubKeyLoaded() { return pubKey != null; }
+
+/** @returns most recent public key file in a directory. */
+public static File mostRecentPubKeyFile(File dir)
 {
 	// Get file names that might be our public key
-	String[] files = pubDir.list();
+	String[] files = dir.list();
 	ArrayList<String> keyFiles = new ArrayList();
 	for (int i=0; i<files.length; i++) {
 		String fname = files[i];
@@ -83,11 +89,25 @@ throws GeneralSecurityException, IOException
 
 	// Get most recent public key
 	int nkey = keyFiles.size();
-	if (nkey == 0) return;
-	File keyFile = new File(pubDir, keyFiles.get(nkey-1));
+	if (nkey == 0) return null;
+	File keyFile = new File(dir, keyFiles.get(nkey-1));
+	return keyFile;
+}
+
+public void loadPubKey()
+throws GeneralSecurityException, IOException
+	{ loadPubKey(pubDir); }
+
+public void loadPubKey(File dir)
+throws GeneralSecurityException, IOException
+{
+	pubKey = null;
+	File keyFile = mostRecentPubKeyFile(pubDir);
+	if (keyFile == null) return;
 
 	// Read and decode public key
 	byte[] bytes = pubdomain.Base64.readBase64File(keyFile);
+	bytes = Checksum.removeChecksum(bytes);
 	X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(bytes);
 	pubKey = (RSAPublicKey) keyFactory.generatePublic(pubSpec);
 }
@@ -129,6 +149,7 @@ throws GeneralSecurityException, IOException
 			// Read the key from the file
 			File f = new File(privDir, fname);
 			byte[] bytes = pubdomain.Base64.readBase64File(f);
+			bytes = Checksum.removeChecksum(bytes);
 			PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
 			PrivateKey key = (RSAPrivateKey) keyFactory.generatePrivate(privSpec);
 
@@ -210,7 +231,7 @@ outer:
 
 static DateFormat dfmt;
 static {
-	dfmt = new SimpleDateFormat("yyyyMMdd-HHmm");
+	dfmt = new SimpleDateFormat("yyyyMMdd-HHmmss");
 	dfmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 }
 
@@ -229,6 +250,7 @@ throws GeneralSecurityException, IOException
 
 	// Store the private key
 	byte[] bkey = key.getPrivate().getEncoded();
+	bkey = Checksum.addChecksum(bkey);
 	String skey = pubdomain.Base64.encodeBytes(bkey);
 	PrintWriter pw = new PrintWriter(
 		new FileWriter(keyFile));
@@ -243,6 +265,7 @@ throws GeneralSecurityException, IOException
 		new File(pubDir, "pubkey-" + dfmt.format(dt) + ".txt"),
 	};
     bkey = key.getPublic().getEncoded();
+	bkey = Checksum.addChecksum(bkey);
 	skey = pubdomain.Base64.encodeBytes(bkey);
 	for (File f : pubFiles) {
 		pw = new PrintWriter(
@@ -254,6 +277,8 @@ throws GeneralSecurityException, IOException
 	}
 
 }
+
+
 
 /** Returns the contents of the file in a byte array.
 From Java Developers Almanac */
@@ -296,7 +321,21 @@ public static class PlainFile
 {
 	public String name;		// Leaf name
 	public byte[] bytes;
+	public PlainFile(File f) throws IOException {
+		bytes = getBytesFromFile(f);
+		this.name = f.getName();
+	}
+	public void write(File dir) throws IOException {
+		File f = new File(dir, name);
+		FileOutputStream out = new FileOutputStream(f);
+		out.write(bytes);
+		out.close();
+	}
 }
+
+public List<PlainFile> readAllKeyFiles()
+throws IOException
+{ return readAllKeyFiles(privDir); }
 
 public static List<PlainFile> readAllKeyFiles(File dir)
 throws IOException
@@ -308,29 +347,34 @@ throws IOException
 		String fname = files[i];
 		if ((fname.startsWith("privkey") || fname.startsWith("pubkey"))
 			&& fname.endsWith(".txt")) {
-			File f = new File(dir, fname);
-			byte[] bytes = getBytesFromFile(f);
-			PlainFile pfile = new PlainFile();
-				pfile.name = fname;
-				pfile.bytes = bytes;
-			data.add(pfile);
+			data.add(new PlainFile(new File(dir, fname)));
 		}
 	}
-	Collections.sort(data);
+//	Collections.sort(data);
 	return data;
 }
+
+/** Copies most recent public key from a master key drive back to pubDir. */
+public void restorePubKey()
+throws IOException
+{
+	File keyFile = mostRecentPubKeyFile(privDir);
+	if (keyFile == null) throw new IOException("Cannot find public key file in directory " + privDir);
+	PlainFile pf = new PlainFile(keyFile);
+	pf.write(pubDir);
+}
+
+
+public void writeKeyFiles(List<PlainFile> data)
+throws IOException
+{ writeKeyFiles(privDir, data); }
 
 public static void writeKeyFiles(File dir, List<PlainFile> data)
 throws IOException
 {
-	for (PlainFile pfile : data) {
-		File f = new File(dir, pfile.name);
-		FileOutputStream out = new FileOutputStream(f);
-		out.write(pfile.bytes);
-		out.close();
-	}
+	for (PlainFile pf : data) pf.write(dir);
 }
-
+// ===============================================================
 
 //
 //make new master key

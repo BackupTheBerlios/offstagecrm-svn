@@ -56,6 +56,7 @@ HashMap<String,CBTask> actionMap = new HashMap();
 
 ActionPanel getThis() { return this; }
 
+
 /** Creates a new instance of ActionPanel */
 public void initRuntime(FrontApp xfapp) throws Exception
 {
@@ -100,6 +101,27 @@ public void initRuntime(FrontApp xfapp) throws Exception
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new offstage.wizards.newgroupid.NewGroupidWizard(fapp, st, root);
+		wizard.runWizard();
+	}}));
+
+	actionMap.put("newkey", new CBTask("", "admin", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.crypt.wiz.NewKeyWizard(fapp, st, root);
+		wizard.runWizard();
+	}}));
+
+	actionMap.put("dupkey", new CBTask("", "admin", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.crypt.wiz.DupKeyWizard(fapp, root);
+		wizard.runWizard();
+	}}));
+
+	actionMap.put("restorekey", new CBTask("", "admin", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.crypt.wiz.RestoreKeyWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 

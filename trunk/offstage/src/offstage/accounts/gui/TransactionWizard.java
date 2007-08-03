@@ -38,6 +38,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.jschema.log.*;
+import offstage.crypt.*;
 
 /**
  *
@@ -58,10 +59,19 @@ addState(new State("", "", "") {
 });
 */
 
+/** Does an insert, using all the field names in v automatically. */
+void vInsert(String table) throws SQLException
+{
+	ConsSqlQuery sql = newInsertQuery(table);
+	sql.addColumn("entityid", SqlInteger.sql(entityid));
+	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+	st.executeUpdate(sql.getSql());
+}
+
 public TransactionWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe,
 int xentityid, int xactypeid)
 {
-	super("Transactions", xfapp, xframe, "cashpayment");
+	super("Transactions", xfapp, xframe, "ccpayment");
 	this.st = xst;
 	this.entityid = xentityid;
 	this.actypeid = xactypeid;
@@ -83,10 +93,7 @@ addState(new State("cashpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
-		ConsSqlQuery sql = newInsertQuery("cashpayments");
-		sql.addColumn("entityid", SqlInteger.sql(entityid));
-		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-		st.executeUpdate(sql.getSql());
+		vInsert("cashpayments");
 	}
 });
 addState(new State("checkpayment", null, null) {
@@ -96,10 +103,7 @@ addState(new State("checkpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
-		ConsSqlQuery sql = newInsertQuery("checkpayments");
-		sql.addColumn("entityid", SqlInteger.sql(entityid));
-		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-		st.executeUpdate(sql.getSql());
+		vInsert("checkpayments");
 	}
 });
 addState(new State("ccpayment", null, null) {
@@ -107,12 +111,21 @@ addState(new State("ccpayment", null, null) {
 		{ return new CcpaymentWiz(frame, fapp); }
 	public void process() throws Exception
 	{
+
 		double namount = ((Number)v.get("namount")).doubleValue();
-		v.put("amount", new Double(-namount));
-		ConsSqlQuery sql = newInsertQuery("ccpayments");
-		sql.addColumn("entityid", SqlInteger.sql(entityid));
-		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-		st.executeUpdate(sql.getSql());
+		KeyRing kr = fapp.getKeyRing();
+
+
+//		String sdetails = kr.encryptCCDetails(v.getString("cctype"),
+//			v.getString("ccnumber"), v.getString("expdate"),
+//			v.getString("seccode"), v.getString("zip"));
+//
+//		v.clear();
+//		v.put("amount", new Double(-namount));
+//		v.put("ccinfo", sdetails);
+//
+//
+//		vInsert("ccpayments");
 	}
 });
 // ---------------------------------------------

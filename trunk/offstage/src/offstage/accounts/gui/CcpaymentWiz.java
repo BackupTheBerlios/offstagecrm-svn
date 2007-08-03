@@ -63,12 +63,22 @@ throws org.xml.sax.SAXException, java.io.IOException
 	addWidget("namount", "amount", schema);		// Negative of amount...
 	KeyedModel kmodel = new KeyedModel();
 		kmodel.addItem(null, "<None>");
-		kmodel.addItem(new Character('m'), "Master Card");
-		kmodel.addItem(new Character('v'), "Visa");
+		kmodel.addItem("m", "Master Card");
+		kmodel.addItem("v", "Visa");
 	addWidget("cctype", new JKeyedComboBox(kmodel));
-	addTextField("ccnumber", new JStringSwinger());
-	addTextField("expdate", new JStringSwinger());
-	addTextField("seccode", new JStringSwinger());
+	JTypedTextField tf;
+	tf = new JTypedTextField();
+		tf.setJType(String.class, new CCFormatter());
+		addWidget("ccnumber", tf);
+	tf = new JTypedTextField();
+		tf.setJType(String.class, new ExpDateFormatter());
+		addWidget("expdate", tf);
+	tf = new JTypedTextField();
+		tf.setJType(String.class, new DigitsFormatter(3));
+		addWidget("seccode", tf);
+	tf = new JTypedTextField();
+		tf.setJType(String.class, new DigitsFormatter(5));
+		addWidget("zip", tf);
 	addTextField("description", schema);
 	addWidget("dtime", schema).setValue(null);
 	loadHtml();
