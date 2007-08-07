@@ -125,6 +125,13 @@ public void initRuntime(FrontApp xfapp) throws Exception
 		wizard.runWizard();
 	}}));
 
+	actionMap.put("ccbatch", new CBTask("", "admin", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		Wizard wizard = new offstage.crypt.wiz.CCBatchWizard(fapp, st, root);
+		wizard.runWizard();
+	}}));
+
 	actionMap.put("editcourses", new CBTask("", "admin", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());

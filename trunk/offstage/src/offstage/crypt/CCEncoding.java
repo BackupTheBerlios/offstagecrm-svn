@@ -19,8 +19,8 @@ import citibob.util.*;
  */
 public class CCEncoding {
 
-static final String[] headers = {"ct", "cc", "ex", "cv", "zp"};
-static final String[] fields = {"cctype", "ccnumber", "expdate", "ccv", "zip"};
+static final String[] headers = {"ct", "cc", "nm", "ex", "cv", "zp"};
+static final String[] fields = {"cctype", "ccnumber", "ccname", "expdate", "ccv", "zip"};
 
 public static String encode(TypedHashMap v)
 {

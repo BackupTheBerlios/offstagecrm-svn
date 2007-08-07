@@ -223,11 +223,16 @@ protected void showPopup()
 		} else {
 			popupDialog.setVisible(false);
 			ccinfo.makeVal();
-			lccinfo.setValue(ccinfo.getValue());
-			lccname.setValue(ccinfo.getCCName());
-			lcctype.setValue(ccinfo.getCCType());
-			lexpdate.setValue(ccinfo.getExpDate());
-			llast4.setValue(ccinfo.getLast4());
+			if (ccinfo.getValue() == null) {
+				JOptionPane.showMessageDialog(this,
+					"Error encrypting credit card info.");
+			} else {
+				lccinfo.setValue(ccinfo.getValue());
+				lccname.setValue(ccinfo.getCCName());
+				lcctype.setValue(ccinfo.getCCType());
+				lexpdate.setValue(ccinfo.getExpDate());
+				llast4.setValue(ccinfo.getLast4());
+			}
 //			ccinfo.fireValueChanged(oldccinfo);
 //	System.out.println("ccinfo.value = " + ccinfo.getValue());
 		}

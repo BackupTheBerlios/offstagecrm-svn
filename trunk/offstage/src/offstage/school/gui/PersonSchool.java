@@ -82,6 +82,10 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 
 	lAdult.initRuntime(fapp);
 
+	if (fapp.getKeyRing() == null || !fapp.getKeyRing().pubKeyLoaded()) {
+		bCc.setEnabled(false);
+	}
+	
 	// Set up transactions table
 	actransDb = new IntKeyedDbModel(fapp.getSchema("actrans"), "entityid");
 	actransDb.setOrderClause("dtime desc");
@@ -561,7 +565,7 @@ public void refreshEnroll(Statement st) throws SQLException
 		fapp.runGui(PersonSchool.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
-			wizard.runWizard("adjustment");
+			wizard.runWizard("adjpayment");
 			actransDb.doSelect(st);
 		}});
 // TODO add your handling code here:

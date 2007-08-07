@@ -116,11 +116,13 @@ public void clearPrivKeys()
 {
 	privKeys = null;
 }
+public boolean privKeysLoaded() { return privKeys != null; }
 
 /** Returns: fals if USB drive was not inserted. */
 public boolean loadPrivKeys()
 throws GeneralSecurityException, IOException
 {
+	clearPrivKeys();
 	if (!(privDir.exists() && privDir.isDirectory()) ) return false;
 
 	String[] files = privDir.list();
@@ -133,8 +135,9 @@ throws GeneralSecurityException, IOException
 			keyFiles.add(fname);
 		}
 	}
+	if (keyFiles.size() == 0) return false;
 	Collections.sort(keyFiles);
-
+	
 	// Read each one as a key file
 	ArrayList<PrivKeyFile> xPrivKeys = new ArrayList();
 	for (int i=keyFiles.size()-1; i >= 0; --i) {
@@ -187,7 +190,7 @@ throws GeneralSecurityException, IOException
 	padded[j++] = '\0';
 	byte[] rndBytes = new byte[BLOCKLEN - j];
 	rnd.nextBytes(rndBytes);
-	for (int i=0; i<plainText.length; ++i) padded[j++] = rndBytes[i];
+	for (int i=0; i<rndBytes.length; ++i) padded[j++] = rndBytes[i];
 
 	// Encrypt!
 	byte[] cipherText = ecipher.doFinal(padded);

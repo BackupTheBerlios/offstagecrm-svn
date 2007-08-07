@@ -133,6 +133,7 @@ void makeVal()
 	TypedHashMap map = new TypedHashMap();
 	map.put("cctype", cctype.getValue());
 	map.put("ccnumber", ccnumber.getValue());
+	map.put("ccname", ccname.getValue());
 	map.put("expdate", expdate.getValue());
 	map.put("ccv", ccv.getValue());
 	map.put("zip", zip.getValue());

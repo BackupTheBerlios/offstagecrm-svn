@@ -64,12 +64,12 @@ throws SQLException
 	tableoidKmodel.addAllItems(
 		st.executeQuery(
 			"select oid,relname from pg_class where relname in" +
-			" ('invoices', 'tuitiontrans', 'actrans', 'cashpayments', 'acadjustments')"), "oid", "relname");
+			" ('invoices', 'tuitiontrans', 'actrans', 'cashpayments', 'adjpayments', 'ccpayments', 'checkpayments')"), "oid", "relname");
 	cols = new Column[] {
 		new Column(new SqlEnum(tableoidKmodel, false), "tableoid"),
 		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlEnum(actypeKmodel, false), "actypeid", true),
-		new Column(new SqlTimestamp("GMT"), "dtime"),
+		new Column(new SqlTimestamp("GMT"), "dtime", true),
 		new Column(new SqlNumeric(9,2), "amount"),
 		new Column(new SqlString(300,true), "description")
 	};

@@ -97,6 +97,14 @@ addState(new State("cashpayment", null, null) {
 		vInsert("cashpayments", v);
 	}
 });
+addState(new State("adjpayment", null, null) {
+	public HtmlWiz newWiz() throws Exception
+		{ return new AdjpaymentWiz(frame, fapp); }
+	public void process() throws Exception
+	{
+		vInsert("adjpayments", v);
+	}
+});
 addState(new State("checkpayment", null, null) {
 	public HtmlWiz newWiz() throws Exception
 		{ return new CheckpaymentWiz(frame, fapp); }

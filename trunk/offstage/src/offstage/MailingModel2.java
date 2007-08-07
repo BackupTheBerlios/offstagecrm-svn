@@ -34,6 +34,10 @@ import offstage.schema.MailingsSchema;
 import offstage.schema.MailingidsSchema;
 import citibob.multithread.*;
 import offstage.schema.*;
+import net.sf.jasperreports.engine.export.*;
+import javax.print.*;
+import javax.print.attribute.*;
+import javax.print.attribute.standard.*;
 
 /**
  *
@@ -124,8 +128,30 @@ System.out.println("MailingModel2: AAA");
 System.out.println("MailingModel2: BBB");
 		JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
 System.out.println("MailingModel2: CCC");
+		offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
 		net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
 System.out.println("MailingModel2: DDD");
+//JasperPrintManager.printReport(jprint,false);
+
+
+
+
+//            PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
+//            /* Set the number of copies */
+//            printRequestAttributeSet.add(new Copies(1));
+//            printRequestAttributeSet.add(new JobName("Job Name", null));
+//
+//            net.sf.jasperreports.engine.export.JRPrintServiceExporter exporter;
+//            exporter = new net.sf.jasperreports.engine.export.JRPrintServiceExporter();  
+//            exporter.setParameter( JRExporterParameter.JASPER_PRINT, jprint);
+//            exporter.setParameter( JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet);
+//            exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE);
+//            exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.TRUE);
+//            exporter.exportReport();
+
+
+
+
 	} finally {
 		try { rs.close(); } catch(Exception e) {}
 		try { in.close(); } catch(Exception e) {}		

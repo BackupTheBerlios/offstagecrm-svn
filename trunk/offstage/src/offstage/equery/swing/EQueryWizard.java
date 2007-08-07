@@ -34,6 +34,7 @@ import citibob.wizard.*;
 import javax.swing.*;
 import java.sql.*;
 import offstage.db.*;
+import offstage.reports.ReportOutput;
 import offstage.wizards.*;
 import offstage.*;
 import citibob.sql.*;
@@ -160,7 +161,7 @@ public boolean doDonationReport(String title, String sql) throws Exception
 {
 	DonationReport report = new DonationReport(fapp, sql);
 	report.doSelect(st);
-	OffstageGuiUtil.saveCSVReport(report.newTableModel(), "Save" + title,
+	ReportOutput.saveCSVReport(report.newTableModel(), "Save" + title,
 		fapp, frame);
 	return true;
 }

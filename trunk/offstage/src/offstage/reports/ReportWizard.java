@@ -82,7 +82,7 @@ addState(new State("ticketparams", null, "editquery") {
 			" and t.groupid = " + SqlInteger.sql(groupid) + "\n" +
 			" order by p.lastname,p.firstname\n");
 		report.executeQuery(st);
-		OffstageGuiUtil.saveCSVReport(report, "Save Ticket Sales Repot",
+		ReportOutput.saveCSVReport(report, "Save Ticket Sales Repot",
 			fapp, frame);
 	}
 });

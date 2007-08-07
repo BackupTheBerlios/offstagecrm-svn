@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package offstage.gui;
+package offstage.reports;
 
 import citibob.swing.typed.*;
 import citibob.swing.table.*;
@@ -33,13 +33,34 @@ import citibob.jschema.*;
 import javax.swing.*;
 import java.io.*;
 import java.awt.*;
+import net.sf.jasperreports.engine.*;
+import java.util.*;
 
 /**
  *
  * @author citibob
  */
-public class OffstageGuiUtil
+public class ReportOutput
 {
+
+public static void viewJasperReport(String reportName, JRDataSource jrdata, Map params)
+throws JRException
+{	
+	InputStream in = Object.class.getResourceAsStream("/offstage/reports/" + reportName);
+	viewJasperReport(in, jrdata, params);
+}
+public static void viewJasperReport(InputStream reportIn, JRDataSource jrdata, Map params)
+throws JRException
+{	
+	// Convert ccinfo to full table representation
+	params = (params == null ? new HashMap() : params);
+	params.put("doggie", "Doggone WOrld");
+//	InputStream in = Object.class.getResourceAsStream("/offstage/reports/CCPayments.jasper");
+	JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(reportIn, params, jrdata);
+	offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
+	net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
+}
+	
 public static String saveCSVReport(JTypeTableModel report, String title, App app, Component parent) throws Exception
 {
 	String dir = app.userRoot().get("saveReportDir", null);
