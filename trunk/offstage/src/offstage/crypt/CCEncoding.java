@@ -10,6 +10,8 @@
 package offstage.crypt;
 
 import citibob.wizard.*;
+import java.util.*;
+import citibob.util.*;
 
 /**
  *
@@ -18,9 +20,9 @@ import citibob.wizard.*;
 public class CCEncoding {
 
 static final String[] headers = {"ct", "cc", "ex", "cv", "zp"};
-static final String[] fields = {"cctype", "ccnumber", "expdate", "seccode", "zip"};
+static final String[] fields = {"cctype", "ccnumber", "expdate", "ccv", "zip"};
 
-static String encode(TypedHashMap v)
+public static String encode(TypedHashMap v)
 {
 	String[] val = new String[fields.length];
 	for (int i=0; i<fields.length; ++i) {
@@ -29,10 +31,14 @@ static String encode(TypedHashMap v)
 	return NVEncoding.encode(headers, val);
 }
 
-static TypedHashMap decode(String s)
+public static TypedHashMap decode(String s)
 {
-//	HashMap m
-	return null;
+	TypedHashMap ret = new TypedHashMap();
+	Map m = NVEncoding.decode(s);
+	for (int i=0; i<fields.length; ++i) {
+		Object o = m.get(headers[i]);
+		if (o != null) ret.put(fields[i], o);
+	}
+	return ret;
 }
-
 }

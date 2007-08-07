@@ -17,9 +17,10 @@ import java.awt.*;
  *
  * @author  citibob
  */
-public class CryptCCInfo extends javax.swing.JPanel implements BindContainer
+public class CCInfoLabels extends javax.swing.JPanel implements BindContainer
 {
 
+KeyRing kr;
 String oldccinfo;
 JDialog popupDialog;
 
@@ -27,25 +28,15 @@ Component[] bindComponents;
 public java.awt.Component[] getBindComponents() { return bindComponents; }
 
 /** Creates new form JEncCCInfo */
-public CryptCCInfo()
+public CCInfoLabels()
 {
 	initComponents();
 	bindComponents = new Component[] {lccinfo};
-	
-	// Pressing ENTER will initiate search.
-	ccinfo.addKeyListener(new KeyAdapter() {
-	public void keyTyped(KeyEvent e) {
-		//System.out.println(e.getKeyChar());
-		if (e.getKeyChar() == '\n') bOKActionPerformed(null);
-	}});
-
-	
 	clear();
 }
 
-public void initRuntime(KeyRing kr)
+public void initRuntime()
 {
-	ccinfo.initRuntime(kr);
 	lcctype.setJType(offstage.schema.EntitiesSchema.ccTypeModel, "<none>");
 	llast4.setJType(new JavaJType(String.class),
 		new StringFormatter());
@@ -62,28 +53,10 @@ public void clear()
 	lexpdate.setValue(null);
 }
 
-protected void showPopup()
+public boolean isFullySet()
 {
-	ccinfo.initValue((String)lccname.getValue(), (String)lcctype.getValue(), (String)lexpdate.getValue());
-	
-//	oldccinfo = ccinfo.getValue();
-	popupDialog = new JDialog((java.awt.Frame)citibob.swing.WidgetTree.getRoot(this));
-	popupDialog.setLocationRelativeTo(this);
-	popupDialog.setTitle("Credit Card Info");
-	popupDialog.setContentPane(popupPanel);
-	popupDialog.pack();
-	popupDialog.setVisible(true);
-//	popupDialog.addWindowListener(new WindowAdapter() {
-//	    public void windowClosing(WindowEvent e) {
-//			ccinfo.setValue(oldccinfo);		// Undo any edits.
-//		}
-//	});
+	return lccinfo.getValue() != null;
 }
-
-//public void initRuntime(FrontApp fapp)
-//{
-//	kr = fapp.getKeyRing();
-//}
 
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -95,41 +68,17 @@ protected void showPopup()
     {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        popup = new javax.swing.JPopupMenu();
-        popupPanel = new javax.swing.JPanel();
-        ccinfo = new offstage.swing.typed.JTypedCCInfo();
-        jPanel1 = new javax.swing.JPanel();
-        bOK = new javax.swing.JButton();
-        lccinfo = new citibob.swing.typed.JTypedLabel();
+        lccinfo = new citibob.swing.typed.JTypedTextField();
         jLabel10 = new javax.swing.JLabel();
         lcctype = new citibob.swing.typed.JTypedLabel();
         jLabel11 = new javax.swing.JLabel();
         llast4 = new citibob.swing.typed.JTypedLabel();
         jLabel12 = new javax.swing.JLabel();
         lexpdate = new citibob.swing.typed.JTypedLabel();
-        jButton1 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         lccname = new citibob.swing.typed.JTypedLabel();
 
-        popupPanel.setLayout(new java.awt.BorderLayout());
-
-        popupPanel.setPreferredSize(new java.awt.Dimension(300, 170));
-        popupPanel.add(ccinfo, java.awt.BorderLayout.CENTER);
-
-        bOK.setText("OK");
-        bOK.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bOKActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(bOK);
-
-        popupPanel.add(jPanel1, java.awt.BorderLayout.SOUTH);
-
-        lccinfo.setText("jTypedLabel1");
+        lccinfo.setText("jTypedTextField1");
         lccinfo.setColName("ccinfo");
 
         setLayout(new java.awt.GridBagLayout());
@@ -182,21 +131,6 @@ protected void showPopup()
         gridBagConstraints.weightx = 1.0;
         add(lexpdate, gridBagConstraints);
 
-        jButton1.setText("Set CC Details");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
-        add(jButton1, gridBagConstraints);
-
         jLabel13.setText("Name onCard: ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -214,48 +148,18 @@ protected void showPopup()
         add(lccname, gridBagConstraints);
 
     }// </editor-fold>//GEN-END:initComponents
-
-	private void bOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOKActionPerformed
-	{//GEN-HEADEREND:event_bOKActionPerformed
-		if (!ccinfo.isFullySet()) {
-			JOptionPane.showMessageDialog(popupDialog,
-				"Please fill in all credit card fields completely.");
-		} else {
-			popupDialog.setVisible(false);
-			ccinfo.makeVal();
-			lccinfo.setValue(ccinfo.getValue());
-			lccname.setValue(ccinfo.getCCName());
-			lcctype.setValue(ccinfo.getCCType());
-			lexpdate.setValue(ccinfo.getExpDate());
-			llast4.setValue(ccinfo.getLast4());
-//			ccinfo.fireValueChanged(oldccinfo);
-//	System.out.println("ccinfo.value = " + ccinfo.getValue());
-		}
-// TODO add your handling code here:
-	}//GEN-LAST:event_bOKActionPerformed
-
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-	{//GEN-HEADEREND:event_jButton1ActionPerformed
-		showPopup();
-	}//GEN-LAST:event_jButton1ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bOK;
-    private offstage.swing.typed.JTypedCCInfo ccinfo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JPanel jPanel1;
-    protected citibob.swing.typed.JTypedLabel lccinfo;
-    private citibob.swing.typed.JTypedLabel lccname;
-    private citibob.swing.typed.JTypedLabel lcctype;
-    private citibob.swing.typed.JTypedLabel lexpdate;
-    private citibob.swing.typed.JTypedLabel llast4;
-    private javax.swing.JPopupMenu popup;
-    private javax.swing.JPanel popupPanel;
+    protected citibob.swing.typed.JTypedTextField lccinfo;
+    protected citibob.swing.typed.JTypedLabel lccname;
+    protected citibob.swing.typed.JTypedLabel lcctype;
+    protected citibob.swing.typed.JTypedLabel lexpdate;
+    protected citibob.swing.typed.JTypedLabel llast4;
     // End of variables declaration//GEN-END:variables
 
 public static void main(String[] args)

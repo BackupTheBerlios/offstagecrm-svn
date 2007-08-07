@@ -33,9 +33,10 @@ throws SQLException
 	super(st, change);
 	table = "ccpayments";
 	appendCols(new Column[] {
-		new Column(new SqlString(50), "name"),
+		new Column(new SqlString(50), "ccname"),
 		new Column(new SqlChar(), "cctype"),
-		new Column(new SqlString(4), "last4"),
+		new Column(new SqlString(4), "cclast4"),
+		new Column(new SqlString(4), "ccexpdate"),
 		new Column(new SqlString(255), "ccinfo")
 	});
 }

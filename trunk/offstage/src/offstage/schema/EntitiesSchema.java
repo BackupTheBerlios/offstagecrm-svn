@@ -26,6 +26,15 @@ import java.sql.*;
 public class EntitiesSchema extends ConstSchema
 {
 
+
+public final static KeyedModel ccTypeModel;
+static {
+	ccTypeModel = new KeyedModel();
+	ccTypeModel.addItem(null, "<None>");
+	ccTypeModel.addItem("m", "Master Card");
+	ccTypeModel.addItem("v", "Visa");
+}
+
 public EntitiesSchema(Statement st, DbChangeModel change)
 throws SQLException
 {
@@ -61,7 +70,12 @@ throws SQLException
 		new Column(new SqlBool(false), "isorg", false),
 		new Column(new SqlEnum(
 			new DbKeyedModel(st, change, "mailprefids", "mailprefid", "name", "mailprefid"),
-			"<No Preference>"), "mailprefid")
+			"<No Preference>"), "mailprefid"),
+		new Column(new SqlString(50), "ccname"),
+		new Column(new SqlString(1), "cctype"),
+		new Column(new SqlString(4), "cclast4", false),
+		new Column(new SqlString(4), "ccexpdate", false),
+		new Column(new SqlString(255), "ccinfo", false)
 	};
 }	
 // ------------------------------------------

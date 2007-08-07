@@ -39,6 +39,8 @@ import citibob.app.*;
 import offstage.schema.*;
 import citibob.jschema.*;
 import citibob.util.*;
+import offstage.*;
+import offstage.swing.typed.*;
 
 /**
  *
@@ -50,8 +52,8 @@ public class CcpaymentWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public CcpaymentWiz(java.awt.Frame owner, App app)
-throws org.xml.sax.SAXException, java.io.IOException
+public CcpaymentWiz(java.awt.Frame owner, java.sql.Statement st, int entityid, FrontApp app)
+throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "New Cash Payment", app.getSwingerMap(), true);
 	
@@ -61,26 +63,11 @@ throws org.xml.sax.SAXException, java.io.IOException
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addWidget("namount", "amount", schema);		// Negative of amount...
-	KeyedModel kmodel = new KeyedModel();
-		kmodel.addItem(null, "<None>");
-		kmodel.addItem("m", "Master Card");
-		kmodel.addItem("v", "Visa");
-	addWidget("cctype", new JKeyedComboBox(kmodel));
-	JTypedTextField tf;
-	tf = new JTypedTextField();
-		tf.setJType(String.class, new CCFormatter());
-		addWidget("ccnumber", tf);
-	tf = new JTypedTextField();
-		tf.setJType(String.class, new ExpDateFormatter());
-		addWidget("expdate", tf);
-	tf = new JTypedTextField();
-		tf.setJType(String.class, new DigitsFormatter(3));
-		addWidget("seccode", tf);
-	tf = new JTypedTextField();
-		tf.setJType(String.class, new DigitsFormatter(5));
-		addWidget("zip", tf);
-	addTextField("description", schema);
-	addWidget("dtime", schema).setValue(null);
+	offstage.swing.typed.CCChooser ccchooser = new CCChooser();
+		ccchooser.initRuntime(app.getKeyRing());
+		ccchooser.setEntityID(st, entityid, app);
+	addWidget("ccchooser", ccchooser);
+//	addWidgetRecursive(ccinfo);
 	loadHtml();
 }
 

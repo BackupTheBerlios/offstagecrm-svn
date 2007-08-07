@@ -60,7 +60,7 @@ FrontApp app;
 //		this.runner = fapp.getGuiRunner();
 		this.model = fapp.getFullEntityDm();
 		//JSchemaWidgetTree.bindToPool(this, fapp.getPool());
-		entityPanel.initRuntime(st, app, model);
+		entityPanel.initRuntime(st, fapp, model);
 		simpleSearch.initRuntime(fapp);
 	}
 	/** This method is called from within the constructor to

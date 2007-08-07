@@ -12,8 +12,8 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="mainPanel" alignment="0" pref="749" max="32767" attributes="0"/>
           <Component id="groupPanels" alignment="0" pref="749" max="32767" attributes="0"/>
+          <Component id="mainPanel" alignment="0" pref="749" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -99,9 +99,18 @@
             </Constraint>
           </Constraints>
         </Component>
+        <Component class="offstage.swing.typed.CryptCCInfo" name="cryptCCInfo">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Credit Card">
+                <Property name="tabTitle" type="java.lang.String" value="Credit Card"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+        </Component>
       </SubComponents>
     </Container>
-    <Component class="offstage.gui.MainEntityPanel" name="mainPanel">
+    <Component class="offstage.gui.PersonPanel" name="mainPanel">
     </Component>
   </SubComponents>
 </Form>

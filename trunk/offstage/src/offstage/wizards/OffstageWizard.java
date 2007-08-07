@@ -79,7 +79,7 @@ public Wiz createWiz(State state) throws Exception
     }
 	
 /** Creates an INSERT query from the values of the HashMap v, and the schema. */
-protected citibob.sql.ConsSqlQuery newInsertQuery(String maintable)
+protected citibob.sql.ConsSqlQuery newInsertQuery(String maintable, TypedHashMap v)
 {
 	return citibob.sql.SQL.newInsertQuery(maintable, v, fapp.getSchema(maintable));
 	

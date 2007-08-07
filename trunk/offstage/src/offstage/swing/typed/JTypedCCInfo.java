@@ -69,6 +69,11 @@ public JTypedCCInfo()
 	zip.addFocusListener(focus);
 }
 
+protected void fireValueChanged(String oldValue)
+{
+	firePropertyChange("value", oldValue, getValue());
+}
+
 public void initRuntime(KeyRing kr)
 {
 	this.kr = kr;
@@ -136,6 +141,7 @@ void makeVal()
 	// Encrypt the value
 	try {
 		val = kr.encrypt(val);
+		valValid = true;
 	} catch(Exception e) {
 		// kr == null, or public key not loaded.
 		// Either way, don't leak any unencrypted information.
@@ -174,6 +180,11 @@ public void initValue(String xccname, String xcctype, String xexpdate)
 	ccname.setValue(xccname);
 	cctype.setValue(xcctype);
 	expdate.setValue(xexpdate);
+}
+public void initValue(CCInfoLabels lab)
+{
+	initValue((String)lab.lccname.getValue(), (String)lab.lcctype.getValue(),
+		(String)lab.lexpdate.getValue());
 }
 /** From TableCellEditor (in case this is being used in a TableCellEditor):
  * Tells the editor to stop editing and accept any partially edited value

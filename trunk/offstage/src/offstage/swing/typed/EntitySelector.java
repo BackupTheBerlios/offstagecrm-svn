@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Created on June 5, 2005, 5:47 PM
  */
 
-package offstage.gui;
+package offstage.swing.typed;
 import java.sql.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;

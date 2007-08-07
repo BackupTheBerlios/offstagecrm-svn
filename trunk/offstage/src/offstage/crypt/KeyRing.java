@@ -137,14 +137,14 @@ throws GeneralSecurityException, IOException
 
 	// Read each one as a key file
 	ArrayList<PrivKeyFile> xPrivKeys = new ArrayList();
-	for (int i=keyFiles.size()-1; i >= 0; ++i) {
+	for (int i=keyFiles.size()-1; i >= 0; --i) {
 		try {
 			// Parse the timestamp from the filename
 			String fname = keyFiles.get(i);
 			int dash = fname.indexOf('-');
 			int dot = fname.lastIndexOf('.');
 			String sdt = fname.substring(dash+1, dot);
-			java.util.Date dt = dfmt.parse(fname);
+			java.util.Date dt = dfmt.parse(sdt);
 
 			// Read the key from the file
 			File f = new File(privDir, fname);

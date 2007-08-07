@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Created on May 14, 2003, 8:52 PM
  */
 
-package offstage.gui;
+package offstage.swing.typed;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -35,11 +35,8 @@ import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
+import offstage.swing.typed.EntitySelector;
 
-/**
- *
- * @author  citibob
- */
 public class EntityIDLabel extends JTypedEditableLabel
 {
 
@@ -70,7 +67,7 @@ protected void showPopup()
 	super.showPopup();
 	sel.requestTextFocus();
 }
-// =======================================================
+// =========================EntityIDFormatter=============
 static class EntityIDFormatter extends DBFormatter
 {
 

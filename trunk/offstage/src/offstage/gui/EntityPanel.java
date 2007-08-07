@@ -51,10 +51,17 @@ public class EntityPanel extends javax.swing.JPanel {
 
 	EntityPanel getThis() { return this; }
 	
-	public void initRuntime(Statement st, citibob.app.App app, FullEntityDbModel dm)
+	public void initRuntime(Statement st, FrontApp fapp, FullEntityDbModel dm)
 	throws java.sql.SQLException
 	{
+		citibob.app.App app = fapp;
+		
 		mainPanel.initRuntime(st, app, dm);
+		
+		// Init the credit card panel
+		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.getSwingerMap());
+		cryptCCInfo.initRuntime(fapp.getKeyRing());
+		
 		donationsPanel.initRuntime(st, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
 			new String[] {"groupid", "date", "amount"}, app.getSwingerMap());
@@ -76,18 +83,20 @@ public class EntityPanel extends javax.swing.JPanel {
 		classesPanel.initRuntime(st, dm.getClassesSb(),
 			new String[] {"Class", "Comments"},
 			new String[] {"groupid", "comments"}, app.getSwingerMap());
-		dm.addListener(new FullEntityDbModel.Adapter() {
-		public void entityTypeChanged(int type) {
-			CardLayout cl = (CardLayout)(mainPanel.getLayout());
-			switch(type) {
-				case FullEntityDbModel.ORG :
-					cl.show(mainPanel, "org");
-				break;
-				case FullEntityDbModel.PERSON :
-					cl.show(mainPanel, "person");
-				break;
-			}
-		}});
+//		dm.addListener(new FullEntityDbModel.Adapter() {
+//		public void entityTypeChanged(int type) {
+//			CardLayout cl = (CardLayout)(mainPanel.getLayout());
+//			switch(type) {
+//				case FullEntityDbModel.ORG :
+//					cl.show(mainPanel, "org");
+//				break;
+//				case FullEntityDbModel.PERSON :
+//					cl.show(mainPanel, "person");
+//				break;
+//			}
+//		}});
+		this.cryptCCInfo.initRuntime(fapp.getKeyRing());
+		
 	}	
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -105,7 +114,8 @@ public class EntityPanel extends javax.swing.JPanel {
         interestsPanel = new offstage.gui.GroupPanel();
         classesPanel = new offstage.gui.GroupPanel();
         flagsPanel = new offstage.gui.GroupPanel();
-        mainPanel = new offstage.gui.MainEntityPanel();
+        cryptCCInfo = new offstage.swing.typed.CryptCCInfo();
+        mainPanel = new offstage.gui.PersonPanel();
 
         groupPanels.setPreferredSize(new java.awt.Dimension(458, 200));
         groupPanels.addTab("Donations", donationsPanel);
@@ -122,12 +132,14 @@ public class EntityPanel extends javax.swing.JPanel {
 
         groupPanels.addTab("Flags", flagsPanel);
 
+        groupPanels.addTab("Credit Card", cryptCCInfo);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(mainPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
             .add(groupPanels, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+            .add(mainPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -141,12 +153,13 @@ public class EntityPanel extends javax.swing.JPanel {
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private offstage.gui.GroupPanel classesPanel;
+    private offstage.swing.typed.CryptCCInfo cryptCCInfo;
     private offstage.gui.GroupPanel donationsPanel;
     private offstage.gui.GroupPanel eventsPanel;
     private offstage.gui.GroupPanel flagsPanel;
     private javax.swing.JTabbedPane groupPanels;
     private offstage.gui.GroupPanel interestsPanel;
-    private offstage.gui.MainEntityPanel mainPanel;
+    private offstage.gui.PersonPanel mainPanel;
     private offstage.gui.GroupPanel notesPanel;
     private offstage.gui.GroupPanel ticketsPanel;
     // End of variables declaration//GEN-END:variables

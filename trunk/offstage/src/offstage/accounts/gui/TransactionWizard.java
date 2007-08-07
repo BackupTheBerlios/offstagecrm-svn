@@ -39,6 +39,7 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.jschema.log.*;
 import offstage.crypt.*;
+import offstage.swing.typed.*;
 
 /**
  *
@@ -60,9 +61,9 @@ addState(new State("", "", "") {
 */
 
 /** Does an insert, using all the field names in v automatically. */
-void vInsert(String table) throws SQLException
+void vInsert(String table, TypedHashMap v) throws SQLException
 {
-	ConsSqlQuery sql = newInsertQuery(table);
+	ConsSqlQuery sql = newInsertQuery(table, v);
 	sql.addColumn("entityid", SqlInteger.sql(entityid));
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 	st.executeUpdate(sql.getSql());
@@ -93,7 +94,7 @@ addState(new State("cashpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
-		vInsert("cashpayments");
+		vInsert("cashpayments", v);
 	}
 });
 addState(new State("checkpayment", null, null) {
@@ -103,29 +104,26 @@ addState(new State("checkpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
-		vInsert("checkpayments");
+		vInsert("checkpayments", v);
 	}
 });
 addState(new State("ccpayment", null, null) {
 	public HtmlWiz newWiz() throws Exception
-		{ return new CcpaymentWiz(frame, fapp); }
+		{ return new CcpaymentWiz(frame, st, entityid, fapp); }
 	public void process() throws Exception
 	{
-
-		double namount = ((Number)v.get("namount")).doubleValue();
-		KeyRing kr = fapp.getKeyRing();
-
-
-//		String sdetails = kr.encryptCCDetails(v.getString("cctype"),
-//			v.getString("ccnumber"), v.getString("expdate"),
-//			v.getString("seccode"), v.getString("zip"));
-//
-//		v.clear();
-//		v.put("amount", new Double(-namount));
-//		v.put("ccinfo", sdetails);
-//
-//
-//		vInsert("ccpayments");
+		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;
+//		cwiz.getWidget("ccchooser")
+		CCChooser cc = (CCChooser)cwiz.getWidget("ccchooser");
+		// TODO: Log change to credit card # on file (or should I?)
+		cc.saveNewCardIfNeeded(st);
+		
+		ConsSqlQuery sql = new ConsSqlQuery("ccpayments", ConsSqlQuery.INSERT);
+		cc.getCard(sql);
+		sql.addColumn("amount", SqlDouble.sql(-((Number)v.get("namount")).doubleValue()));
+		sql.addColumn("entityid", SqlInteger.sql(entityid));
+		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+		st.executeUpdate(sql.getSql());
 	}
 });
 // ---------------------------------------------

@@ -30,6 +30,8 @@ import citibob.swing.html.*;
 import java.util.*;
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
+import offstage.swing.typed.EntitySelector;
+import offstage.swing.typed.EntitySelector;
 import offstage.types.*;
 import javax.swing.*;
 import offstage.wizards.*;
