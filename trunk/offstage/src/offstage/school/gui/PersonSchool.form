@@ -436,7 +436,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.gui.EntityIDLabel" name="lAdult">
+                <Component class="offstage.swing.typed.EntityIDLabel" name="lAdult">
                   <Properties>
                     <Property name="colName" type="java.lang.String" value="adultid"/>
                   </Properties>

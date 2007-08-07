@@ -260,7 +260,7 @@ public void refreshEnroll(Statement st) throws SQLException
         jLabel7 = new javax.swing.JLabel();
         acbal = new citibob.swing.typed.JTypedLabel();
         jLabel5 = new javax.swing.JLabel();
-        lAdult = new offstage.gui.EntityIDLabel();
+        lAdult = new offstage.swing.typed.EntityIDLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -705,7 +705,7 @@ public void refreshEnroll(Statement st) throws SQLException
     private javax.swing.JPanel jPanel9;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JToolBar jToolBar2;
-    private offstage.gui.EntityIDLabel lAdult;
+    private offstage.swing.typed.EntityIDLabel lAdult;
     private javax.swing.JLabel lSpace;
     private citibob.swing.typed.JTypedLabel lastname;
     private citibob.swing.typed.JTypedLabel lentityid;
