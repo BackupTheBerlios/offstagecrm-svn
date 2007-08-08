@@ -1,0 +1,266 @@
+/*
+OffstageArts: Enterprise Database for Arts Organizations
+This file Copyright (c) 2005-2007 by Robert Fischer
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/*
+ * PdfJooReport.java
+ *
+ * Created on August 7, 2007, 11:33 PM
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package offstage.reports;
+
+import com.artofsolving.jodconverter.*;
+import com.artofsolving.jodconverter.openoffice.connection.*;
+import com.artofsolving.jodconverter.openoffice.converter.*;
+import net.sf.jooreports.templates.*;
+import java.io.*;
+import java.util.*;
+import com.pdfhacks.*;
+
+/**
+ *
+ * @author citibob
+ */
+public class JodPdfWriter
+{
+
+static final int E_MAIN = 0;
+static final int E_TEMPLATE = 1;
+static final int E_OO = 2;
+static final int E_CONCAT = 3;
+Throwable[] exceptions = new Throwable[4];
+
+//OutputStream pdfOut;		// Current place where we send our PDF files
+DocumentFormatRegistry registry;
+ConcatPdfWriter concat;		// null if no concatenation
+Thread concatThread;
+
+// -----------------------------------------------------------------
+// ---------------------------------------------------------------
+public JodPdfWriter() throws IOException, InterruptedException
+{
+	registry = new XmlDocumentFormatRegistry(); 
+	connectOOo();
+	concat = null;			// One-by-one output files
+}
+
+public JodPdfWriter(OutputStream pdfOut) throws IOException, InterruptedException
+{
+	this();
+	concat = new ConcatPdfWriter(pdfOut);
+}
+
+public void close() throws IOException
+{
+	// Must check for concatThread==null; otherwise, concat.close() will hang.
+	if (concat != null && concatThread == null) concat.close();
+	closeOOo();
+}
+
+public void writeReport(final InputStream templateIn, final Object dataModel)
+throws IOException, DocumentTemplateException, com.lowagie.text.DocumentException, InterruptedException
+{
+	final Exception[] exp = new Exception[1];
+	try {
+		// Set up pipes to copy to concat
+		final PipedInputStream pin2 = new PipedInputStream();
+		final PipedOutputStream pout2 = new PipedOutputStream(pin2);
+		concatThread = new Thread() { public void run() {
+			try {
+				System.out.println("Concat Running");
+				concat.writePdfDoc(pin2);
+				pin2.close();
+				concat.flush();
+				System.out.println("Concat done running");
+			} catch(Exception e) {
+				// throws IOException, com.lowagie.text.DocumentException
+				exp[0] = e;
+			}
+		}};
+		concatThread.setDaemon(true);
+		concatThread.start();
+
+		writeReport(templateIn, dataModel, pout2);
+
+		pout2.close();		// Flush out, allows concatThread to finish.
+		concatThread.join();	// Wait for concatenation to finish before moving on
+		concatThread = null;
+	} finally {
+		if (exp[0] != null) {
+			if (exp[0] instanceof IOException) throw (IOException) exp[0];
+			if (exp[0] instanceof com.lowagie.text.DocumentException)
+				throw (com.lowagie.text.DocumentException) exp[0];
+		}
+	}
+}
+	
+public void writeReport(final InputStream templateIn, final Object dataModel, final OutputStream out)
+throws IOException, DocumentTemplateException
+{
+	final Exception[] exp = new Exception[1];
+	try {
+		// Set up pipes and basic filling-in of the template
+		final PipedInputStream pin = new PipedInputStream();
+		final PipedOutputStream pout = new PipedOutputStream(pin);
+		new Thread() { public void run() {
+			try {
+				DocumentTemplate template = new ZippedDocumentTemplate(templateIn);
+				template.createDocument(dataModel, pout);
+			} catch(Exception e) {
+				// throws IOException, DocumentTemplateException
+				exp[0] = e;
+			}
+	//		catch(IOException e) {
+	//			exp[0] = e;
+	//		} catch(DocumentTemplateException de) {
+	//			exp[]
+	////			exp[0] = e;
+	////			e.printStackTrace();
+	//		}
+		}}.start();
+
+		// Use our OOo connection to translate the document
+		DocumentConverter converter = new OpenOfficeDocumentConverter(connection, registry); 
+		DocumentFormat odt = registry.getFormatByFileExtension("odt"); 
+		DocumentFormat pdf = registry.getFormatByFileExtension("pdf"); 
+		converter.convert(pin, odt, out, pdf);
+
+		// Close the pipes
+		pin.close();
+		pout.close();
+	} finally {
+		if (exp[0] != null) {
+			if (exp[0] instanceof IOException) throw (IOException) exp[0];
+			if (exp[0] instanceof DocumentTemplateException) throw (DocumentTemplateException) exp[0];
+		}
+	}
+}
+
+
+//public void exec(final InputStream[] templateIn, final Object[] dataModel, final OutputStream pdfOut) throws Exception
+//{
+//	try {
+//		
+//		// Set up pipes for concatenating PDF files
+//		
+//			
+//		for (int i=0; i<templateIn.length; ++i) {
+//			System.out.println("Processing file " + i);
+//
+//
+//		}
+//		concat.close();
+//	} catch(Exception e) {
+//		throw new Exception(
+//			exceptions[0].getMessage() + "\n" +
+//			exceptions[1].getMessage() + "\n" +
+//			exceptions[2].getMessage() + "\n");
+//	} finally {
+//		try {
+//			closeOOo();
+//		} catch(Exception e) {
+//			System.out.println("Exception closing: ");
+//			e.printStackTrace();
+//			throw e;
+//		}
+//	}
+//}
+
+
+// ====================================================================
+// OOo connection
+OpenOfficeConnection connection;
+Process proc;
+InputStream stderr;
+
+void connectOOo() throws IOException, InterruptedException
+{
+	proc = Runtime.getRuntime().exec(
+		"ooffice -headless -accept=socket,port=8100;urp;StarOffice.ServiceManager");
+	stderr = proc.getErrorStream();
+	
+	// Handle the OOo server we just started.
+	Thread ooThread = new Thread() {
+	public void run() {
+		try {
+			String line = null;
+			int c;
+			while ((c = stderr.read()) > 0) ;
+			proc.destroy();
+		} catch (Throwable t) {
+			exceptions[E_OO] = t;
+			t.printStackTrace();
+		}
+		System.out.println("ooThread exiting");
+	}};
+	ooThread.setDaemon(true);
+	ooThread.start();
+
+	// connect to the OpenOffice.org instance we just started or ressucitated
+	for (int i=0; ; ++i) {
+		try {
+			System.out.println("Connection try " + i);
+			connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
+			connection.connect();
+			break;
+		} catch(IOException e) {
+			if (i < 10) Thread.currentThread().sleep(1000);
+			else throw e;
+		}
+	}
+
+}
+
+void closeOOo() throws IOException
+{
+	// close the connection to OOo
+	connection.disconnect();
+	stderr.close();
+	proc.destroy();
+}
+// ======================================================================
+
+public static void main(String[] args) throws Exception
+{
+	File dir = new File("reports");
+	final Map data = new HashMap();
+	data.put("name", "Joe");
+	
+	ArrayList items = new ArrayList();
+	Map i1 = new HashMap();
+		i1.put("firstname", "Martha");
+		i1.put("lastname", "Magpie");
+		items.add(i1);
+	i1 = new HashMap();
+//		i1.put("firstname", "Joe");
+		i1.put("lastname", "Schmoe");
+		items.add(i1);		
+	data.put("items", items);
+	
+	OutputStream pdfOut = new FileOutputStream(new File(dir, "test1-out.pdf"));
+	JodPdfWriter jout = new JodPdfWriter(pdfOut);
+	try {
+		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
+		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
+	} finally {
+		jout.close();
+	}
+}
+}
