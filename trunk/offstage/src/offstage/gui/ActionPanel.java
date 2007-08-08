@@ -132,6 +132,11 @@ public void initRuntime(FrontApp xfapp) throws Exception
 		wizard.runWizard();
 	}}));
 
+	actionMap.put("testjodreports", new CBTask("", "admin", new StRunnable() {
+	public void run(Statement st) throws Exception {
+		offstage.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
+	}}));
+	
 	actionMap.put("editcourses", new CBTask("", "admin", new StRunnable() {
 	public void run(Statement st) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());

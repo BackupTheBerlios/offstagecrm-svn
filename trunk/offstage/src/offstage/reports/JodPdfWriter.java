@@ -54,16 +54,16 @@ Thread concatThread;
 
 // -----------------------------------------------------------------
 // ---------------------------------------------------------------
-public JodPdfWriter() throws IOException, InterruptedException
+public JodPdfWriter(String oofficeExe) throws IOException, InterruptedException
 {
 	registry = new XmlDocumentFormatRegistry(); 
-	connectOOo();
+	connectOOo(oofficeExe);
 	concat = null;			// One-by-one output files
 }
 
-public JodPdfWriter(OutputStream pdfOut) throws IOException, InterruptedException
+public JodPdfWriter(String oofficeExe, OutputStream pdfOut) throws IOException, InterruptedException
 {
-	this();
+	this(oofficeExe);
 	concat = new ConcatPdfWriter(pdfOut);
 }
 
@@ -190,10 +190,10 @@ OpenOfficeConnection connection;
 Process proc;
 InputStream stderr;
 
-void connectOOo() throws IOException, InterruptedException
+void connectOOo(String oofficeExe) throws IOException, InterruptedException
 {
 	proc = Runtime.getRuntime().exec(
-		"ooffice -headless -accept=socket,port=8100;urp;StarOffice.ServiceManager");
+		oofficeExe + " -headless -accept=socket,port=8100;urp;StarOffice.ServiceManager");
 	stderr = proc.getErrorStream();
 	
 	// Handle the OOo server we just started.
@@ -239,6 +239,10 @@ void closeOOo() throws IOException
 
 public static void main(String[] args) throws Exception
 {
+	doTest("soffice");
+}
+public static void doTest(String oofficeExe) throws Exception
+{
 	File dir = new File("reports");
 	final Map data = new HashMap();
 	data.put("name", "Joe");
@@ -249,13 +253,13 @@ public static void main(String[] args) throws Exception
 		i1.put("lastname", "Magpie");
 		items.add(i1);
 	i1 = new HashMap();
-//		i1.put("firstname", "Joe");
+		i1.put("firstname", "Joe");
 		i1.put("lastname", "Schmoe");
 		items.add(i1);		
 	data.put("items", items);
 	
 	OutputStream pdfOut = new FileOutputStream(new File(dir, "test1-out.pdf"));
-	JodPdfWriter jout = new JodPdfWriter(pdfOut);
+	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut);
 	try {
 		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
 		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
