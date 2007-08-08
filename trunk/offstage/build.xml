@@ -70,7 +70,11 @@
     
 <taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
   <classpath>
-    <fileset dir="./lib">
+    <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
+    <fileset dir="./lib/jasperreports">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="./compilelib">
       <include name="*.jar"/>
     </fileset>
   </classpath>
@@ -85,7 +89,7 @@
 		</fileset>
 	  </src>
 	  <classpath>
-	    <fileset dir="./lib"><include name="*.jar"/></fileset>
+	    <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
 	    <fileset dir="./compilelib"><include name="*.jar"/></fileset>
 	  </classpath>
 	</jrc>
@@ -97,6 +101,10 @@
 <target name="-post-jar">
     <copy todir="dist">
         <fileset dir="./lib"><include name="*.jar"/></fileset>
+        <fileset dir="./lib/jasperreports"><include name="*.jar"/></fileset>
+        <fileset dir="./lib/jooreports"><include name="*.jar"/></fileset>
+        <fileset dir="./lib/jodconverter"><include name="*.jar"/></fileset>
+        <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
         <fileset dir="../jschema/dist">
             <include name="mail.jar"/>
             <include name="activation.jar"/>
@@ -115,7 +123,7 @@
 
 
 
-<taskdef name="mvcgen" classname="citibob.mvcgen.MVCGenTask" classpath="lib/MVCGen.jar"/>
+<taskdef name="mvcgen" classname="citibob.mvcgen.MVCGenTask" classpath="compilelib/MVCGen.jar"/>
     
 <target name="mvc">
     <mvcgen file="./src/offstage/DbChangeModelMVC.mvc"/>
