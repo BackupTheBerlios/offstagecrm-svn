@@ -101,8 +101,10 @@ throws GeneralSecurityException, IOException
 public void loadPubKey(File dir)
 throws GeneralSecurityException, IOException
 {
+System.out.println("loadPubKey dir = " + dir);
 	pubKey = null;
 	File keyFile = mostRecentPubKeyFile(pubDir);
+System.out.println("loadPubKey keyFile = " + keyFile);
 	if (keyFile == null) return;
 
 	// Read and decode public key

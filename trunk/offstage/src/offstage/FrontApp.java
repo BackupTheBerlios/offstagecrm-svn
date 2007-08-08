@@ -150,7 +150,7 @@ public java.util.prefs.Preferences systemRoot()
 InputStream openPropFile(String name) throws IOException
 {
 	// First: try loading external file
-	String dir = System.getProperty("user.dir");
+	File dir = new File(System.getProperty("user.dir"), "config");
 	File f = new File(dir, name);
 	if (f.exists()) return new FileInputStream(f);
 
