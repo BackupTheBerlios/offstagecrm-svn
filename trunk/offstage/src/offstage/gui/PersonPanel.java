@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
+import citibob.swing.RowModel;
+import citibob.swing.RowModel.ColListener;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -35,7 +37,8 @@ import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
 import citibob.multithread.*;
 import citibob.app.App;
-
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 /**
  *
  * @author  citibob
@@ -82,39 +85,54 @@ extends javax.swing.JPanel {
 		genderButtonGroup.add("F", femaleButton);
 		genderButtonGroup.add(null, unknownGenderButton);
 		
-		
-		familyTable.addMouseListener(new DClickTableMouseListener(familyTable) {
-		public void doubleClicked(final int row) {
+		familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent evt) {
 			app.runGui(PersonPanel.this, new StRunnable() {
 			public void run(Statement st) throws Exception {
-				// Make sure it's selected in the GUI
-				familyTable.getSelectionModel().setSelectionInterval(row, row);
-
-				// Process the selection
-				int selected = familyTable.getSelectedRow();
-				if (selected < 0) return;
-				int entityID = dm.getEntity().getFamily().getEntityID(selected);
-				dm.setKey(entityID);
+				Integer EntityID = (Integer)familyTable.getValue();
+				if (EntityID == null) return;
+				dm.setKey(EntityID);
 				dm.doSelect(st);
-			}});
+			}});			
 		}});
+		
+//		familyTable.addMouseListener(new DClickTableMouseListener(familyTable) {
+//		public void doubleClicked(final int row) {
+//		}});
 
 	}
 	
-	public void initRuntime(Statement st, App app, FullEntityDbModel dm)
+	public void initRuntime(Statement st, App xapp, FullEntityDbModel dm)
 	throws java.sql.SQLException
 	{
-		this.app = app;
+		this.app = xapp;
 		this.dm = dm;
 		//SchemaBufRowModel model = dm.getPersonRm();
-		SchemaBufRowModel model = new SchemaBufRowModel(dm.getPersonSb());
+		SchemaBufRowModel xmodel = new SchemaBufRowModel(dm.getPersonSb());
 		//SchemaBuf phonesSb = dm.getPhonesSb();
 
 		//this.phonesSb = phonesSb;
-		this.model = model;
+		this.model = xmodel;
+		
+		// Bind the Family Table thingy (it's special)
+		familyTable.initRuntime(app);
+		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
+		public void curRowChanged(final int col) {
+			app.runApp(new StRunnable() {
+			public void run(Statement st) throws Exception {
+//System.out.println("xxyyz: " + familyTable);
+//System.out.println("xxyyz: " + st);
+//System.out.println("xxyyz: " + model);
+				Integer EntityID = (Integer)model.get(col);
+				if (EntityID == null) return;
+				familyTable.setPrimaryEntityID(st, EntityID);
+			}});
+		}});
+		
+		
 		TypedWidgetBinder.bindRecursive(this, model, app.getSwingerMap());
-		new TypedWidgetBinder().bind(genderButtonGroup, model);
-		new IsPrimaryBinder().bind(cbIsPrimary, model);
+		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
+		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only
 
 		this.entitySubPanel1.initRuntime(app);
 		
@@ -129,7 +147,7 @@ extends javax.swing.JPanel {
 		//	new String[] {"Type", "Phone"},
 		//	new String[] {"groupid", "phone"}));
 //		familyTable.setModel(dm.getFamily());
-		familyTable.initRuntime(dm.getPersonDb().getFamily());
+//		familyTable.initRuntime(dm.getPersonDb().getFamily());
 	}
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -160,7 +178,7 @@ extends javax.swing.JPanel {
         bLaunchBrowser = new javax.swing.JButton();
         FamilyPane = new javax.swing.JPanel();
         FamilyScrollPanel = new javax.swing.JScrollPane();
-        familyTable = new offstage.gui.FamilyTable();
+        familyTable = new offstage.swing.typed.FamilySelectorTable();
         jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         cbIsPrimary = new citibob.swing.typed.JBoolCheckbox();
@@ -605,7 +623,7 @@ extends javax.swing.JPanel {
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email1;
     private offstage.gui.EntitySubPanel entitySubPanel1;
-    private offstage.gui.FamilyTable familyTable;
+    private offstage.swing.typed.FamilySelectorTable familyTable;
     private javax.swing.JRadioButton femaleButton;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;

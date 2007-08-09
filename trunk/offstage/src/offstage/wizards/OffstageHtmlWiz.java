@@ -50,22 +50,22 @@ public class OffstageHtmlWiz extends HtmlWiz
 public OffstageHtmlWiz(Frame owner, String title, boolean modal)
 { super(owner, title, modal); }
 
-public EntitySelector addEntitySelector(String name, citibob.app.App app)
-{ return addEntitySelector(name, new EntitySelector(), app); }
-
-/** Adds an EntitySelector JPanel object, one that submits on double-click.  Convenience method. */
-public EntitySelector addEntitySelector(final String name, EntitySelector sel, citibob.app.App app)
-{
-	sel.initRuntime(app);
-	// Double-clicking will go to selected person
-	sel.getSearchTable().addMouseListener(new MouseAdapter() {
-	public void mouseClicked(MouseEvent e) {
-		if( e.getClickCount() != 2 ) return;
-		setSubmit(name);
-		setVisible(false);
-	}});
-	html.addWidget(name, sel);
-	return sel;
-}
+//public EntitySelector addEntitySelector(String name, citibob.app.App app)
+//{ return addEntitySelector(name, new EntitySelector(), app); }
+//
+///** Adds an EntitySelector JPanel object, one that submits on double-click.  Convenience method. */
+//public EntitySelector addEntitySelector(final String name, EntitySelector sel, citibob.app.App app)
+//{
+//	sel.initRuntime(app);
+//	// Double-clicking will go to selected person
+//	sel.getSearchTable().addMouseListener(new MouseAdapter() {
+//	public void mouseClicked(MouseEvent e) {
+//		if( e.getClickCount() != 2 ) return;
+//		setSubmit(name);
+//		setVisible(false);
+//	}});
+//	html.addWidget(name, sel);
+//	return sel;
+//}
 
 }

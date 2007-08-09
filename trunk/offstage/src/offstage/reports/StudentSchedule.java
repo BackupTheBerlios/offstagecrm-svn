@@ -49,18 +49,18 @@ public static String getSql(int termid)
 
 }
 	
-//public static void doTest(String oofficeExe) throws Exception
-public static void main(String[] args) throws Exception
-{
-	
-	OutputStream pdfOut = new FileOutputStream(new File(dir, "test1-out.pdf"));
-	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut);
-	try {
-		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
-		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
-	} finally {
-		jout.close();
-	}
-}
+////public static void doTest(String oofficeExe) throws Exception
+//public static void main(String[] args) throws Exception
+//{
+//	
+//	OutputStream pdfOut = new FileOutputStream(new File(dir, "test1-out.pdf"));
+//	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut);
+//	try {
+//		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
+//		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
+//	} finally {
+//		jout.close();
+//	}
+//}
 
 }

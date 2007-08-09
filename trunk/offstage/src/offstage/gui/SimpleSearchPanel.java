@@ -31,72 +31,62 @@ import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
 import offstage.db.*;
 import java.awt.event.*;
+import offstage.swing.typed.*;
+import citibob.swing.typed.*;
+//import java.beans.*;
 
-/**
+/**import 
  *
  * @author  citibob
  */
-public class SimpleSearchPanel extends javax.swing.JPanel {
-//	Statement st;
+public class SimpleSearchPanel extends javax.swing.JPanel
+implements java.beans.PropertyChangeListener
+{
 	FullEntityDbModel dm;
-	EntityListTableModel searchResults;
-	//ActionRunner runner;
 	citibob.app.App app;
 	
 	/** Creates new form SimpleSearchPanel */
 	public SimpleSearchPanel() {
 		initComponents();
-		
-		// Double-clicking will go to selected person
-		searchResultsTable.addMouseListener(new DClickTableMouseListener(searchResultsTable) {
-		public void doubleClicked(final int row) {
-			app.runGui(SimpleSearchPanel.this, new StRunnable() {
-			public void run(Statement st) throws Exception {
-				// Make sure it's selected in the GUI
-				searchResultsTable.getSelectionModel().setSelectionInterval(row, row);
 
-				// Process the selection
-				int entityid = getSelectedEntityID();
-				if (entityid < 0) return;
-				dm.setKey(entityid);
-				dm.doSelect(st);
-			}});
-		}});
-		
-		// Pressing ENTER will initiate search.
-		searchWord.addKeyListener(new KeyAdapter() {
-	    public void keyTyped(KeyEvent e) {
-			//System.out.println(e.getKeyChar());
-			if (e.getKeyChar() == '\n') runSearch();
-		}});
-		
+		selector.addPropertyChangeListener("value", this);
+//		// Double-clicking will go to selected person
+//		final JTypedSelectTable table = selector.getSearchTable();
+//		table.addMouseListener(
+//		new DClickTableMouseListener(table) {
+//		public void doubleClicked(final int row) {
+//			app.runGui(SimpleSearchPanel.this, new StRunnable() {
+//			public void run(Statement st) throws Exception {
+//				// Make sure it's selected in the GUI
+//				table.getSelectionModel().setSelectionInterval(row, row);
+//
+//				// Process the selection
+//				int entityid = (Integer)selector.getValue();//getSelectedEntityID();
+//				if (entityid < 0) return;
+//				dm.setKey(entityid);
+//				dm.doSelect(st);
+//			}});
+//		}});
 	}
 	public void initRuntime(FrontApp fapp) //Statement st, FullEntityDbModel dm)
 	{
-		//this.st = app.createStatement();
 		this.app = fapp;
 		this.dm = fapp.getFullEntityDm();
-		searchResults = fapp.getSimpleSearchResults();
-		// searchResults = new EntityListTableModel();
-		searchResultsTable.initRuntime(searchResults);
+		selector.initRuntime(fapp);
 	}
 
-	int getSelectedEntityID()
-	{
-		int selected = searchResultsTable.getSelectedRow();
-		if (selected < 0) return -1;
-		int entityID = searchResults.getEntityID(selected);
-		return entityID;
-	}
-	
-	private void runSearch() {
-		app.runGui(this, new StRunnable() {
-		public void run(Statement st) throws Exception {
-			String sql = DB.simpleSearchSql(searchWord.getText());
-			if (sql != null) searchResults.setRows(st, sql, null);
-		}});
-	}                                       
-
+public void propertyChange(final java.beans.PropertyChangeEvent evt)
+{
+	app.runGui(SimpleSearchPanel.this, new StRunnable() {
+	public void run(Statement st) throws Exception {
+		Integer Entityid = (Integer)evt.getNewValue();
+		if (Entityid == null) return;
+		int entityid = Entityid;
+		if (entityid < 0) return;
+		dm.setKey(entityid);
+		dm.doSelect(st);
+	}});
+}	
 
 /** This method is called from within the constructor to
 	 * initialize the form.
@@ -108,84 +98,11 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
     {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jPanel1 = new javax.swing.JPanel();
-        searchWord = new javax.swing.JTextField();
-        bSearch = new javax.swing.JButton();
-        bGo = new javax.swing.JButton();
-        FamilyScrollPanel = new javax.swing.JScrollPane();
-        searchResultsTable = new offstage.gui.FamilyTable();
         jToolBar1 = new javax.swing.JToolBar();
         bSetFamily = new javax.swing.JButton();
+        selector = new offstage.swing.typed.EntitySelector();
 
         setLayout(new java.awt.BorderLayout());
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        searchWord.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                searchWordActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(searchWord, gridBagConstraints);
-
-        bSearch.setText("Search");
-        bSearch.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bSearchActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.5;
-        jPanel1.add(bSearch, gridBagConstraints);
-
-        bGo.setText("Go");
-        bGo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bGoActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.5;
-        jPanel1.add(bGo, gridBagConstraints);
-
-        add(jPanel1, java.awt.BorderLayout.SOUTH);
-
-        FamilyScrollPanel.setPreferredSize(new java.awt.Dimension(300, 64));
-        searchResultsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String []
-            {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        FamilyScrollPanel.setViewportView(searchResultsTable);
-
-        add(FamilyScrollPanel, java.awt.BorderLayout.CENTER);
 
         bSetFamily.setText("Add to Family");
         bSetFamily.addActionListener(new java.awt.event.ActionListener()
@@ -200,16 +117,14 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 
         add(jToolBar1, java.awt.BorderLayout.NORTH);
 
-    }// </editor-fold>//GEN-END:initComponents
+        add(selector, java.awt.BorderLayout.CENTER);
 
-	private void searchWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchWordActionPerformed
-// TODO add your handling code here:
-	}//GEN-LAST:event_searchWordActionPerformed
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void bSetFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSetFamilyActionPerformed
 		app.runGui(this, new StRunnable() {
 		public void run(Statement st) throws Exception {
-			int entityid = getSelectedEntityID();
+			int entityid = (Integer)selector.getValue();//getSelectedEntityID();
 			if (entityid < 0) return;
 //			dm.getEntitySb().setFamilySameAs(st, entityid);
 			dm.getEntity().addToFamily(st, entityid);
@@ -221,31 +136,12 @@ public class SimpleSearchPanel extends javax.swing.JPanel {
 // TODO add your handling code here:
 	}//GEN-LAST:event_bSetFamilyActionPerformed
 
-	private void bGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGoActionPerformed
-		app.runGui(this, new StRunnable() {
-		public void run(Statement st) throws Exception {
-			int entityid = getSelectedEntityID();
-			if (entityid < 0) return;
-			dm.setKey(entityid);
-			dm.doSelect(st);
-		}});
-	}//GEN-LAST:event_bGoActionPerformed
-
-	
-	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-		runSearch();
-	}//GEN-LAST:event_bSearchActionPerformed
-	
+		
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane FamilyScrollPanel;
-    private javax.swing.JButton bGo;
-    private javax.swing.JButton bSearch;
     private javax.swing.JButton bSetFamily;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JToolBar jToolBar1;
-    private offstage.gui.FamilyTable searchResultsTable;
-    private javax.swing.JTextField searchWord;
+    private offstage.swing.typed.EntitySelector selector;
     // End of variables declaration//GEN-END:variables
 	
 }

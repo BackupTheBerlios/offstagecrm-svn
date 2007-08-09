@@ -35,7 +35,6 @@ import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
-import offstage.swing.typed.EntitySelector;
 
 public class EntityIDLabel extends JTypedEditableLabel
 {
@@ -58,7 +57,7 @@ public void initRuntime(App app)
 //	super.setJType(new SqlInteger(), ));
 	sel = new EntitySelector();
 	sel.initRuntime(app);
-	super.setPopupWidget(sel);
+	super.setPopupWidget(sel);		// Makes superclass listen to sel
 }
 
 protected void showPopup()

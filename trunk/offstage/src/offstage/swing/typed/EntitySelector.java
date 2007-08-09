@@ -42,7 +42,7 @@ import java.awt.*;
  */
 public class EntitySelector extends citibob.swing.typed.JTypedPanel {
 	
-RSTableModel searchResults;
+// searchResultsTable is the main "sub widget", whose value change events get reported in JTypedPanel
 citibob.app.App app;
 
 /** Creates new form SimpleSearchPanel */
@@ -54,65 +54,8 @@ public EntitySelector() {
 public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel dm)
 {
 	this.app = xapp;
-	
-	searchResults = new RSTableModel(app.getSqlTypeSet()) {
-	public void executeQuery(Statement st, String text) throws SQLException {
-		// Convert text to a search query for entityid's
-		String idSql = DB.simpleSearchSql(text);
-		if (idSql == null) return;		// no query
-
-		// Search for appropriate set of columns, given that list of IDs.
-		String sql =
-			" create temporary table _ids (id int); delete from _ids;\n" +
-
-			" delete from _ids;\n" +
-
-			" insert into _ids (id) " + idSql + ";\n" +
-
-			" select p.entityid," +
-			" (case when lastname is null then '' else lastname || ', ' end ||" +
-			" case when firstname is null then '' else firstname || ' ' end ||" +
-			" case when middlename is null then '' else middlename end ||" +
-			" case when orgname is null then '' else ' (' || orgname || ')' end" +
-			" ) as name," +
-//			" city as tooltip," +
-			" ('<html>' ||" +
-			" case when city is null then '' else city || ', ' end ||" +
-			" case when state is null then '' else state end || '<br>' ||" +
-			" case when occupation is null then '' else occupation || '<br>' end ||" +
-			" case when email is null then '' else email || '' end ||" +
-			" '</html>') as tooltip," +
-			" p.entityid = p.primaryentityid as isprimary" +
-			" from persons p, _ids" +
-			" where p.entityid = _ids.id" +
-			" order by name;\n" +
-
-			" drop table _ids";
-		ResultSet rs = st.executeQuery(sql);
-		setNumRows(0);
-		addAllRows(rs);
-		rs.close();
-//		super.executeQuery(st, sql);
-	}};
-	// PostgreSQL doesn't properly return data types of headings above, given
-	// the computed columns.  So we must set the column types ourselves.
-	searchResults.setColHeaders(new RSTableModel.Col[] {
-		new RSTableModel.Col("entityid", new SqlInteger(true)),
-		new RSTableModel.Col("name", new SqlString(true)),
-		new RSTableModel.Col("tooltip", new SqlString(true)),
-		new RSTableModel.Col("isprimary", new SqlBool(true))
-	});
-		
-	// Add the model (with tooltips)
-	searchResultsTable.setModelU(searchResults,
-		new String[] {"Name"},
-		new String[] {"name"},
-		new String[] {"tooltip"},
-		new boolean[] {false},
-		app.getSwingerMap(), app.getSFormatterMap());
-	searchResultsTable.setValueColU("entityid");
+	searchResultsTable.initRuntime(app);
 	super.setSubWidget(searchResultsTable);
-
 	
 	// Pressing ENTER will initiate search.
 	searchWord.addKeyListener(new KeyAdapter() {
@@ -122,20 +65,24 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 	}});
 }
 
-	
-public void runSearch() {
+void runSearch() {
 	app.runGui(this, new StRunnable() {
 	public void run(Statement st) throws Exception {
 		String text = searchWord.getText();
-		searchResults.executeQuery(st, text);
+		String idSql = DB.simpleSearchSql(text);
+		searchResultsTable.executeQuery(st, idSql, null);
+		if (searchResultsTable.getModel().getRowCount() == 1) {
+			searchResultsTable.setRowSelectionInterval(0,0);	// Should fire an event...
+		}
 	}});
 }
 
-/** Allows others to add a double-click-to-select mouse listener. */
-public JTypedSelectTable getSearchTable()
-	{ return searchResultsTable; }
+///** Allows others to add a double-click-to-select mouse listener. */
+//public JTypedSelectTable getSearchTable()
+//	{ return searchResultsTable; }
 // ----------------------------------------------------------------------
 
+/** Used when this widget is in a popup; put the focus immediately on the search field. */
 public void requestTextFocus()
 {
 	searchWord.setText("");
@@ -150,26 +97,15 @@ public void requestTextFocus()
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
-        java.awt.GridBagConstraints gridBagConstraints;
-
         jPanel1 = new javax.swing.JPanel();
         searchWord = new javax.swing.JTextField();
         bSearch = new javax.swing.JButton();
         FamilyScrollPanel = new javax.swing.JScrollPane();
-        searchResultsTable = new citibob.swing.typed.JTypedSelectTable();
+        searchResultsTable = new offstage.swing.typed.IdSqlTable();
 
         setLayout(new java.awt.BorderLayout());
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.X_AXIS));
-
-        searchWord.setPreferredSize(new java.awt.Dimension(4, 19));
-        searchWord.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                searchWordActionPerformed(evt);
-            }
-        });
 
         jPanel1.add(searchWord);
 
@@ -207,16 +143,12 @@ public void requestTextFocus()
 
     }// </editor-fold>//GEN-END:initComponents
 
-	private void searchWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchWordActionPerformed
-// TODO add your handling code here:
-	}//GEN-LAST:event_searchWordActionPerformed
-
 	
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+//	app.runGui(this, new StRunnable() {
+//	public void run(Statement st) throws Exception {
 		runSearch();
-	}});
+//	}});
 	}//GEN-LAST:event_bSearchActionPerformed
 	
 	
@@ -224,7 +156,7 @@ public void requestTextFocus()
     private javax.swing.JScrollPane FamilyScrollPanel;
     private javax.swing.JButton bSearch;
     private javax.swing.JPanel jPanel1;
-    private citibob.swing.typed.JTypedSelectTable searchResultsTable;
+    private offstage.swing.typed.IdSqlTable searchResultsTable;
     private javax.swing.JTextField searchWord;
     // End of variables declaration//GEN-END:variables
 // ===========================================================

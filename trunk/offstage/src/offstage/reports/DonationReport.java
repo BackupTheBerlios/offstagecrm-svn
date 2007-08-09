@@ -70,7 +70,7 @@ public DonationReport(App app, String idSql)
 		" select p.* from persons p, ids_donor ids where p.entityid = ids.id";
 //		int x=5;
 	MainSqlTableModel main = new MainSqlTableModel(
-		app.getSqlTypeSet(), "entityid", sql);
+		app.getSqlTypeSet(), sql);
 	this.add(new SqlDbModel(main));
 
 	// Outer Join the Fiscal Year summaries
@@ -87,7 +87,7 @@ public DonationReport(App app, String idSql)
 		" group by d.entityid, di.fiscalyear";
 
 	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(
-		main, "entityid", cols, app.getSqlTypeSet(),
+		main, "entityid", "entityid", cols, app.getSqlTypeSet(),
 		sql) {
 			public void setRow(int row, ResultSet rs) throws SQLException
 			{
