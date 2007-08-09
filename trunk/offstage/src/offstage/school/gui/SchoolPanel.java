@@ -29,6 +29,7 @@ import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
 import offstage.schema.*;
 import citibob.wizard.*;
 import offstage.accounts.gui.*;
+import javax.swing.*;
 
 /**
  *
@@ -37,14 +38,61 @@ import offstage.accounts.gui.*;
 public class SchoolPanel extends javax.swing.JPanel
 {
 
-	FrontApp fapp;
+FrontApp fapp;
 
-	/** Creates new form SchoolPanel */
-	public SchoolPanel()
-	{
-		initComponents();
-	}
+FullStudentDbModel studentDm;
 	
+
+/** Creates new form SchoolPanel */
+public SchoolPanel()
+{
+	initComponents();
+}
+
+public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
+{
+	this.fapp = xfapp;
+
+	// Display student info
+	studentDm = new FullStudentDbModel(fapp);
+	SwingerMap smap = fapp.getSwingerMap();
+	SchemaBufRowModel studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
+		vHouseholdID.initRuntime(fapp);
+		new TypedWidgetBinder().bind(vHouseholdID, studentRm, smap);
+//		TypedWidgetBinder.bindRecursive(StudentTab, studentRm, smap);
+
+	// Set up terms selector
+	vTermID.setKeyedModel(new DbKeyedModel(st, fapp.getDbChange(), "termids",
+		"select termid, name from termids where iscurrent order by firstdate desc"));
+	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(PropertyChangeEvent evt) {
+		fapp.runApp(new StRunnable() {
+		public void run(Statement st) throws Exception {
+			termChanged(st);
+		}});
+	}});
+
+	// Edit another student
+	searchBox.initRuntime(fapp);
+	searchBox.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(PropertyChangeEvent evt) {
+		fapp.runApp(new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Integer EntityID = (Integer)searchBox.getValue();
+			if (EntityID != null) studentDm.setKey(EntityID);
+			studentDm.doUpdate(st);
+			studentDm.doSelect(st);
+		}});
+	}});
+
+
+	
+}
+
+void termChanged(Statement st)
+{
+}
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -56,18 +104,17 @@ public class SchoolPanel extends javax.swing.JPanel
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
-        terms = new citibob.swing.typed.JKeyedComboBox();
+        vTermID = new citibob.swing.typed.JKeyedComboBox();
         jLabel3 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         PeopleHeader = new javax.swing.JPanel();
-        searchbox = new offstage.swing.typed.EntitySelector();
+        searchBox = new offstage.swing.typed.EntitySelector();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        vParent = new offstage.swing.typed.EntityIDLabel();
-        vHousehold = new offstage.swing.typed.EntityIDLabel();
-        vStudent = new citibob.swing.typed.JTypedLabel();
+        vParentID = new offstage.swing.typed.EntityIDLabel();
+        vHouseholdID = new offstage.swing.typed.EntityIDLabel();
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
@@ -84,9 +131,9 @@ public class SchoolPanel extends javax.swing.JPanel
         lastname = new citibob.swing.typed.JTypedTextField();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
-        phonePanel = new offstage.gui.GroupPanel();
+        payerPhonePanel = new offstage.gui.GroupPanel();
         jPanel5 = new javax.swing.JPanel();
-        cryptCCInfo1 = new offstage.swing.typed.CryptCCInfo();
+        payerCCInfo = new offstage.swing.typed.CryptCCInfo();
         jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -115,7 +162,7 @@ public class SchoolPanel extends javax.swing.JPanel
         lastname1 = new citibob.swing.typed.JTypedTextField();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel8 = new javax.swing.JPanel();
-        phonePanel1 = new offstage.gui.GroupPanel();
+        householdPhonePanel = new offstage.gui.GroupPanel();
         jPanel9 = new javax.swing.JPanel();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         familyTable = new offstage.swing.typed.FamilySelectorTable();
@@ -177,8 +224,8 @@ public class SchoolPanel extends javax.swing.JPanel
 
         setLayout(new java.awt.BorderLayout());
 
-        terms.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        terms.setPreferredSize(new java.awt.Dimension(68, 19));
+        vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
 
         jLabel3.setText("Term: ");
 
@@ -189,12 +236,12 @@ public class SchoolPanel extends javax.swing.JPanel
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jLabel3)
                 .add(3, 3, 3)
-                .add(terms, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE))
+                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jLabel3)
-            .add(terms, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+            .add(vTermID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
@@ -204,7 +251,7 @@ public class SchoolPanel extends javax.swing.JPanel
 
         PeopleHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         PeopleHeader.setPreferredSize(new java.awt.Dimension(790, 120));
-        searchbox.setMinimumSize(new java.awt.Dimension(200, 47));
+        searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -213,7 +260,7 @@ public class SchoolPanel extends javax.swing.JPanel
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 0);
-        PeopleHeader.add(searchbox, gridBagConstraints);
+        PeopleHeader.add(searchBox, gridBagConstraints);
 
         jLabel2.setText("Student:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -239,7 +286,7 @@ public class SchoolPanel extends javax.swing.JPanel
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader.add(jLabel5, gridBagConstraints);
 
-        vParent.setPreferredSize(new java.awt.Dimension(300, 19));
+        vParentID.setPreferredSize(new java.awt.Dimension(300, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -247,9 +294,10 @@ public class SchoolPanel extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vParent, gridBagConstraints);
+        PeopleHeader.add(vParentID, gridBagConstraints);
 
-        vHousehold.setPreferredSize(new java.awt.Dimension(122, 19));
+        vHouseholdID.setColName("primaryentityid");
+        vHouseholdID.setPreferredSize(new java.awt.Dimension(122, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -257,18 +305,7 @@ public class SchoolPanel extends javax.swing.JPanel
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vHousehold, gridBagConstraints);
-
-        vStudent.setText("jTypedLabel1");
-        vStudent.setPreferredSize(new java.awt.Dimension(200, 15));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vStudent, gridBagConstraints);
+        PeopleHeader.add(vHouseholdID, gridBagConstraints);
 
         bSave.setText("Save");
         bSave.addActionListener(new java.awt.event.ActionListener()
@@ -292,7 +329,13 @@ public class SchoolPanel extends javax.swing.JPanel
 
         jToolBar1.add(bUndo);
 
-        PeopleHeader.add(jToolBar1, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        PeopleHeader.add(jToolBar1, gridBagConstraints);
 
         jPanel2.add(PeopleHeader, java.awt.BorderLayout.NORTH);
 
@@ -366,17 +409,17 @@ public class SchoolPanel extends javax.swing.JPanel
         Payer.add(FirstMiddleLast, gridBagConstraints);
 
         jTabbedPane2.setFont(new java.awt.Font("Dialog", 1, 10));
-        phonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
+        payerPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+            .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
         );
         jTabbedPane2.addTab("Phone", jPanel4);
 
@@ -384,11 +427,11 @@ public class SchoolPanel extends javax.swing.JPanel
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(cryptCCInfo1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(payerCCInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(cryptCCInfo1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+            .add(payerCCInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
         );
         jTabbedPane2.addTab("Billing", jPanel5);
 
@@ -426,7 +469,7 @@ public class SchoolPanel extends javax.swing.JPanel
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -615,17 +658,17 @@ public class SchoolPanel extends javax.swing.JPanel
         Household.add(FirstMiddleLast1, gridBagConstraints);
 
         jTabbedPane3.setFont(new java.awt.Font("Dialog", 1, 10));
-        phonePanel1.setPreferredSize(new java.awt.Dimension(453, 180));
+        householdPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
 
         org.jdesktop.layout.GroupLayout jPanel8Layout = new org.jdesktop.layout.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(phonePanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(householdPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(phonePanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+            .add(householdPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
         );
         jTabbedPane3.addTab("Phone", jPanel8);
 
@@ -648,7 +691,7 @@ public class SchoolPanel extends javax.swing.JPanel
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(FamilyScrollPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(FamilyScrollPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -690,7 +733,7 @@ public class SchoolPanel extends javax.swing.JPanel
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+            .add(jPanel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1064,11 +1107,11 @@ public class SchoolPanel extends javax.swing.JPanel
             PeopleMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PeopleMainLayout.createSequentialGroup()
                 .add(PeopleMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(AccountTab, 0, 0, Short.MAX_VALUE)
-                    .add(StudentTab, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 348, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(StudentTab, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, AccountTab, 0, 0, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(AdultTabs, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 360, Short.MAX_VALUE))
-            .add(jTabbedPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
+                .add(AdultTabs, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE))
+            .add(jTabbedPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
         );
         PeopleMainLayout.setVerticalGroup(
             PeopleMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1082,7 +1125,7 @@ public class SchoolPanel extends javax.swing.JPanel
                         .add(12, 12, 12)
                         .add(AdultTabs, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 361, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jTabbedPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                .add(jTabbedPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2.add(PeopleMain, java.awt.BorderLayout.CENTER);
@@ -1093,11 +1136,11 @@ public class SchoolPanel extends javax.swing.JPanel
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 714, Short.MAX_VALUE)
+            .add(0, 723, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 737, Short.MAX_VALUE)
+            .add(0, 738, Short.MAX_VALUE)
         );
         jTabbedPane1.addTab("Actions", jPanel3);
 
@@ -1205,7 +1248,6 @@ public class SchoolPanel extends javax.swing.JPanel
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedTextField city1;
     private javax.swing.JPanel controller1;
-    private offstage.swing.typed.CryptCCInfo cryptCCInfo1;
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email1;
     private citibob.swing.typed.JTypedTextField email2;
@@ -1217,6 +1259,7 @@ public class SchoolPanel extends javax.swing.JPanel
     private citibob.swing.typed.JTypedTextField firstname1;
     private citibob.swing.typed.JTypedTextField firstname2;
     private citibob.swing.typed.JKeyedComboBox genders;
+    private offstage.gui.GroupPanel householdPhonePanel;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1271,22 +1314,37 @@ public class SchoolPanel extends javax.swing.JPanel
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JTypedTextField middlename1;
     private citibob.swing.typed.JTypedTextField middlename2;
-    private offstage.gui.GroupPanel phonePanel;
-    private offstage.gui.GroupPanel phonePanel1;
+    private offstage.swing.typed.CryptCCInfo payerCCInfo;
+    private offstage.gui.GroupPanel payerPhonePanel;
     private citibob.swing.typed.JKeyedComboBox programs;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField salutation1;
     private citibob.swing.typed.JTypedTextField salutation2;
-    private offstage.swing.typed.EntitySelector searchbox;
+    private offstage.swing.typed.EntitySelector searchBox;
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField state1;
-    private citibob.swing.typed.JKeyedComboBox terms;
     private citibob.jschema.swing.StatusTable trans;
-    private offstage.swing.typed.EntityIDLabel vHousehold;
-    private offstage.swing.typed.EntityIDLabel vParent;
-    private citibob.swing.typed.JTypedLabel vStudent;
+    private offstage.swing.typed.EntityIDLabel vHouseholdID;
+    private offstage.swing.typed.EntityIDLabel vParentID;
+    private citibob.swing.typed.JKeyedComboBox vTermID;
     private citibob.swing.typed.JTypedTextField zip;
     private citibob.swing.typed.JTypedTextField zip1;
     // End of variables declaration//GEN-END:variables
+public static void main(String[] args) throws Exception
+{
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	Statement st = pool.checkout().createStatement();
+	FrontApp fapp = new FrontApp(pool,null);
+
+	SchoolPanel panel = new SchoolPanel();
+	panel.initRuntime(fapp, st);
 	
+	JFrame frame = new JFrame();
+	frame.setSize(600,800);
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	frame.getContentPane().add(panel);
+
+	frame.setVisible(true);
+}
+
 }
