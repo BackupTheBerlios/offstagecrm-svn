@@ -201,7 +201,8 @@ void termChanged(Statement st) throws SQLException
 		" select courseid, c.name || ' (' || dw.shortname || ')'" +
 		" from courseids c, daysofweek dw" +
 		" where c.dayofweek = dw.javaid" +
-		" and termid = " + stermid));
+		" and termid = " + stermid +
+		" order by c.dayofweek, c.name, c.tstart"));
 
 
 }

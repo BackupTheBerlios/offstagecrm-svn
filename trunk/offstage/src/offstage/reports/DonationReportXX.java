@@ -51,29 +51,17 @@ JoinedSchemaBufDbModel mdm;
 	public void initRuntime(App app, Statement st) throws SQLException
 	{
 		this.app = app;
-//		SchemaBuf persons = new SchemaBuf(app.getSchema("persons"));
-//		SchemaBuf phones = new SchemaBuf(app.getSchema("phones"));
-		DonationReport report = new DonationReport(app,
-			"select entityid from persons where lastname = 'Fischer'");
-//		mdm = new JoinedSchemaBufDbModel(null, new TableSpec[] {
-//			new TableSpec(app.getSchema("persons")),
-//			new TableSpec(app.getSchema("phones"))
-//		});
-//		
-//		mdm.setWhereClause("persons.entityid = phones.entityid and persons.lastname like '%Fisch%'");
-//		
-//		jTypeColTable1.setSwingerMap(app.getSwingerMap());
-//		jTypeColTable1.setModel(mdm.newJTypeTableModel());
+//		DonationReport report = new DonationReport(app,
+//			"select entityid from persons where lastname = 'Fischer'");
+		RollBook report = new RollBook(app, 8);
 		report.doSelect(st);
-//		jTypeColTable1.setSwingerMap(app.getSwingerMap());
-//		jTypeColTable1.setModel(report.newTableModel());
-		Swinger dtSwinger = new JDateSwinger(
-			new SqlDate(app.getTimeZone(), true),
-			app.getTimeZone(), "yyyy-MM-dd");
+//		Swinger dtSwinger = new JDateSwinger(
+//			new SqlDate(app.getTimeZone(), true),
+//			app.getTimeZone(), "yyyy-MM-dd");
 		jTypeColTable1.setModelU(report.newTableModel(),
 			null, null, null,
 			app.getSwingerMap());
-		jTypeColTable1.setRenderEditU("created", dtSwinger);
+//		jTypeColTable1.setRenderEditU("created", dtSwinger);
 	}
 	
 	/** This method is called from within the constructor to
