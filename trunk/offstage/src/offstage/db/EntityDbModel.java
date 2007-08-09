@@ -41,17 +41,17 @@ import citibob.sql.pgsql.*;
 public class EntityDbModel extends IntKeyedDbModel
 {
 	
-	FamilyTableModel family;	// List of family members of current entity.
+//	FamilyTableModel family;	// List of family members of current entity.
 	
 	/** Creates a new instance of EntityDbModel */
 	public EntityDbModel(Schema schema, App app) {
 		super(new EntityBuf(schema), "entityid", false, null);
 		
-		family = new FamilyTableModel(app);//.getAppRunner(), app.getSqlTypeSet());
-		SchemaBufRowModel rm = new SchemaBufRowModel(this.getSchemaBuf());
-		family.bind(rm);
+//		family = new FamilyTableModel(app);//.getAppRunner(), app.getSqlTypeSet());
+//		SchemaBufRowModel rm = new SchemaBufRowModel(this.getSchemaBuf());
+//		family.bind(rm);
 	}
-	public FamilyTableModel getFamily() { return family; }
+//	public FamilyTableModel getFamily() { return family; }
 	
 	public void doInsert(Statement st) throws SQLException
 	{
@@ -76,7 +76,7 @@ public class EntityDbModel extends IntKeyedDbModel
 	public void doClear()
 	{
 		super.doClear();
-		family.setRowCount(0);
+//		family.setRowCount(0);
 	}
 	
 	
