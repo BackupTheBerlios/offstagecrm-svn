@@ -140,8 +140,9 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.swing.typed.EntityIDLabel" name="vParentID">
+                <Component class="offstage.swing.typed.EntityIDEditableLabel" name="vPayerID">
                   <Properties>
+                    <Property name="colName" type="java.lang.String" value="adultid"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[300, 19]"/>
                     </Property>
@@ -152,12 +153,9 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.swing.typed.EntityIDLabel" name="vHouseholdID">
+                <Component class="offstage.swing.typed.EntityIDEditableLabel" name="vHouseholdID">
                   <Properties>
                     <Property name="colName" type="java.lang.String" value="primaryentityid"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[122, 19]"/>
-                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -192,6 +190,17 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="offstage.swing.typed.EntityIDLabel" name="vStudentID">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="entityIDLabel1"/>
+                    <Property name="colName" type="java.lang.String" value="entityid"/>
+                  </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="16" weightX="0.0" weightY="0.0"/>
+                    </Constraint>
+                  </Constraints>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="PeopleMain">
@@ -1162,7 +1171,7 @@
                             </Constraint>
                           </Constraints>
                         </Component>
-                        <Component class="citibob.swing.typed.JKeyedComboBox" name="genders">
+                        <Component class="citibob.swing.typed.JKeyedComboBox" name="gender">
                           <Properties>
                             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                               <StringArray count="4">
@@ -1172,7 +1181,7 @@
                                 <StringItem index="3" value="Item 4"/>
                               </StringArray>
                             </Property>
-                            <Property name="colName" type="java.lang.String" value="programid"/>
+                            <Property name="colName" type="java.lang.String" value=""/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

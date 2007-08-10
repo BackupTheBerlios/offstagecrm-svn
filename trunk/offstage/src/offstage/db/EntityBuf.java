@@ -50,6 +50,13 @@ public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged)
 	q.addColumn("created", "now()");
 }
 
+/** Changes primary entity id to be the same as the primaryentityid of someone else. */
+public void setPrimaryEntityID(Statement st, int entityid)
+throws SQLException
+{
+	int peid = DB.getPrimaryEntityID(st, entityid);
+	setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
+}
 // ==================================================================
 // Custom edits to data in the buffer...
 		

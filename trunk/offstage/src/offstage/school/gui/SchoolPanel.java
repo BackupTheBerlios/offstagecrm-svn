@@ -26,6 +26,7 @@ import citibob.sql.pgsql.*;
 import citibob.swing.pgsql.*;
 import citibob.sql.*;
 import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
+import static citibob.swing.typed.TypedWidgetBinder.*;
 import offstage.schema.*;
 import citibob.wizard.*;
 import offstage.accounts.gui.*;
@@ -41,7 +42,10 @@ public class SchoolPanel extends javax.swing.JPanel
 FrontApp fapp;
 
 FullStudentDbModel studentDm;
-	
+MultiDbModel all = new MultiDbModel();
+
+void setKey(Integer EntityID)
+{ all.setKey(new Integer[] {EntityID}); }
 
 /** Creates new form SchoolPanel */
 public SchoolPanel()
@@ -53,13 +57,79 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 {
 	this.fapp = xfapp;
 
-	// Display student info
-	studentDm = new FullStudentDbModel(fapp);
+	all.add(studentDm = new FullStudentDbModel(fapp));
 	SwingerMap smap = fapp.getSwingerMap();
+	
+	// ================================================================
+	// Student
+	// Display student info from persons table
 	SchemaBufRowModel studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
-		vHouseholdID.initRuntime(fapp);
+	vHouseholdID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vHouseholdID, studentRm, smap);
-//		TypedWidgetBinder.bindRecursive(StudentTab, studentRm, smap);
+	vStudentID.initRuntime(fapp);
+		new TypedWidgetBinder().bind(vStudentID, studentRm, smap);
+	KeyedModel gmodel = new KeyedModel();
+		gmodel.addItem(null, "<Unknown>");
+		gmodel.addItem("M", "Male");
+		gmodel.addItem("F", "Female");
+		gender.setKeyedModel(gmodel);
+		new TypedWidgetBinder().bind(gender, studentRm, "gender", BT_READWRITE);
+	familyTable.initRuntime(fapp);
+		new TypedWidgetBinder().bind(familyTable, studentRm, "primaryentityid", BT_READ);
+	TypedWidgetBinder.bindRecursive(StudentTab, studentRm, smap);
+
+	// Change person when user clicks on family...
+	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(final PropertyChangeEvent evt) {
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Integer EntityID = (Integer)evt.getNewValue();
+			if (EntityID == null) return;
+			setKey(EntityID);
+			all.doSelect(st);
+		}});
+	}});
+
+	
+	// Display student info from entities_school table
+	SchemaBufRowModel schoolRm = new SchemaBufRowModel(studentDm.schoolDb.getSchemaBuf());
+	vPayerID.initRuntime(fapp);
+		new TypedWidgetBinder().bind(vPayerID, schoolRm, smap);
+	TypedWidgetBinder.bindRecursive(StudentTab, schoolRm, smap);
+
+	// ================================================================
+	// Payer
+
+	// ================================================================
+	// Global Stuff
+	// Edit another student
+	searchBox.initRuntime(fapp);
+	searchBox.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(PropertyChangeEvent evt) {
+		fapp.runApp(new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Integer EntityID = (Integer)searchBox.getValue();
+			if (EntityID == null) return;
+			int entityid = EntityID;
+			
+			// Make sure person has record in school system
+			if (!SchoolDB.isInSchool(st, entityid)) {
+				if (JOptionPane.showConfirmDialog(SchoolPanel.this,
+					"The person you selected is not yet\n" +
+					"in the school system.\n" +
+					"Should that person be added now?",
+					"Person Not in School", JOptionPane.YES_NO_OPTION)
+					== JOptionPane.NO_OPTION) return;
+				st.executeUpdate(
+					" insert into entities_school (entityid)" +
+					" values (" + SqlInteger.sql(entityid) + ")");
+			}
+			
+			// Go to that record
+			studentDm.setKey(entityid);
+			studentDm.doSelect(st);
+		}});
+	}});
 
 	// Set up terms selector
 	vTermID.setKeyedModel(new DbKeyedModel(st, fapp.getDbChange(), "termids",
@@ -72,20 +142,8 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		}});
 	}});
 
-	// Edit another student
-	searchBox.initRuntime(fapp);
-	searchBox.addPropertyChangeListener("value", new PropertyChangeListener() {
-	public void propertyChange(PropertyChangeEvent evt) {
-		fapp.runApp(new StRunnable() {
-		public void run(Statement st) throws Exception {
-			Integer EntityID = (Integer)searchBox.getValue();
-			if (EntityID != null) studentDm.setKey(EntityID);
-			studentDm.doUpdate(st);
-			studentDm.doSelect(st);
-		}});
-	}});
-
-
+	setKey(12633);
+	studentDm.doSelect(st);
 	
 }
 
@@ -113,11 +171,12 @@ void termChanged(Statement st)
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        vParentID = new offstage.swing.typed.EntityIDLabel();
-        vHouseholdID = new offstage.swing.typed.EntityIDLabel();
+        vPayerID = new offstage.swing.typed.EntityIDEditableLabel();
+        vHouseholdID = new offstage.swing.typed.EntityIDEditableLabel();
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
+        vStudentID = new offstage.swing.typed.EntityIDLabel();
         PeopleMain = new javax.swing.JPanel();
         AdultTabs = new javax.swing.JTabbedPane();
         Payer = new javax.swing.JPanel();
@@ -197,7 +256,7 @@ void termChanged(Statement st)
         jLabel17 = new javax.swing.JLabel();
         programs = new citibob.swing.typed.JKeyedComboBox();
         jLabel14 = new javax.swing.JLabel();
-        genders = new citibob.swing.typed.JKeyedComboBox();
+        gender = new citibob.swing.typed.JKeyedComboBox();
         lGender = new javax.swing.JLabel();
         AccountTab = new javax.swing.JTabbedPane();
         AccountPane = new javax.swing.JPanel();
@@ -286,7 +345,8 @@ void termChanged(Statement st)
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader.add(jLabel5, gridBagConstraints);
 
-        vParentID.setPreferredSize(new java.awt.Dimension(300, 19));
+        vPayerID.setColName("adultid");
+        vPayerID.setPreferredSize(new java.awt.Dimension(300, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -294,10 +354,9 @@ void termChanged(Statement st)
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vParentID, gridBagConstraints);
+        PeopleHeader.add(vPayerID, gridBagConstraints);
 
         vHouseholdID.setColName("primaryentityid");
-        vHouseholdID.setPreferredSize(new java.awt.Dimension(122, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -336,6 +395,13 @@ void termChanged(Statement st)
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.weighty = 1.0;
         PeopleHeader.add(jToolBar1, gridBagConstraints);
+
+        vStudentID.setText("entityIDLabel1");
+        vStudentID.setColName("entityid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        PeopleHeader.add(vStudentID, gridBagConstraints);
 
         jPanel2.add(PeopleHeader, java.awt.BorderLayout.NORTH);
 
@@ -955,13 +1021,13 @@ void termChanged(Statement st)
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         StudentPane.add(jLabel14, gridBagConstraints);
 
-        genders.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        genders.setColName("programid");
+        gender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gender.setColName("");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        StudentPane.add(genders, gridBagConstraints);
+        StudentPane.add(gender, gridBagConstraints);
 
         lGender.setText("Gender: ");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1155,7 +1221,11 @@ void termChanged(Statement st)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-// TODO add your handling code here:
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			all.doUpdate(st);
+			all.doSelect(st);
+		}});
 	}//GEN-LAST:event_bSaveActionPerformed
 
 	private void bAdjustActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAdjustActionPerformed
@@ -1258,7 +1328,7 @@ void termChanged(Statement st)
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.JTypedTextField firstname1;
     private citibob.swing.typed.JTypedTextField firstname2;
-    private citibob.swing.typed.JKeyedComboBox genders;
+    private citibob.swing.typed.JKeyedComboBox gender;
     private offstage.gui.GroupPanel householdPhonePanel;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1324,8 +1394,9 @@ void termChanged(Statement st)
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField state1;
     private citibob.jschema.swing.StatusTable trans;
-    private offstage.swing.typed.EntityIDLabel vHouseholdID;
-    private offstage.swing.typed.EntityIDLabel vParentID;
+    private offstage.swing.typed.EntityIDEditableLabel vHouseholdID;
+    private offstage.swing.typed.EntityIDEditableLabel vPayerID;
+    private offstage.swing.typed.EntityIDLabel vStudentID;
     private citibob.swing.typed.JKeyedComboBox vTermID;
     private citibob.swing.typed.JTypedTextField zip;
     private citibob.swing.typed.JTypedTextField zip1;

@@ -40,29 +40,14 @@ import citibob.sql.pgsql.*;
  */
 public class EntityDbModel extends IntKeyedDbModel
 {
-	
-//	FamilyTableModel family;	// List of family members of current entity.
-	
 	/** Creates a new instance of EntityDbModel */
 	public EntityDbModel(Schema schema, App app) {
 		super(new EntityBuf(schema), "entityid", false, null);
-		
-//		family = new FamilyTableModel(app);//.getAppRunner(), app.getSqlTypeSet());
-//		SchemaBufRowModel rm = new SchemaBufRowModel(this.getSchemaBuf());
-//		family.bind(rm);
 	}
-//	public FamilyTableModel getFamily() { return family; }
-	
+
+	/** Override insert stuff */
 	public void doInsert(Statement st) throws SQLException
 	{
-//		// Custom select the entityid to use for this record; it should
-//		// be placed in not one but two columns!
-//		String sql = "select nextval('public.entities_entityid_seq'::text);";
-//		ResultSet rs = st.executeQuery(sql);
-//		rs.next();
-//		Integer id = (Integer)rs.getObject(1);
-//		rs.close();
-		
 		SchemaBuf sb = this.getSchemaBuf();
 		Integer Entityid = (Integer)sb.getValueAt(0, "entityid");
 	
@@ -70,28 +55,8 @@ public class EntityDbModel extends IntKeyedDbModel
 		int pei = sb.findColumn("primaryentityid");
 		if (sb.getValueAt(0, pei) == null) sb.setValueAt(Entityid, 0, pei);
 		
-		// Now do the insert qu\ery!
+		// Now do the insert query!
 		super.doInsert(st);
-	}
-	public void doClear()
-	{
-		super.doClear();
-//		family.setRowCount(0);
-	}
-	
-	
-	/** Adds entityid to the family of person currently in entity editor */
-	public void addToFamily(Statement st, int entityid)
-	throws SQLException
-	{
-	//	int peid = DB.getPrimaryEntityID(st, entityid);
-	//	setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
-		SchemaBuf sb = getSchemaBuf();
-		int peid = (Integer)sb.getValueAt(0, sb.findColumn("primaryentityid"));
-		st.executeUpdate("update entities set primaryentityid = " + SqlInteger.sql(peid) +
-			" where entityid = " + SqlInteger.sql(entityid));
-//		this.doUpdate(st);
-//		this.doSelect(st);
 	}
 
 }

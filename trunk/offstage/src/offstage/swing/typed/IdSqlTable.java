@@ -43,9 +43,11 @@ import java.awt.*;
 public class IdSqlTable extends JTypedSelectTable {
 	
 IdSqlTableModel searchResults;
+citibob.app.App app;
 
 public void initRuntime(citibob.app.App app) //Statement st, FullEntityDbModel dm)
 {
+	this.app = app;
 	searchResults = new IdSqlTableModel();
 		
 	// Add the model (with tooltips)

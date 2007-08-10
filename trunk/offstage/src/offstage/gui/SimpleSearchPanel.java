@@ -127,7 +127,7 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 			int entityid = (Integer)selector.getValue();//getSelectedEntityID();
 			if (entityid < 0) return;
 //			dm.getEntitySb().setFamilySameAs(st, entityid);
-			dm.getEntity().addToFamily(st, entityid);
+///////////			dm.getEntity().addToFamily(st, entityid);
 //			dm.getEntitySb().addToFamily(st, entityid);	// Adds entityid to the family of person currently in entity editor
 			dm.doUpdate(st);
 			dm.doSelect(st);

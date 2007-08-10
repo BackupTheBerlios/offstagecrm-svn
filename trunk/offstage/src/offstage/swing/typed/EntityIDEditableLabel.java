@@ -36,15 +36,18 @@ import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 
-public class EntityIDLabel extends JTypedLabel
+public class EntityIDEditableLabel extends JTypedEditableLabel
 {
 
 
+public EntityIDEditableLabel() {}
+
 App app;
+EntitySelector sel;
 
 public void setJType(Swinger swing)
 {
-	super.setJType(swing.getJType(), new EntityIDFormatter(app.getPool()));
+	super.setJType(swing.getJType(), new EntityIDLabel.EntityIDFormatter(app.getPool()));
 	super.setNullText("<No Person>");
 }
 
@@ -52,34 +55,43 @@ public void initRuntime(App app)
 {
 	this.app = app;
 //	super.setJType(new SqlInteger(), ));
+	sel = new EntitySelector();
+	sel.initRuntime(app);
+	super.setPopupWidget(sel);		// Makes superclass listen to sel
 }
 
-// =========================EntityIDFormatter=============
-protected static class EntityIDFormatter extends DBFormatter
+protected void showPopup()
 {
-
-public EntityIDFormatter(ConnPool pool)
-{
-	super(pool);
-//	nullText = "<No Person Selected>";
+	sel.setValue(null);
+	super.showPopup();
+	sel.requestTextFocus();
 }
-
-public String valueToString(Statement st, Object value)
-throws java.sql.SQLException
-{
-	String s = SQL.readString(st,
-		" select " +
-			" (case when firstname is null then '' else firstname || ' ' end ||" +
-			" case when middlename is null then '' else middlename || ' ' end ||" +
-			" case when lastname is null then '' else lastname end" +
-//			" case when orgname is null then '' else ' (' || orgname || ')' end" +
-			" ) as name" +
-		" from entities" +
-		" where entityid = " + SqlInteger.sql((Integer)value));
-	return s;
-}
-
-}
+//// =========================EntityIDFormatter=============
+//static class EntityIDFormatter extends DBFormatter
+//{
+//
+//public EntityIDFormatter(ConnPool pool)
+//{
+//	super(pool);
+////	nullText = "<No Person Selected>";
+//}
+//
+//public String valueToString(Statement st, Object value)
+//throws java.sql.SQLException
+//{
+//	String s = SQL.readString(st,
+//		" select " +
+//			" (case when firstname is null then '' else firstname || ' ' end ||" +
+//			" case when middlename is null then '' else middlename || ' ' end ||" +
+//			" case when lastname is null then '' else lastname end" +
+////			" case when orgname is null then '' else ' (' || orgname || ')' end" +
+//			" ) as name" +
+//		" from entities" +
+//		" where entityid = " + SqlInteger.sql((Integer)value));
+//	return s;
+//}
+//
+//}
 
 }
 

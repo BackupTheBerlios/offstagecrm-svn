@@ -107,7 +107,7 @@ int getSelectedEntityID(CitibobJTable searchResultsTable)
         jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         dupsTable = new offstage.gui.FamilyTable();
-        mainEntityPanel = new offstage.gui.MainEntityPanel();
+        mainEntityPanel = new offstage.gui.PersonPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -139,7 +139,7 @@ int getSelectedEntityID(CitibobJTable searchResultsTable)
     private offstage.gui.FamilyTable dupsTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane2;
-    private offstage.gui.MainEntityPanel mainEntityPanel;
+    private offstage.gui.PersonPanel mainEntityPanel;
     // End of variables declaration//GEN-END:variables
 
 }

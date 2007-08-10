@@ -32,24 +32,24 @@ import offstage.db.*;
 public class FullStudentDbModel extends MultiDbModel
 {
 
-// Key field.
-private int entityID;
+//// Key field.
+//private int entityID;
 
-public int getEntityId()
-{ return entityID; }
+//public int getEntityId()
+//{ return entityID; }
 
 public final EntityDbModel personDb;
 public final IntKeyedDbModel schoolDb;
 public final IntKeyedDbModel notesDb;
 
-public void setKey(int entityID)
-{
-	this.entityID = entityID;
-
-	personDb.setKey(entityID);
-	schoolDb.setKey(entityID);
-	notesDb.setKey(entityID);
-}
+//public void setKey(int entityID)
+//{
+//	this.entityID = entityID;
+//
+//	personDb.setKey(entityID);
+//	schoolDb.setKey(entityID);
+//	notesDb.setKey(entityID);
+//}
 // ---------------------------------------------------------
 
 void logadd(QueryLogger logger, SchemaBufDbModel m)

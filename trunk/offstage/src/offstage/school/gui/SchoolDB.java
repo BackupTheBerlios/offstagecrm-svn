@@ -201,6 +201,20 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 	
 System.out.println(sqlOut);
 	st.executeUpdate(sqlOut.toString());
+	
+}
+// -------------------------------------------------------------------------------
+public static boolean isInSchool(Statement st, int entityid) throws SQLException
+{
+	ResultSet rs = null;
+	try {
+		rs = st.executeQuery(
+			"select entityid from entities_school where entityid = " +
+			SqlInteger.sql(entityid));
+		return rs.next();
+	} finally {
+		rs.close();
+	}
 }
 // -------------------------------------------------------------------------------
 //public static void main(String[] args) throws Exception

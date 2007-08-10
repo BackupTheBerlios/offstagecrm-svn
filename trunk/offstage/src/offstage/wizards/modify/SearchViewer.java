@@ -111,7 +111,7 @@ public int getDisplayedEntityID()
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jSplitPane2 = new javax.swing.JSplitPane();
-        mainEntityPanel = new offstage.gui.MainEntityPanel();
+        mainEntityPanel = new offstage.gui.PersonPanel();
         searchPanel = new offstage.gui.SimpleSearchPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -129,7 +129,7 @@ public int getDisplayedEntityID()
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSplitPane jSplitPane2;
-    private offstage.gui.MainEntityPanel mainEntityPanel;
+    private offstage.gui.PersonPanel mainEntityPanel;
     private offstage.gui.SimpleSearchPanel searchPanel;
     // End of variables declaration//GEN-END:variables
 

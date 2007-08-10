@@ -43,13 +43,36 @@ public void initRuntime(citibob.app.App app) //Statement st, FullEntityDbModel d
 	super.initRuntime(app);
 }
 		
+/** Overrides setting the value.  NOTE: getValue() won't necessarily return
+ the value that setValue() just set.  It will always return the head of household
+ of the value just set. */
+public void setValue(final Object o)
+{
+	if (o == null) {
+		getSelectionModel().clearSelection();
+		return;
+	}
+	int row = rowOfValue(o);
+	if (row >= 0) {
+		// Only set value by user...
+//		this.getSelectionModel().setSelectionInterval(row,row);
+	} else {
+		app.runApp(new StRunnable() {
+		public void run(java.sql.Statement st) throws Throwable {
+			// We don't have the value in our table; re-load
+			setPrimaryEntityID(st, (Integer)o);			
+		}});
+	}
+}
+
 public void setPrimaryEntityID(Statement st, int primaryEntityID)
 throws SQLException
 {
 	executeQuery(st,
-		" select pe.entityid from entities pe" +
-		" where pe.primaryentityid = " + SqlInteger.sql(primaryEntityID) +
-		" and not obsolete",
+		" select pe.entityid from entities pe, entities pq" +
+		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
+		" and pe.primaryentityid = pq.primaryentityid" +
+		" and not pe.obsolete",
 		"isprimary desc, name");
 }
 // ===========================================================
