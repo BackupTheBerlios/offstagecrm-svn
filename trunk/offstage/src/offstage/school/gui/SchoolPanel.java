@@ -31,6 +31,7 @@ import offstage.schema.*;
 import citibob.wizard.*;
 import offstage.accounts.gui.*;
 import javax.swing.*;
+import citibob.swing.*;
 
 /**
  *
@@ -41,11 +42,30 @@ public class SchoolPanel extends javax.swing.JPanel
 
 FrontApp fapp;
 
-FullStudentDbModel studentDm;
-MultiDbModel all = new MultiDbModel();
+StudentDbModel studentDm;
+SchemaBufRowModel studentRm;
+PayerDbModel payerDm;
+HouseholdDbModel householdDm;
 
-void setKey(Integer EntityID)
-{ all.setKey(new Integer[] {EntityID}); }
+IntKeyedDbModel actransDb;
+
+MultiDbModel all = new MultiDbModel() {
+	public void doSelect(Statement st) throws java.sql.SQLException
+	{
+		studentDm.doSelect(st);
+		Integer pid = (Integer)studentRm.get("primaryentityid");
+		familyTable.setPrimaryEntityID(st, pid);
+		payerDm.setKey(studentDm.getAdultID());
+		payerDm.doSelect(st);
+		householdDm.setKey(pid);
+		householdDm.doSelect(st);
+	}
+	public void setKey(int entityid)
+	{
+		intKey = entityid;
+		studentDm.setKey(new Integer[] {entityid});
+	}
+};
 
 /** Creates new form SchoolPanel */
 public SchoolPanel()
@@ -57,13 +77,16 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 {
 	this.fapp = xfapp;
 
-	all.add(studentDm = new FullStudentDbModel(fapp));
+	all.add(studentDm = new StudentDbModel(fapp));
+	all.add(payerDm = new PayerDbModel(fapp));
+	all.add(householdDm = new HouseholdDbModel(fapp));
 	SwingerMap smap = fapp.getSwingerMap();
 	
 	// ================================================================
 	// Student
 	// Display student info from persons table
-	SchemaBufRowModel studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
+	studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
+	new TypedWidgetBinder().bind(lEntityID, studentRm, smap);
 	vHouseholdID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vHouseholdID, studentRm, smap);
 	vStudentID.initRuntime(fapp);
@@ -77,6 +100,23 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 	familyTable.initRuntime(fapp);
 		new TypedWidgetBinder().bind(familyTable, studentRm, "primaryentityid", BT_READ);
 	TypedWidgetBinder.bindRecursive(StudentTab, studentRm, smap);
+	
+	// Initialize dropdowns when student changes.
+	studentRm.addColListener("entityid", new RowModel.ColListener() {
+		// Do nothing when user just changes values; it must be saved first.
+		public void valueChanged(int col) {}
+		// Do something when user moves to a different student
+		public void curRowChanged(final int col) {
+			fapp.runApp(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				Integer ID = (Integer)studentRm.get(col);
+				if (ID == null) return;
+				String lastname = (String)studentRm.get(studentRm.findColumn("lastname"));
+				vPayerID.setSearch(st, lastname);
+				vHouseholdID.setSearch(st, lastname);
+			}});
+		}
+	});
 
 	// Change person when user clicks on family...
 	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
@@ -85,21 +125,64 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		public void run(Statement st) throws Exception {
 			Integer EntityID = (Integer)evt.getNewValue();
 			if (EntityID == null) return;
-			setKey(EntityID);
-			all.doSelect(st);
+			changeStudent(st, EntityID);
 		}});
 	}});
 
 	
 	// Display student info from entities_school table
-	SchemaBufRowModel schoolRm = new SchemaBufRowModel(studentDm.schoolDb.getSchemaBuf());
+	final SchemaBufRowModel schoolRm = new SchemaBufRowModel(studentDm.schoolDb.getSchemaBuf());
 	vPayerID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vPayerID, schoolRm, smap);
 	TypedWidgetBinder.bindRecursive(StudentTab, schoolRm, smap);
 
 	// ================================================================
 	// Payer
+	SchemaBufRowModel payerRm = new SchemaBufRowModel(payerDm.personDb.getSchemaBuf());
+	TypedWidgetBinder.bindRecursive(PayerPanel, payerRm, smap);
+	payerPhonePanel.initRuntime(st, payerDm.phoneDb.getSchemaBuf(),
+			new String[] {"Type", "Number"},
+			new String[] {"groupid", "phone"}, smap);
+	payerCCInfo.initRuntime(fapp.getKeyRing());
+		
+	// ================================================================
+	// Account Transactions
+	actransDb = new IntKeyedDbModel(fapp.getSchema("actrans"), "entityid");
+	actransDb.setWhereClause(
+		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
+		" and now()-dtime < 450");
+	actransDb.setOrderClause("dtime desc");
+	trans.setModelU(actransDb.getSchemaBuf(),
+		new String[] {"Type", "Date", "Amount", "Description"},
+		new String[] {"tableoid", "dtime", "amount", "description"},
+		new String[] {null, null, null, "description"},
+		new boolean[] {false, false, false, false},
+		fapp.getSwingerMap(), fapp.getSFormatterMap());
 
+	// Refresh account when payer changes
+	schoolRm.addColListener("adultid", new RowModel.ColListener() {
+		// Do nothing when user just changes values; it must be saved first.
+		public void valueChanged(int col) {}
+		// Do something when user saves and re-loads
+		public void curRowChanged(final int col) {
+			fapp.runApp(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				Integer ID = (Integer)schoolRm.get(col);
+				if (ID == null) return;
+				changeAccount(st, ID);
+			}});
+		}
+	});
+	
+	// ================================================================
+	// Household
+	SchemaBufRowModel householdRm = new SchemaBufRowModel(householdDm.personDb.getSchemaBuf());
+	TypedWidgetBinder.bindRecursive(HouseholdPanel, householdRm, smap);
+	householdPhonePanel.initRuntime(st, householdDm.phoneDb.getSchemaBuf(),
+			new String[] {"Type", "Number"},
+			new String[] {"groupid", "phone"}, smap);
+	
+	
 	// ================================================================
 	// Global Stuff
 	// Edit another student
@@ -111,23 +194,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 			Integer EntityID = (Integer)searchBox.getValue();
 			if (EntityID == null) return;
 			int entityid = EntityID;
-			
-			// Make sure person has record in school system
-			if (!SchoolDB.isInSchool(st, entityid)) {
-				if (JOptionPane.showConfirmDialog(SchoolPanel.this,
-					"The person you selected is not yet\n" +
-					"in the school system.\n" +
-					"Should that person be added now?",
-					"Person Not in School", JOptionPane.YES_NO_OPTION)
-					== JOptionPane.NO_OPTION) return;
-				st.executeUpdate(
-					" insert into entities_school (entityid)" +
-					" values (" + SqlInteger.sql(entityid) + ")");
-			}
-			
-			// Go to that record
-			studentDm.setKey(entityid);
-			studentDm.doSelect(st);
+			changeStudent(st, entityid);
 		}});
 	}});
 
@@ -142,9 +209,39 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		}});
 	}});
 
-	setKey(12633);
-	studentDm.doSelect(st);
+	changeStudent(st, 12633);
+//	all.setKey(new Integer(12633));
+	all.doSelect(st);
 	
+}
+
+public void changeStudent(Statement st, int entityid) throws SQLException
+{
+	// Make sure person has record in school system
+	if (!SchoolDB.isInSchool(st, entityid)) {
+		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
+			"The person you selected is not yet\n" +
+			"in the school system.\n" +
+			"Should that person be added now?",
+			"Person Not in School", JOptionPane.YES_NO_OPTION)
+			== JOptionPane.NO_OPTION) return;
+		SchoolDB.w_students_create(st, entityid);
+//		String sql =
+//			" insert into entities_school (entityid)" +
+//			" values (" + SqlInteger.sql(entityid) + ")";
+//		st.executeUpdate(sql);
+	}
+
+	// Go to that record
+	vHouseholdID.setEntityID(entityid);	// So it knows when we try to emancipate.
+	all.setKey(entityid);
+	all.doSelect(st);
+}
+
+public void changeAccount(Statement st, int payerid) throws SQLException
+{
+	actransDb.setKey(payerid);
+	actransDb.doSelect(st);
 }
 
 void termChanged(Statement st)
@@ -172,14 +269,16 @@ void termChanged(Statement st)
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         vPayerID = new offstage.swing.typed.EntityIDEditableLabel();
-        vHouseholdID = new offstage.swing.typed.EntityIDEditableLabel();
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
         vStudentID = new offstage.swing.typed.EntityIDLabel();
+        lEntityID = new citibob.swing.typed.JTypedLabel();
+        vHouseholdID = new offstage.swing.typed.HouseholdIDEditableLabel();
+        bEmancipate = new javax.swing.JButton();
         PeopleMain = new javax.swing.JPanel();
         AdultTabs = new javax.swing.JTabbedPane();
-        Payer = new javax.swing.JPanel();
+        PayerPanel = new javax.swing.JPanel();
         FirstMiddleLast = new javax.swing.JPanel();
         lFirst = new javax.swing.JLabel();
         lMiddle = new javax.swing.JLabel();
@@ -210,7 +309,7 @@ void termChanged(Statement st)
         jLabel11 = new javax.swing.JLabel();
         email1 = new citibob.swing.typed.JTypedTextField();
         bLaunchEmail = new javax.swing.JButton();
-        Household = new javax.swing.JPanel();
+        HouseholdPanel = new javax.swing.JPanel();
         FirstMiddleLast1 = new javax.swing.JPanel();
         lFirst1 = new javax.swing.JLabel();
         lMiddle1 = new javax.swing.JLabel();
@@ -295,7 +394,7 @@ void termChanged(Statement st)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jLabel3)
                 .add(3, 3, 3)
-                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE))
+                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -312,7 +411,7 @@ void termChanged(Statement st)
         PeopleHeader.setPreferredSize(new java.awt.Dimension(790, 120));
         searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridheight = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -350,21 +449,12 @@ void termChanged(Statement st)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
         PeopleHeader.add(vPayerID, gridBagConstraints);
-
-        vHouseholdID.setColName("primaryentityid");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vHouseholdID, gridBagConstraints);
 
         bSave.setText("Save");
         bSave.addActionListener(new java.awt.event.ActionListener()
@@ -391,7 +481,7 @@ void termChanged(Statement st)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.weighty = 1.0;
         PeopleHeader.add(jToolBar1, gridBagConstraints);
@@ -399,13 +489,48 @@ void termChanged(Statement st)
         vStudentID.setText("entityIDLabel1");
         vStudentID.setColName("entityid");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         PeopleHeader.add(vStudentID, gridBagConstraints);
 
+        lEntityID.setText("jTypedLabel1");
+        lEntityID.setColName("entityid");
+        lEntityID.setMinimumSize(new java.awt.Dimension(83, 15));
+        lEntityID.setPreferredSize(new java.awt.Dimension(83, 15));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        PeopleHeader.add(lEntityID, gridBagConstraints);
+
+        vHouseholdID.setColName("primaryentityid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        PeopleHeader.add(vHouseholdID, gridBagConstraints);
+
+        bEmancipate.setText("Emancipate");
+        bEmancipate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bEmancipateActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        PeopleHeader.add(bEmancipate, gridBagConstraints);
+
         jPanel2.add(PeopleHeader, java.awt.BorderLayout.NORTH);
 
-        Payer.setLayout(new java.awt.GridBagLayout());
+        PayerPanel.setLayout(new java.awt.GridBagLayout());
 
         FirstMiddleLast.setLayout(new java.awt.GridBagLayout());
 
@@ -472,7 +597,7 @@ void termChanged(Statement st)
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Payer.add(FirstMiddleLast, gridBagConstraints);
+        PayerPanel.add(FirstMiddleLast, gridBagConstraints);
 
         jTabbedPane2.setFont(new java.awt.Font("Dialog", 1, 10));
         payerPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
@@ -481,7 +606,7 @@ void termChanged(Statement st)
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -493,7 +618,7 @@ void termChanged(Statement st)
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(payerCCInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            .add(payerCCInfo, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -535,7 +660,7 @@ void termChanged(Statement st)
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            .add(jPanel7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -552,7 +677,7 @@ void termChanged(Statement st)
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Payer.add(jTabbedPane2, gridBagConstraints);
+        PayerPanel.add(jTabbedPane2, gridBagConstraints);
 
         addressPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -614,7 +739,7 @@ void termChanged(Statement st)
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Payer.add(addressPanel, gridBagConstraints);
+        PayerPanel.add(addressPanel, gridBagConstraints);
 
         EmailPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -650,11 +775,11 @@ void termChanged(Statement st)
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Payer.add(EmailPanel, gridBagConstraints);
+        PayerPanel.add(EmailPanel, gridBagConstraints);
 
-        AdultTabs.addTab("Payer", Payer);
+        AdultTabs.addTab("Payer", PayerPanel);
 
-        Household.setLayout(new java.awt.GridBagLayout());
+        HouseholdPanel.setLayout(new java.awt.GridBagLayout());
 
         FirstMiddleLast1.setLayout(new java.awt.GridBagLayout());
 
@@ -721,7 +846,7 @@ void termChanged(Statement st)
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Household.add(FirstMiddleLast1, gridBagConstraints);
+        HouseholdPanel.add(FirstMiddleLast1, gridBagConstraints);
 
         jTabbedPane3.setFont(new java.awt.Font("Dialog", 1, 10));
         householdPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
@@ -730,7 +855,7 @@ void termChanged(Statement st)
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(householdPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            .add(householdPhonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -757,7 +882,7 @@ void termChanged(Statement st)
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(FamilyScrollPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            .add(FamilyScrollPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -799,7 +924,7 @@ void termChanged(Statement st)
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            .add(jPanel11, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -816,7 +941,7 @@ void termChanged(Statement st)
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Household.add(jTabbedPane3, gridBagConstraints);
+        HouseholdPanel.add(jTabbedPane3, gridBagConstraints);
 
         addressPanel1.setLayout(new java.awt.GridBagLayout());
 
@@ -878,7 +1003,7 @@ void termChanged(Statement st)
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Household.add(addressPanel1, gridBagConstraints);
+        HouseholdPanel.add(addressPanel1, gridBagConstraints);
 
         EmailPanel1.setLayout(new java.awt.GridBagLayout());
 
@@ -914,9 +1039,9 @@ void termChanged(Statement st)
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Household.add(EmailPanel1, gridBagConstraints);
+        HouseholdPanel.add(EmailPanel1, gridBagConstraints);
 
-        AdultTabs.addTab("Household", Household);
+        AdultTabs.addTab("Household", HouseholdPanel);
 
         StudentPane.setLayout(new java.awt.GridBagLayout());
 
@@ -1173,11 +1298,11 @@ void termChanged(Statement st)
             PeopleMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(PeopleMainLayout.createSequentialGroup()
                 .add(PeopleMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(StudentTab, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                    .add(StudentTab, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, AccountTab, 0, 0, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(AdultTabs, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE))
-            .add(jTabbedPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
+                .add(AdultTabs, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE))
+            .add(jTabbedPane4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE)
         );
         PeopleMainLayout.setVerticalGroup(
             PeopleMainLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1202,7 +1327,7 @@ void termChanged(Statement st)
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 723, Short.MAX_VALUE)
+            .add(0, 662, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -1214,8 +1339,21 @@ void termChanged(Statement st)
 
     }// </editor-fold>//GEN-END:initComponents
 
+	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
+	{//GEN-HEADEREND:event_bEmancipateActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			studentRm.set("primaryentityid", all.getIntKey());
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bEmancipateActionPerformed
+
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			all.doSelect(st);
+		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bUndoActionPerformed
 
@@ -1292,8 +1430,8 @@ void termChanged(Statement st)
     private javax.swing.JPanel FirstMiddleLast2;
     private javax.swing.JScrollPane GroupScrollPanel;
     private javax.swing.JScrollPane GroupScrollPanel1;
-    private javax.swing.JPanel Household;
-    private javax.swing.JPanel Payer;
+    private javax.swing.JPanel HouseholdPanel;
+    private javax.swing.JPanel PayerPanel;
     private javax.swing.JPanel PeopleHeader;
     private javax.swing.JPanel PeopleMain;
     private javax.swing.JPanel StudentPane;
@@ -1310,6 +1448,7 @@ void termChanged(Statement st)
     private javax.swing.JButton bCash;
     private javax.swing.JButton bCc;
     private javax.swing.JButton bCheck;
+    private javax.swing.JButton bEmancipate;
     private javax.swing.JButton bLaunchEmail;
     private javax.swing.JButton bLaunchEmail1;
     private javax.swing.JButton bRemoveEnrollment;
@@ -1366,6 +1505,7 @@ void termChanged(Statement st)
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JToolBar jToolBar1;
+    private citibob.swing.typed.JTypedLabel lEntityID;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lFirst1;
     private javax.swing.JLabel lFirst2;
@@ -1394,7 +1534,7 @@ void termChanged(Statement st)
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField state1;
     private citibob.jschema.swing.StatusTable trans;
-    private offstage.swing.typed.EntityIDEditableLabel vHouseholdID;
+    private offstage.swing.typed.HouseholdIDEditableLabel vHouseholdID;
     private offstage.swing.typed.EntityIDEditableLabel vPayerID;
     private offstage.swing.typed.EntityIDLabel vStudentID;
     private citibob.swing.typed.JKeyedComboBox vTermID;

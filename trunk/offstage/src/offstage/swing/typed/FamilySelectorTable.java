@@ -48,21 +48,27 @@ public void initRuntime(citibob.app.App app) //Statement st, FullEntityDbModel d
  of the value just set. */
 public void setValue(final Object o)
 {
-	if (o == null) {
-		getSelectionModel().clearSelection();
-		return;
-	}
-	int row = rowOfValue(o);
-	if (row >= 0) {
-		// Only set value by user...
-//		this.getSelectionModel().setSelectionInterval(row,row);
-	} else {
-		app.runApp(new StRunnable() {
-		public void run(java.sql.Statement st) throws Throwable {
-			// We don't have the value in our table; re-load
-			setPrimaryEntityID(st, (Integer)o);			
-		}});
-	}
+//	if (o == null) {
+//		getSelectionModel().clearSelection();
+//		return;
+//	}
+////	int row = rowOfValue(o);
+////	if (row >= 0) {
+////		// Only set value by user...
+//////		this.getSelectionModel().setSelectionInterval(row,row);
+////	} else {
+//	
+//	// User is setting the value; we should change it normally
+//	if (inSelect) return;
+//
+//	// Machine is setting "value", it really means it wants to
+//	// change entities...
+//	app.runApp(new StRunnable() {
+//	public void run(java.sql.Statement st) throws Throwable {
+//		// We don't have the value in our table; re-load
+//		setPrimaryEntityID(st, (Integer)o);			
+//	}});
+////	}
 }
 
 public void setPrimaryEntityID(Statement st, int primaryEntityID)

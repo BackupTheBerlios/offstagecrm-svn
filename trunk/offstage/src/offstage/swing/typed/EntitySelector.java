@@ -65,17 +65,24 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 	}});
 }
 
-void runSearch() {
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
-		String text = searchWord.getText();
+public void setSearch(Statement st, String text)
+throws SQLException
+{
 		String idSql = DB.simpleSearchSql(text);
 		searchResultsTable.executeQuery(st, idSql, null);
 		if (searchResultsTable.getModel().getRowCount() == 1) {
 			searchResultsTable.setRowSelectionInterval(0,0);	// Should fire an event...
 		}
+}
+
+void runSearch() {
+	app.runGui(this, new StRunnable() {
+	public void run(Statement st) throws Exception {
+		String text = searchWord.getText();
+		setSearch(st, text);
 	}});
 }
+
 
 ///** Allows others to add a double-click-to-select mouse listener. */
 //public JTypedSelectTable getSearchTable()

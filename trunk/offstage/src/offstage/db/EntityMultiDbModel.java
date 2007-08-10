@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package offstage.school.gui;
+package offstage.db;
 
 import citibob.jschema.*;
 import citibob.multithread.*;
@@ -27,43 +27,16 @@ import offstage.schema.*;
 import citibob.jschema.log.*;
 import offstage.db.*;
 
-/** Query one person record and all the stuff related to it. */
-
-public class FullStudentDbModel extends MultiDbModel
+/** A DbModel based on a core entity table, plus a lot of other hanger-oners. */
+public class EntityMultiDbModel extends MultiDbModel
 {
-
-//// Key field.
-//private int entityID;
-
-//public int getEntityId()
-//{ return entityID; }
 
 public final EntityDbModel personDb;
-public final IntKeyedDbModel schoolDb;
-public final IntKeyedDbModel notesDb;
 
-//public void setKey(int entityID)
-//{
-//	this.entityID = entityID;
-//
-//	personDb.setKey(entityID);
-//	schoolDb.setKey(entityID);
-//	notesDb.setKey(entityID);
-//}
-// ---------------------------------------------------------
-
-void logadd(QueryLogger logger, SchemaBufDbModel m)
+public EntityMultiDbModel(citibob.app.App app)
 {
-	add(m);
-	m.setLogger(logger);
-}
-public FullStudentDbModel(offstage.FrontApp fapp)
-{
-	citibob.app.App app = fapp;
-	QueryLogger logger = fapp.getLogger();
-	logadd(logger, personDb = new EntityDbModel(fapp.getSchema("persons"), app));
-	logadd(logger, schoolDb = new IntKeyedDbModel(fapp.getSchema("entities_school"), "entityid", true));
-	logadd(logger, notesDb = new IntKeyedDbModel(fapp.getSchema("notes"), "entityid", true));
+	QueryLogger logger = app.getLogger();
+	logadd(logger, personDb = new EntityDbModel(app.getSchema("persons"), app));
 }
 
 /** Sets up the SchemaBufs for a new person,
@@ -84,6 +57,7 @@ public void newEntity(Statement st, int entityType) throws java.sql.SQLException
 	} catch(KeyViolationException e) {}	// can't happen, buffer is clear.
 }
 
-
+//public Integer getPrimaryEntityID()
+//{ return (Integer)personDb.getSchemaBuf().getValueAt(0, "primaryentityid"); }
 
 }

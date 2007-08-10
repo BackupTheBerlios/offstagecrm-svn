@@ -144,6 +144,8 @@ void makeVal()
 		val = kr.encrypt(val);
 		valValid = true;
 	} catch(Exception e) {
+		e.printStackTrace();
+
 		// kr == null, or public key not loaded.
 		// Either way, don't leak any unencrypted information.
 		val = null;

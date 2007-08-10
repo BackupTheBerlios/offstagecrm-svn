@@ -70,7 +70,7 @@ public void setKey(int mailingID)
 which will be inserted into the DB upon doUpdate(). */
 public void newAddress() throws KeyViolationException
 {
-	mailings.getSchemaBuf().insertRow(-1, new String[] {"groupid"}, new Object[] {new Integer(mailings.getKey())});
+	mailings.getSchemaBuf().insertRow(-1, new String[] {"groupid"}, new Object[] {new Integer(mailings.getIntKey())});
 //	mailings.getSchemaBuf().insertRow(-1, (String[])null, null);
 	//new String[] {"groupid"}, new Object[] {mailings.getKey()});
 }
@@ -113,12 +113,12 @@ public void makeReport(Statement st) throws SQLException, JRException
 	ResultSet rs = null;
 	InputStream in = null;
 	try {
-		DB.w_mailings_makereport(st, mailings.getKey());
+		DB.w_mailings_makereport(st, mailings.getIntKey());
 
 		in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");
 		String sql =
 			"select * from mailings" +
-			" where groupid=" + mailings.getKey() +
+			" where groupid=" + mailings.getIntKey() +
 			" and isgood" +
 			" order by country, zip";
 		rs = st.executeQuery(sql);

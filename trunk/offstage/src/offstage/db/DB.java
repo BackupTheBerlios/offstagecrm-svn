@@ -516,11 +516,7 @@ public static String simpleSearchSql(String text)
 		return idSql;
 	}
 }
-// --------------------------------------------------
-
-
 }
-
 
 
 
