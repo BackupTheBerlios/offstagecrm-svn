@@ -80,7 +80,7 @@
     <Container class="javax.swing.JTabbedPane" name="tabs">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-          <BorderConstraints direction="Center"/>
+          <BorderConstraints direction="North"/>
         </Constraint>
       </Constraints>
 
@@ -98,8 +98,17 @@
         <Component class="offstage.gui.EditorPanel" name="people">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="People">
-                <Property name="tabTitle" type="java.lang.String" value="People"/>
+              <JTabbedPaneConstraints tabName="Development">
+                <Property name="tabTitle" type="java.lang.String" value="Development"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="offstage.school.gui.SchoolPanel" name="school">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="School">
+                <Property name="tabTitle" type="java.lang.String" value="School"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

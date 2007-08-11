@@ -124,7 +124,7 @@ public boolean isZipSet() {
 }
 public boolean isFullySet() {
 	return isNameSet() && isCCTypeSet() && isCCNumberSet() &&
-		isExpDateSet() && isCCVSet() && isZipSet();
+		isExpDateSet() && isZipSet();	//  && isCCVSet()
 }
 // ------------------------------------------------
 

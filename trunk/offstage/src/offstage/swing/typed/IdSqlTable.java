@@ -42,7 +42,7 @@ import java.awt.*;
  */
 public class IdSqlTable extends JTypedSelectTable {
 	
-IdSqlTableModel searchResults;
+protected IdSqlTableModel searchResults;
 citibob.app.App app;
 
 public void initRuntime(citibob.app.App app) //Statement st, FullEntityDbModel dm)

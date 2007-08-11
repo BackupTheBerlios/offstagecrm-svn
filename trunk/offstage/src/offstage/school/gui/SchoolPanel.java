@@ -6,6 +6,7 @@
 
 package offstage.school.gui;
 
+import java.security.Permission;
 import java.sql.*;
 import citibob.jschema.*;
 import citibob.jschema.swing.*;
@@ -32,6 +33,7 @@ import citibob.wizard.*;
 import offstage.accounts.gui.*;
 import javax.swing.*;
 import citibob.swing.*;
+import offstage.accounts.gui.*;
 
 /**
  *
@@ -44,9 +46,10 @@ FrontApp fapp;
 
 StudentDbModel studentDm;
 SchemaBufRowModel studentRm;
+SchemaBufRowModel schoolRm;
 PayerDbModel payerDm;
 HouseholdDbModel householdDm;
-
+JoinedSchemaBufDbModel enrolledDb;
 IntKeyedDbModel actransDb;
 
 MultiDbModel all = new MultiDbModel() {
@@ -59,11 +62,18 @@ MultiDbModel all = new MultiDbModel() {
 		payerDm.doSelect(st);
 		householdDm.setKey(pid);
 		householdDm.doSelect(st);
+		enrolledDb.doSelect(st);
 	}
 	public void setKey(int entityid)
 	{
 		intKey = entityid;
 		studentDm.setKey(new Integer[] {entityid});
+		
+		// Set "key" for enrollments
+		int termid = (Integer)vTermID.getValue();
+		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
+			" and courseids.termid = " + SqlInteger.sql(termid) +
+			" and enrollments.entityid = " + SqlInteger.sql(entityid));
 	}
 };
 
@@ -98,7 +108,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		gender.setKeyedModel(gmodel);
 		new TypedWidgetBinder().bind(gender, studentRm, "gender", BT_READWRITE);
 	familyTable.initRuntime(fapp);
-		new TypedWidgetBinder().bind(familyTable, studentRm, "primaryentityid", BT_READ);
+//		new TypedWidgetBinder().bind(familyTable, studentRm, "primaryentityid", BT_READ);
 	TypedWidgetBinder.bindRecursive(StudentTab, studentRm, smap);
 	
 	// Initialize dropdowns when student changes.
@@ -131,7 +141,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 
 	
 	// Display student info from entities_school table
-	final SchemaBufRowModel schoolRm = new SchemaBufRowModel(studentDm.schoolDb.getSchemaBuf());
+	schoolRm = new SchemaBufRowModel(studentDm.schoolDb.getSchemaBuf());
 	vPayerID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vPayerID, schoolRm, smap);
 	TypedWidgetBinder.bindRecursive(StudentTab, schoolRm, smap);
@@ -173,6 +183,22 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 			}});
 		}
 	});
+
+	// =====================================================================
+	// Enrollments
+	all.add(enrolledDb = new JoinedSchemaBufDbModel(null, new TableSpec[] {
+			new TableSpec(fapp.getSchema("enrollments")),
+			new TableSpec(fapp.getSchema("courseids"))
+		}));
+	enrolledDb.setOrderClause("courseids_dayofweek, courseids_tstart, courseids_name");
+	enrollments.setModelU(enrolledDb.getTableModel(),
+		new String[] {"Course", "Day", "Start", "Finish",
+			"Role", "Custom Start", "Custom End (+1)", "Enrolled"},
+		new String[] {"courseids_name", "courseids_dayofweek", "courseids_tstart", "courseids_tnext",
+			"enrollments_courserole", "enrollments_dstart", "enrollments_dend", "enrollments_dtenrolled"},
+		new boolean[] {false, false, false, false,
+			true, true, true, false}, fapp.getSwingerMap());
+	enrollments.setRenderEditU("courseids_dayofweek", new KeyedRenderEdit(new DayOfWeekKeyedModel()));
 	
 	// ================================================================
 	// Household
@@ -217,6 +243,9 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 
 public void changeStudent(Statement st, int entityid) throws SQLException
 {
+	// See if old student needs saving...
+	// ...
+	
 	// Make sure person has record in school system
 	if (!SchoolDB.isInSchool(st, entityid)) {
 		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
@@ -241,7 +270,17 @@ public void changeStudent(Statement st, int entityid) throws SQLException
 public void changeAccount(Statement st, int payerid) throws SQLException
 {
 	actransDb.setKey(payerid);
+	refreshAccount(st);
+}
+public void refreshAccount(Statement st) throws SQLException
+{
 	actransDb.doSelect(st);
+	
+	// Set up account balance
+	acbal.setJType(new JavaJType(Double.class),
+		new FormatFormatter(java.text.NumberFormat.getCurrencyInstance()));
+	acbal.setValue(new Double(offstage.db.DB.r_acct_balance(
+		st, actransDb.getIntKey(), ActransSchema.AC_SCHOOL)));
 }
 
 void termChanged(Statement st)
@@ -276,6 +315,9 @@ void termChanged(Statement st)
         lEntityID = new citibob.swing.typed.JTypedLabel();
         vHouseholdID = new offstage.swing.typed.HouseholdIDEditableLabel();
         bEmancipate = new javax.swing.JButton();
+        bNewStudent = new javax.swing.JButton();
+        bNewPayer = new javax.swing.JButton();
+        bNewHousehold = new javax.swing.JButton();
         PeopleMain = new javax.swing.JPanel();
         AdultTabs = new javax.swing.JTabbedPane();
         PayerPanel = new javax.swing.JPanel();
@@ -360,7 +402,7 @@ void termChanged(Statement st)
         AccountTab = new javax.swing.JTabbedPane();
         AccountPane = new javax.swing.JPanel();
         GroupScrollPanel1 = new javax.swing.JScrollPane();
-        trans = new citibob.jschema.swing.StatusTable();
+        trans = new citibob.jschema.swing.SchemaBufTable();
         controller1 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
@@ -411,7 +453,7 @@ void termChanged(Statement st)
         PeopleHeader.setPreferredSize(new java.awt.Dimension(790, 120));
         searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridheight = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -497,8 +539,6 @@ void termChanged(Statement st)
 
         lEntityID.setText("jTypedLabel1");
         lEntityID.setColName("entityid");
-        lEntityID.setMinimumSize(new java.awt.Dimension(83, 15));
-        lEntityID.setPreferredSize(new java.awt.Dimension(83, 15));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -527,6 +567,52 @@ void termChanged(Statement st)
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         PeopleHeader.add(bEmancipate, gridBagConstraints);
+
+        bNewStudent.setText("New");
+        bNewStudent.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewStudent.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewStudentActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader.add(bNewStudent, gridBagConstraints);
+
+        bNewPayer.setText("New");
+        bNewPayer.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewPayer.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewPayerActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader.add(bNewPayer, gridBagConstraints);
+
+        bNewHousehold.setText("New");
+        bNewHousehold.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewHousehold.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewHouseholdActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader.add(bNewHousehold, gridBagConstraints);
 
         jPanel2.add(PeopleHeader, java.awt.BorderLayout.NORTH);
 
@@ -763,6 +849,14 @@ void termChanged(Statement st)
         bLaunchEmail.setText("*");
         bLaunchEmail.setMargin(new java.awt.Insets(1, 1, 1, 1));
         bLaunchEmail.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchEmail.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bLaunchEmailActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -1283,9 +1377,25 @@ void termChanged(Statement st)
         jPanel12.add(GroupScrollPanel, java.awt.BorderLayout.CENTER);
 
         bAddEnrollment.setText("Add Enrollment");
+        bAddEnrollment.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bAddEnrollmentActionPerformed(evt);
+            }
+        });
+
         jPanel15.add(bAddEnrollment);
 
         bRemoveEnrollment.setText("Remove Enrollment");
+        bRemoveEnrollment.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bRemoveEnrollmentActionPerformed(evt);
+            }
+        });
+
         jPanel15.add(bRemoveEnrollment);
 
         jPanel12.add(jPanel15, java.awt.BorderLayout.SOUTH);
@@ -1339,6 +1449,109 @@ void termChanged(Statement st)
 
     }// </editor-fold>//GEN-END:initComponents
 
+	private void bNewHouseholdActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewHouseholdActionPerformed
+	{//GEN-HEADEREND:event_bNewHouseholdActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
+			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
+			wizard.runWizard();
+			Integer eid = (Integer)wizard.getVal("entityid");
+			if (eid != null) {
+				studentRm.set("primaryentityid", eid);
+				all.doUpdate(st);
+				all.doSelect(st);
+			}
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bNewHouseholdActionPerformed
+
+	private void bNewPayerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewPayerActionPerformed
+	{//GEN-HEADEREND:event_bNewPayerActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
+			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
+			wizard.runWizard();
+			Integer eid = (Integer)wizard.getVal("entityid");
+			if (eid != null) {
+				schoolRm.set("adultid", eid);
+				all.doUpdate(st);
+				all.doSelect(st);
+			}
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bNewPayerActionPerformed
+
+	private void bNewStudentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewStudentActionPerformed
+	{//GEN-HEADEREND:event_bNewStudentActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
+			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
+			wizard.runWizard();
+			Integer eid = (Integer)wizard.getVal("entityid");
+			if (eid != null) {
+				SchoolDB.w_students_create(st, eid);		// Add to school table as well.
+				changeStudent(st, eid);
+			}
+		}});
+	}//GEN-LAST:event_bNewStudentActionPerformed
+
+	private void bRemoveEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRemoveEnrollmentActionPerformed
+	{//GEN-HEADEREND:event_bRemoveEnrollmentActionPerformed
+		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
+			"Are you sure you wish to\n" +
+			"remove the selected enrollment?",
+			"Remove Enrollment", JOptionPane.YES_NO_OPTION)
+			== JOptionPane.NO_OPTION) return;
+		
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			
+			int row = enrollments.getSelectedRow();
+			if (row < 0) return;
+			JTypeTableModel x;
+			CitibobTableModel model = enrollments.getModelU();
+			int courseid = (Integer)model.getValueAt(row, model.findColumn("enrollments_courseid"));
+			int entityid = (Integer)model.getValueAt(row, model.findColumn("enrollments_entityid"));
+			st.executeUpdate("delete from enrollments" +
+				" where courseid = " + SqlInteger.sql(courseid) +
+				" and entityid = " + SqlInteger.sql(entityid));
+			enrolledDb.doSelect(st);
+		}});
+		
+// TODO add your handling code here:
+	}//GEN-LAST:event_bRemoveEnrollmentActionPerformed
+
+	private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddEnrollmentActionPerformed
+	{//GEN-HEADEREND:event_bAddEnrollmentActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			enrolledDb.doUpdate(st);
+			Wizard wizard = new EnrollWizard(fapp, st, null);
+			TypedHashMap v = new TypedHashMap();
+				v.put("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
+				v.put("sperson", vStudentID.getText());
+				v.put("entityid", vStudentID.getValue());
+				v.put("termid", vTermID.getValue());
+//				v.put("courseroleModel",
+//					fapp.getSchema("courseroles"), )
+//						new citibob.sql.DbKeyedModel(st, null,
+//		"courseroles", "courseroleid", "name", "orderid")));
+
+			wizard.runWizard("add", v);
+			enrolledDb.doSelect(st);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bAddEnrollmentActionPerformed
+
+	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
+	{//GEN-HEADEREND:event_bLaunchEmailActionPerformed
+		citibob.gui.BareBonesMailto.mailto((String)email1.getValue());
+// TODO add your handling code here:
+	}//GEN-LAST:event_bLaunchEmailActionPerformed
+
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
@@ -1368,53 +1581,56 @@ void termChanged(Statement st)
 
 	private void bAdjustActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAdjustActionPerformed
 	{//GEN-HEADEREND:event_bAdjustActionPerformed
-//		fapp.runGui(SchoolPanel.this, new StRunnable()
-//		{
-//			public void run(Statement st) throws Exception
-//			{
-//				Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
-//				wizard.runWizard("adjpayment");
-//				actransDb.doSelect(st);
-//			}});
+		fapp.runGui(SchoolPanel.this, new StRunnable()
+		{
+			public void run(Statement st) throws Exception
+			{
+				Wizard wizard = new TransactionWizard(fapp, st, null,
+					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+				wizard.runWizard("adjpayment");
+				actransDb.doSelect(st);
+			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bAdjustActionPerformed
 
 	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
 	{//GEN-HEADEREND:event_bCcActionPerformed
-//		fapp.runGui(SchoolPanel.this, new StRunnable()
-//		{
-//			public void run(Statement st) throws Exception
-//			{
-//				Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
-//				wizard.runWizard("ccpayment");
-//				actransDb.doSelect(st);
-//			}});
-// TODO add your handling code here:
+		fapp.runGui(SchoolPanel.this, new StRunnable()
+		{
+			public void run(Statement st) throws Exception
+			{
+				Wizard wizard = new TransactionWizard(fapp, st, null,
+					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+				wizard.runWizard("ccpayment");
+				actransDb.doSelect(st);
+			}});
 	}//GEN-LAST:event_bCcActionPerformed
 
 	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
 	{//GEN-HEADEREND:event_bCheckActionPerformed
-//		fapp.runGui(SchoolPanel.this, new StRunnable()
-//		{
-//			public void run(Statement st) throws Exception
-//			{
-//				Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
-//				wizard.runWizard("checkpayment");
-//				actransDb.doSelect(st);
-//			}});
+		fapp.runGui(SchoolPanel.this, new StRunnable()
+		{
+			public void run(Statement st) throws Exception
+			{
+				Wizard wizard = new TransactionWizard(fapp, st, null,
+					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+				wizard.runWizard("checkpayment");
+				actransDb.doSelect(st);
+			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bCheckActionPerformed
 
 	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
 	{//GEN-HEADEREND:event_bCashActionPerformed
-//		fapp.runGui(SchoolPanel.this, new StRunnable()
-//		{
-//			public void run(Statement st) throws Exception
-//			{
-//				Wizard wizard = new TransactionWizard(fapp, st, null, entityid, actypeid);
-//				wizard.runWizard("cashpayment");
-//				actransDb.doSelect(st);
-//			}});
+		fapp.runGui(SchoolPanel.this, new StRunnable()
+		{
+			public void run(Statement st) throws Exception
+			{
+				Wizard wizard = new TransactionWizard(fapp, st, null,
+					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+				wizard.runWizard("cashpayment");
+				actransDb.doSelect(st);
+			}});
 	}//GEN-LAST:event_bCashActionPerformed
 	
 	
@@ -1451,6 +1667,9 @@ void termChanged(Statement st)
     private javax.swing.JButton bEmancipate;
     private javax.swing.JButton bLaunchEmail;
     private javax.swing.JButton bLaunchEmail1;
+    private javax.swing.JButton bNewHousehold;
+    private javax.swing.JButton bNewPayer;
+    private javax.swing.JButton bNewStudent;
     private javax.swing.JButton bRemoveEnrollment;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
@@ -1533,7 +1752,7 @@ void termChanged(Statement st)
     private offstage.swing.typed.EntitySelector searchBox;
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField state1;
-    private citibob.jschema.swing.StatusTable trans;
+    private citibob.jschema.swing.SchemaBufTable trans;
     private offstage.swing.typed.HouseholdIDEditableLabel vHouseholdID;
     private offstage.swing.typed.EntityIDEditableLabel vPayerID;
     private offstage.swing.typed.EntityIDLabel vStudentID;

@@ -38,6 +38,7 @@ import java.awt.*;
 public class FamilySelectorTable extends IdSqlTable
 {
 
+	
 public void initRuntime(citibob.app.App app) //Statement st, FullEntityDbModel dm)
 {
 	super.initRuntime(app);
@@ -71,9 +72,11 @@ public void setValue(final Object o)
 ////	}
 }
 
+//int primaryEntityID;
 public void setPrimaryEntityID(Statement st, int primaryEntityID)
 throws SQLException
 {
+//int primaryEntityID;
 	executeQuery(st,
 		" select pe.entityid from entities pe, entities pq" +
 		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +

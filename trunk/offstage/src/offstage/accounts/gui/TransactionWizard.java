@@ -129,6 +129,7 @@ addState(new State("ccpayment", null, null) {
 		ConsSqlQuery sql = new ConsSqlQuery("ccpayments", ConsSqlQuery.INSERT);
 		cc.getCard(sql);
 		sql.addColumn("amount", SqlDouble.sql(-((Number)v.get("namount")).doubleValue()));
+		sql.addColumn("description", SqlString.sql((String)v.get("description")));
 		sql.addColumn("entityid", SqlInteger.sql(entityid));
 		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 		st.executeUpdate(sql.getSql());

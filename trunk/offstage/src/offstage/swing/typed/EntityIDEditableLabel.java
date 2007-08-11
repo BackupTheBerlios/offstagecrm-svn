@@ -47,6 +47,9 @@ EntitySelector sel;
 
 public void setJType(Swinger swing)
 {
+	if (swing == null) {
+		System.out.println("Missing swinger for EntityIDLabel: " + this);
+	}
 	super.setJType(swing.getJType(), new EntityIDLabel.EntityIDFormatter(app.getPool()));
 	super.setNullText("<No Person>");
 }

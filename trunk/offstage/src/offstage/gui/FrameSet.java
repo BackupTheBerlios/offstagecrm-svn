@@ -36,6 +36,8 @@ import citibob.gui.*;
 import citibob.sql.*;
 import offstage.FrontApp;
 import offstage.config.*;
+//import com.jgoodies.looks.plastic.theme.*;
+//import com.jgoodies.looks.plastic.*;
 
 /**
  *
@@ -91,9 +93,14 @@ app.getFullEntityDm().doSelect(st);
 	    offstageGui.setVisible(true);
     }
 
+
+	
 	public static void main(String[] args) throws Exception
     {
-		new FrameSet();
+		System.setProperty("swing.metalTheme", "ocean");
+		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+		
+	 new FrameSet();
     }
 
 }

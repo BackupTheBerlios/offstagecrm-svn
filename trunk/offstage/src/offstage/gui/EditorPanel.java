@@ -80,7 +80,7 @@ FrontApp app;
         bUndo = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
         bNewPerson = new javax.swing.JButton();
-        bSchool = new javax.swing.JButton();
+        bNewOrg = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -131,7 +131,7 @@ FrontApp app;
 
         jToolBar1.add(bDelete);
 
-        bNewPerson.setText("New");
+        bNewPerson.setText("New Person");
         bNewPerson.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -142,16 +142,16 @@ FrontApp app;
 
         jToolBar1.add(bNewPerson);
 
-        bSchool.setText("School");
-        bSchool.addActionListener(new java.awt.event.ActionListener()
+        bNewOrg.setText("New Org");
+        bNewOrg.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                bSchoolActionPerformed(evt);
+                bNewOrgActionPerformed(evt);
             }
         });
 
-        jToolBar1.add(bSchool);
+        jToolBar1.add(bNewOrg);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -162,18 +162,21 @@ FrontApp app;
 
     }// </editor-fold>//GEN-END:initComponents
 
-	private void bSchoolActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSchoolActionPerformed
-	{//GEN-HEADEREND:event_bSchoolActionPerformed
+	private void bNewOrgActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewOrgActionPerformed
+	{//GEN-HEADEREND:event_bNewOrgActionPerformed
 	app.runGui(this, new StRunnable() {
 	public void run(Statement st) throws Exception {
-		PersonSchool ps = new PersonSchool();
-//		java.awt.Window root = (java.awt.Window)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
-		ps.initRuntime(app, st, model.getEntityId());
-		citibob.gui.GuiUtil.showJPanel(EditorPanel.this, ps, app,
-			"School Info for Person", "personschool", true);
-	}});
-// TODO add your handling code here:
-	}//GEN-LAST:event_bSchoolActionPerformed
+//		model.newEntity(st, FullEntityDbModel.PERSON);
+		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
+		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, st, root);
+		wizard.runWizard("org");
+		Integer EntityID = (Integer)wizard.getVal("entityid");
+		if (EntityID != null) {
+			model.setKey(EntityID);
+			model.doSelect(st);
+		}
+	}});// TODO add your handling code here:
+	}//GEN-LAST:event_bNewOrgActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 	app.runGui(this, new StRunnable() {
@@ -197,7 +200,15 @@ private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewPersonActionPerformed
 	app.runGui(this, new StRunnable() {
 	public void run(Statement st) throws Exception {
-		model.newEntity(st, FullEntityDbModel.PERSON);
+//		model.newEntity(st, FullEntityDbModel.PERSON);
+		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
+		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, st, root);
+		wizard.runWizard("person");
+		Integer EntityID = (Integer)wizard.getVal("entityid");
+		if (EntityID != null) {
+			model.setKey(EntityID);
+			model.doSelect(st);
+		}
 	}});
 }//GEN-LAST:event_bNewPersonActionPerformed
 
@@ -212,9 +223,9 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bDelete;
+    private javax.swing.JButton bNewOrg;
     private javax.swing.JButton bNewPerson;
     private javax.swing.JButton bSave;
-    private javax.swing.JButton bSchool;
     private javax.swing.JButton bUndo;
     private offstage.gui.EntityPanel entityPanel;
     private javax.swing.JToolBar jToolBar1;

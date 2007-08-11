@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
- * PersonWiz.java
+ * OrgWiz.java
  *
  * Created on October 8, 2006, 6:08 PM
  *
@@ -43,15 +43,15 @@ import java.sql.*;
  *
  * @author citibob
  */
-public class PersonWiz extends HtmlWiz {
+public class OrgWiz extends HtmlWiz {
 	
 /**
- * Creates a new instance of PersonWiz 
+ * Creates a new instance of OrgWiz 
  */
-public PersonWiz(java.awt.Frame owner, java.sql.Statement st, citibob.app.App app)
+public OrgWiz(java.awt.Frame owner, java.sql.Statement st, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, "New Person Record", app.getSwingerMap(), true);
+	super(owner, "New Org Record", app.getSwingerMap(), true);
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addTextField("firstname", new JStringSwinger());
@@ -87,11 +87,11 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 //{
 //	JFrame f = new JFrame();
 //	f.setVisible(true);
-//	PersonWiz wiz = new PersonWiz(f, app);
+//	OrgWiz wiz = new OrgWiz(f, app);
 //	wiz.setVisible(true);
 //	System.out.println(wiz.getSubmitName());
 //	
-//	wiz = new PersonWiz(f, app);
+//	wiz = new OrgWiz(f, app);
 //	wiz.setVisible(true);
 //	System.out.println(wiz.getSubmitName());
 //	

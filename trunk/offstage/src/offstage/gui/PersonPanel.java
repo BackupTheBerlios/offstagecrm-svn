@@ -93,7 +93,7 @@ extends javax.swing.JPanel {
 				if (EntityID == null) return;
 				dm.setKey(EntityID);
 				dm.doSelect(st);
-			}});			
+			}});
 		}});
 		
 //		familyTable.addMouseListener(new DClickTableMouseListener(familyTable) {
@@ -113,26 +113,57 @@ extends javax.swing.JPanel {
 
 		//this.phonesSb = phonesSb;
 		this.model = xmodel;
+		this.vHouseholdID.initRuntime(app);
 		
 		// Bind the Family Table thingy (it's special)
 		familyTable.initRuntime(app);
+		
+		// Change family table contents when user re-reads from db
 		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
 			app.runApp(new StRunnable() {
 			public void run(Statement st) throws Exception {
-//System.out.println("xxyyz: " + familyTable);
-//System.out.println("xxyyz: " + st);
-//System.out.println("xxyyz: " + model);
+				if (model.getCurRow() < 0) return;
+//				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
+				Integer OrigEntityID = (Integer)model.getOrigValue(col);
 				Integer EntityID = (Integer)model.get(col);
+//				Integer OrigEntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
+//				Integer EntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
 				if (EntityID == null) return;
-				familyTable.setPrimaryEntityID(st, EntityID);
+				if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
+					// Orig == Value --- greater class probably just re-read from DB.
+					// So now we need to re-read too.  This problem should REALLY be
+					// solved by adding events to DbModel.
+					familyTable.setPrimaryEntityID(st, EntityID);
+//					vHouseholdID.setEntityID(EntityID);
+				}
+			}});
+		}});
+
+		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
+		public void curRowChanged(final int col) {
+			app.runApp(new StRunnable() {
+			public void run(Statement st) throws Exception {
+				if (model.getCurRow() < 0) return;
+//				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
+				Integer OrigEntityID = (Integer)model.getOrigValue(col);
+				Integer EntityID = (Integer)model.get(col);
+//				Integer OrigEntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
+//				Integer EntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
+				if (EntityID == null) return;
+				if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
+					// Orig == Value --- greater class probably just re-read from DB.
+					// So now we need to re-read too.  This problem should REALLY be
+					// solved by adding events to DbModel.
+					vHouseholdID.setEntityID(EntityID);
+				}
 			}});
 		}});
 		
 		
 		TypedWidgetBinder.bindRecursive(this, model, app.getSwingerMap());
 		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
-		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only
+//		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only
 
 		this.entitySubPanel1.initRuntime(app);
 		
@@ -181,8 +212,8 @@ extends javax.swing.JPanel {
         familyTable = new offstage.swing.typed.FamilySelectorTable();
         jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        cbIsPrimary = new citibob.swing.typed.JBoolCheckbox();
-        clearFamily = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        vHouseholdID = new offstage.swing.typed.HouseholdIDEditableLabel();
         phonePanel = new offstage.gui.GroupPanel();
         lPhoneNumbers = new javax.swing.JLabel();
         FirstMiddleLast = new javax.swing.JPanel();
@@ -193,7 +224,6 @@ extends javax.swing.JPanel {
         firstname = new citibob.swing.typed.JTypedTextField();
         middlename = new citibob.swing.typed.JTypedTextField();
         lastname = new citibob.swing.typed.JTypedTextField();
-        lName = new javax.swing.JLabel();
         GenderX = new javax.swing.JPanel();
         isorg = new citibob.swing.typed.JBoolCheckbox();
         mailprefid = new citibob.swing.typed.JKeyedComboBox();
@@ -205,6 +235,7 @@ extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         customaddressto = new citibob.swing.typed.JTypedTextField();
         jLabel10 = new javax.swing.JLabel();
+        bEmancipate = new javax.swing.JButton();
 
         genderButtonGroup.setColName("gender");
 
@@ -322,6 +353,14 @@ extends javax.swing.JPanel {
         bLaunchEmail.setText("*");
         bLaunchEmail.setMargin(new java.awt.Insets(1, 1, 1, 1));
         bLaunchEmail.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchEmail.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bLaunchEmailActionPerformed(evt);
+            }
+        });
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
@@ -371,30 +410,21 @@ extends javax.swing.JPanel {
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        cbIsPrimary.setText("Primary Contact");
-        cbIsPrimary.setEnabled(false);
+        jLabel12.setText("Household:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(cbIsPrimary, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
+        jPanel2.add(jLabel12, gridBagConstraints);
 
-        clearFamily.setText("Make Primary");
-        clearFamily.setToolTipText("");
-        clearFamily.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                clearFamilyActionPerformed(evt);
-            }
-        });
-
+        vHouseholdID.setColName("primaryentityid");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel2.add(clearFamily, gridBagConstraints);
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(vHouseholdID, gridBagConstraints);
 
         FamilyPane.add(jPanel2, java.awt.BorderLayout.NORTH);
 
@@ -460,8 +490,6 @@ extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
         FirstMiddleLast.add(lastname, gridBagConstraints);
-
-        lName.setText("Name");
 
         GenderX.setLayout(new java.awt.GridBagLayout());
 
@@ -534,23 +562,32 @@ extends javax.swing.JPanel {
 
         jLabel10.setText("To");
 
+        bEmancipate.setText("Emancipate");
+        bEmancipate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bEmancipateActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                        .add(47, 47, 47)
-                        .add(lName)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
                         .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 262, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(GenderX, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 155, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 48, Short.MAX_VALUE)
+                        .add(GenderX, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 155, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .add(12, 12, 12)
+                        .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 322, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 26, Short.MAX_VALUE)
+                        .add(bEmancipate)))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(FamilyPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
+                .add(FamilyPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE))
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
@@ -564,7 +601,7 @@ extends javax.swing.JPanel {
                     .add(layout.createSequentialGroup()
                         .add(lPhoneNumbers)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED))
-                    .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
+                    .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -572,40 +609,48 @@ extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(lName)
-                            .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(bEmancipate))
                         .add(9, 9, 9)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(GenderX, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                            .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(GenderX, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                            .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                            .add(lPhoneNumbers)
+                            .add(jLabel10)
+                            .add(customaddressto, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(FamilyPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 181, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(lPhoneNumbers)
-                    .add(jLabel10)
-                    .add(customaddressto, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(entitySubPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                    .add(phonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 157, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .add(layout.createSequentialGroup()
+                        .add(entitySubPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .add(phonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 157, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
+	{//GEN-HEADEREND:event_bLaunchEmailActionPerformed
+		citibob.gui.BareBonesMailto.mailto((String)email1.getValue());
+	}//GEN-LAST:event_bLaunchEmailActionPerformed
+
+	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
+	{//GEN-HEADEREND:event_bEmancipateActionPerformed
+		app.runGui(PersonPanel.this, new StRunnable()
+		{
+			public void run(Statement st) throws Exception
+			{
+				model.set("primaryentityid", dm.getPersonSb().getValueAt(0, "entityid"));
+			}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bEmancipateActionPerformed
 
 	private void bLaunchBrowserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchBrowserActionPerformed
 	{//GEN-HEADEREND:event_bLaunchBrowserActionPerformed
 		citibob.gui.BareBonesBrowserLaunch.openURL((String)url.getValue());
 	}//GEN-LAST:event_bLaunchBrowserActionPerformed
-
-	private void clearFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearFamilyActionPerformed
-		app.runGui(this, new StRunnable() { public void run(Statement st) throws Exception {
-			dm.getEntitySb().clearFamily();
-			dm.doUpdate(st);
-			dm.doSelect(st);
-		}});
-// TODO add your handling code here:
-	}//GEN-LAST:event_clearFamilyActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -615,10 +660,9 @@ extends javax.swing.JPanel {
     private javax.swing.JPanel Gender;
     private javax.swing.JPanel GenderX;
     private javax.swing.JPanel MiscInfo;
+    private javax.swing.JButton bEmancipate;
     private javax.swing.JButton bLaunchBrowser;
     private javax.swing.JButton bLaunchEmail;
-    private citibob.swing.typed.JBoolCheckbox cbIsPrimary;
-    private javax.swing.JButton clearFamily;
     private citibob.swing.typed.JTypedTextField customaddressto;
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email1;
@@ -631,6 +675,7 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -642,7 +687,6 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lMiddle;
-    private javax.swing.JLabel lName;
     private javax.swing.JLabel lPhoneNumbers;
     private citibob.swing.typed.JTypedTextField lastname;
     private citibob.swing.typed.JKeyedComboBox mailprefid;
@@ -655,6 +699,7 @@ extends javax.swing.JPanel {
     private citibob.swing.typed.JTypedTextField title;
     private javax.swing.JRadioButton unknownGenderButton;
     private citibob.swing.typed.JTypedTextField url;
+    private offstage.swing.typed.HouseholdIDEditableLabel vHouseholdID;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------
 

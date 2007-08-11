@@ -27,12 +27,15 @@ import citibob.util.KeyedModel;
 public class InterestsSchema extends ConstSchema
 {
 
+KeyedModel kmodel;
+public KeyedModel getKeyedModel() { return kmodel; }
+
 public InterestsSchema(Statement st, DbChangeModel change)
 throws SQLException
 {
 	super();
 	table = "interests";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	kmodel = new DbKeyedModel(st, change,
 		"interestids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),

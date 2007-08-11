@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
- * PersonWiz.java
+ * OrgWiz.java
  *
  * Created on October 8, 2006, 6:08 PM
  *
@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package offstage.accounts.gui;
+package offstage.school.gui;
 
 import citibob.swing.html.*;
 import java.util.*;
@@ -35,41 +35,53 @@ import offstage.types.*;
 import javax.swing.*;
 import offstage.wizards.*;
 import citibob.wizard.*;
-import citibob.app.*;
 import offstage.schema.*;
-import citibob.jschema.*;
 import citibob.util.*;
-import offstage.*;
-import offstage.swing.typed.*;
+import java.sql.*;
 
 /**
  *
  * @author citibob
  */
-public class CcpaymentWiz extends HtmlWiz {
-
+public class AddEnrollWiz extends HtmlWiz {
 	
 /**
- * Creates a new instance of PersonWiz 
+ * Creates a new instance of OrgWiz 
  */
-public CcpaymentWiz(java.awt.Frame owner, java.sql.Statement st, int entityid, FrontApp app)
-throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
+public AddEnrollWiz(java.awt.Frame owner, java.sql.Statement st, citibob.app.App app, TypedHashMap v)
+throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, "New Cash Payment", app.getSwingerMap(), true);
-	
-	Schema schema = app.getSchema("ccpayments");
-//	SwingerMap swingers = app.getSwingerMap();
-	
+	super(owner, "New Org Record", app.getSwingerMap(), true);
 	setSize(600,460);
-//	TypedWidgetMap map = new TypedWidgetMap();
-	addWidget("namount", "amount", schema);		// Negative of amount...
-	addTextField("description", schema);
-	offstage.swing.typed.CCChooser ccchooser = new CCChooser();
-		ccchooser.initRuntime(app.getKeyRing());
-		ccchooser.setEntityID(st, entityid, app);
-	addWidget("ccchooser", ccchooser);
-//	addWidgetRecursive(ccinfo);
+	addWidget("sperson", new JTypedLabel((String)v.get("sperson")));
+	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));
+	
+//	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
+	addWidget("courserole", new JKeyedComboBox(
+		new citibob.sql.DbKeyedModel(st, null,
+		"courseroles", "courseroleid", "name", "orderid")));
+	
+	addWidget("courseid", new JKeyedComboBox( //new JKeyedSelectTable(
+		new citibob.sql.DbKeyedModel(st, null,
+		"courseids", "courseid", "name", "dayofweek,tstart")));
+
 	loadHtml();
 }
 
+
+//public static void main(String[] args)
+//throws Exception
+//{
+//	JFrame f = new JFrame();
+//	f.setVisible(true);
+//	OrgWiz wiz = new OrgWiz(f, app);
+//	wiz.setVisible(true);
+//	System.out.println(wiz.getSubmitName());
+//	
+//	wiz = new OrgWiz(f, app);
+//	wiz.setVisible(true);
+//	System.out.println(wiz.getSubmitName());
+//	
+//	System.exit(0);
+//}
 }

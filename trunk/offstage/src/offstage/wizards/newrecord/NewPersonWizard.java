@@ -59,7 +59,7 @@ addState(new State("", "", "") {
 
 public NewPersonWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
 {
-	super("New Person", xfapp, xframe, "person");
+	super("New Record", xfapp, xframe, "person");
 	this.st = xst;
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
@@ -75,7 +75,7 @@ public NewPersonWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xf
 //addState(new State("person", "init", null) {
 addState(new State("person", null, null) {
 	public HtmlWiz newWiz() throws Exception
-		{ return new PersonWiz(frame); }
+		{ return new PersonWiz(frame, st, fapp); }
 	public void process() throws Exception
 	{
 		if (state == null) {
@@ -90,19 +90,19 @@ addState(new State("person", null, null) {
 				System.out.println("DupCheck sql: " + idSql);
 				int ndups = DB.countIDList(st, idSql);
 				if (ndups == 0) {
-					createPerson();
-					state = "finished";
+					createPerson(false);
+					state = null; //"finished";
 				} else {
-					state = "checkperson";
+					state = "checkdups";
 				}
-				//state = (ndups == 0 ? "finished" : "checkperson");
+				//state = (ndups == 0 ? "finished" : "checkdups");
 			}
 		}
 	}
 });
 // ---------------------------------------------
 // Duplicates were found; double-check.
-addState(new State("checkperson", "person", null) {
+addState(new State("checkdups", null, null) {
 	public HtmlWiz newWiz() throws Exception
 		{ return new DupsWiz(frame, st, fapp, v.getString("idsql")); }
 	public void process() throws Exception
@@ -110,9 +110,37 @@ addState(new State("checkperson", "person", null) {
 		String submit = v.getString("submit");
 		if ("dontadd".equals(submit)) state = null;
 		if ("addanyway".equals(submit)) {
-			createPerson();
+			createPerson(false);
 			state = "finished";
 System.out.println("Add anyway!");
+		}
+	}
+});
+// ---------------------------------------------
+addState(new State("org", null, null) {
+	public HtmlWiz newWiz() throws Exception
+		{ return new OrgWiz(frame, st, fapp); }
+	public void process() throws Exception
+	{
+		if (state == null) {
+			// First: do a simple check of data entry
+			if (!isValidOrg()) {
+				JOptionPane.showMessageDialog((JDialog)wiz,
+					"Invalid input.\nPlease fill in all required (starred) fields!");
+				state = "org";
+			} else {
+				String idSql = offstage.db.DupCheck.checkDups(st, v, 3, 20);
+				v.put("idsql", idSql);
+				System.out.println("DupCheck sql: " + idSql);
+				int ndups = DB.countIDList(st, idSql);
+				if (ndups == 0) {
+					createPerson(true);
+					state = null;// "finished";
+				} else {
+					state = "checkdups";
+				}
+				//state = (ndups == 0 ? "finished" : "checkdups");
+			}
 		}
 	}
 });
@@ -134,10 +162,11 @@ private void addSCol(ConsSqlQuery q, String col)
 	String val = v.getString(col);
 	if (val != null) q.addColumn(col, SqlString.sql(val));
 }
-void createPerson() throws SQLException
+void createPerson(boolean isorg) throws SQLException
 {
 	// Make main record
 	int id = DB.r_nextval(st, "entities_entityid_seq");
+	v.put("entityid", new Integer(id));
 	ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
 	q.addColumn("entityid", SqlInteger.sql(id));
 	q.addColumn("primaryentityid", SqlInteger.sql(id));
@@ -154,7 +183,7 @@ void createPerson() throws SQLException
 	addSCol(q, "orgname");
 	addSCol(q, "email");
 	addSCol(q, "url");
-	q.addColumn("isorg", SqlBool.sql(v.getBool("isorg")));
+	q.addColumn("isorg", SqlBool.sql(isorg));
 	String sql = q.getSql();
 System.out.println(sql);
 	st.execute(sql);
@@ -163,9 +192,10 @@ System.out.println(sql);
 	// Make phone record --- first dig for keyed model...
 	String phone = v.getString("phone");
 	if (phone != null) {
+		String phoneType = (isorg ? "work" : "home");
 		q = new ConsSqlQuery("phones", ConsSqlQuery.INSERT);
 		q.addColumn("entityid", SqlInteger.sql(id));
-		q.addColumn("groupid", "(select groupid from phoneids where name = 'home')");
+		q.addColumn("groupid", "(select groupid from phoneids where name = " + SqlString.sql(phoneType) + ")");
 		q.addColumn("phone", SqlString.sql(phone));
 		sql = q.getSql();
 System.out.println(sql);
@@ -173,13 +203,18 @@ System.out.println(sql);
 		
 		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
 	}
-//	Schema phones = fapp.getSchemaSet().phones;
-//	Column col = phones.getCol(phones.findCol("groupid"));
-//	SqlEnum type = (SqlEnum)col.getType();
-//	KeyedModel kmodel = type.getKeyedModel();
-//	kmodel.
-	
-	
+
+	// Do interests
+	Integer interestid = v.getInteger("interestid");
+	if (interestid != null) {
+		q = new ConsSqlQuery("interests", ConsSqlQuery.INSERT);
+		q.addColumn("entityid", SqlInteger.sql(id));
+		q.addColumn("groupid", SqlInteger.sql(interestid));
+		sql = q.getSql();
+System.out.println(sql);
+		st.execute(sql);
+		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
+	}
 }
 
 boolean notnull(String field)
@@ -190,6 +225,12 @@ boolean notnull(String field)
 boolean isValid()
 {
 	return notnull("lastname");
+}
+
+/** Initial check on validity of info inputted. */
+boolean isValidOrg()
+{
+	return notnull("orgname");
 }
 
 public static void main(String[] args) throws Exception

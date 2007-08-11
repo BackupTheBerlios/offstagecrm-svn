@@ -96,51 +96,17 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
-        java.awt.GridBagConstraints gridBagConstraints;
-
-        jToolBar1 = new javax.swing.JToolBar();
-        bSetFamily = new javax.swing.JButton();
         selector = new offstage.swing.typed.EntitySelector();
 
         setLayout(new java.awt.BorderLayout());
-
-        bSetFamily.setText("Add to Family");
-        bSetFamily.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bSetFamilyActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.add(bSetFamily);
-
-        add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         add(selector, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
 
-	private void bSetFamilyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSetFamilyActionPerformed
-		app.runGui(this, new StRunnable() {
-		public void run(Statement st) throws Exception {
-			int entityid = (Integer)selector.getValue();//getSelectedEntityID();
-			if (entityid < 0) return;
-//			dm.getEntitySb().setFamilySameAs(st, entityid);
-///////////			dm.getEntity().addToFamily(st, entityid);
-//			dm.getEntitySb().addToFamily(st, entityid);	// Adds entityid to the family of person currently in entity editor
-			dm.doUpdate(st);
-			dm.doSelect(st);
-
-		}});
-// TODO add your handling code here:
-	}//GEN-LAST:event_bSetFamilyActionPerformed
-
 		
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bSetFamily;
-    private javax.swing.JToolBar jToolBar1;
     private offstage.swing.typed.EntitySelector selector;
     // End of variables declaration//GEN-END:variables
 	
