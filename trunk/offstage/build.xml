@@ -93,6 +93,9 @@
 	    <fileset dir="./compilelib"><include name="*.jar"/></fileset>
 	  </classpath>
 	</jrc>
+	<copy todir="build/classes/offstage/reports">
+	    <fileset dir="./reports"><include name="*.odt"/></fileset>
+	</copy>
 </target>
 
 <target name="-pre-jar" depends="reports" />
