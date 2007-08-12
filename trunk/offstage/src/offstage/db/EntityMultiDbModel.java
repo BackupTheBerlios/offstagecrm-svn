@@ -39,23 +39,23 @@ public EntityMultiDbModel(citibob.app.App app)
 	logadd(logger, personDb = new EntityDbModel(app.getSchema("persons"), app));
 }
 
-/** Sets up the SchemaBufs for a new person,
-which will be inserted into the DB upon doUpdate(). */
-public void newEntity(Statement st, int entityType) throws java.sql.SQLException
-{
-	// Clear all existing data --- including in sub-DBModels.
-	doClear();
-
-	// Get a new entityID for this record.
-	int entityID = DB.r_nextval(st, "entities_entityid_seq");
-	setKey(entityID);
-
-	// Insert a blank record with that entityID
-	try {
-		personDb.getSchemaBuf().insertRow(-1, new String[] {"entityid", "primaryentityid", "isorg"},
-			new Object[] {new Integer(entityID), new Integer(entityID), Boolean.FALSE});
-	} catch(KeyViolationException e) {}	// can't happen, buffer is clear.
-}
+///** Sets up the SchemaBufs for a new person,
+//which will be inserted into the DB upon doUpdate(). */
+//public void newEntity(Statement st, int entityType) throws java.sql.SQLException
+//{
+//	// Clear all existing data --- including in sub-DBModels.
+//	doClear();
+//
+//	// Get a new entityID for this record.
+//	int entityID = DB.r_nextval(st, "entities_entityid_seq");
+//	setKey(entityID);
+//
+//	// Insert a blank record with that entityID
+//	try {
+//		personDb.getSchemaBuf().insertRow(-1, new String[] {"entityid", "primaryentityid", "isorg"},
+//			new Object[] {new Integer(entityID), new Integer(entityID), Boolean.FALSE});
+//	} catch(KeyViolationException e) {}	// can't happen, buffer is clear.
+//}
 
 //public Integer getPrimaryEntityID()
 //{ return (Integer)personDb.getSchemaBuf().getValueAt(0, "primaryentityid"); }

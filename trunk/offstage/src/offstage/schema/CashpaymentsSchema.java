@@ -27,10 +27,10 @@ import java.sql.*;
 public class CashpaymentsSchema extends ActransSchema
 {
 
-public CashpaymentsSchema(Statement st, DbChangeModel change)
+public CashpaymentsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
-	super(st, change);
+	super(st, change, tz);
 	table = "cashpayments";
 //	appendCols(new Column[] {
 //		new Column(new SqlChar(), "gender", false),

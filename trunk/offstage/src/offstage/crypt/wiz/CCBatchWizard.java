@@ -144,8 +144,8 @@ static {
 }
 
 void processBatch(Statement st)
-throws SQLException, java.security.GeneralSecurityException, java.text.ParseException,
-JRException
+throws SQLException, java.io.IOException,
+java.security.GeneralSecurityException, java.text.ParseException, JRException
 {
 	KeyRing kr = fapp.getKeyRing();
 	SqlTimestamp sqlt = new SqlTimestamp("GMT");
@@ -188,7 +188,7 @@ JRException
 		details.add(map);
 	}
 	JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jasper", jrdata, params);
+	offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jasper", jrdata, params);
 
 }
 

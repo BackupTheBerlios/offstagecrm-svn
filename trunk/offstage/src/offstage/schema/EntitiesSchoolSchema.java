@@ -26,6 +26,14 @@ import java.sql.*;
 public class EntitiesSchoolSchema extends ConstSchema
 {
 
+public final static KeyedModel billingtypeModel;
+static {
+	billingtypeModel = new KeyedModel();
+//	billingtypeModel.addItem(null, "<None>");
+	billingtypeModel.addItem("y", "Yearly");
+	billingtypeModel.addItem("q", "Quarterly");
+}
+
 public EntitiesSchoolSchema(Statement st, DbChangeModel change)
 throws SQLException
 {
@@ -39,6 +47,7 @@ throws SQLException
 	cols = new Column[] {
 			new Column(new SqlInteger(false), "entityid", true),
 			new Column(new SqlInteger(), "adultid", false),
+			new Column(new SqlString(1), "billingtype"),
 			new Column(new SqlEnum(kmodel, "<No Level Selected>"), "programid")
 	};
 }	

@@ -78,7 +78,7 @@ public void initRuntime(FrontApp xfapp, Statement st, int entityid) throws SQLEx
 	
 
 	// Make sure we have a school record
-	SchoolDB.w_students_create(st, entityid);
+	SchoolDB.w_student_create(st, entityid);
 
 	lAdult.initRuntime(fapp);
 
@@ -664,7 +664,7 @@ public void refreshEnroll(Statement st) throws SQLException
 			enrolledDb.doUpdate(st);
 			enrolledDb.doSelect(st);
 
-			actransDb.doUpdate(st);			
+			actransDb.doUpdate(st);
 			int termid = (Integer)terms.getValue();
 //			SchoolDB.w_tuitiontrans_calcTuition(st, termid, entityid);
 			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(st, termid, Oldadultid);

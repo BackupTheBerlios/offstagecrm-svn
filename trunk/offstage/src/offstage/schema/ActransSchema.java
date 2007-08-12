@@ -43,7 +43,7 @@ public static final int T_CHECKPAYMENTS = 6;
 public final KeyedModel tableKmodel;
 public final KeyedModel tableoidKmodel;
 	
-public ActransSchema(Statement st, DbChangeModel change)
+public ActransSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
@@ -69,7 +69,7 @@ throws SQLException
 		new Column(new SqlEnum(tableoidKmodel, false), "tableoid"),
 		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlEnum(actypeKmodel, false), "actypeid", true),
-		new Column(new SqlTimestamp("GMT"), "dtime", true),
+		new Column(new SqlDate(tz, false), "date"),
 		new Column(new SqlNumeric(9,2), "amount"),
 		new Column(new SqlString(300,true), "description")
 	};

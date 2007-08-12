@@ -26,8 +26,7 @@ package offstage.reports;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.jschema.CSVReportOutput;
-import citibob.jschema.CSVReportOutput;
+import offstage.reports.CSVReportOutput;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.*;
 import citibob.wizard.*;
@@ -82,8 +81,7 @@ addState(new State("ticketparams", null, "editquery") {
 			" and t.groupid = " + SqlInteger.sql(groupid) + "\n" +
 			" order by p.lastname,p.firstname\n");
 		report.executeQuery(st);
-		ReportOutput.saveCSVReport(report, "Save Ticket Sales Repot",
-			fapp, frame);
+		ReportOutput.saveCSVReport(fapp, frame, "Save Ticket Sales Repot",report);
 	}
 });
 //// ---------------------------------------------

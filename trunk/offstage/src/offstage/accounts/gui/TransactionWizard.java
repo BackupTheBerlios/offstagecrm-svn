@@ -26,6 +26,7 @@ package offstage.accounts.gui;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
+import citibob.app.App;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
 import citibob.wizard.*;
@@ -49,7 +50,8 @@ public class TransactionWizard extends OffstageWizard {
 
 	Statement st;		// Datbase connection
 	int entityid, actypeid;
-	/*
+	SqlDate sqlDate;
+/*
 addState(new State("", "", "") {
 	public HtmlWiz newWiz()
 		{ return new }
@@ -66,6 +68,7 @@ void vInsert(String table, TypedHashMap v) throws SQLException
 	ConsSqlQuery sql = newInsertQuery(table, v);
 	sql.addColumn("entityid", SqlInteger.sql(entityid));
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 	st.executeUpdate(sql.getSql());
 }
 
@@ -76,6 +79,7 @@ int xentityid, int xactypeid)
 	this.st = xst;
 	this.entityid = xentityid;
 	this.actypeid = xactypeid;
+	sqlDate = new SqlDate(fapp.getTimeZone(), false);
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
 //	public HtmlWiz newWiz() throws Exception
@@ -102,6 +106,8 @@ addState(new State("adjpayment", null, null) {
 		{ return new AdjpaymentWiz(frame, fapp); }
 	public void process() throws Exception
 	{
+		double namount = ((Number)v.get("namount")).doubleValue();
+		v.put("amount", new Double(-namount));
 		vInsert("adjpayments", v);
 	}
 });
@@ -132,6 +138,7 @@ addState(new State("ccpayment", null, null) {
 		sql.addColumn("description", SqlString.sql((String)v.get("description")));
 		sql.addColumn("entityid", SqlInteger.sql(entityid));
 		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
+		sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 		st.executeUpdate(sql.getSql());
 	}
 });

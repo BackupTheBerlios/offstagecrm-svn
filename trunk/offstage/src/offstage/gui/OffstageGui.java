@@ -122,11 +122,12 @@ FrontApp app;
 
         tabs.addTab("Development", people);
 
+        school.setPreferredSize(new java.awt.Dimension(836, 600));
         tabs.addTab("School", school);
 
         tabs.addTab("Mailings", mailings);
 
-        getContentPane().add(tabs, java.awt.BorderLayout.NORTH);
+        getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
 
         jMenu1.setText("File");
         miThrowException.setText("Throw Exception");

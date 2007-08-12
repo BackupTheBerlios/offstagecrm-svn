@@ -31,14 +31,16 @@ import offstage.db.*;
 
 public class PayerDbModel extends EntityMultiDbModel
 {
-
+	
 public final IntKeyedDbModel phoneDb;
+public final IntKeyedDbModel schoolDb;
 
 public PayerDbModel(citibob.app.App app)
 {
 	super(app);
 	QueryLogger logger = app.getLogger();
 	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid", true));
+	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid", true));
 }
 
 }

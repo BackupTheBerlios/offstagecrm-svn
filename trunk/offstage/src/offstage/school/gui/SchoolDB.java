@@ -40,7 +40,7 @@ public class SchoolDB {
 
 // -------------------------------------------------------------------------------
 /** Makes a student record for an entity if it doesn't already exist. */
-public static void w_students_create(Statement st, int studentid)
+public static void w_student_create(Statement st, int studentid)
 {
 	try {
 		String sql =
@@ -48,6 +48,17 @@ public static void w_students_create(Statement st, int studentid)
 			SqlInteger.sql(studentid) +
 			", (select primaryentityid from entities" +
 			"     where entityid = " + SqlInteger.sql(studentid) + "))";
+		st.executeUpdate(sql);
+	} catch(SQLException e) {
+//		System.out.println("hoi");
+	}	// ignore if already in DB
+}
+public static void w_payer_create(Statement st, int payerid)
+{
+	try {
+		String sql =
+			"insert into entities_school (entityid, adultid) values (" +
+			SqlInteger.sql(payerid) + ", " + SqlInteger.sql(payerid) + ")";
 		st.executeUpdate(sql);
 	} catch(SQLException e) {
 //		System.out.println("hoi");
@@ -89,6 +100,8 @@ public static void w_students_create(Statement st, int studentid)
 private static class TuitionRec implements Comparable<TuitionRec>
 {
 	public int studentid;
+	public String studentName;
+	public String sdate;
 	public String description;
 	public double tuition;
 	public int compareTo(TuitionRec o) {
@@ -109,15 +122,40 @@ throws SQLException
 	SqlNumeric money = new SqlNumeric(9, 2);
 	SqlTime time = new SqlTime(true);
 	
+	// Read term due dates
+	HashMap<String,String> duedates = new HashMap();
+	rs = st.executeQuery(
+		" select name,duedate from termduedates" +
+		" where termid = " + SqlInteger.sql(termid));
+	while (rs.next()) duedates.put(rs.getString("name"), rs.getString("duedate"));
+	rs.close();
+	
 	// Get name of the term
 	rs = st.executeQuery(
-		" select name, billdtime, paymentdue from termids" +
-		" where termid = " + SqlInteger.sql(termid));
+		" select t.name as termname" +
+		" from termids t" +
+//		" left outer join entities_school es on (es.termid = t.termid and es.entityid = " + SqlInteger.sql(adultid) + ")" +
+//		" select name, billdtime, paymentdue from termids" +
+		" where t.termid = " + SqlInteger.sql(termid));
 	rs.next();
-	String termName = rs.getString("name");
-	String sBillDtime = rs.getString("billdtime");
-	String sPaymentdue = rs.getString("paymentdue");
+	String termName = rs.getString("termname");
 	rs.close();
+	
+	// Get billing type for this payer
+	rs = st.executeQuery(
+		" select billingtype" +
+		" from entities_school es where entityid = " + SqlInteger.sql(adultid));
+	rs.next();
+	String sBillingType = rs.getString("billingtype");
+	char btype = (sBillingType == null ? 'y' : sBillingType.charAt(0));
+	rs.close();
+	
+	
+//	String sBillDtime = rs.getString("billdtime");
+//	String sPaymentdue = rs.getString("paymentdue");
+	rs.close();
+
+	// Get the quarterly and yearly duedates
 	
 	// Remove previous tuition invoice records
 	sqlOut.append(
@@ -140,38 +178,39 @@ throws SQLException
 	rs = st.executeQuery(sql);
 	
 	// Calculate sum of hours in enrolled courses, per student
-//	int studentid = -1;
-//	String description = null;
-//	double tuition = 0;		// Tuition for one student
 	TuitionRec tr = null;
+	int weeklyS = 0;
 	ArrayList<TuitionRec> tuitions = new ArrayList();
 	for (;;) {
 		boolean hasNext = rs.next();
 		if (!hasNext || tr == null || (tr.studentid != rs.getInt("studentid"))) {
-			if (tr != null) tuitions.add(tr);
+			if (tr != null) {
+				tr.tuition += TuitionRate.getRateY(weeklyS);
+				tuitions.add(tr);
+			}
 			
 			// Make up description for this next student record.
 			if (hasNext) {
 				tr = new TuitionRec();
 				tr.studentid = rs.getInt("studentid");
-				tr.description = termName + ": Tuition for " +
-					rs.getString("firstname") + " " + rs.getString("lastname");
+				tr.studentName = rs.getString("firstname") + " " + rs.getString("lastname");
+				tr.description = termName + ": Tuition for " + tr.studentName;
 				tr.tuition = 0;
+				weeklyS = 0;
 			}
 		}
 		if (!hasNext) break;
 System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 		// Add the price of this course to the tuition
-		double price;
 		String Price = rs.getString("price");
-		if (Price != null) price = Double.parseDouble(Price);
-		else {
+		if (Price != null) {
+			tr.tuition += Double.parseDouble(Price);
+		} else {
 			long tstart = time.get(rs, "tstart").getTime();
 			long tnext = time.get(rs, "tnext").getTime();
 			int lengthS = (int)(tnext - tstart) / 1000;
-			price = (double)lengthS * (100.0 / 3600.0);	// $100/hr
+			weeklyS += lengthS;
 		}
-		tr.tuition += price;
 	}
 	rs.close();
 
@@ -186,16 +225,50 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 			trx.description += " (w/ sibling discount)";
 		}
 	}
+
+	// ====================================================
+	// Make up final list of bills to account
+	ArrayList<TuitionRec> t2 = new ArrayList();
 	
+	// Add registration fees
 	for (TuitionRec trx : tuitions) {
+		TuitionRec tq = new TuitionRec();
+		tq.sdate = duedates.get("r");
+		tq.description = "Registration Fee for " + trx.studentName;
+		tq.studentid = trx.studentid;
+		tq.tuition = 25;
+		t2.add(tq);
+	}
+		
+	// Covert to actual billing records that are quarterly or yearly...
+	if (btype == 'q') {
+		for (TuitionRec trx : tuitions) {
+			for (int i=1; i<=4; ++i) {
+				TuitionRec tq = new TuitionRec();
+				tq.sdate = duedates.get("q" + i);
+				tq.description = trx.description + " --- Quarter " + i;
+				tq.studentid = trx.studentid;
+				tq.tuition = trx.tuition * .25;
+				t2.add(tq);
+			}
+		}
+	} else {	// Bill Yearly
+		for (TuitionRec trx : tuitions) {
+			trx.sdate = duedates.get("y");
+			trx.description += " --- Full Year";
+			t2.add(trx);		
+		}
+	}
+	
+	// Write them out
+	for (TuitionRec trx : t2) {
 		// This student's records have ended; write out
 		sqlOut.append(" insert into tuitiontrans" +
-			" (entityid, actypeid, dtime, amount, description, ddue, studentid, termid)" +
+			" (entityid, actypeid, date, amount, description, studentid, termid)" +
 			" values (" + SqlInteger.sql(adultid) + ", " +
 			" (select actypeid from actypes where name = 'school'), " +
-			"'" + sBillDtime + "', " +
+			"'" + trx.sdate + "', " +
 			money.sql(trx.tuition) + ", " + SqlString.sql(trx.description) + ", " +
-			"'" + sPaymentdue + "', " +
 			SqlInteger.sql(trx.studentid) + ", " + SqlInteger.sql(termid) + ");\n");
 	}
 	
@@ -204,6 +277,7 @@ System.out.println(sqlOut);
 	
 }
 // -------------------------------------------------------------------------------
+/** Returns true only if ALL IDs are in the entities_school table. */
 public static boolean isInSchool(Statement st, int entityid) throws SQLException
 {
 	ResultSet rs = null;
@@ -216,6 +290,13 @@ public static boolean isInSchool(Statement st, int entityid) throws SQLException
 		rs.close();
 	}
 }
+//public static boolean isInSchool(Statement st, int[] entityids) throws SQLException
+//{
+//	ResultSet rs = null;
+//	return SQL.readInt(st,
+//		"select count(*) from entities_school where entityid in " +
+//		SQL.intList(entityids)) == entityids.length;
+//}
 // -------------------------------------------------------------------------------
 //public static void main(String[] args) throws Exception
 //{

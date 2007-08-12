@@ -64,7 +64,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	addTextField("name", schema);
 	addTextField("checknumber", schema);
 	addTextField("phone", schema);
-	addWidget("dtime", schema).setValue(null);
+//	addWidget("date", schema).setValue(null);
 	loadHtml();
 }
 

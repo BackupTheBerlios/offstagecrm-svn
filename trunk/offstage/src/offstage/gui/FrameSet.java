@@ -90,6 +90,7 @@ st.execute("update entities set primaryentityid=entityid where primaryentityid i
 app.getFullEntityDm().setKey(12633);	// Go to Bob's record (for debuggin)'
 app.getFullEntityDm().doSelect(st);
 
+		offstageGui.pack();
 	    offstageGui.setVisible(true);
     }
 

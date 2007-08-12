@@ -27,10 +27,10 @@ import java.sql.*;
 public class CcpaymentsSchema extends ActransSchema
 {
 
-public CcpaymentsSchema(Statement st, DbChangeModel change)
+public CcpaymentsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
-	super(st, change);
+	super(st, change,tz);
 	table = "ccpayments";
 	appendCols(new Column[] {
 		new Column(new SqlString(50), "ccname"),

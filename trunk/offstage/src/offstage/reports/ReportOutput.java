@@ -154,6 +154,24 @@ String[] sformattercols, SFormatter[] sformatters) throws Exception
 //	Runtime.getRuntime().exec("acroread " + file.getPath());
 	return file;
 }
+
+public static File saveJodReport(App app, Component parent,
+String title, HashMap jodModel) throws Exception
+{
+	File file = chooseReportOutput(app, parent,
+		"pdfreport", ".pdf", title);
+	
+	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file));
+	try {
+			jout.writeReport(ReportOutput.openTemplateFile(app, "AcctStatement.odt"), jodModel);
+	} finally {
+		jout.close();
+	}
+
+	citibob.gui.BareBonesPdf.view(file);
+//	Runtime.getRuntime().exec("acroread " + file.getPath());
+	return file;
+}
 // =========================================================================
 
 

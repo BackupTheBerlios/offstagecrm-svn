@@ -116,7 +116,7 @@ public static void main(String[] args) throws Exception
 		details.add(map);
 	}
 	JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jasper", jrdata, params);
+//	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jasper", jrdata, params);
 	
 //	// Convert ccinfo to full table representation
 //	HashMap params = new HashMap();
