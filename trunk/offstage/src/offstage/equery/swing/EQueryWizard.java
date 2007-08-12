@@ -26,15 +26,13 @@ package offstage.equery.swing;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.jschema.CSVReportOutput;
-import citibob.jschema.CSVReportOutput;
+import offstage.reports.CSVReportOutput;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.*;
 import citibob.wizard.*;
 import javax.swing.*;
 import java.sql.*;
 import offstage.db.*;
-import offstage.reports.ReportOutput;
 import offstage.wizards.*;
 import offstage.*;
 import citibob.sql.*;
@@ -161,8 +159,7 @@ public boolean doDonationReport(String title, String sql) throws Exception
 {
 	DonationReport report = new DonationReport(fapp, sql);
 	report.doSelect(st);
-	ReportOutput.saveCSVReport(report.newTableModel(), "Save" + title,
-		fapp, frame);
+	ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());
 	return true;
 }
 //		
