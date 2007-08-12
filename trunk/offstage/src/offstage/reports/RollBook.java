@@ -127,45 +127,22 @@ public RollBook(App app, int termid)
 			}
 		});
 	this.add(model);
-	
-//	// Outer Join the Teacher and # students
-//	Col[] cols = new Col[] {new Col("days", new SqlString(true))};
-//	sql =
-//		" select distinct p.entityid, c.dayofweek, dow.lettername\n" +
-//		" from enrollments en, courseids c, entities p, daysofweek dow\n" +
-//		" where c.courseid = en.courseid\n" +
-//		" and en.entityid = p.entityid\n" +
-//		" and c.dayofweek = dow.javaid\n" +
-//		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
-//		" order by p.entityid, c.dayofweek\n";
-//	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(
-//		main, "entityid", "entityid", cols, app.getSqlTypeSet(),
-//		sql) {
-//			public void setRow(int row, ResultSet rs) throws SQLException
-//			{
-//				String dayname = rs.getString("lettername");
-//				String s = (String)getValueAt(row, 0);
-//				s = (s == null ? "" : s) + dayname;
-//				setValueAt(s, row, 0);
-//			}
-//		});
-//	this.add(model);
 }
 
 	
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-
-	RollBook report = new RollBook(fapp, 8);
-	report.doSelect(st);
-	JTypeTableModel model = report.newTableModel();
-
-	HashMap params = new HashMap();
-	JRDataSource jrdata = new JRTableModelDataSource(model);
-	offstage.reports.ReportOutput.viewJasperReport("RollBook.jasper", jrdata, params);
-
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	Statement st = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//
+//	RollBook report = new RollBook(fapp, 8);
+//	report.doSelect(st);
+//	JTypeTableModel model = report.newTableModel();
+//
+//	HashMap params = new HashMap();
+//	JRDataSource jrdata = new JRTableModelDataSource(model);
+//	offstage.reports.ReportOutput.viewJasperReport("RollBook.jasper", jrdata, params);
+//
+//}
 }

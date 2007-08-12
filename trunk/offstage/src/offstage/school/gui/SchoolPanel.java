@@ -34,7 +34,10 @@ import offstage.accounts.gui.*;
 import javax.swing.*;
 import citibob.swing.*;
 import offstage.accounts.gui.*;
-
+import offstage.reports.*;
+import citibob.text.*;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.*;
 /**
  *
  * @author  citibob
@@ -413,6 +416,8 @@ void termChanged(Statement st)
         jPanel14 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         acbal = new citibob.swing.typed.JTypedLabel();
+        jPanel16 = new javax.swing.JPanel();
+        jButton3 = new javax.swing.JButton();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel12 = new javax.swing.JPanel();
         GroupScrollPanel = new javax.swing.JScrollPane();
@@ -421,6 +426,8 @@ void termChanged(Statement st)
         bAddEnrollment = new javax.swing.JButton();
         bRemoveEnrollment = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -1357,6 +1364,33 @@ void termChanged(Statement st)
 
         AccountTab.addTab("Account History", AccountPane);
 
+        jButton3.setText("Student Schedule");
+        jButton3.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel16Layout = new org.jdesktop.layout.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jButton3)
+                .addContainerGap(160, Short.MAX_VALUE))
+        );
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jButton3)
+                .addContainerGap(173, Short.MAX_VALUE))
+        );
+        AccountTab.addTab("Reports", jPanel16);
+
         jPanel12.setLayout(new java.awt.BorderLayout());
 
         enrollments.setModel(new javax.swing.table.DefaultTableModel(
@@ -1433,22 +1467,106 @@ void termChanged(Statement st)
 
         jTabbedPane1.addTab("Registrations", jPanel2);
 
+        jButton1.setText("Roll Books");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Student Schedules");
+        jButton2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 662, Short.MAX_VALUE)
+            .add(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jButton1)
+                    .add(jButton2))
+                .addContainerGap(502, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 738, Short.MAX_VALUE)
+            .add(jPanel3Layout.createSequentialGroup()
+                .add(21, 21, 21)
+                .add(jButton1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jButton2)
+                .addContainerGap(661, Short.MAX_VALUE))
         );
-        jTabbedPane1.addTab("Actions", jPanel3);
+        jTabbedPane1.addTab("Reports", jPanel3);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
 
+	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+	{//GEN-HEADEREND:event_jButton1ActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			RollBook report = new RollBook(fapp, 8);
+			report.doSelect(st);
+			JTypeTableModel model = report.newTableModel();
+
+			HashMap params = new HashMap();
+			JRDataSource jrdata = new JRTableModelDataSource(model);
+			offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jasper", jrdata, params);// TODO add your handling code here:
+		}});
+	}//GEN-LAST:event_jButton1ActionPerformed
+
+	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
+	{//GEN-HEADEREND:event_jButton3ActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			Integer eid = (Integer)studentRm.get("entityid");
+			int termid = (Integer)vTermID.getValue();
+			doStudentSchedules(st, termid, eid);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_jButton3ActionPerformed
+
+	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
+	{//GEN-HEADEREND:event_jButton2ActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+//			Integer eid = (Integer)studentRm.get("entityid");
+			int termid = (Integer)vTermID.getValue();
+			doStudentSchedules(st, termid, -1);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_jButton2ActionPerformed
+
+void doStudentSchedules(Statement st, int termid, int entityid)
+throws Exception
+{
+	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
+		rsmod.executeQuery(st, offstage.reports.StudentSchedule.getSql(termid, entityid));
+
+	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear"};
+	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
+	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
+	SFormatter[] sformatters = {
+		new JDateSFormatter("EEEEE, MMMMM d"),
+		new JDateSFormatter("yyyy"),
+		new JDateSFormatter("yyyy")
+	};
+	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
+		"Save Student Schedules",
+		group, sformattercols, sformatters);
+}
+	
+	
 	private void bNewHouseholdActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewHouseholdActionPerformed
 	{//GEN-HEADEREND:event_bNewHouseholdActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
@@ -1688,6 +1806,9 @@ void termChanged(Statement st)
     private citibob.swing.typed.JTypedTextField firstname2;
     private citibob.swing.typed.JKeyedComboBox gender;
     private offstage.gui.GroupPanel householdPhonePanel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -1711,6 +1832,7 @@ void termChanged(Statement st)
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

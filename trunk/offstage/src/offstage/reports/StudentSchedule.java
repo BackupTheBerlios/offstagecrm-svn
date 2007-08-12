@@ -17,6 +17,11 @@ import java.io.*;
 import java.util.*;
 import com.pdfhacks.*;
 import citibob.sql.pgsql.*;
+import java.sql.*;
+import offstage.*;
+import citibob.sql.*;
+import citibob.swing.table.*;
+import citibob.text.*;
 
 /**
  *
@@ -25,15 +30,17 @@ import citibob.sql.pgsql.*;
 public class StudentSchedule
 {
 	
-public static String getSql(int termid)
+public static String getSql(int termid, int studentid)
 {
 	return
 		" select adult.lastname as alastname, adult.firstname as afirstname,\n" +
 		" p.lastname, p.firstname, pr.name as programname,\n" +
-		" c.dayofweek, dow.shortname,\n" +
+		" c.dayofweek, dow.shortname as dayofweek_shortname,\n" +
 		" to_char(c.tstart,'HH:MI') as tstart,\n" +
 		" to_char(c.tnext,'HH:MI') as tnext,\n" +
-		" loc.name as locname\n" +
+		" loc.name as locname,\n" +
+		" t.firstdate, t.nextdate-1 as lastdate,\n" +
+		" t.firstdate as firstyear, t.nextdate-1 as lastyear\n" +		
 		" from termids t\n" +
 		" inner join courseids c on (c.termid = t.termid)\n" +
 		" inner join enrollments en on (en.courseid = c.courseid)\n" +
@@ -44,11 +51,50 @@ public static String getSql(int termid)
 		" inner join locations loc on (loc.locationid = c.locationid)\n" +
 		" left outer join programids pr  on (pr.programid = ps.programid)\n" +
 		" where t.termid=" + SqlInteger.sql(termid) + "\n" +
+		(studentid < 0 ? "" : " and p.entityid = " + SqlInteger.sql(studentid)) +
 		" order by adult.lastname, adult.firstname, p.lastname, p.firstname, \n" +
 		" c.dayofweek, c.tstart\n";
 
 }
+
+public static void main(String[] args) throws Exception
+{
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	Statement st = pool.checkout().createStatement();
+	FrontApp fapp = new FrontApp(pool,null);
 	
+	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
+		rsmod.executeQuery(st, getSql(8, 12633));
+		
+	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear"};
+	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
+	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
+	SFormatter[] sformatters = {
+		new JDateSFormatter("EEEEE, MMMMM d"),
+		new JDateSFormatter("yyyy"),
+		new JDateSFormatter("yyyy")
+	};
+	
+	JodPdfWriter jout = new JodPdfWriter("ooffice", new FileOutputStream("x.pdf"));
+	JTypeTableModel jtmod;
+	try {
+		while ((jtmod = group.next()) != null) {
+			StringTableModel smod = new StringTableModel(jtmod, fapp.getSFormatterMap());
+			for (int i=0; i<sformattercols.length; ++i) smod.setSFormatter(sformattercols[i], sformatters[i]);
+			TemplateTableModel ttmod = new TemplateTableModel(smod);
+			HashMap data = new HashMap();
+				data.put("rs", ttmod);
+			for (int i=0; i<gcols.length; ++i) {
+				data.put("g0_" + gcols[i], smod.getValueAt(0, smod.findColumn(gcols[i])));
+			}
+			jout.writeReport(ReportOutput.openTemplateFile(fapp, "StudentSchedule.odt"), data);
+		}
+	} finally {
+		jout.close();
+	}
+	
+	Runtime.getRuntime().exec("acroread x.pdf");
+}
 ////public static void doTest(String oofficeExe) throws Exception
 //public static void main(String[] args) throws Exception
 //{

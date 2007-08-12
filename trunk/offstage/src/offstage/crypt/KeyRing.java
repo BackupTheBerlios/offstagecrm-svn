@@ -257,8 +257,8 @@ throws GeneralSecurityException, IOException
 	byte[] bkey = key.getPrivate().getEncoded();
 	bkey = Checksum.addChecksum(bkey);
 	String skey = pubdomain.Base64.encodeBytes(bkey);
-	PrintWriter pw = new PrintWriter(
-		new FileWriter(keyFile));
+	keyFile.getParentFile().mkdirs();
+	PrintWriter pw = new PrintWriter(new FileWriter(keyFile));
 	pw.println("-----BEGIN PRIVATE KEY-----"); //$NON-NLS-1$
 	pw.println(skey);
 	pw.println("-----END PRIVATE KEY-----"); //$NON-NLS-1$
@@ -273,8 +273,8 @@ throws GeneralSecurityException, IOException
 	bkey = Checksum.addChecksum(bkey);
 	skey = pubdomain.Base64.encodeBytes(bkey);
 	for (File f : pubFiles) {
-		pw = new PrintWriter(
-			new FileWriter(f));
+		f.getParentFile().mkdirs();
+		pw = new PrintWriter(new FileWriter(f));
 		pw.println("-----BEGIN PUBLIC KEY-----"); //$NON-NLS-1$
 		pw.println(skey);
 		pw.println("-----END PUBLIC KEY-----"); //$NON-NLS-1$

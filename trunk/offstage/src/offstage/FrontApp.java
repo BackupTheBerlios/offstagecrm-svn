@@ -47,7 +47,7 @@ public static final int SCHOOL_SCREEN = 2;
 public static final int MAILINGS_SCREEN = 3;
 int screen = PEOPLE_SCREEN;
 
-
+final File configDir;
 /** Connection to our SQL database. */
 //Connection db;
 Properties props;
@@ -87,6 +87,7 @@ public SwingPrefs getSwingPrefs() { return swingPrefs; }
 public QueryLogger getLogger() { return logger; }
 public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
+public File getConfigDir() { return configDir; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
 /** Only runs the action if logged-in user is a member of the correct group.
  TODO: This functionality should be maybe in the ActionRunner? */
@@ -147,11 +148,12 @@ public java.util.prefs.Preferences systemRoot()
 //	return DBConnection.getConnection();
 //}
 // -------------------------------------------------------
+
 InputStream openPropFile(String name) throws IOException
 {
 	// First: try loading external file
-	File dir = new File(System.getProperty("user.dir"), "config");
-	File f = new File(dir, name);
+//	File dir = new File(System.getProperty("user.dir"), "config");
+	File f = new File(configDir, name);
 	if (f.exists()) return new FileInputStream(f);
 
 	// File doesn't exist; read from inside JAR file instead.
@@ -187,18 +189,19 @@ java.security.GeneralSecurityException
 	Connection dbb = null;
 	Statement st = null;
 
+	configDir = new File(System.getProperty("user.dir"), "config");
 	props = loadProps();
 
 	// Load the crypto keys
-	File userDir = new File(System.getProperty("user.dir"));
+//	File userDir = new File(System.getProperty("user.dir"));
 //	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
 	String pubLeaf = props.getProperty("crypt.pubdir");
 	File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
-		new File(pubLeaf) : new File(userDir, pubLeaf)); 
+		new File(pubLeaf) : new File(configDir, pubLeaf)); 
 
 	String privLeaf = props.getProperty("crypt.privdir");
 	File privDir = (privLeaf.charAt(0) == File.separatorChar ?
-		new File(privLeaf) : new File(userDir, privLeaf)); 
+		new File(privLeaf) : new File(configDir, privLeaf)); 
 	keyRing = new KeyRing(pubDir, privDir);
 	if (!keyRing.pubKeyLoaded()) {
 		javax.swing.JOptionPane.showMessageDialog(null,

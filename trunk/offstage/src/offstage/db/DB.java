@@ -466,7 +466,9 @@ public static void rekeyEncryptedData(Statement st, offstage.crypt.KeyRing kr)
 /** Given something the user typed into a simple search box, generate a SQL search query. */
 public static String simpleSearchSql(String text)
 {
-	if (text == null || "".equals(text)) return null;		// no query
+	if (text == null) return null;
+	text = text.trim();
+	if ("".equals(text)) return null;		// no query
 	
 	int space = text.indexOf(' ');
 	int comma = text.indexOf(',');
