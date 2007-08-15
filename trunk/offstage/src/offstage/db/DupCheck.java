@@ -58,6 +58,7 @@ static class Score
 	int score;
 }
 HashMap scores;
+int nfields;		// # fields scores is based upon...
 // -------------------------------------------------------------
 String getString(String name)
 {
@@ -167,6 +168,7 @@ System.out.println("DupCheck: " + sql);
 		Integer EntityID = (Integer)rs.getObject(1);
 		addScore(EntityID);
 	}
+	++nfields;
 	rs.close();
 }
 void addScores(Statement st, String whereClause)
@@ -203,12 +205,12 @@ throws SQLException
 String getIDSql(int minScore, int maxDups)
 {
 	StringBuffer sql = new StringBuffer(
-		"select entityid as id from entities where entityid in (-1");
+		"select entityid as id from entities where not obsolete and entityid in (-1");
 	int nid = 0;
 	for (Iterator ii=scores.entrySet().iterator(); ii.hasNext(); ) {
 		Map.Entry e = (Map.Entry)ii.next();
 		Score s = (Score)e.getValue();
-		if (s.score >= minScore) {
+		if (s.score >= minScore || s.score == nfields) {
 			if (++nid > maxDups) return null;
 			sql.append(",");
 			sql.append(e.getKey());

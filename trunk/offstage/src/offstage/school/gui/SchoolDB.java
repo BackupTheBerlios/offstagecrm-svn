@@ -53,6 +53,18 @@ public static void w_student_create(Statement st, int studentid)
 //		System.out.println("hoi");
 	}	// ignore if already in DB
 }
+/** Makes a student record for an entity if it doesn't already exist. */
+public static void w_student_register(Statement st, int termid, int studentid)
+{
+	try {
+		String sql =
+			"insert into termregs (termid, entityid) values (" +
+			SqlInteger.sql(termid) + ", " +
+			SqlInteger.sql(studentid) + ")";
+		st.executeUpdate(sql);
+	} catch(SQLException e) {
+	}	// ignore if already in DB
+}
 public static void w_payer_create(Statement st, int payerid)
 {
 	try {
@@ -226,6 +238,14 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 		}
 	}
 
+	// Store in termregs table
+	for (TuitionRec trx : tuitions) {
+		st.executeUpdate("update termregs" +
+			" set tuition = " + trx.tuition +
+			" where entityid = " + trx.studentid +
+			" and termid = " + termid);
+	}
+	
 	// ====================================================
 	// Make up final list of bills to account
 	ArrayList<TuitionRec> t2 = new ArrayList();
@@ -239,7 +259,7 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 		tq.tuition = 25;
 		t2.add(tq);
 	}
-		
+
 	// Covert to actual billing records that are quarterly or yearly...
 	if (btype == 'q') {
 		for (TuitionRec trx : tuitions) {

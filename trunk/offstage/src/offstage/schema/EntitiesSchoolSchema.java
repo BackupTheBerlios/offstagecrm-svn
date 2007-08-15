@@ -47,6 +47,8 @@ throws SQLException
 	cols = new Column[] {
 			new Column(new SqlInteger(false), "entityid", true),
 			new Column(new SqlInteger(), "adultid", false),
+			new Column(new SqlInteger(), "parentid", false),
+			new Column(new SqlInteger(), "parent2id", false),
 			new Column(new SqlString(1), "billingtype"),
 			new Column(new SqlEnum(kmodel, "<No Level Selected>"), "programid")
 	};
