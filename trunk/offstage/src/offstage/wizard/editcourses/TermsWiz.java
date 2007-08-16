@@ -84,7 +84,7 @@ offstage.FrontApp fapp;
 	/** After the Wiz is done running, report its output into a Map. */
 	public void getAllValues(java.util.Map map)
 	{
-		Object termid = termPNC.getTable().getOneSelectedValU("termid");
+		Object termid = termPNC.getTable().getOneSelectedValU("groupid");
 		map.put("termid", termid);
 	}
 

@@ -76,6 +76,8 @@ SwingPrefs swingPrefs = new SwingPrefs();
 
 /** TODO: This is temporary. */
 public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
+public static final SqlDate sqlDate = new SqlDate(timeZone, true);	// Used for on-the-fly Sql creation
+public static final SqlTimestamp sqlTimestamp = new SqlTimestamp("GMT", true);
 //public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------

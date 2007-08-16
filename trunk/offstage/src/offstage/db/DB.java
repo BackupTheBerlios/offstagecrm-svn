@@ -420,7 +420,7 @@ throws SQLException
 	// Get basic parameters
 	sql = "select t.firstdate, t.nextdate, c.dayofweek, c.tstart, c.tnext" +
 		" from termids t, courseids c" +
-		" where t.termid = c.termid" +
+		" where t.groupid = c.termid" +
 		" and c.courseid = " + SqlInteger.sql(courseid);
 	rs = st.executeQuery(sql);
 	rs.next();

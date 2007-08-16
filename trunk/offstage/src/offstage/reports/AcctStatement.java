@@ -105,7 +105,7 @@ throws SQLException
 //	data.put("remit", rs0.getValueAt(rs0.getRowCount()-1, balcol));
 
 	// Add misc stuff
-	data.put("sterm", SQL.readString(st, "select name from termids where termid = " + termid));
+	data.put("sterm", SQL.readString(st, "select name from termids where groupid = " + termid));
 	data.put("sname", SQL.readString(st, "select firstname || ' ' || lastname from entities where entityid = " + payerid));
 	DateFormat dfmt = new SimpleDateFormat("MMM dd, yyyy");
 		dfmt.setTimeZone(app.getTimeZone());

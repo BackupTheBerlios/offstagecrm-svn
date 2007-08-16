@@ -44,7 +44,7 @@ KeyRing kr;
 public JTypedCCInfo()
 {
 	initComponents();
-	cctype.setKeyedModel(offstage.schema.EntitiesSchema.ccTypeModel);
+//	cctype.setKeyedModel(offstage.schema.EntitiesSchema.ccTypeModel);
 	ccnumber.setJType(String.class, new CCFormatter());
 	expdate.setJType(String.class, new ExpDateFormatter());
 	ccv.setJType(String.class, new DigitsFormatter(3));
@@ -62,7 +62,7 @@ public JTypedCCInfo()
 		}
 	};
 	ccname.addFocusListener(focus);
-	cctype.addFocusListener(focus);
+//	cctype.addFocusListener(focus);
 	ccnumber.addFocusListener(focus);
 	expdate.addFocusListener(focus);
 	ccv.addFocusListener(focus);
@@ -78,10 +78,9 @@ public void initRuntime(KeyRing kr)
 {
 	this.kr = kr;
 }
-
 public void addKeyListener(KeyListener kl) {
 	ccname.addKeyListener(kl);
-	cctype.addKeyListener(kl);
+//	cctype.addKeyListener(kl);
 	ccnumber.addKeyListener(kl);
 	expdate.addKeyListener(kl);
 	ccv.addKeyListener(kl);
@@ -101,14 +100,24 @@ public String getLast4()
 	return null;
 }
 public String getCCName() { return (String)ccname.getValue(); }
-public String getCCType() { return (String)cctype.getValue(); }
+//public String getCCType() { return (String)cctype.getValue(); }
+public String getCCType(String num)
+{
+	switch(num.charAt(0)) {
+		case '4' : return "v";
+		case '5' : return "m";
+		default : return null;
+	}
+}
+public String getCCType() { return getCCType((String)ccnumber.getValue()); }
 public String getExpDate() { return (String)expdate.getValue(); }
 // ------------------------------------------------
 public boolean isNameSet() { return ccname.getValue() != null; }
-public boolean isCCTypeSet() { return cctype.getValue() != null; }
+//public boolean isCCTypeSet() { return cctype.getValue() != null; }
 public boolean isCCNumberSet() {
 	String s = (String)ccnumber.getValue();
-	return (s != null && s.length() == 16);
+	return (s != null && s.length() == 16 &&
+		(s.charAt(0) == '4' || s.charAt(0) == '5'));
 }
 public boolean isExpDateSet() {
 	String s = (String)expdate.getValue();
@@ -123,7 +132,8 @@ public boolean isZipSet() {
 	return (s != null && s.length() == 5);
 }
 public boolean isFullySet() {
-	return isNameSet() && isCCTypeSet() && isCCNumberSet() &&
+	return isNameSet() && // isCCTypeSet() &&
+		isCCNumberSet() &&
 		isExpDateSet() && isZipSet();	//  && isCCVSet()
 }
 // ------------------------------------------------
@@ -131,8 +141,10 @@ public boolean isFullySet() {
 void makeVal()
 {
 	TypedHashMap map = new TypedHashMap();
-	map.put("cctype", cctype.getValue());
-	map.put("ccnumber", ccnumber.getValue());
+//	map.put("cctype", cctype.getValue());
+	String num = (String)ccnumber.getValue();
+	map.put("ccnumber", num);
+	map.put("cctype", getCCType(num));
 	map.put("ccname", ccname.getValue());
 	map.put("expdate", expdate.getValue());
 	map.put("ccv", ccv.getValue());
@@ -162,14 +174,14 @@ void makeVal()
 public void setValue(Object o) {
 	if (o == null) {
 		// Clear it out...
-		cctype.setValue(null);
+//		cctype.setValue(null);
 		ccnumber.setValue(null);
 		expdate.setValue(null);
 		ccv.setValue(null);
 		zip.setValue(null);
 	} else {
 		TypedHashMap map = CCEncoding.decode((String)o);
-		cctype.setValue(map.getString("cctype"));
+//		cctype.setValue(map.getString("cctype"));
 		ccnumber.setValue(map.getString("ccnumber"));
 		expdate.setValue(map.getString("expdate"));
 		ccv.setValue(map.getString("ccv"));
@@ -177,17 +189,18 @@ public void setValue(Object o) {
 	}
 }
 
-public void initValue(String xccname, String xcctype, String xexpdate)
+public void initValue(String xccname, String xcctype, String xexpdate, String xzip)
 {
 	setValue(null);
 	ccname.setValue(xccname);
-	cctype.setValue(xcctype);
+//	cctype.setValue(xcctype);
 	expdate.setValue(xexpdate);
+	zip.setValue(xzip);
 }
 public void initValue(CCInfoLabels lab)
 {
 	initValue((String)lab.lccname.getValue(), (String)lab.lcctype.getValue(),
-		(String)lab.lexpdate.getValue());
+		(String)lab.lexpdate.getValue(), null);
 }
 /** From TableCellEditor (in case this is being used in a TableCellEditor):
  * Tells the editor to stop editing and accept any partially edited value
@@ -246,9 +259,7 @@ public void setColName(String col) { this.colName = col; }
         ccnumber = new citibob.swing.typed.JTypedTextField();
         ccv = new citibob.swing.typed.JTypedTextField();
         zip = new citibob.swing.typed.JTypedTextField();
-        cctype = new citibob.swing.typed.JKeyedComboBox();
         ccname = new citibob.swing.typed.JTypedTextField();
-        jLabel7 = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -332,17 +343,6 @@ public void setColName(String col) { this.colName = col; }
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         add(zip, gridBagConstraints);
 
-        cctype.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cctype.setPreferredSize(new java.awt.Dimension(68, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
-        add(cctype, gridBagConstraints);
-
         ccname.setText("jTypedTextField4");
         ccname.setColName("ccname");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -354,21 +354,12 @@ public void setColName(String col) { this.colName = col; }
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
         add(ccname, gridBagConstraints);
 
-        jLabel7.setText("CC Type:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
-        add(jLabel7, gridBagConstraints);
-
     }// </editor-fold>//GEN-END:initComponents
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private citibob.swing.typed.JTypedTextField ccname;
     private citibob.swing.typed.JTypedTextField ccnumber;
-    private citibob.swing.typed.JKeyedComboBox cctype;
     private citibob.swing.typed.JTypedTextField ccv;
     private citibob.swing.typed.JTypedTextField expdate;
     private javax.swing.JLabel jLabel2;
@@ -376,7 +367,6 @@ public void setColName(String col) { this.colName = col; }
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 

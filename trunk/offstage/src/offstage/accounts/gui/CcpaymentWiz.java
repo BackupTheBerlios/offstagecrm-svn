@@ -68,6 +68,7 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 		ccchooser.initRuntime(app.getKeyRing());
 		ccchooser.setEntityID(st, entityid, app);
 	addWidget("ccchooser", ccchooser);
+	addWidget("date", schema).setValue(schema.getCol("date").newDate());
 //	addWidgetRecursive(ccinfo);
 	loadHtml();
 }

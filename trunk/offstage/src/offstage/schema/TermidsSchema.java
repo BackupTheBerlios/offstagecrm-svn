@@ -25,7 +25,7 @@ import citibob.util.KeyedModel;
 
 
 
-public class TermidsSchema extends ConstSchema
+public class TermidsSchema extends GroupidsSchema
 {
 
 public TermidsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
@@ -33,18 +33,14 @@ throws SQLException{
 	table = "termids";
 	KeyedModel kmodel = new DbKeyedModel(st, change,
 		"termtypes", "termtypeid", "name", "orderid");
-	cols = new Column[] {
-		new Column(new SqlSerial("termids_termid_seq", false), "termid", true),
+	appendCols(new Column[] {
 		new Column(new SqlEnum(kmodel, false), "termtypeid", false),
-		new Column(new SqlString(), "name", false),
-//		new Column(new SqlDate(), "firstdate", false),
-//		new Column(new SqlDate(), "nextdate", false)
 		new ColumnDefaultNow(new SqlDate(tz, false), "firstdate", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "nextdate", false),
 		new ColumnDefaultNow(new SqlTimestamp("GMT", true), "billdtime", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "paymentdue", false),
 		new Column(new SqlBool(false), "iscurrent", false)
-	};
+	});
 }
 
 }

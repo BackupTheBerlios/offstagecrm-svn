@@ -76,7 +76,7 @@ public RollBook(App app, int termid)
 		" xx.lastname as tlastname, xx.firstname as tfirstname," +
 		" cast(yy.nstudents as int4) as nstudents" +
 		" from termids t\n" +
-		" inner join courseids c on (c.termid = t.termid)\n" +
+		" inner join courseids c on (c.termid = t.groupid)\n" +
 		" inner join enrollments en on (en.courseid = c.courseid)\n" +
 		" inner join persons p on (p.entityid = en.entityid)\n" +
 		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
@@ -88,18 +88,18 @@ public RollBook(App app, int termid)
 			" from enrollments en, courseids c, termids t, entities tp, courseroles cr\n" +
 			" where en.courseid =  c.courseid and en.entityid = tp.entityid\n" +
 			" and en.courserole = cr.courseroleid and cr.name = 'teacher'\n" +
-			" and t.termid = " + SqlInteger.sql(termid) + ") xx on (c.courseid = xx.courseid)\n" +
+			" and t.groupid = " + SqlInteger.sql(termid) + ") xx on (c.courseid = xx.courseid)\n" +
 		" left outer join\n" +
 			" (select c.courseid, count(*) as nstudents\n" +
 			" from termids t\n" +
-			" inner join courseids c on (c.termid = t.termid)\n" +
+			" inner join courseids c on (c.termid = t.groupid)\n" +
 			" inner join enrollments en on (en.courseid = c.courseid)\n" +
 			" inner join courseroles cr on (cr.courseroleid = en.courserole)" +
 			" where cr.name = 'student'" +
-			" and t.termid = " + SqlInteger.sql(termid) + "\n" +
+			" and t.groupid = " + SqlInteger.sql(termid) + "\n" +
 			" group by c.courseid) yy on (c.courseid = yy.courseid)\n" +
 		" where cr.name = 'student'" +
-		" and t.termid = " + SqlInteger.sql(termid) + "\n" +
+		" and t.groupid = " + SqlInteger.sql(termid) + "\n" +
 		" order by c.dayofweek, c.tstart, c.courseid, p.lastname, p.firstname\n";
 	MainSqlTableModel main = new MainSqlTableModel(
 		app.getSqlTypeSet(), sql);

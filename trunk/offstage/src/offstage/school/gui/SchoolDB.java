@@ -54,13 +54,14 @@ public static void w_student_create(Statement st, int studentid)
 	}	// ignore if already in DB
 }
 /** Makes a student record for an entity if it doesn't already exist. */
-public static void w_student_register(Statement st, int termid, int studentid)
+public static void w_student_register(Statement st, int termid, int studentid, SqlDate sqlDate)
 {
 	try {
 		String sql =
-			"insert into termregs (termid, entityid) values (" +
+			"insert into termregs (groupid, entityid, dtregistered) values (" +
 			SqlInteger.sql(termid) + ", " +
-			SqlInteger.sql(studentid) + ")";
+			SqlInteger.sql(studentid) + ", " +
+			sqlDate.toSql(new java.util.Date()) + ")";	// Register NOW
 		st.executeUpdate(sql);
 	} catch(SQLException e) {
 	}	// ignore if already in DB
@@ -148,7 +149,7 @@ throws SQLException
 		" from termids t" +
 //		" left outer join entities_school es on (es.termid = t.termid and es.entityid = " + SqlInteger.sql(adultid) + ")" +
 //		" select name, billdtime, paymentdue from termids" +
-		" where t.termid = " + SqlInteger.sql(termid));
+		" where t.groupid = " + SqlInteger.sql(termid));
 	rs.next();
 	String termName = rs.getString("termname");
 	rs.close();
@@ -243,7 +244,7 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 		st.executeUpdate("update termregs" +
 			" set tuition = " + trx.tuition +
 			" where entityid = " + trx.studentid +
-			" and termid = " + termid);
+			" and groupid = " + termid);
 	}
 	
 	// ====================================================

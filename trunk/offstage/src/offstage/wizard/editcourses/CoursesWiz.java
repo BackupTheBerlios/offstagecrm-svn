@@ -62,7 +62,7 @@ FrontApp fapp;
 		
 		// Set up terms selector
 		terms.setKeyedModel(new DbKeyedModel(xst, fapp.getDbChange(), "termids",
-			"select termid, name from termids where iscurrent order by firstdate"));
+			"select groupid, name from termids where iscurrent order by firstdate"));
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 	    public void propertyChange(PropertyChangeEvent evt) {
 			fapp.runApp(new StRunnable() {

@@ -54,6 +54,13 @@ public void initRuntime(KeyRing kr)
 	lccinfo.setJType(new JavaJType(String.class),
 		new StringFormatter());
 }
+String defaultName;
+String defaultZip;
+public void setDefaults(String name, String zip)
+{
+	defaultName = name;
+	defaultZip = zip;
+}
 
 public void clear()
 {
@@ -64,7 +71,9 @@ public void clear()
 
 protected void showPopup()
 {
-	ccinfo.initValue((String)lccname.getValue(), (String)lcctype.getValue(), (String)lexpdate.getValue());
+	String xname = (String)lccname.getValue();
+		if (xname == null) xname = defaultName;
+	ccinfo.initValue(xname, (String)lcctype.getValue(), (String)lexpdate.getValue(), defaultZip);
 	
 //	oldccinfo = ccinfo.getValue();
 	popupDialog = new JDialog((java.awt.Frame)citibob.swing.WidgetTree.getRoot(this));

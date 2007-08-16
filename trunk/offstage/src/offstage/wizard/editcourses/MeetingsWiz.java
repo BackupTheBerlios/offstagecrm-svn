@@ -64,7 +64,7 @@ int courseid;
 		
 		// Set up terms selector
 		ResultSet rs;
-		rs = xst.executeQuery("select name from termids where termid = " + SqlInteger.sql(termid));	
+		rs = xst.executeQuery("select name from termids where groupid = " + SqlInteger.sql(termid));	
 		rs.next();
 		term.setText(rs.getString(1));
 		rs.close();

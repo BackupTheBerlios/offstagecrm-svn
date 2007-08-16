@@ -42,7 +42,7 @@ public static String getSql(int termid, int studentid)
 		" t.firstdate, t.nextdate-1 as lastdate,\n" +
 		" t.firstdate as firstyear, t.nextdate-1 as lastyear\n" +		
 		" from termids t\n" +
-		" inner join courseids c on (c.termid = t.termid)\n" +
+		" inner join courseids c on (c.termid = t.groupid)\n" +
 		" inner join enrollments en on (en.courseid = c.courseid)\n" +
 		" inner join persons p on (p.entityid = en.entityid)\n" +
 		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
@@ -50,7 +50,7 @@ public static String getSql(int termid, int studentid)
 		" inner join daysofweek dow on (dow.javaid = c.dayofweek)\n" +
 		" inner join locations loc on (loc.locationid = c.locationid)\n" +
 		" left outer join programids pr  on (pr.programid = ps.programid)\n" +
-		" where t.termid=" + SqlInteger.sql(termid) + "\n" +
+		" where t.groupid=" + SqlInteger.sql(termid) + "\n" +
 		(studentid < 0 ? "" : " and p.entityid = " + SqlInteger.sql(studentid)) +
 		" order by adult.lastname, adult.firstname, p.lastname, p.firstname, \n" +
 		" c.dayofweek, c.tstart\n";

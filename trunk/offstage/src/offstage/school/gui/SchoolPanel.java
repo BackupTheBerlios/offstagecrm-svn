@@ -144,14 +144,14 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 //	all.add(householdDm = new HouseholdDbModel(fapp));
 	all.add(parentDm = new ParentDbModel(fapp));
 	all.add(parent2Dm = new ParentDbModel(fapp));
-	all.add(termregsDm = new IntsKeyedDbModel(fapp.getSchema("termregs"), new String[] {"termid", "entityid"}, true));
+	all.add(termregsDm = new IntsKeyedDbModel(fapp.getSchema("termregs"), new String[] {"groupid", "entityid"}, true));
 	SwingerMap smap = fapp.getSwingerMap();
 	
 	// ================================================================
 	// Student
 	// Display student info from persons table
 	termregsRm = new SchemaBufRowModel(termregsDm.getSchemaBuf());
-	new TypedWidgetBinder().bind(lTuition, termregsRm, smap);
+	TypedWidgetBinder.bindRecursive(this.TermRegPanel, termregsRm, smap);
 		
 	studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
 	new TypedWidgetBinder().bind(lEntityID, studentRm, smap);
@@ -216,12 +216,23 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 
 	// ================================================================
 	// Payer
-	SchemaBufRowModel payerRm = new SchemaBufRowModel(payerDm.personDb.getSchemaBuf());
+	final SchemaBufRowModel payerRm = new SchemaBufRowModel(payerDm.personDb.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(PayerPanel, payerRm, smap);
 	payerPhonePanel.initRuntime(st, payerDm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, smap);
 	payerCCInfo.initRuntime(fapp.getKeyRing());
+	RowModel.ColListener payerCCListener = new RowModel.ColAdapter() {
+		public void valueChanged(final int col) {
+			String xzip = (String)payerRm.get("zip");
+				if (xzip != null && xzip.length() > 5) xzip = xzip.substring(0,5);
+			String xname = (String)payerRm.get("firstname") + " " + (String)payerRm.get("lastname");
+				xname = xname.toUpperCase();
+			payerCCInfo.setDefaults(xname, xzip);
+		}};
+	payerRm.addColListener("firstname", payerCCListener);
+	payerRm.addColListener("lastname", payerCCListener);
+	payerRm.addColListener("zip", payerCCListener);
 
 	// Display payer info from entities_school table
 	SchemaBufRowModel pschoolRm = new SchemaBufRowModel(payerDm.schoolDb.getSchemaBuf());
@@ -324,7 +335,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 
 	// Set up terms selector
 	vTermID.setKeyedModel(new DbKeyedModel(st, fapp.getDbChange(), "termids",
-		"select termid, name from termids where iscurrent order by firstdate desc"));
+		"select groupid, name from termids where iscurrent order by firstdate desc"));
 	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
 		fapp.runApp(new StRunnable() {
@@ -381,7 +392,7 @@ public void changeStudent(Statement st, int entityid) throws SQLException
 	}
 	
 	// Ensure a registration record for this term
-	SchoolDB.w_student_register(st, getTermID(), entityid);
+	SchoolDB.w_student_register(st, getTermID(), entityid, fapp.sqlDate);
 
 	// Go to that record
 //	vHouseholdID.setEntityID(entityid);	// So it knows when we try to emancipate.
@@ -411,7 +422,7 @@ void termChanged(Statement st) throws SQLException
 	Integer eid = (Integer)studentRm.get("entityid");
 	
 	// Ensure a registration record for this term
-	SchoolDB.w_student_register(st, getTermID(), eid);
+	SchoolDB.w_student_register(st, getTermID(), eid, fapp.sqlDate);
 	
 	termregsDm.doUpdate(st);
 }
@@ -440,25 +451,8 @@ void setIDDirty(boolean dirty)
         vTermID = new citibob.swing.typed.JKeyedComboBox();
         jLabel3 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
-        PeopleHeader = new javax.swing.JPanel();
-        searchBox = new offstage.swing.typed.EntitySelector();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        vPayerID = new offstage.swing.typed.EntityIDEditableLabel();
-        jToolBar1 = new javax.swing.JToolBar();
-        bSave = new javax.swing.JButton();
-        bUndo = new javax.swing.JButton();
-        vStudentID = new offstage.swing.typed.EntityIDLabel();
-        lEntityID = new citibob.swing.typed.JTypedLabel();
-        bNewStudent = new javax.swing.JButton();
-        bNewPayer = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
-        vParentID = new offstage.swing.typed.EntityIDEditableLabel();
-        bNewParent = new javax.swing.JButton();
-        jLabel21 = new javax.swing.JLabel();
-        vParent2ID = new offstage.swing.typed.EntityIDEditableLabel();
-        bNewParent2 = new javax.swing.JButton();
+        RegistrationsTab = new javax.swing.JPanel();
+        jPanel20 = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
         PeopleMain = new javax.swing.JPanel();
         EnrollmentTab = new javax.swing.JTabbedPane();
@@ -574,8 +568,6 @@ void setIDDirty(boolean dirty)
         lastname2 = new citibob.swing.typed.JTypedTextField();
         dob = new citibob.swing.typed.JTypedDateChooser();
         jLabel17 = new javax.swing.JLabel();
-        programs = new citibob.swing.typed.JKeyedComboBox();
-        jLabel14 = new javax.swing.JLabel();
         gender = new citibob.swing.typed.JKeyedComboBox();
         lGender = new javax.swing.JLabel();
         AccountTab = new javax.swing.JTabbedPane();
@@ -592,8 +584,6 @@ void setIDDirty(boolean dirty)
         jPanel14 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         acbal = new citibob.swing.typed.JTypedLabel();
-        jLabel19 = new javax.swing.JLabel();
-        lTuition = new citibob.swing.typed.JTypedLabel();
         jPanel16 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jPanel19 = new javax.swing.JPanel();
@@ -634,6 +624,38 @@ void setIDDirty(boolean dirty)
         jLabel13 = new javax.swing.JLabel();
         email2 = new citibob.swing.typed.JTypedTextField();
         bLaunchEmail1 = new javax.swing.JButton();
+        PeopleHeader = new javax.swing.JPanel();
+        PeopleHeader1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        vPayerID = new offstage.swing.typed.EntityIDEditableLabel();
+        jToolBar1 = new javax.swing.JToolBar();
+        bSave = new javax.swing.JButton();
+        bUndo = new javax.swing.JButton();
+        vStudentID = new offstage.swing.typed.EntityIDLabel();
+        lEntityID = new citibob.swing.typed.JTypedLabel();
+        bNewStudent = new javax.swing.JButton();
+        bNewPayer = new javax.swing.JButton();
+        jLabel20 = new javax.swing.JLabel();
+        vParentID = new offstage.swing.typed.EntityIDEditableLabel();
+        bNewParent = new javax.swing.JButton();
+        jLabel21 = new javax.swing.JLabel();
+        vParent2ID = new offstage.swing.typed.EntityIDEditableLabel();
+        bNewParent2 = new javax.swing.JButton();
+        TermRegPanel = new javax.swing.JPanel();
+        jLabel30 = new javax.swing.JLabel();
+        lDtregistered = new citibob.swing.typed.JTypedLabel();
+        jLabel31 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        programs = new citibob.swing.typed.JKeyedComboBox();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel32 = new javax.swing.JLabel();
+        lTuition1 = new citibob.swing.typed.JTypedLabel();
+        jLabel33 = new javax.swing.JLabel();
+        tuitionOverride = new citibob.swing.typed.JTypedTextField();
+        scholarship = new citibob.swing.typed.JTypedTextField();
+        dtSigned = new citibob.swing.typed.JTypedDateChooser();
+        searchBox = new offstage.swing.typed.EntitySelector();
         jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -661,201 +683,9 @@ void setIDDirty(boolean dirty)
         );
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        jPanel2.setLayout(new java.awt.BorderLayout());
+        RegistrationsTab.setLayout(new java.awt.BorderLayout());
 
-        PeopleHeader.setLayout(new java.awt.GridBagLayout());
-
-        PeopleHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        PeopleHeader.setPreferredSize(new java.awt.Dimension(790, 120));
-        searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 0);
-        PeopleHeader.add(searchBox, gridBagConstraints);
-
-        jLabel2.setText("Student:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
-        PeopleHeader.add(jLabel2, gridBagConstraints);
-
-        jLabel4.setText("Payer:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
-        PeopleHeader.add(jLabel4, gridBagConstraints);
-
-        vPayerID.setColName("adultid");
-        vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vPayerID, gridBagConstraints);
-
-        bSave.setText("Save");
-        bSave.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bSaveActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.add(bSave);
-
-        bUndo.setText("Undo");
-        bUndo.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bUndoActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.add(bUndo);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.weighty = 1.0;
-        PeopleHeader.add(jToolBar1, gridBagConstraints);
-
-        vStudentID.setText("entityIDLabel1");
-        vStudentID.setColName("entityid");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        PeopleHeader.add(vStudentID, gridBagConstraints);
-
-        lEntityID.setText("jTypedLabel1");
-        lEntityID.setColName("entityid");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        PeopleHeader.add(lEntityID, gridBagConstraints);
-
-        bNewStudent.setText("New");
-        bNewStudent.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewStudent.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bNewStudentActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        PeopleHeader.add(bNewStudent, gridBagConstraints);
-
-        bNewPayer.setText("New");
-        bNewPayer.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewPayer.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bNewPayerActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        PeopleHeader.add(bNewPayer, gridBagConstraints);
-
-        jLabel20.setText("Parent 1:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
-        PeopleHeader.add(jLabel20, gridBagConstraints);
-
-        vParentID.setColName("parentid");
-        vParentID.setPreferredSize(new java.awt.Dimension(200, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vParentID, gridBagConstraints);
-
-        bNewParent.setText("New");
-        bNewParent.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewParent.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bNewParentActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        PeopleHeader.add(bNewParent, gridBagConstraints);
-
-        jLabel21.setText("Parent 2:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
-        PeopleHeader.add(jLabel21, gridBagConstraints);
-
-        vParent2ID.setColName("parent2id");
-        vParent2ID.setPreferredSize(new java.awt.Dimension(200, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader.add(vParent2ID, gridBagConstraints);
-
-        bNewParent2.setText("New");
-        bNewParent2.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewParent2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bNewParent2ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
-        PeopleHeader.add(bNewParent2, gridBagConstraints);
-
-        jPanel2.add(PeopleHeader, java.awt.BorderLayout.NORTH);
+        jPanel20.setLayout(new java.awt.BorderLayout());
 
         cardPanel.setLayout(new java.awt.CardLayout());
 
@@ -1086,7 +916,7 @@ void setIDDirty(boolean dirty)
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         jTabbedPane2.addTab("Misc.", jPanel6);
 
@@ -1331,7 +1161,7 @@ void setIDDirty(boolean dirty)
             jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel21Layout.createSequentialGroup()
                 .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
         jTabbedPane4.addTab("Misc.", jPanel21);
 
@@ -1568,7 +1398,7 @@ void setIDDirty(boolean dirty)
             jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel25Layout.createSequentialGroup()
                 .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
         jTabbedPane5.addTab("Misc.", jPanel25);
 
@@ -1780,21 +1610,6 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
         StudentPane.add(jLabel17, gridBagConstraints);
 
-        programs.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        programs.setColName("programid");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        StudentPane.add(programs, gridBagConstraints);
-
-        jLabel14.setText("Level: ");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        StudentPane.add(jLabel14, gridBagConstraints);
-
         gender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         gender.setColName("");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1813,7 +1628,7 @@ void setIDDirty(boolean dirty)
         StudentTab.addTab("Student", StudentPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1917,22 +1732,6 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.weightx = 1.0;
         jPanel14.add(acbal, gridBagConstraints);
 
-        jLabel19.setText("Tuition: ");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel14.add(jLabel19, gridBagConstraints);
-
-        lTuition.setText("2500");
-        lTuition.setColName("tuition");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        jPanel14.add(lTuition, gridBagConstraints);
-
         AccountPane.add(jPanel14, java.awt.BorderLayout.NORTH);
 
         AccountTab.addTab("Account History", AccountPane);
@@ -1955,6 +1754,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -2160,7 +1960,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addContainerGap(1090, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2275,9 +2075,317 @@ void setIDDirty(boolean dirty)
 
         cardPanel.add(ObsoleteStuff, "card4");
 
-        jPanel2.add(cardPanel, java.awt.BorderLayout.CENTER);
+        jPanel20.add(cardPanel, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Registrations", jPanel2);
+        PeopleHeader.setLayout(new javax.swing.BoxLayout(PeopleHeader, javax.swing.BoxLayout.X_AXIS));
+
+        PeopleHeader.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        PeopleHeader1.setLayout(new java.awt.GridBagLayout());
+
+        PeopleHeader1.setPreferredSize(new java.awt.Dimension(300, 120));
+        jLabel2.setText("Student:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
+        PeopleHeader1.add(jLabel2, gridBagConstraints);
+
+        jLabel4.setText("Payer:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
+        PeopleHeader1.add(jLabel4, gridBagConstraints);
+
+        vPayerID.setColName("adultid");
+        vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        PeopleHeader1.add(vPayerID, gridBagConstraints);
+
+        bSave.setText("Save");
+        bSave.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bSaveActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bSave);
+
+        bUndo.setText("Undo");
+        bUndo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bUndoActionPerformed(evt);
+            }
+        });
+
+        jToolBar1.add(bUndo);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        PeopleHeader1.add(jToolBar1, gridBagConstraints);
+
+        vStudentID.setText("entityIDLabel1");
+        vStudentID.setColName("entityid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        PeopleHeader1.add(vStudentID, gridBagConstraints);
+
+        lEntityID.setText("jTypedLabel1");
+        lEntityID.setColName("entityid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        PeopleHeader1.add(lEntityID, gridBagConstraints);
+
+        bNewStudent.setText("New");
+        bNewStudent.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewStudent.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewStudentActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader1.add(bNewStudent, gridBagConstraints);
+
+        bNewPayer.setText("New");
+        bNewPayer.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewPayer.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewPayerActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader1.add(bNewPayer, gridBagConstraints);
+
+        jLabel20.setText("Parent 1:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
+        PeopleHeader1.add(jLabel20, gridBagConstraints);
+
+        vParentID.setColName("parentid");
+        vParentID.setPreferredSize(new java.awt.Dimension(200, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        PeopleHeader1.add(vParentID, gridBagConstraints);
+
+        bNewParent.setText("New");
+        bNewParent.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewParent.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewParentActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader1.add(bNewParent, gridBagConstraints);
+
+        jLabel21.setText("Parent 2:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
+        PeopleHeader1.add(jLabel21, gridBagConstraints);
+
+        vParent2ID.setColName("parent2id");
+        vParent2ID.setPreferredSize(new java.awt.Dimension(200, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        PeopleHeader1.add(vParent2ID, gridBagConstraints);
+
+        bNewParent2.setText("New");
+        bNewParent2.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        bNewParent2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewParent2ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
+        PeopleHeader1.add(bNewParent2, gridBagConstraints);
+
+        PeopleHeader.add(PeopleHeader1);
+
+        TermRegPanel.setLayout(new java.awt.GridBagLayout());
+
+        jLabel30.setText("Date Registered:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel30, gridBagConstraints);
+
+        lDtregistered.setText("jTypedLabel1");
+        lDtregistered.setColName("dtregistered");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(lDtregistered, gridBagConstraints);
+
+        jLabel31.setText("Registration Signed:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel31, gridBagConstraints);
+
+        jLabel14.setText("Level:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel14, gridBagConstraints);
+
+        programs.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        programs.setColName("programid");
+        programs.setPreferredSize(new java.awt.Dimension(120, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(programs, gridBagConstraints);
+
+        jLabel19.setText("Tuition: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel19, gridBagConstraints);
+
+        jLabel32.setText("Tuition Override:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel32, gridBagConstraints);
+
+        lTuition1.setText("2500");
+        lTuition1.setColName("tuition");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(lTuition1, gridBagConstraints);
+
+        jLabel33.setText("Scholarship:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel33, gridBagConstraints);
+
+        tuitionOverride.setEditable(false);
+        tuitionOverride.setText("jTypedTextField1");
+        tuitionOverride.setColName("tuitionoverride");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(tuitionOverride, gridBagConstraints);
+
+        scholarship.setText("jTypedTextField1");
+        scholarship.setColName("scholarship");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(scholarship, gridBagConstraints);
+
+        dtSigned.setColName("dtsigned");
+        dtSigned.setPreferredSize(new java.awt.Dimension(140, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(dtSigned, gridBagConstraints);
+
+        PeopleHeader.add(TermRegPanel);
+
+        jPanel20.add(PeopleHeader, java.awt.BorderLayout.NORTH);
+
+        RegistrationsTab.add(jPanel20, java.awt.BorderLayout.CENTER);
+
+        searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
+        searchBox.setPreferredSize(new java.awt.Dimension(200, 89));
+        RegistrationsTab.add(searchBox, java.awt.BorderLayout.EAST);
+
+        jTabbedPane1.addTab("Registrations", RegistrationsTab);
 
         jButton1.setText("Roll Books");
         jButton1.addActionListener(new java.awt.event.ActionListener()
@@ -2315,7 +2423,7 @@ void setIDDirty(boolean dirty)
                 .add(jButton1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton2)
-                .addContainerGap(549, Short.MAX_VALUE))
+                .addContainerGap(585, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab("Reports", jPanel3);
 
@@ -2611,10 +2719,13 @@ void newAdultAction(final String colName)
     private offstage.gui.GroupPanel ParentPhonePanel;
     private javax.swing.JPanel PayerPanel;
     private javax.swing.JPanel PeopleHeader;
+    private javax.swing.JPanel PeopleHeader1;
     private javax.swing.JPanel PeopleMain;
+    private javax.swing.JPanel RegistrationsTab;
     private javax.swing.JPanel StudentAccounts;
     private javax.swing.JPanel StudentPane;
     private javax.swing.JTabbedPane StudentTab;
+    private javax.swing.JPanel TermRegPanel;
     private citibob.swing.typed.JTypedLabel acbal;
     private citibob.swing.typed.JTypedTextField address1;
     private citibob.swing.typed.JTypedTextField address2;
@@ -2654,6 +2765,7 @@ void newAdultAction(final String colName)
     private citibob.swing.typed.JTypedTextField city3;
     private javax.swing.JPanel controller1;
     private citibob.swing.typed.JTypedDateChooser dob;
+    private citibob.swing.typed.JTypedDateChooser dtSigned;
     private citibob.swing.typed.JTypedTextField email1;
     private citibob.swing.typed.JTypedTextField email2;
     private citibob.swing.typed.JTypedTextField email3;
@@ -2697,6 +2809,10 @@ void newAdultAction(final String colName)
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2714,7 +2830,7 @@ void newAdultAction(final String colName)
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel19;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel23;
@@ -2733,6 +2849,7 @@ void newAdultAction(final String colName)
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JToolBar jToolBar1;
+    private citibob.swing.typed.JTypedLabel lDtregistered;
     private citibob.swing.typed.JTypedLabel lEntityID;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lFirst1;
@@ -2750,7 +2867,7 @@ void newAdultAction(final String colName)
     private javax.swing.JLabel lMiddle2;
     private javax.swing.JLabel lMiddle3;
     private javax.swing.JLabel lMiddle4;
-    private citibob.swing.typed.JTypedLabel lTuition;
+    private citibob.swing.typed.JTypedLabel lTuition1;
     private citibob.swing.typed.JTypedTextField lastname;
     private citibob.swing.typed.JTypedTextField lastname1;
     private citibob.swing.typed.JTypedTextField lastname2;
@@ -2773,12 +2890,14 @@ void newAdultAction(final String colName)
     private citibob.swing.typed.JTypedTextField salutation2;
     private citibob.swing.typed.JTypedTextField salutation3;
     private citibob.swing.typed.JTypedTextField salutation4;
+    private citibob.swing.typed.JTypedTextField scholarship;
     private offstage.swing.typed.EntitySelector searchBox;
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField state1;
     private citibob.swing.typed.JTypedTextField state2;
     private citibob.swing.typed.JTypedTextField state3;
     private citibob.jschema.swing.SchemaBufTable trans;
+    private citibob.swing.typed.JTypedTextField tuitionOverride;
     private offstage.swing.typed.EntityIDEditableLabel vParent2ID;
     private offstage.swing.typed.EntityIDEditableLabel vParentID;
     private offstage.swing.typed.EntityIDEditableLabel vPayerID;

@@ -68,7 +68,7 @@ void vInsert(String table, TypedHashMap v) throws SQLException
 	ConsSqlQuery sql = newInsertQuery(table, v);
 	sql.addColumn("entityid", SqlInteger.sql(entityid));
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
+//	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 	st.executeUpdate(sql.getSql());
 }
 
