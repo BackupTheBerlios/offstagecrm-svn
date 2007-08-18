@@ -69,6 +69,7 @@ void vInsert(String table, TypedHashMap v) throws SQLException
 	sql.addColumn("entityid", SqlInteger.sql(entityid));
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 //	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
+	sql.addColumn("datecreated", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 	st.executeUpdate(sql.getSql());
 }
 
@@ -138,7 +139,8 @@ addState(new State("ccpayment", null, null) {
 		sql.addColumn("description", SqlString.sql((String)v.get("description")));
 		sql.addColumn("entityid", SqlInteger.sql(entityid));
 		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-		sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
+		sql.addColumn("date", sqlDate.toSql(v.get("date")));		// Store day that it is in home timezone
+//		sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 		st.executeUpdate(sql.getSql());
 	}
 });

@@ -246,7 +246,19 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 
 	// ================================================================
 	// Account Transactions
-	actransDb = new IntKeyedDbModel(fapp.getSchema("actrans"), "entityid");
+	Schema actransSchema = fapp.getSchema("actrans");
+	final int createdCol = actransSchema.findCol("datecreated");
+	final int tableoidCol = actransSchema.findCol("tableoid");
+	SchemaBuf actransSb = new SchemaBuf(actransSchema) {
+	public boolean isCellEditable(int row, int col) {
+		if (col >= getColumnCount()) return false;
+		if (row >= getRowCount()) return false;
+		if (col == tableoidCol) return false;
+		java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
+		java.util.Date now = new java.util.Date();
+		return (now.getTime() - created.getTime() < 86400 * 1000L);
+	}};
+	actransDb = new IntKeyedDbModel(actransSb, "entityid", true);
 	actransDb.setWhereClause(
 		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
 		" and now()-date < 450");
@@ -255,7 +267,8 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		new String[] {"Type", "Date", "Amount", "Description"},
 		new String[] {"tableoid", "date", "amount", "description"},
 		new String[] {null, null, null, "description"},
-		new boolean[] {false, false, false, false},
+		null,
+//		new boolean[] {false, false, false, false},
 		fapp.getSwingerMap(), fapp.getSFormatterMap());
 
 	// Refresh account when payer changes

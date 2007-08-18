@@ -70,6 +70,7 @@ throws SQLException
 		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlEnum(actypeKmodel, false), "actypeid", true),
 		new Column(new SqlDate(tz, false), "date"),
+		new Column(new SqlDate(tz, false), "datecreated"),
 		new Column(new SqlNumeric(9,2), "amount"),
 		new Column(new SqlString(300,true), "description")
 	};

@@ -126,7 +126,7 @@ public static void main(String[] args) throws Exception
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 	
-	JodPdfWriter jout = new JodPdfWriter("ooffice", new FileOutputStream("x.pdf"));
+	JodPdfWriter jout = new JodPdfWriter("/Applications/NeoOffice.app/Contents/program/soffice", new FileOutputStream("x.pdf"));
 	try {
 		HashMap data;
 		data = makeJodModel(fapp, st, 8, 12633, cal.getTime());
