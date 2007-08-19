@@ -188,14 +188,20 @@ throws IOException, DocumentTemplateException
 // OOo connection
 OpenOfficeConnection connection;
 Process proc;
+int ooPid = -1;			// PID of the pre-existing OpenOffice.org process (Windows)
 InputStream stderr;
 
 void connectOOo(String oofficeExe) throws IOException, InterruptedException
 {
-	proc = Runtime.getRuntime().exec(
-		oofficeExe + " -headless -accept=socket,port=8100;urp;StarOffice.ServiceManager");
-	stderr = proc.getErrorStream();
+	String osName = System.getProperty("os.name");
+	if (osName.startsWith("Windows")) {
+		ooPid = windowsGetOOProcessID();
+	}
 	
+	proc = Runtime.getRuntime().exec(
+		oofficeExe + " -headless -norestore -nodefault -nolockcheck -accept=socket,port=8100;urp;StarOffice.ServiceManager");
+	stderr = proc.getErrorStream();
+
 	// Handle the OOo server we just started.
 	Thread ooThread = new Thread() {
 	public void run() {
@@ -212,7 +218,7 @@ void connectOOo(String oofficeExe) throws IOException, InterruptedException
 	}};
 	ooThread.setDaemon(true);
 	ooThread.start();
-
+	
 	// connect to the OpenOffice.org instance we just started or ressucitated
 	for (int i=0; ; ++i) {
 		try {
@@ -232,18 +238,142 @@ void closeOOo() throws IOException
 {
 	// close the connection to OOo
 	connection.disconnect();
-	stderr.close();
-	proc.destroy();
+//	//	stderr.close();
+//	boolean isExited = true;
+//	try {
+//		System.out.println("OOo exit value = " + proc.exitValue());
+//	} catch(Exception e) {
+//		isExited = false;
+//	}
+
+	// Only kill if OO wasn't already running when we started
+	// because if OOo WAS running when we started, it will exit
+	// on its own.
+	if (ooPid < 0) {
+		String osName = System.getProperty("os.name");
+		if (osName.startsWith("Windows")) {
+			windowsKillOpenOffice();
+		} else {
+			proc.destroy();
+		}
+	}
+}
+// ========================================================================
+// See: http://www.oooforum.org/forum/viewtopic.phtml?p=59246
+
+/**
+* Kill OpenOffice.
+*
+* Supports Windows XP, Solaris (SunOS) and Linux.
+* Perhaps it supports more OS, but it has been tested
+* only with this three.
+*
+* @throws IOException  Killing OpenOffice didn't work
+*/
+public static void killOpenOffice() throws IOException
+{
+   String osName = System.getProperty("os.name");
+   if (osName.startsWith("Windows"))
+   {
+	  windowsKillOpenOffice();
+   }
+   else if (osName.startsWith("SunOS") || osName.startsWith("Linux"))
+   {
+	  unixKillOpenOffice();
+   }
+   else
+   {
+	  throw new IOException("Unknown OS, killing impossible");
+   }
+}
+
+/**
+* Kill OpenOffice on Windows XP.
+*/
+private static void windowsKillOpenOffice() throws IOException
+{
+	Runtime.getRuntime().exec("tskill soffice");
+}
+
+/**
+* Kill OpenOffice on Unix.
+*/
+private static void unixKillOpenOffice() throws IOException
+{
+   Runtime runtime = Runtime.getRuntime();
+
+   String pid = getOpenOfficeProcessID();
+   if (pid != null)
+   {
+	  while (pid != null)
+	  {
+		 String[] killCmd = {"/bin/bash", "-c", "kill -9 "+pid};
+		 runtime.exec(killCmd);
+
+		 // Is another OpenOffice prozess running?
+		 pid = getOpenOfficeProcessID();
+	  }
+   }
+}
+
+/**
+* Get OpenOffice prozess id. (Unix/Linux)
+*/
+private static String getOpenOfficeProcessID() throws IOException
+{
+   Runtime runtime = Runtime.getRuntime();
+
+   // Get prozess id
+   String[] getPidCmd = {"/bin/bash", "-c", "ps -e|grep soffice|awk '{print $1}'"};
+   Process getPidProcess = runtime.exec(getPidCmd);
+
+   // Read prozess id
+   InputStreamReader isr = new InputStreamReader(getPidProcess.getInputStream());
+   BufferedReader br = new BufferedReader(isr);
+
+   return br.readLine();
+}
+
+private static int windowsGetOOProcessID() throws IOException
+{
+   Runtime runtime = Runtime.getRuntime();
+
+   // Get prozess id
+   String[] getPidCmd = {"qprocess"};
+   Process getPidProcess = runtime.exec(getPidCmd);
+
+   // Read prozess id
+   InputStreamReader isr = new InputStreamReader(getPidProcess.getInputStream());
+   BufferedReader br = new BufferedReader(isr);
+   String line;
+   int ooPid = -1;
+   while ((line = br.readLine()) != null) {
+	   int space2 = line.lastIndexOf(' ');
+	   if (space2 < 0) continue;
+	   int space1 = space2-1;
+	   while (line.charAt(space1) == ' ') --space1;
+	   int space0 = space1-1;
+	   while (line.charAt(space0) != ' ') --space0;
+	   String spname = line.substring(space2+1);
+	   if ("soffice.bin".equals(spname)) {
+		   String spid = line.substring(space0+1, space1+1);
+		   ooPid = Integer.parseInt(spid);
+	   }
+   }
+   getPidProcess.destroy();
+   return ooPid;
 }
 // ======================================================================
 
 public static void main(String[] args) throws Exception
 {
-	doTest("soffice");
+//	System.out.println("PID = " + windowsGetOOProcessID());
+	doTest("c:\\Program Files\\OpenOffice.org 2.2\\program\\soffice.bin");
 }
 public static void doTest(String oofficeExe) throws Exception
 {
-	File dir = new File("reports");
+        File indir = new File("h:\\svn\\offstage\\reports");
+	File outdir = new File(".");
 	final Map data = new HashMap();
 	data.put("name", "Joe");
 	
@@ -258,12 +388,14 @@ public static void doTest(String oofficeExe) throws Exception
 		items.add(i1);		
 	data.put("items", items);
 	
-	OutputStream pdfOut = new FileOutputStream(new File(dir, "test1-out.pdf"));
+	OutputStream pdfOut = new FileOutputStream(new File(outdir, "test1-out.pdf"));
 	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut);
 	try {
-		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
-		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
-	} finally {
+		jout.writeReport(new FileInputStream(new File(indir, "test1.odt")), data);
+		jout.writeReport(new FileInputStream(new File(indir, "test1.odt")), data);
+	} catch(Exception e) {
+            e.printStackTrace();
+        } finally {
 		jout.close();
 	}
 }
