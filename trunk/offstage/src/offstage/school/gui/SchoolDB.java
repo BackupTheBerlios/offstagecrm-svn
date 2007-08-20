@@ -126,6 +126,27 @@ private static class TuitionRec implements Comparable<TuitionRec>
 	}
 }
 
+public static void w_tuitiontrans_recalcAllTuitions(Statement st, int termid)
+throws SQLException
+{
+	ResultSet rs;
+	String sql;
+
+	List<Integer> payers = new ArrayList();
+	rs = st.executeQuery("select distinct adultid from entities_school union select entityid from entities_school");
+	while (rs.next()) payers.add(rs.getInt(1));
+	rs.close();
+	
+	for (Integer payerid : payers) {
+		try {
+			System.out.println("Recalculating tuition for " + payerid);
+			w_tuitiontrans_calcTuitionByAdult(st, termid, payerid);
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
 public static void w_tuitiontrans_calcTuitionByAdult(Statement st, int termid, int adultid)
 throws SQLException
 {

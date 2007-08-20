@@ -1988,7 +1988,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jPanel11" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="1302" max="32767" attributes="0"/>
+                                              <EmptySpace pref="1350" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -2581,10 +2581,14 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jButton1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jButton2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton4" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jButton4" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="bRecalcTuition" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <Component id="jButton5" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="661" max="32767" attributes="0"/>
+                      <EmptySpace pref="513" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2596,7 +2600,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jButton4" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jButton4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bRecalcTuition" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton5" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="523" max="32767" attributes="0"/>
@@ -2635,6 +2642,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="bRecalcTuition">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Recalc All Tuition"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bRecalcTuitionActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

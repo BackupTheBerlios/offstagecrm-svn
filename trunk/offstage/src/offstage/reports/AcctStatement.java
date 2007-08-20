@@ -44,7 +44,7 @@ public static String getSql(int termid, int payerid, int actypeid)
 		" and actypeid = " + SqlInteger.sql(actypeid) +
 		(payerid < 0 ? "" : " and act.entityid = " + SqlInteger.sql(payerid)) +
 //		" and act.termid = " + SqlInteger.sql(termid) + "\n" +
-		" order by act.entityid, act.date, act.actransid";
+		" order by p.lastname, p.firstname, act.entityid, act.date, act.actransid";
 }
 	
 public static List<HashMap<String,Object>> makeJodModels(App app, Statement st, int termid, int payerid, java.util.Date today)

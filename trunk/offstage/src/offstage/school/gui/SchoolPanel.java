@@ -262,7 +262,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 	actransDb = new IntKeyedDbModel(actransSb, "entityid", true);
 	actransDb.setWhereClause(
 		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
-		" and now()-date < 450");
+		" and now()-date < '450 days'");
 	actransDb.setOrderClause("date desc, actransid desc");
 	trans.setModelU(actransDb.getSchemaBuf(),
 		new String[] {"Type", "Date", "Amount", "Description"},
@@ -676,6 +676,7 @@ void setIDDirty(boolean dirty)
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        bRecalcTuition = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -1991,7 +1992,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1302, Short.MAX_VALUE))
+                .addContainerGap(1350, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2454,6 +2455,15 @@ void setIDDirty(boolean dirty)
             }
         });
 
+        bRecalcTuition.setText("Recalc All Tuition");
+        bRecalcTuition.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bRecalcTuitionActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -2463,9 +2473,12 @@ void setIDDirty(boolean dirty)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jButton1)
                     .add(jButton2)
-                    .add(jButton4)
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .add(jButton4)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(bRecalcTuition))
                     .add(jButton5))
-                .addContainerGap(661, Short.MAX_VALUE))
+                .addContainerGap(513, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -2475,7 +2488,9 @@ void setIDDirty(boolean dirty)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton2)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButton4)
+                .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jButton4)
+                    .add(bRecalcTuition))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton5)
                 .addContainerGap(523, Short.MAX_VALUE))
@@ -2485,6 +2500,15 @@ void setIDDirty(boolean dirty)
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bRecalcTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRecalcTuitionActionPerformed
+	{//GEN-HEADEREND:event_bRecalcTuitionActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			SchoolDB.w_tuitiontrans_recalcAllTuitions(st, getTermID());
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bRecalcTuitionActionPerformed
 
 	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
 	{//GEN-HEADEREND:event_jButton5ActionPerformed
@@ -2859,6 +2883,7 @@ void newAdultAction(final String colName)
     private javax.swing.JButton bNewParent2;
     private javax.swing.JButton bNewPayer;
     private javax.swing.JButton bNewStudent;
+    private javax.swing.JButton bRecalcTuition;
     private javax.swing.JButton bRemoveEnrollment;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
