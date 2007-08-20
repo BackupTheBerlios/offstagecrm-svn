@@ -121,17 +121,72 @@ String title, JTypeTableModel report) throws Exception
 	csv.writeReport(file);
 	return file;
 }
-
-public static File saveJodReport(App app, Component parent,
-String title, TableModelGrouper group,
+//// ====================================================================
+//public static File saveJodReport(App app, Component parent,
+//String title, TableModelGrouper group,
+//String[] sformattercols, SFormatter[] sformatters) throws Exception
+//{
+//	File file = chooseReportOutput(app, parent,
+//		"pdfreport", ".pdf", title);
+//	
+//	int[] gcols = group.getGcols();
+//	String[] sgcols = group.getGcolNames();
+//	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file));
+//	JTypeTableModel jtmod;
+//	try {
+//		while ((jtmod = group.next()) != null) {
+//			StringTableModel smod = new StringTableModel(jtmod, app.getSFormatterMap());
+//			if (sformattercols != null) for (int i=0; i<sformattercols.length; ++i)
+//				smod.setSFormatter(sformattercols[i], sformatters[i]);
+//			TemplateTableModel ttmod = new TemplateTableModel(smod);
+//			HashMap data = new HashMap();
+//				data.put("rs", ttmod);
+//			for (int i=0; i<gcols.length; ++i) {
+//				data.put("g0_" + sgcols[i], smod.getValueAt(0, gcols[i]));
+//			}
+//			jout.writeReport(ReportOutput.openTemplateFile(app, "StudentSchedule.odt"), data);
+//		}
+//	} finally {
+//		jout.close();
+//	}
+//
+//	citibob.gui.BareBonesPdf.view(file);
+////	Runtime.getRuntime().exec("acroread " + file.getPath());
+//	return file;
+//}
+//
+//public static File saveJodReport(App app, Component parent,
+//String title, HashMap jodModel) throws Exception
+//{
+//	File file = chooseReportOutput(app, parent,
+//		"pdfreport", ".pdf", title);
+//	
+//	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file));
+//	try {
+//			jout.writeReport(ReportOutput.openTemplateFile(app, "AcctStatement.odt"), jodModel);
+//	} finally {
+//		jout.close();
+//	}
+//
+//	citibob.gui.BareBonesPdf.view(file);
+////	Runtime.getRuntime().exec("acroread " + file.getPath());
+//	return file;
+//}
+// =========================================================================
+public static File viewJodReport(App app, String templateName,
+TableModelGrouper group,
 String[] sformattercols, SFormatter[] sformatters) throws Exception
 {
-	File file = chooseReportOutput(app, parent,
-		"pdfreport", ".pdf", title);
+	int dot = templateName.lastIndexOf('.');
+	String outBase = templateName.substring(0, dot);
+	String ext = templateName.substring(dot+1);
+	String outExt = "pdf";
+	File file = File.createTempFile(outBase, "." + outExt);
+	file.deleteOnExit();
 	
 	int[] gcols = group.getGcols();
 	String[] sgcols = group.getGcolNames();
-	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file));
+	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file), outExt);
 	JTypeTableModel jtmod;
 	try {
 		while ((jtmod = group.next()) != null) {
@@ -144,7 +199,9 @@ String[] sformattercols, SFormatter[] sformatters) throws Exception
 			for (int i=0; i<gcols.length; ++i) {
 				data.put("g0_" + sgcols[i], smod.getValueAt(0, gcols[i]));
 			}
-			jout.writeReport(ReportOutput.openTemplateFile(app, "StudentSchedule.odt"), data);
+			InputStream in = ReportOutput.openTemplateFile(app, templateName);
+			jout.writeReport(in, ext, data);
+			in.close();
 		}
 	} finally {
 		jout.close();
@@ -155,15 +212,48 @@ String[] sformattercols, SFormatter[] sformatters) throws Exception
 	return file;
 }
 
-public static File saveJodReport(App app, Component parent,
-String title, HashMap jodModel) throws Exception
+public static File viewJodReport(App app, String templateName,
+java.util.List models) throws Exception
 {
-	File file = chooseReportOutput(app, parent,
-		"pdfreport", ".pdf", title);
+	int dot = templateName.lastIndexOf('.');
+	String outBase = templateName.substring(0, dot);
+	String ext = templateName.substring(dot+1);
+	String outExt = "pdf";
+	File file = File.createTempFile(outBase, "." + outExt);
+	file.deleteOnExit();
 	
-	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file));
+	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"),
+		new FileOutputStream(file), outExt);
 	try {
-			jout.writeReport(ReportOutput.openTemplateFile(app, "AcctStatement.odt"), jodModel);
+		for (Object model : models) {
+			InputStream in = ReportOutput.openTemplateFile(app, templateName);
+			jout.writeReport(in, ext, model);
+			in.close();
+		}
+	} finally {
+		jout.close();
+	}
+
+	citibob.gui.BareBonesPdf.view(file);
+	return file;
+}
+
+public static File viewJodReport(App app, String templateName,
+HashMap jodModel) throws Exception
+{
+	int dot = templateName.lastIndexOf('.');
+	String ext = templateName.substring(dot+1);
+	String outBase = templateName.substring(0, dot);
+	String outExt = "pdf";
+	File file = File.createTempFile(outBase, "." + outExt);
+	file.deleteOnExit();
+	
+	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"),
+		new FileOutputStream(file), outExt);
+	try {
+			InputStream in = ReportOutput.openTemplateFile(app, templateName);
+			jout.writeReport(in, ext, jodModel);
+			in.close();
 	} finally {
 		jout.close();
 	}

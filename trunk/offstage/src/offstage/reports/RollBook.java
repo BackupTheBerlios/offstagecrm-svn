@@ -82,7 +82,8 @@ public RollBook(App app, int termid)
 		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
 		" inner join daysofweek dow on (dow.javaid = c.dayofweek)\n" +
 		" inner join courseroles cr on (cr.courseroleid = en.courserole)" +
-		" left outer join programids pr  on (pr.programid = ps.programid)\n" +
+		" inner join termregs tr on (tr.groupid = t.groupid and tr.entityid = p.entityid)\n" +
+		" left outer join programids pr  on (pr.programid = tr.programid)\n" +
 		" left outer join\n" +
 			" (select c.courseid, tp.lastname, tp.firstname\n" +
 			" from enrollments en, courseids c, termids t, entities tp, courseroles cr\n" +
@@ -101,6 +102,7 @@ public RollBook(App app, int termid)
 		" where cr.name = 'student'" +
 		" and t.groupid = " + SqlInteger.sql(termid) + "\n" +
 		" order by c.dayofweek, c.tstart, c.courseid, p.lastname, p.firstname\n";
+System.out.println(sql);
 	MainSqlTableModel main = new MainSqlTableModel(
 		app.getSqlTypeSet(), sql);
 	this.add(new SqlDbModel(main));

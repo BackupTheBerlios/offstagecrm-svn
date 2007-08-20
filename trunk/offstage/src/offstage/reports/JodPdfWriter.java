@@ -43,19 +43,21 @@ OOConnect ooConnect;
 DocumentFormatRegistry registry;
 ConcatPdfWriter concat;		// null if no concatenation
 Thread concatThread;
+String outExt;
 
 // -----------------------------------------------------------------
 // ---------------------------------------------------------------
-public JodPdfWriter(String oofficeExe) throws IOException, InterruptedException
+public JodPdfWriter(String oofficeExe, String outExt) throws IOException, InterruptedException
 {
+	this.outExt = outExt;
 	registry = new XmlDocumentFormatRegistry(); 
 	ooConnect = new OOConnect(oofficeExe);
 	concat = null;			// One-by-one output files
 }
 
-public JodPdfWriter(String oofficeExe, OutputStream pdfOut) throws IOException, InterruptedException
+public JodPdfWriter(String oofficeExe, OutputStream pdfOut, String outExt) throws IOException, InterruptedException
 {
-	this(oofficeExe);
+	this(oofficeExe, outExt);
 	concat = new ConcatPdfWriter(pdfOut);
 }
 
@@ -66,7 +68,7 @@ public void close() throws IOException
 	ooConnect.close();
 }
 
-public void writeReport(final InputStream templateIn, final Object dataModel)
+public void writeReport(final InputStream templateIn, String ext, final Object dataModel)
 throws IOException, DocumentTemplateException, com.lowagie.text.DocumentException, InterruptedException
 {
 	final Exception[] exp = new Exception[1];
@@ -89,7 +91,7 @@ throws IOException, DocumentTemplateException, com.lowagie.text.DocumentExceptio
 		concatThread.setDaemon(true);
 		concatThread.start();
 
-		writeReport(templateIn, dataModel, pout2);
+		writeReport(templateIn, ext, dataModel, pout2);
 
 		pout2.close();		// Flush out, allows concatThread to finish.
 		concatThread.join();	// Wait for concatenation to finish before moving on
@@ -103,7 +105,7 @@ throws IOException, DocumentTemplateException, com.lowagie.text.DocumentExceptio
 	}
 }
 	
-public void writeReport(final InputStream templateIn, final Object dataModel, final OutputStream out)
+public void writeReport(final InputStream templateIn, String ext, final Object dataModel, final OutputStream out)
 throws IOException, DocumentTemplateException
 {
 	final Exception[] exp = new Exception[1];
@@ -130,8 +132,8 @@ throws IOException, DocumentTemplateException
 
 		// Use our OOo connection to translate the document
 		DocumentConverter converter = new OpenOfficeDocumentConverter(ooConnect.getConnection(), registry); 
-		DocumentFormat odt = registry.getFormatByFileExtension("odt"); 
-		DocumentFormat pdf = registry.getFormatByFileExtension("pdf"); 
+		DocumentFormat odt = registry.getFormatByFileExtension(ext);
+		DocumentFormat pdf = registry.getFormatByFileExtension(outExt); 
 		converter.convert(pin, odt, out, pdf);
 
 		// Close the pipes
@@ -205,10 +207,10 @@ public static void doTest(String oofficeExe) throws Exception
 	data.put("items", items);
 	
 	OutputStream pdfOut = new FileOutputStream(new File(outdir, "test1-out.pdf"));
-	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut);
+	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut, "pdf");
 	try {
-		jout.writeReport(new FileInputStream(new File(indir, "test1.odt")), data);
-		jout.writeReport(new FileInputStream(new File(indir, "test1.odt")), data);
+		jout.writeReport(new FileInputStream(new File(indir, "test1.odt")), "odt", data);
+		jout.writeReport(new FileInputStream(new File(indir, "test1.odt")), "odt", data);
 	} catch(Exception e) {
             e.printStackTrace();
         } finally {

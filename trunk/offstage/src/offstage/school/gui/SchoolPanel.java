@@ -599,6 +599,7 @@ void setIDDirty(boolean dirty)
         acbal = new citibob.swing.typed.JTypedLabel();
         jPanel16 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
+        bAcctStatement = new javax.swing.JButton();
         jPanel19 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         ObsoleteStuff = new javax.swing.JPanel();
@@ -1762,6 +1763,20 @@ void setIDDirty(boolean dirty)
 
         jPanel16.add(jButton3, new java.awt.GridBagConstraints());
 
+        bAcctStatement.setText("Account Statement");
+        bAcctStatement.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bAcctStatementActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        jPanel16.add(bAcctStatement, gridBagConstraints);
+
         AccountTab.addTab("Reports", jPanel16);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1973,7 +1988,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1090, Short.MAX_VALUE))
+                .addContainerGap(1190, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2444,6 +2459,16 @@ void setIDDirty(boolean dirty)
 
     }// </editor-fold>//GEN-END:initComponents
 
+	private void bAcctStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAcctStatementActionPerformed
+	{//GEN-HEADEREND:event_bAcctStatementActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			int termid = (Integer)vTermID.getValue();
+			Integer payerid = (Integer)schoolRm.get("adultid");
+			AcctStatement.doAccountStatements(fapp, st, termid, payerid, new java.util.Date());
+		}});
+	}//GEN-LAST:event_bAcctStatementActionPerformed
+
 	private void bNewParent2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParent2ActionPerformed
 	{//GEN-HEADEREND:event_bNewParent2ActionPerformed
 		newAdultAction("parent2id");
@@ -2510,8 +2535,10 @@ throws Exception
 		new JDateSFormatter("yyyy"),
 		new JDateSFormatter("yyyy")
 	};
-	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
-		"Save Student Schedules",
+//	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
+//		"Save Student Schedules",
+//		group, sformattercols, sformatters);
+	ReportOutput.viewJodReport(fapp, "StudentSchedule.odt",
 		group, sformattercols, sformatters);
 }
 
@@ -2752,6 +2779,7 @@ void newAdultAction(final String colName)
     private javax.swing.JPanel addressPanel1;
     private javax.swing.JPanel addressPanel2;
     private javax.swing.JPanel addressPanel3;
+    private javax.swing.JButton bAcctStatement;
     private javax.swing.JButton bAddEnrollment;
     private javax.swing.JButton bAdjust;
     private javax.swing.JButton bCash;

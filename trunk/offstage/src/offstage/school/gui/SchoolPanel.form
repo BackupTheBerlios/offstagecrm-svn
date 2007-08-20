@@ -25,7 +25,7 @@
               <Group type="102" attributes="0">
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                  <Component id="vTermID" pref="793" max="32767" attributes="0"/>
+                  <Component id="vTermID" pref="794" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -457,7 +457,7 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace pref="52" max="32767" attributes="0"/>
+                                                      <EmptySpace pref="124" max="32767" attributes="0"/>
                                                   </Group>
                                               </Group>
                                             </DimensionLayout>
@@ -809,7 +809,7 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="jPanel22" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace pref="48" max="32767" attributes="0"/>
+                                                      <EmptySpace pref="122" max="32767" attributes="0"/>
                                                   </Group>
                                               </Group>
                                             </DimensionLayout>
@@ -1158,7 +1158,7 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="jPanel26" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace pref="48" max="32767" attributes="0"/>
+                                                      <EmptySpace pref="122" max="32767" attributes="0"/>
                                                   </Group>
                                               </Group>
                                             </DimensionLayout>
@@ -1714,6 +1714,19 @@
                                             </Constraint>
                                           </Constraints>
                                         </Component>
+                                        <Component class="javax.swing.JButton" name="bAcctStatement">
+                                          <Properties>
+                                            <Property name="text" type="java.lang.String" value="Account Statement"/>
+                                          </Properties>
+                                          <Events>
+                                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bAcctStatementActionPerformed"/>
+                                          </Events>
+                                          <Constraints>
+                                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                                              <GridBagConstraints gridX="0" gridY="1" gridWidth="1" gridHeight="1" fill="0" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="0.0"/>
+                                            </Constraint>
+                                          </Constraints>
+                                        </Component>
                                       </SubComponents>
                                     </Container>
                                   </SubComponents>
@@ -1975,7 +1988,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jPanel11" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="1126" max="32767" attributes="0"/>
+                                              <EmptySpace pref="1190" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -2569,7 +2582,7 @@
                           <Component id="jButton1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jButton2" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="655" max="32767" attributes="0"/>
+                      <EmptySpace pref="671" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2580,7 +2593,7 @@
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="560" max="32767" attributes="0"/>
+                      <EmptySpace pref="585" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

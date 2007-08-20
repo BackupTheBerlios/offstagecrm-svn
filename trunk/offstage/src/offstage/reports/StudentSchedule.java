@@ -58,44 +58,44 @@ public static String getSql(int termid, int studentid)
 
 }
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	
-	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
-		rsmod.executeQuery(st, getSql(8, 12633));
-		
-	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear"};
-	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
-	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
-	SFormatter[] sformatters = {
-		new JDateSFormatter("EEEEE, MMMMM d"),
-		new JDateSFormatter("yyyy"),
-		new JDateSFormatter("yyyy")
-	};
-	
-	JodPdfWriter jout = new JodPdfWriter("ooffice", new FileOutputStream("x.pdf"));
-	JTypeTableModel jtmod;
-	try {
-		while ((jtmod = group.next()) != null) {
-			StringTableModel smod = new StringTableModel(jtmod, fapp.getSFormatterMap());
-			for (int i=0; i<sformattercols.length; ++i) smod.setSFormatter(sformattercols[i], sformatters[i]);
-			TemplateTableModel ttmod = new TemplateTableModel(smod);
-			HashMap data = new HashMap();
-				data.put("rs", ttmod);
-			for (int i=0; i<gcols.length; ++i) {
-				data.put("g0_" + gcols[i], smod.getValueAt(0, smod.findColumn(gcols[i])));
-			}
-			jout.writeReport(ReportOutput.openTemplateFile(fapp, "StudentSchedule.odt"), data);
-		}
-	} finally {
-		jout.close();
-	}
-	
-	Runtime.getRuntime().exec("acroread x.pdf");
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	Statement st = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//	
+//	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
+//		rsmod.executeQuery(st, getSql(8, 12633));
+//		
+//	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear"};
+//	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
+//	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
+//	SFormatter[] sformatters = {
+//		new JDateSFormatter("EEEEE, MMMMM d"),
+//		new JDateSFormatter("yyyy"),
+//		new JDateSFormatter("yyyy")
+//	};
+//	
+//	JodPdfWriter jout = new JodPdfWriter("ooffice", new FileOutputStream("x.pdf"));
+//	JTypeTableModel jtmod;
+//	try {
+//		while ((jtmod = group.next()) != null) {
+//			StringTableModel smod = new StringTableModel(jtmod, fapp.getSFormatterMap());
+//			for (int i=0; i<sformattercols.length; ++i) smod.setSFormatter(sformattercols[i], sformatters[i]);
+//			TemplateTableModel ttmod = new TemplateTableModel(smod);
+//			HashMap data = new HashMap();
+//				data.put("rs", ttmod);
+//			for (int i=0; i<gcols.length; ++i) {
+//				data.put("g0_" + gcols[i], smod.getValueAt(0, smod.findColumn(gcols[i])));
+//			}
+//			jout.writeReport(ReportOutput.openTemplateFile(fapp, "StudentSchedule.odt"), data);
+//		}
+//	} finally {
+//		jout.close();
+//	}
+//	
+//	Runtime.getRuntime().exec("acroread x.pdf");
+//}
 ////public static void doTest(String oofficeExe) throws Exception
 //public static void main(String[] args) throws Exception
 //{
