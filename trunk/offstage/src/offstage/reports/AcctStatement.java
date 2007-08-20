@@ -35,11 +35,46 @@ import java.text.*;
 public class AcctStatement
 {
 
+/** Get a listing of students for each parent */
+public static HashMap<Integer,String> getStudentNames(App app, Statement st, int termid, int payerid)
+throws SQLException
+{
+	HashMap<Integer,String> map = new HashMap();
+	String sql =
+		" select es.adultid, p.lastname, p.firstname" +
+		" from persons p, entities_school es\n" +
+		" where p.entityid = es.entityid\n" +
+		" and es.entityid <> es.adultid" +
+//		" and tr.termid = " + SqlInteger.sql(termid) +
+		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
+		" order by es.adultid";
+System.out.println("sql");
+	RSTableModel mod = new RSTableModel(app.getSqlTypeSet());
+	mod.executeQuery(st, sql);
+	TableModelGrouper tmg = new TableModelGrouper(mod, new String[] {"adultid"});
+	JTypeTableModel tt;
+	while ((tt = tmg.next()) != null) {
+		for (int i=0; i<tt.getRowCount(); ++i) {
+			String fname = (String)tt.getValueAt(i,2) + " " + (String)tt.getValueAt(i,1);
+			Integer id = (Integer)tt.getValueAt(i,0);
+			String names = map.get(id);
+			if (names == null) {
+				names = fname;
+			} else {
+				names = names + ", " + fname;
+			}
+			map.put(id, names);
+		}
+	}
+	return map;
+}
+
 public static String getSql(int termid, int payerid, int actypeid)
 {
 	return
-		" select act.*, firstname || ' ' || lastname as fullname" +
-		" from actrans act, persons p" +
+		" select act.*," +
+		" p.cclast4, p.firstname || ' ' || p.lastname as payername" +
+		" from actrans act, persons p" +		// p is payer
 		" where act.entityid = p.entityid" +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
 		(payerid < 0 ? "" : " and act.entityid = " + SqlInteger.sql(payerid)) +
@@ -50,6 +85,8 @@ public static String getSql(int termid, int payerid, int actypeid)
 public static List<HashMap<String,Object>> makeJodModels(App app, Statement st, int termid, int payerid, java.util.Date today)
 throws SQLException
 {
+	HashMap<Integer,String> studentMap = getStudentNames(app, st, termid, payerid);
+	
 	String sterm = SQL.readString(st, "select name from termids where groupid = " + termid);
 	List<HashMap<String,Object>> models = new ArrayList();
 
@@ -74,22 +111,40 @@ System.out.println(sql);
 	
 		HashMap<String,Object> data = new HashMap();
 		models.add(data);
+		Integer PayerID = (Integer)sb.getValueAt(0, sb.findColumn("entityid"));
 
 		// Add on account balance
 		BalTableModel bal = new BalTableModel(sb.getRowCount());
 		int amtcol = sb.findColumn("amount");
 		int desccol = sb.findColumn("description");
 		double dbal = 0;
+		double sumtuition = 0;
+		double sumfees = 0;
+		double sumpayments = 0;
+		double sumscholarship = 0;
+		String paymenttype = "";
 		for (int i=0; i<sb.getRowCount(); ++i) {
 			// Set balance
 			double amt = (Double)sb.getValueAt(i, amtcol);
 			dbal += amt;
 			bal.setValueAt(dbal, i, 0);
-			
+
 			// Correct description if there is none
 			String desc = (String)sb.getValueAt(i, desccol);
 			if (amt < 0 && (desc == null || "".equals(desc.trim()))) {
-				sb.setValueAt("Payment, Thank You!", i, desccol);
+				desc = "Payment, Thank You!";
+				sb.setValueAt(desc, i, desccol);
+			}
+			
+			// Sort into tuition, registration, payment records
+			if (amt < 0) sumpayments += amt;
+			else if (desc.contains("Fee")) sumfees += amt;
+			else if (desc.contains("Tuition")) sumtuition += amt;
+			else if (desc.contains("Scholarship")) sumscholarship += amt;
+			
+			// Set payment type
+			if (sb.getValueAt(i, sb.findColumn("cclast4")) != null) {
+				paymenttype = "cc";
 			}
 		}
 		MultiJTypeTableModel mod = new MultiJTypeTableModel(
@@ -134,19 +189,30 @@ System.out.println(sql);
 
 		// Add totals...
 		int balcol = mod.findColumn("balance");
+		
 		// TODO: This will throw exception if no rows...
+		NumberFormat mfmt = NumberFormat.getCurrencyInstance();
 		double overdue = (rs0.getRowCount() == 0 ? 0 : (Double)rs0.getValueAt(rs0.getRowCount()-1, balcol));
-		data.put("overdue", overdue <= 0 ? "0" : overdue);
+		data.put("overdue", overdue <= 0 ? mfmt.format(0.0D) : mfmt.format(overdue));
 		double paynow = (Double)rs1.getValueAt(rs1.getRowCount()-1, balcol);
-		data.put("paynow", paynow <= 0 ? "0" : paynow);
-	//	data.put("remit", rs0.getValueAt(rs0.getRowCount()-1, balcol));
-
+		data.put("paynow", paynow <= 0 ? mfmt.format(0.0D) : mfmt.format(paynow));
+		data.put("sumtuition", mfmt.format(Math.abs(sumtuition)));
+		data.put("sumfees", mfmt.format(Math.abs(sumfees)));
+		data.put("sumscholarship", sumscholarship == 0 ? "" : mfmt.format(Math.abs(sumscholarship)));
+		data.put("sumpayments", mfmt.format(Math.abs(sumpayments)));
+		data.put("balance", mfmt.format(Math.abs(dbal)));
+		data.put("paymenttype", paymenttype);
+		
 		// Add misc stuff
 		data.put("sterm", sterm);
-		data.put("sname", rs0.getValueAt(0, mod.findColumn("fullname")));
+		String studentName = studentMap.get(PayerID);
+		data.put("studentname", studentName == null ? "<none>" : studentName);
+		data.put("payername", rs0.getValueAt(0, mod.findColumn("payername")));
 		DateFormat dfmt = new SimpleDateFormat("MMM dd, yyyy");
 			dfmt.setTimeZone(app.getTimeZone());
 		data.put("date", dfmt.format(today));
+		data.put("duedate", (rs1.getRowCount() == 0 ? "" :
+			dfmt.format((java.util.Date)rs1.getValueAt(0,dtcol))));
 	}
 	return models;
 }
@@ -184,18 +250,15 @@ throws Exception
 //	Runtime.getRuntime().exec("acroread x.pdf");
 //}
 ////public static void doTest(String oofficeExe) throws Exception
-//public static void main(String[] args) throws Exception
-//{
-//	
-//	OutputStream pdfOut = new FileOutputStream(new File(dir, "test1-out.pdf"));
-//	JodPdfWriter jout = new JodPdfWriter(oofficeExe, pdfOut);
-//	try {
-//		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
-//		jout.writeReport(new FileInputStream(new File(dir, "test1.odt")), data);
-//	} finally {
-//		jout.close();
-//	}
-//}
+public static void main(String[] args) throws Exception
+{
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	Statement st = pool.checkout().createStatement();
+	FrontApp fapp = new FrontApp(pool,null);
+	
+	int termid = 346;
+	AcctStatement.doAccountStatements(fapp, st, termid, 12633, new java.util.Date());
+}
 // ================================================================
 static class BalTableModel extends javax.swing.table.DefaultTableModel implements JTypeTableModel
 {

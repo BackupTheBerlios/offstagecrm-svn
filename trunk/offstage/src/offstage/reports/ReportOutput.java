@@ -48,7 +48,8 @@ public static InputStream openTemplateFile(App app, String name) throws IOExcept
 {
 	// First: try loading external file
 //	File dir = new File(System.getProperty("user.dir"), "config");
-	File f = new File(app.getConfigDir().getPath() + File.separatorChar + "reports" + name);
+	File f = new File(app.getConfigDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);
+System.out.println("Looking for template file on filesystem: " + f);
 	if (f.exists()) return new FileInputStream(f);
 
 	// File doesn't exist; read from inside JAR file instead.

@@ -675,8 +675,9 @@ void setIDDirty(boolean dirty)
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        bParentLabels = new javax.swing.JButton();
         bRecalcTuition = new javax.swing.JButton();
+        bConfirmationLetters = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -1992,7 +1993,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1350, Short.MAX_VALUE))
+                .addContainerGap(1462, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2446,12 +2447,12 @@ void setIDDirty(boolean dirty)
             }
         });
 
-        jButton5.setText("Payer Labels");
-        jButton5.addActionListener(new java.awt.event.ActionListener()
+        bParentLabels.setText("Payer/Parent Labels");
+        bParentLabels.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton5ActionPerformed(evt);
+                bParentLabelsActionPerformed(evt);
             }
         });
 
@@ -2464,20 +2465,36 @@ void setIDDirty(boolean dirty)
             }
         });
 
+        bConfirmationLetters.setText("Confirmation Letters");
+        bConfirmationLetters.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bConfirmationLettersActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jButton1)
-                    .add(jButton2)
                     .add(jPanel3Layout.createSequentialGroup()
-                        .add(jButton4)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(bRecalcTuition))
-                    .add(jButton5))
+                        .addContainerGap()
+                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jButton1)
+                            .add(jButton2)
+                            .add(jPanel3Layout.createSequentialGroup()
+                                .add(jButton4)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(bRecalcTuition))))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(bConfirmationLetters))
+                    .add(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(bParentLabels)))
                 .addContainerGap(513, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -2492,14 +2509,26 @@ void setIDDirty(boolean dirty)
                     .add(jButton4)
                     .add(bRecalcTuition))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jButton5)
-                .addContainerGap(523, Short.MAX_VALUE))
+                .add(bConfirmationLetters)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(bParentLabels)
+                .addContainerGap(492, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab("Reports", jPanel3);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bConfirmationLettersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bConfirmationLettersActionPerformed
+	{//GEN-HEADEREND:event_bConfirmationLettersActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			int termid = (Integer)vTermID.getValue();
+			YDPConfirmationLetter.doReport(fapp, st, termid);
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_bConfirmationLettersActionPerformed
 
 	private void bRecalcTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRecalcTuitionActionPerformed
 	{//GEN-HEADEREND:event_bRecalcTuitionActionPerformed
@@ -2510,8 +2539,8 @@ void setIDDirty(boolean dirty)
 // TODO add your handling code here:
 	}//GEN-LAST:event_bRecalcTuitionActionPerformed
 
-	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
-	{//GEN-HEADEREND:event_jButton5ActionPerformed
+	private void bParentLabelsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bParentLabelsActionPerformed
+	{//GEN-HEADEREND:event_bParentLabelsActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
 			int termid = (Integer)vTermID.getValue();
@@ -2519,6 +2548,11 @@ void setIDDirty(boolean dirty)
 				" select xx.entityid\n" +
 				" from (\n" +
 				" 	select distinct s.adultid as entityid\n" +
+				" 	from termregs tr, entities_school s\n" +
+				" 	where tr.groupid = " + termid + "\n" +
+				" 	and tr.entityid = s.entityid\n" +
+				"          UNION\n" +
+				" 	select distinct s.parentid as entityid\n" +
 				" 	from termregs tr, entities_school s\n" +
 				" 	where tr.groupid = " + termid + "\n" +
 				" 	and tr.entityid = s.entityid\n" +
@@ -2536,7 +2570,7 @@ System.out.println("==================");
 //			st.executeUpdate(LabelReport.cleanupSql());
 		}});
 // TODO add your handling code here:
-	}//GEN-LAST:event_jButton5ActionPerformed
+	}//GEN-LAST:event_bParentLabelsActionPerformed
 
 	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
 	{//GEN-HEADEREND:event_jButton4ActionPerformed
@@ -2615,7 +2649,7 @@ throws Exception
 	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
 		rsmod.executeQuery(st, offstage.reports.StudentSchedule.getSql(termid, entityid));
 
-	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear"};
+	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"};
 	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
 	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
 	SFormatter[] sformatters = {
@@ -2873,6 +2907,7 @@ void newAdultAction(final String colName)
     private javax.swing.JButton bCash;
     private javax.swing.JButton bCc;
     private javax.swing.JButton bCheck;
+    private javax.swing.JButton bConfirmationLetters;
     private javax.swing.JButton bEmancipate;
     private javax.swing.JButton bLaunchEmail;
     private javax.swing.JButton bLaunchEmail1;
@@ -2883,6 +2918,7 @@ void newAdultAction(final String colName)
     private javax.swing.JButton bNewParent2;
     private javax.swing.JButton bNewPayer;
     private javax.swing.JButton bNewStudent;
+    private javax.swing.JButton bParentLabels;
     private javax.swing.JButton bRecalcTuition;
     private javax.swing.JButton bRemoveEnrollment;
     private javax.swing.JButton bSave;
@@ -2917,7 +2953,6 @@ void newAdultAction(final String colName)
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

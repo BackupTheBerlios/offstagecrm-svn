@@ -64,7 +64,6 @@ public class LabelReport
 
 /** Creates a new instance of DonorReport */
 public static String getSql(String idSql, boolean removeHouseholdDups)
-throws SQLException
 {
 	String sql =
 		// Create temporary table of IDs for this mailing list
@@ -72,6 +71,7 @@ throws SQLException
 		" CREATE TEMPORARY TABLE _mailings (\n" +
 		"  orderid serial,\n" +
 		"  entityid int4 NOT NULL,\n" +
+		"  firstname varchar(100),\n" +
 		"  ename varchar(100),\n" +
 		"  addressto varchar(100),\n" +
 		"  address1 varchar(100),\n" +
@@ -91,6 +91,11 @@ throws SQLException
 		" insert into _mailings (entityid) " +
 			(removeHouseholdDups ? DB.removeDupsIDSql(idSql) : idSql) + ";\n" +
 	
+		"	update _mailings\n" +
+		"	set firstname = p.firstname\n" +
+		"	from entities p\n" +
+		"	where p.entityid = _mailings.entityid;\n" +
+		
 		// ========= Set addressto from multiple sources
 		// 1. Try customaddressto
 		"	update _mailings\n" +
