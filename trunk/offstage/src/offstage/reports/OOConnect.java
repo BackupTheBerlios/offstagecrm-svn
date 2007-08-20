@@ -38,6 +38,7 @@ OpenOfficeConnection connection;
 Process proc;
 int ooPid = -1;			// PID of the pre-existing OpenOffice.org process (Windows)
 InputStream stderr;
+File runsofficeTmp;		// Temporary file created on Macintosh...
 
 OpenOfficeConnection getConnection() { return connection; }
 
@@ -56,13 +57,13 @@ public OOConnect(String oofficeExe) throws IOException, InterruptedException
 	String cmd = oofficeExe + cmdOptions;
 	if (osName.startsWith("Mac")) {
 		System.out.println("OOConnect: cmd = " + cmd);
-		File tmp = File.createTempFile("runsoffice", ".sh");
-		tmp.deleteOnExit();
-		FileWriter fout = new FileWriter(tmp);
+		runsofficeTmp = File.createTempFile("runsoffice", ".sh");
+		runsofficeTmp.deleteOnExit();
+		FileWriter fout = new FileWriter(runsofficeTmp);
 		fout.write(cmd);
 		fout.write('\n');
 		fout.close();
-		proc = Runtime.getRuntime().exec("sh " + tmp.getPath());
+		proc = Runtime.getRuntime().exec("sh " + runsofficeTmp.getPath());
 	} else {		// Windows, Linux
 		cmd = cmd.replace("'", "");
 		System.out.println("OOConnect: cmd = " + cmd);
@@ -117,6 +118,7 @@ void close() throws IOException
 			windowsKillOpenOffice();
 		} else if (osName.startsWith("Mac")) {
 			macKillOpenOffice();
+			runsofficeTmp.delete();
 		} else {
 			stderr.close();
 			proc.destroy();
