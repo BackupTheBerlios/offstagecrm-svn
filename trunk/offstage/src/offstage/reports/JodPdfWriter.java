@@ -15,14 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
- * PdfJooReport.java
- *
- * Created on August 7, 2007, 11:33 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
 
 package offstage.reports;
 
@@ -238,22 +230,17 @@ void closeOOo() throws IOException
 {
 	// close the connection to OOo
 	connection.disconnect();
-//	//	stderr.close();
-//	boolean isExited = true;
-//	try {
-//		System.out.println("OOo exit value = " + proc.exitValue());
-//	} catch(Exception e) {
-//		isExited = false;
-//	}
 
 	// Only kill if OO wasn't already running when we started
 	// because if OOo WAS running when we started, it will exit
-	// on its own.
+	// on its own.  NOTE: "Killing" this on Unix/Linux doesn't hurt,
+	// so we don't have to bother setting ooPid above for Unix.
 	if (ooPid < 0) {
 		String osName = System.getProperty("os.name");
 		if (osName.startsWith("Windows")) {
 			windowsKillOpenOffice();
 		} else {
+			stderr.close();
 			proc.destroy();
 		}
 	}
@@ -302,7 +289,7 @@ private static void unixKillOpenOffice() throws IOException
 {
    Runtime runtime = Runtime.getRuntime();
 
-   String pid = getOpenOfficeProcessID();
+   String pid = unixGetOOProcessID();
    if (pid != null)
    {
 	  while (pid != null)
@@ -311,7 +298,7 @@ private static void unixKillOpenOffice() throws IOException
 		 runtime.exec(killCmd);
 
 		 // Is another OpenOffice prozess running?
-		 pid = getOpenOfficeProcessID();
+			pid = unixGetOOProcessID();
 	  }
    }
 }
@@ -319,7 +306,7 @@ private static void unixKillOpenOffice() throws IOException
 /**
 * Get OpenOffice prozess id. (Unix/Linux)
 */
-private static String getOpenOfficeProcessID() throws IOException
+private static String unixGetOOProcessID() throws IOException
 {
    Runtime runtime = Runtime.getRuntime();
 
