@@ -138,9 +138,11 @@ System.out.println(sql);
 			
 			// Sort into tuition, registration, payment records
 			if (amt < 0) sumpayments += amt;
-			else if (desc.contains("Fee")) sumfees += amt;
-			else if (desc.contains("Tuition")) sumtuition += amt;
-			else if (desc.contains("Scholarship")) sumscholarship += amt;
+			else if (desc != null) {
+				if (desc.contains("Fee")) sumfees += amt;
+				if (desc.contains("Tuition")) sumtuition += amt;
+				if (desc.contains("Scholarship")) sumscholarship += amt;
+			}
 			
 			// Set payment type
 			if (sb.getValueAt(i, sb.findColumn("cclast4")) != null) {
