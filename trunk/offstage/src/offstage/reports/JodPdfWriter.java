@@ -39,7 +39,7 @@ static final int E_OO = 2;
 static final int E_CONCAT = 3;
 Throwable[] exceptions = new Throwable[4];
 
-//OutputStream pdfOut;		// Current place where we send our PDF files
+OOConnect ooConnect;
 DocumentFormatRegistry registry;
 ConcatPdfWriter concat;		// null if no concatenation
 Thread concatThread;
@@ -49,7 +49,7 @@ Thread concatThread;
 public JodPdfWriter(String oofficeExe) throws IOException, InterruptedException
 {
 	registry = new XmlDocumentFormatRegistry(); 
-	connectOOo(oofficeExe);
+	ooConnect = new OOConnect(oofficeExe);
 	concat = null;			// One-by-one output files
 }
 
@@ -63,7 +63,7 @@ public void close() throws IOException
 {
 	// Must check for concatThread==null; otherwise, concat.close() will hang.
 	if (concat != null && concatThread == null) concat.close();
-	closeOOo();
+	ooConnect.close();
 }
 
 public void writeReport(final InputStream templateIn, final Object dataModel)
@@ -129,7 +129,7 @@ throws IOException, DocumentTemplateException
 		}}.start();
 
 		// Use our OOo connection to translate the document
-		DocumentConverter converter = new OpenOfficeDocumentConverter(connection, registry); 
+		DocumentConverter converter = new OpenOfficeDocumentConverter(ooConnect.getConnection(), registry); 
 		DocumentFormat odt = registry.getFormatByFileExtension("odt"); 
 		DocumentFormat pdf = registry.getFormatByFileExtension("pdf"); 
 		converter.convert(pin, odt, out, pdf);
@@ -176,248 +176,19 @@ throws IOException, DocumentTemplateException
 //}
 
 
-// ====================================================================
-// OOo connection
-OpenOfficeConnection connection;
-Process proc;
-int ooPid = -1;			// PID of the pre-existing OpenOffice.org process (Windows)
-InputStream stderr;
-
-void connectOOo(String oofficeExe) throws IOException, InterruptedException
-{
-	String osName = System.getProperty("os.name");
-	if (osName.startsWith("Windows")) {
-		ooPid = windowsGetOOProcessID();
-	} else if (osName.startsWith("Mac")) {
-		ooPid = macGetOOProcessID();
-	}
-
-//	Runtime.getRuntime().exec("open /Applications/NeoOffice.app");
-oofficeExe = "/Applications/NeoOffice.app/Contents/MacOS/soffice.bin";
-String cmd = oofficeExe + " -headless -norestore -nodefault -nolockcheck '-accept=socket,port=8100;urp;StarOffice.ServiceManager'";
-File tmp = File.createTempFile("runsoffice", ".sh");
-tmp.deleteOnExit();
-FileWriter fout = new FileWriter(tmp);
-	fout.write(cmd);
-	fout.write('\n');
-	fout.close();
-//proc = Runtime.getRuntime().exec("chmod +x " + tmp.getPath());
-//proc.waitFor();
-proc = Runtime.getRuntime().exec("sh " + tmp.getPath());
-	stderr = proc.getErrorStream();
-
-//String cmd = "./runsoffice";
-//System.out.println(cmd);
-//	proc = Runtime.getRuntime().exec(cmd);
-//	stderr = proc.getErrorStream();
-
-	// Handle the OOo server we just started.
-	Thread ooThread = new Thread() {
-	public void run() {
-		try {
-			String line = null;
-			int c;
-			while ((c = stderr.read()) > 0) System.out.print(c);;
-			proc.destroy();
-		} catch (Throwable t) {
-			exceptions[E_OO] = t;
-			t.printStackTrace();
-		}
-		System.out.println("ooThread exiting");
-	}};
-	ooThread.setDaemon(true);
-	ooThread.start();
-	
-	// connect to the OpenOffice.org instance we just started or ressucitated
-	for (int i=0; ; ++i) {
-		try {
-			System.out.println("Connection try " + i);
-			connection = new SocketOpenOfficeConnection("127.0.0.1", 8100);
-			connection.connect();
-			break;
-		} catch(IOException e) {
-			if (i < 10) Thread.currentThread().sleep(1000);
-			else throw e;
-		}
-	}
-
-}
-
-void closeOOo() throws IOException
-{
-	// close the connection to OOo
-	connection.disconnect();
-
-	// Only kill if OO wasn't already running when we started
-	// because if OOo WAS running when we started, it will exit
-	// on its own.  NOTE: "Killing" this on Unix/Linux doesn't hurt,
-	// so we don't have to bother setting ooPid above for Unix.
-	if (ooPid < 0) {
-		String osName = System.getProperty("os.name");
-		if (osName.startsWith("Windows")) {
-			windowsKillOpenOffice();
-		} else if (osName.startsWith("Mac")) {
-			macKillOpenOffice();
-		} else {
-			stderr.close();
-			proc.destroy();
-		}
-	}
-}
-// ========================================================================
-// See: http://www.oooforum.org/forum/viewtopic.phtml?p=59246
-
-/**
-* Kill OpenOffice.
-*
-* Supports Windows XP, Solaris (SunOS) and Linux.
-* Perhaps it supports more OS, but it has been tested
-* only with this three.
-*
-* @throws IOException  Killing OpenOffice didn't work
-*/
-public static void killOpenOffice() throws IOException
-{
-   String osName = System.getProperty("os.name");
-   if (osName.startsWith("Windows"))
-   {
-	  windowsKillOpenOffice();
-   }
-   else if (osName.startsWith("SunOS") || osName.startsWith("Linux"))
-   {
-	  unixKillOpenOffice();
-   }
-   else
-   {
-	  throw new IOException("Unknown OS, killing impossible");
-   }
-}
-
-/**
-* Kill OpenOffice on Windows XP.
-*/
-private static void windowsKillOpenOffice() throws IOException
-{
-	Runtime.getRuntime().exec("tskill soffice");
-}
-
-/**
-* Kill OpenOffice on Unix.
-*/
-private static void unixKillOpenOffice() throws IOException
-{
-   Runtime runtime = Runtime.getRuntime();
-
-   String pid = unixGetOOProcessID();
-   if (pid != null)
-   {
-	  while (pid != null)
-	  {
-		 String[] killCmd = {"/bin/bash", "-c", "kill -9 "+pid};
-		 runtime.exec(killCmd);
-
-		 // Is another OpenOffice prozess running?
-			pid = unixGetOOProcessID();
-	  }
-   }
-}
-
-private static void macKillOpenOffice() throws IOException
-{
-   Runtime runtime = Runtime.getRuntime();
-
-   int pid = macGetOOProcessID();
-	while (pid >= 0) {
-		String killCmd = "kill -9 "+pid;
-		runtime.exec(killCmd);
-
-		// Is another OpenOffice prozess running?
-		pid = macGetOOProcessID();
-	}
-}
-
-/**
-* Get OpenOffice prozess id. (Unix/Linux)
-*/
-private static String unixGetOOProcessID() throws IOException
-{
-   Runtime runtime = Runtime.getRuntime();
-
-   // Get prozess id
-   String[] getPidCmd = {"/bin/bash", "-c", "ps -e|grep soffice|awk '{print $1}'"};
-   Process getPidProcess = runtime.exec(getPidCmd);
-
-   // Read prozess id
-   InputStreamReader isr = new InputStreamReader(getPidProcess.getInputStream());
-   BufferedReader br = new BufferedReader(isr);
-
-   return br.readLine();
-}
-private static int macGetOOProcessID() throws IOException
-{
-   Runtime runtime = Runtime.getRuntime();
-
-   // Get prozess id
-   Process getPidProcess = runtime.exec("ps ax");
-
-	// Read prozess id
-	// Read prozess id
-	InputStreamReader isr = new InputStreamReader(getPidProcess.getInputStream());
-	BufferedReader br = new BufferedReader(isr);
-	String line;
-	int ooPid = -1;
-	while ((line = br.readLine()) != null) {
-		if (!line.contains("soffice")) continue;
-		int start = 0;
-		for (; line.charAt(start) == ' '; ++start);
-		int end = start;
-		for (; line.charAt(end) != ' '; ++end);
-		ooPid = Integer.parseInt(line.substring(start, end));
-	}
-	getPidProcess.destroy();
-	return ooPid;
-}
-
-private static int windowsGetOOProcessID() throws IOException
-{
-   Runtime runtime = Runtime.getRuntime();
-
-   // Get prozess id
-   String[] getPidCmd = {"qprocess"};
-   Process getPidProcess = runtime.exec(getPidCmd);
-
-   // Read prozess id
-   InputStreamReader isr = new InputStreamReader(getPidProcess.getInputStream());
-   BufferedReader br = new BufferedReader(isr);
-   String line;
-   int ooPid = -1;
-   while ((line = br.readLine()) != null) {
-	   int space2 = line.lastIndexOf(' ');
-	   if (space2 < 0) continue;
-	   int space1 = space2-1;
-	   while (line.charAt(space1) == ' ') --space1;
-	   int space0 = space1-1;
-	   while (line.charAt(space0) != ' ') --space0;
-	   String spname = line.substring(space2+1);
-	   if ("soffice.bin".equals(spname)) {
-		   String spid = line.substring(space0+1, space1+1);
-		   ooPid = Integer.parseInt(spid);
-	   }
-   }
-   getPidProcess.destroy();
-   return ooPid;
-}
 // ======================================================================
 
 public static void main(String[] args) throws Exception
 {
 //	System.out.println("PID = " + windowsGetOOProcessID());
-	doTest("c:\\Program Files\\OpenOffice.org 2.2\\program\\soffice.bin");
+//	doTest("c:\\Program Files\\OpenOffice.org 2.2\\program\\soffice.bin");
+	doTest("soffice");
 }
 public static void doTest(String oofficeExe) throws Exception
 {
 //	File indir = new File("h:\\svn\\offstage\\reports");
-	File indir = new File("/Volumes/citibob/svn/offstage/reports");
+//	File indir = new File("/Volumes/citibob/svn/offstage/reports");
+	File indir = new File("/export/home/citibob/svn/offstage/reports");
 	File outdir = new File(".");
 	final Map data = new HashMap();
 	data.put("name", "Joe");
