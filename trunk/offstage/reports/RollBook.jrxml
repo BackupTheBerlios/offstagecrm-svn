@@ -17,7 +17,7 @@
 		 whenNoDataType="NoPages"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="2" />
+	<property name="ireport.scriptlethandling" value="0" />
 	<property name="ireport.encoding" value="UTF-8" />
 	<import value="java.util.*" />
 	<import value="net.sf.jasperreports.engine.*" />
@@ -84,69 +84,6 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{tstart} + "-" + $F{tnext}]]></textFieldExpression>
 				</textField>
-				<rectangle>
-					<reportElement
-						x="237"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-36"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="251"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-37"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="265"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-38"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="279"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-39"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="293"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-40"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="307"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-41"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="321"
-						y="18"
-						width="14"
-						height="18"
-						key="rectangle-42"/>
-					<graphicElement stretchType="NoStretch" pen="1Point"/>
-				</rectangle>
 				<rectangle>
 					<reportElement
 						x="335"
@@ -532,78 +469,15 @@
 					<reportElement
 						x="180"
 						y="0"
-						width="57"
+						width="143"
 						height="18"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font size="11"/>
+						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{programname}]]></textFieldExpression>
 				</textField>
-				<rectangle>
-					<reportElement
-						x="237"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-1"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="251"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-2"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="265"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-3"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="279"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-4"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="293"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-5"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="307"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-6"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						x="321"
-						y="0"
-						width="14"
-						height="18"
-						key="rectangle-7"/>
-					<graphicElement stretchType="NoStretch" pen="Thin"/>
-				</rectangle>
 				<rectangle>
 					<reportElement
 						x="335"
