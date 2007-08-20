@@ -116,6 +116,7 @@ private static class TuitionRec implements Comparable<TuitionRec>
 	public String studentName;
 	public String sdate;
 	public String description;
+	public double scholarship;
 	public double tuition;
 	public int compareTo(TuitionRec o) {
 		double d = o.tuition - tuition;		// Sort descending
@@ -180,9 +181,10 @@ throws SQLException
 	
 	// Recalculate all tuition records for that paying party
 	sql =
-		" select st.entityid as studentid, p.lastname, p.firstname, c.*\n" +
-		" from entities_school st, entities p, courseids c, enrollments e\n" +
+		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, c.*\n" +
+		" from entities_school st, entities p, courseids c, enrollments e, termregs tr\n" +
 		" where st.entityid = p.entityid\n" +
+		" and tr.entityid = p.entityid and tr.groupid = c.termid" +
 		" and st.adultid = " + SqlInteger.sql(adultid) + "\n" +
 		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
 		" and e.courseid = c.courseid and e.entityid = st.entityid" +
@@ -192,6 +194,8 @@ throws SQLException
 	
 	// Calculate sum of hours in enrolled courses, per student
 	TuitionRec tr = null;
+	double scholarship = 0;
+	int nsiblings = 0;				// Total number of siblings
 	int weeklyS = 0;
 	ArrayList<TuitionRec> tuitions = new ArrayList();
 	for (;;) {
@@ -200,6 +204,17 @@ throws SQLException
 			if (tr != null) {
 				tr.tuition += TuitionRate.getRateY(weeklyS);
 				tuitions.add(tr);
+				++nsiblings;
+
+				// Apply the scholarship
+				if (scholarship > 0) {
+					TuitionRec trs = new TuitionRec();
+					trs.studentid = tr.studentid;
+					trs.studentName = tr.studentName;
+					trs.description = termName + ": Scholarship for " + tr.studentName;
+					tuitions.add(trs);
+					trs.tuition = -scholarship;
+				}
 			}
 			
 			// Make up description for this next student record.
@@ -209,6 +224,7 @@ throws SQLException
 				tr.studentName = rs.getString("firstname") + " " + rs.getString("lastname");
 				tr.description = termName + ": Tuition for " + tr.studentName;
 				tr.tuition = 0;
+				scholarship = rs.getDouble("scholarship");
 				weeklyS = 0;
 			}
 		}
@@ -228,19 +244,22 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 	rs.close();
 
 	// Give sibling discounts
-	if (tuitions.size() > 1) {
-		Collections.sort(tuitions);
+	if (nsiblings > 1) {
+		Collections.sort(tuitions);		// Sorted by tuition; scholarships are at end
 		Iterator<TuitionRec> ii = tuitions.iterator();
 		ii.next();
 		while (ii.hasNext()) {
 			TuitionRec trx = ii.next();
+			if (trx.tuition < 0) break;		// Scholarships
 			trx.tuition *= .9;
 			trx.description += " (w/ sibling discount)";
 		}
 	}
 
-	// Store in termregs table
+	
 	for (TuitionRec trx : tuitions) {
+		if (trx.tuition < 0) continue;		// Scholarships
+		// Store in termregs table
 		st.executeUpdate("update termregs" +
 			" set tuition = " + trx.tuition +
 			" where entityid = " + trx.studentid +
@@ -253,6 +272,7 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 	
 	// Add registration fees
 	for (TuitionRec trx : tuitions) {
+		if (trx.tuition < 0) continue;		// Ignore scholarhips
 		TuitionRec tq = new TuitionRec();
 		tq.sdate = duedates.get("r");
 		tq.description = "Registration Fee for " + trx.studentName;
@@ -260,7 +280,7 @@ System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
 		tq.tuition = 25;
 		t2.add(tq);
 	}
-
+	
 	// Covert to actual billing records that are quarterly or yearly...
 	if (btype == 'q') {
 		for (TuitionRec trx : tuitions) {

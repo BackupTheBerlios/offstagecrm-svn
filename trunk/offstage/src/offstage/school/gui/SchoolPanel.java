@@ -255,6 +255,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		if (row >= getRowCount()) return false;
 		if (col == tableoidCol) return false;
 		java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
+		if (created == null) return false;
 		java.util.Date now = new java.util.Date();
 		return (now.getTime() - created.getTime() < 86400 * 1000L);
 	}};
@@ -673,6 +674,8 @@ void setIDDirty(boolean dirty)
         jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -1988,7 +1991,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1190, Short.MAX_VALUE))
+                .addContainerGap(1302, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2433,6 +2436,24 @@ void setIDDirty(boolean dirty)
             }
         });
 
+        jButton4.setText("Account Statements");
+        jButton4.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Payer Labels");
+        jButton5.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout jPanel3Layout = new org.jdesktop.layout.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -2441,8 +2462,10 @@ void setIDDirty(boolean dirty)
                 .addContainerGap()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jButton1)
-                    .add(jButton2))
-                .addContainerGap(671, Short.MAX_VALUE))
+                    .add(jButton2)
+                    .add(jButton4)
+                    .add(jButton5))
+                .addContainerGap(661, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -2451,13 +2474,55 @@ void setIDDirty(boolean dirty)
                 .add(jButton1)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton2)
-                .addContainerGap(585, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jButton4)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jButton5)
+                .addContainerGap(523, Short.MAX_VALUE))
         );
         jTabbedPane1.addTab("Reports", jPanel3);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
+	{//GEN-HEADEREND:event_jButton5ActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			int termid = (Integer)vTermID.getValue();
+			String idSql =
+				" select xx.entityid\n" +
+				" from (\n" +
+				" 	select distinct s.adultid as entityid\n" +
+				" 	from termregs tr, entities_school s\n" +
+				" 	where tr.groupid = " + termid + "\n" +
+				" 	and tr.entityid = s.entityid\n" +
+				" ) xx, persons p\n" +
+				" where xx.entityid = p.entityid\n" +
+				" order by p.lastname, p.firstname";
+			String sql = LabelReport.getSql(idSql, false);
+System.out.println("==================");
+System.out.println(sql);
+System.out.println("==================");
+			ResultSet rs = st.executeQuery(sql); // + LabelReport.cleanupSql());
+			JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
+			ReportOutput.viewJasperReport(fapp, "AddressLabels.jasper", jrdata, new HashMap());
+			rs.close();
+//			st.executeUpdate(LabelReport.cleanupSql());
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_jButton5ActionPerformed
+
+	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
+	{//GEN-HEADEREND:event_jButton4ActionPerformed
+		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		public void run(Statement st) throws Exception {
+			int termid = (Integer)vTermID.getValue();
+			AcctStatement.doAccountStatements(fapp, st, termid, -1, new java.util.Date());
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_jButton4ActionPerformed
 
 	private void bAcctStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAcctStatementActionPerformed
 	{//GEN-HEADEREND:event_bAcctStatementActionPerformed
@@ -2490,13 +2555,12 @@ void setIDDirty(boolean dirty)
 	{//GEN-HEADEREND:event_jButton1ActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
 		public void run(Statement st) throws Exception {
-			RollBook report = new RollBook(fapp, 8);
+			RollBook report = new RollBook(fapp, getTermID());
 			report.doSelect(st);
 			JTypeTableModel model = report.newTableModel();
 
-			HashMap params = new HashMap();
 			JRDataSource jrdata = new JRTableModelDataSource(model);
-			offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jasper", jrdata, params);// TODO add your handling code here:
+			offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jasper", jrdata, null);// TODO add your handling code here:
 		}});
 	}//GEN-LAST:event_jButton1ActionPerformed
 
@@ -2827,6 +2891,8 @@ void newAdultAction(final String colName)
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

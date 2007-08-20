@@ -43,7 +43,8 @@ public static String getSql(int termid, int payerid, int actypeid)
 		" where act.entityid = p.entityid" +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
 		(payerid < 0 ? "" : " and act.entityid = " + SqlInteger.sql(payerid)) +
-		" and act.termid = " + SqlInteger.sql(termid);
+//		" and act.termid = " + SqlInteger.sql(termid) + "\n" +
+		" order by act.entityid, act.date, act.actransid";
 }
 	
 public static List<HashMap<String,Object>> makeJodModels(App app, Statement st, int termid, int payerid, java.util.Date today)
@@ -56,18 +57,18 @@ throws SQLException
 System.out.println(sql);
 	RSTableModel rsmod = new RSTableModel(app.getSqlTypeSet());
 		rsmod.executeQuery(st, sql);
-		
-	// Do basic query
-	IntKeyedDbModel actransDb = new IntKeyedDbModel(app.getSchema("actrans"), "entityid");
-	actransDb.setWhereClause(" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL));
-	actransDb.setOrderClause("entityid, date, actransid");
-	actransDb.setKey(payerid);		// Could be -1, would mean all payers
-	actransDb.doSelect(st);
-//	SchemaBuf sb = actransDb.getSchemaBuf();
+
+//	// Do basic query
+//	IntKeyedDbModel actransDb = new IntKeyedDbModel(app.getSchema("actrans"), "entityid");
+//	actransDb.setWhereClause(" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL));
+//	actransDb.setOrderClause("entityid, date, actransid");
+//	actransDb.setKey(payerid);		// Could be -1, would mean all payers
+//	actransDb.doSelect(st);
+////	SchemaBuf sb = actransDb.getSchemaBuf();
 
 	// Group it by payer...
 	String[] gcols = new String[] {"entityid"};
-	TableModelGrouper group = new TableModelGrouper(actransDb.getSchemaBuf(), gcols);
+	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
 	JTypeTableModel sb;
 	while ((sb = group.next()) != null) {
 	
@@ -77,10 +78,19 @@ System.out.println(sql);
 		// Add on account balance
 		BalTableModel bal = new BalTableModel(sb.getRowCount());
 		int amtcol = sb.findColumn("amount");
+		int desccol = sb.findColumn("description");
 		double dbal = 0;
 		for (int i=0; i<sb.getRowCount(); ++i) {
-			dbal += (Double)sb.getValueAt(i, amtcol);
+			// Set balance
+			double amt = (Double)sb.getValueAt(i, amtcol);
+			dbal += amt;
 			bal.setValueAt(dbal, i, 0);
+			
+			// Correct description if there is none
+			String desc = (String)sb.getValueAt(i, desccol);
+			if (amt < 0 && (desc == null || "".equals(desc.trim()))) {
+				sb.setValueAt("Payment, Thank You!", i, desccol);
+			}
 		}
 		MultiJTypeTableModel mod = new MultiJTypeTableModel(
 			new JTypeTableModel[] {sb, bal});
@@ -125,9 +135,10 @@ System.out.println(sql);
 		// Add totals...
 		int balcol = mod.findColumn("balance");
 		// TODO: This will throw exception if no rows...
-		double overdue = (Double)rs0.getValueAt(rs0.getRowCount()-1, balcol);
+		double overdue = (rs0.getRowCount() == 0 ? 0 : (Double)rs0.getValueAt(rs0.getRowCount()-1, balcol));
 		data.put("overdue", overdue <= 0 ? "0" : overdue);
-		data.put("paynow", rs1.getValueAt(rs1.getRowCount()-1, balcol));
+		double paynow = (Double)rs1.getValueAt(rs1.getRowCount()-1, balcol);
+		data.put("paynow", paynow <= 0 ? "0" : paynow);
 	//	data.put("remit", rs0.getValueAt(rs0.getRowCount()-1, balcol));
 
 		// Add misc stuff
@@ -144,7 +155,7 @@ throws Exception
 {
 	if (dt == null) dt = new java.util.Date();
 	List models = makeJodModels(fapp, st, termid, payerid, fapp.sqlDate.truncate(dt));
-	ReportOutput.viewJodReport(fapp, "AcctStatment.odt", models);
+	ReportOutput.viewJodReport(fapp, "AcctStatement.odt", models);
 }
 //public static void main(String[] args) throws Exception
 //{

@@ -49,6 +49,7 @@ public String 	getColumnName(int column) { return mod.getColumnName(column); }
 public Object getValueAt(int row, int col) { return mod.getValueAt(row + firstrow,col); }
 public Class 	getColumnClass(int columnIndex) { return mod.getColumnClass(columnIndex); }
 
+public void setValueAt(Object obj, int row, int col) {mod.setValueAt(obj, row + firstrow, col); }
 
 
 }
