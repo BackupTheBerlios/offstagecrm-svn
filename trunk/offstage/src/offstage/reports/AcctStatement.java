@@ -35,7 +35,15 @@ import java.text.*;
 public class AcctStatement
 {
 
-/** Get a listing of students for each parent */
+/**
+     * Get a listing of students for each parent
+     * @param app 
+     * @param st 
+     * @param termid 
+     * @param payerid 
+     * @throws java.sql.SQLException 
+     * @return 
+     */
 public static HashMap<Integer,String> getStudentNames(App app, Statement st, int termid, int payerid)
 throws SQLException
 {
