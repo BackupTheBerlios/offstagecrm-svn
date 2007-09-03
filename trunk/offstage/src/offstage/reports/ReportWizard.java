@@ -80,7 +80,7 @@ addState(new State("ticketparams", null, "editquery") {
 			" order by p.lastname,p.firstname\n");
 		report.executeQuery(str);
 		str.execUpdate(new UpdRunnable() {
-		public void run() throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			ReportOutput.saveCSVReport(fapp, frame, "Save Ticket Sales Repot",report);
 		}});
 	}

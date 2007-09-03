@@ -69,10 +69,10 @@ protected void showPopup()
 	super.showPopup();
 	sel.requestTextFocus();
 }
-public void setSearch(Statement st, String text)
+public void setSearch(SqlRunner str, String text)
 throws SQLException
 {
-	sel.setSearch(st, text);
+	sel.setSearch(str, text);
 }
 //// =========================EntityIDFormatter=============
 //static class EntityIDFormatter extends DBFormatter

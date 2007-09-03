@@ -147,8 +147,10 @@ void processBatch(SqlRunner str)
 	final SqlTimestamp sqlt = new SqlTimestamp("GMT");
 	
 	// Process empty batch
-	SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq", new SeqRunnable() {
-	public void run(final int ccbatchid, SqlRunner nstr) {
+	SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq");
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) {
+		final int ccbatchid = (Integer)str.get("ccbatch_ccbatchid_seq");
 		String sql =
 			" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(ccbatchid) + ");" +
 			
@@ -161,8 +163,8 @@ void processBatch(SqlRunner str)
 				" where e.entityid = p.entityid" +
 				" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
 				" order by dtime";
-		nstr.execSql(sql, new RssRunnable() {
-		public void run(ResultSet[] rss, SqlRunner nstr) throws Exception {
+		str.next().execSql(sql, new RssRunnable() {
+		public void run(SqlRunner str, ResultSet[] rss) throws Exception {
 			ResultSet rs;
 			
 			// =============== rss[0]: incidental items

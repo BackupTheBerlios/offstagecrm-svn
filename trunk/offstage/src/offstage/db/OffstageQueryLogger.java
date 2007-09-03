@@ -57,7 +57,7 @@ public OffstageQueryLogger(ActionRunner runner, int loginID)
 public void log(final QueryLogRec rec)
 {
 	runner.doRun(new StRunnable() {
-	public void run(java.sql.Statement st) throws Throwable
+	public void run(java.sql.Statement st) throws Exception
 	{
 		char ctype = 'X';
 		switch(rec.type) {

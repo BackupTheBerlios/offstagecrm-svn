@@ -65,21 +65,24 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 	}});
 }
 
-public void setSearch(Statement st, String text)
+public void setSearch(SqlRunner str, String text)
 throws SQLException
 {
 		String idSql = DB.simpleSearchSql(text);
-		searchResultsTable.executeQuery(st, idSql, null);
-		if (searchResultsTable.getModel().getRowCount() == 1) {
-			searchResultsTable.setRowSelectionInterval(0,0);	// Should fire an event...
-		}
+		searchResultsTable.executeQuery(str, idSql, null);
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			if (searchResultsTable.getModel().getRowCount() == 1) {
+				searchResultsTable.setRowSelectionInterval(0,0);	// Should fire an event...
+			}
+		}});
 }
 
 void runSearch() {
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
 		String text = searchWord.getText();
-		setSearch(st, text);
+		setSearch(str, text);
 	}});
 }
 

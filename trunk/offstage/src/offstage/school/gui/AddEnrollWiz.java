@@ -59,7 +59,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	
 //	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
 	addWidget("courserole", new JKeyedComboBox(
-		new citibob.sql.DbKeyedModel(st, null,
+		new citibob.sql.DbKeyedModel(str, null,
 		"courseroles", "courseroleid", "name", "orderid")));
 	
 //	// Populate available courses for adding
@@ -79,7 +79,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 		" order by c.dayofweek, c.name, c.tstart";
 //System.out.println(sql);
 	addWidget("courseid", new JKeyedComboBox( //new JKeyedSelectTable(
-		new citibob.sql.DbKeyedModel(st, null, "courseids", sql)));
+		new citibob.sql.DbKeyedModel(str, null, "courseids", sql)));
 		//"courseid", "name", "dayofweek,tstart")));
 
 	loadHtml();

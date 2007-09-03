@@ -54,9 +54,10 @@ public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged)
 public void setPrimaryEntityID(SqlRunner str, int entityid)
 throws SQLException
 {
-	DB.getPrimaryEntityID(str, entityid, new SeqRunnable() {
-	public void run(int peid, SqlRunner nstr) {
-		setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
+	DB.getPrimaryEntityID(str, entityid);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		setValueAt(str.get("primaryentityid"), 0, findColumn("primaryentityid"));
 	}});
 }
 // ==================================================================

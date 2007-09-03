@@ -45,7 +45,7 @@ throws SQLException
 		String sql =
 			" select * from entities where entityid = " + SqlInteger.sql(entityid);
 		str.execSql(sql, new RsRunnable() {
-		public void run(ResultSet rs) throws SQLException {
+		public void run(SqlRunner str, ResultSet rs) throws SQLException {
 			rs.next();
 			TypedWidgetBinder.setValueRecursive(oldCard, rs, app.getSwingerMap(), app.getSqlTypeSet());
 			if (oldCard.isFullySet()) {
@@ -65,17 +65,18 @@ throws SQLException
 	}
 }
 
-public void saveNewCardIfNeeded(Statement st) throws SQLException
+public void saveNewCardIfNeeded(SqlRunner str) throws SQLException
 {
-	if (saveCard.getBoolValue()) saveNewCard(st);
+	if (saveCard.getBoolValue()) saveNewCard(str);
 }
 
-public void saveNewCard(Statement st) throws SQLException
+/** Save credit card details back to the database. */
+public void saveNewCard(SqlRunner str) throws SQLException
 {
 	ConsSqlQuery sql = new ConsSqlQuery("entities", ConsSqlQuery.UPDATE);
 	sql.addWhereClause("entityid = " + SqlInteger.sql(entityid));
 	getNewCard(sql);
-	st.executeUpdate(sql.getSql());
+	str.execSql(sql.getSql());
 }
 
 public void getNewCard(ConsSqlQuery sql)

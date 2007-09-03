@@ -83,14 +83,17 @@ addState(new State("person", null, null) {
 					"Invalid input.\nPlease fill in all required (starred) fields!");
 				state = "person";
 			} else {
-				offstage.db.DupCheck.checkDups(str, v, 3, 20, new StringRunnable() {
-				public void run(String idSql, SqlRunner nstr) {
+				offstage.db.DupCheck.checkDups(str, v, 3, 20, new UpdRunnable() {
+				public void run(SqlRunner str) {
+					String idSql = (String)str.get("idsql");
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
-					DB.countIDList(nstr, idSql, new SeqRunnable() {
-					public void run(int ndups, SqlRunner nstr) throws SQLException {
+					DB.countIDList("count", str.next(), idSql);
+					str.next().execUpdate(new UpdRunnable() {
+					public void run(SqlRunner str) throws Exception {
+						int ndups = (Integer)str.get("count");
 						if (ndups == 0) {
-							createPerson(nstr, false);
+							createPerson(str.next(), false);
 							state = null; //"finished";
 						} else {
 							state = "checkdups";
@@ -131,14 +134,17 @@ addState(new State("org", null, null) {
 					"Invalid input.\nPlease fill in all required (starred) fields!");
 				state = "org";
 			} else {
-				offstage.db.DupCheck.checkDups(str, v, 3, 20, new StringRunnable() {
-				public void run(String idSql, SqlRunner nstr) {
+				offstage.db.DupCheck.checkDups(str, v, 3, 20, new UpdRunnable() {
+				public void run(SqlRunner str) {
+					String idSql = (String)str.get("idsql");
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
-					DB.countIDList(nstr, idSql, new SeqRunnable() {
-					public void run(int ndups, SqlRunner nstr) throws SQLException {
+					DB.countIDList("ndups", str.next(), idSql);
+					str.execUpdate(new UpdRunnable() {
+					public void run(SqlRunner str) throws SQLException {
+						int ndups = (Integer)str.get("ndups");
 						if (ndups == 0) {
-							createPerson(nstr, true);
+							createPerson(str.next(), true);
 							state = null;// "finished";
 						} else {
 							state = "checkdups";
@@ -171,8 +177,10 @@ private void addSCol(ConsSqlQuery q, String col)
 void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 {
 	// Make main record
-	SqlSerial.getNextVal(str, "entities_entityid_seq", new SeqRunnable() {
-	public void run(int id, SqlRunner nstr) {
+	SqlSerial.getNextVal(str, "entities_entityid_seq");
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) {
+		int id = (Integer)str.get("entities_entityid_seq");
 		v.put("entityid", new Integer(id));
 		ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
 		q.addColumn("entityid", SqlInteger.sql(id));
@@ -193,7 +201,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 		q.addColumn("isorg", SqlBool.sql(isorg));
 		String sql = q.getSql();
 	System.out.println(sql);
-		nstr.execSql(sql);
+		str.next().execSql(sql);
 		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("persons")));
 
 		// Make phone record --- first dig for keyed model...
@@ -206,7 +214,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 			q.addColumn("phone", SqlString.sql(phone));
 			sql = q.getSql();
 	System.out.println(sql);
-			nstr.execSql(sql);
+			str.next().execSql(sql);
 
 			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
 		}
@@ -219,7 +227,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 			q.addColumn("groupid", SqlInteger.sql(interestid));
 			sql = q.getSql();
 	System.out.println(sql);
-			nstr.execSql(sql);
+			str.next().execSql(sql);
 			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
 		}
 	}});

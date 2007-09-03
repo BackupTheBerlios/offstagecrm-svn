@@ -87,12 +87,13 @@ throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFou
 //}
 // -------------------------------------------------------------------------------
 /** @param eqSql an idSql that selects the entityids we wish to mail to. */
-public static void w_mailingids_create(SqlRunner str, final String queryName, final String eqXml, final String eqSql,
-final SeqRunnable rr)
+public static void w_mailingids_create(SqlRunner str, final String queryName,
+final String eqXml, final String eqSql, final UpdRunnable rr)
 {
-	SqlSerial.getNextVal(str, "groupids_groupid_seq", new SeqRunnable() {
-	public void run(int val, SqlRunner nstr) {
-		final int groupID = val; //r_nextval(st, "groupids_groupid_seq");
+	SqlSerial.getNextVal(str, "groupids_groupid_seq");
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		final int groupID = (Integer)str.get("groupids_groupid_seq");
 		
 		String sql =
 			// Conditionally drop our temporary able before creating it
@@ -160,9 +161,9 @@ final SeqRunnable rr)
 			"	where mailings.entityid = e.entityid\n" +
 			"	and mailings.groupid = " + groupID + ";\n";
 
-		nstr.execSql(sql, new RssRunnable() {
-		public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
-			if (rr != null) rr.run(groupID, nstr);
+		str.next().execSql(sql, new UpdRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			if (rr != null) rr.run(str);
 		}});
 	}});
 //System.out.println(sql);
@@ -204,16 +205,15 @@ public static void w_mailings_makereport(SqlRunner str, int mailingID)
 	str.execSql(sql);
 }
 // -------------------------------------------------------------------------------
-public static void getPrimaryEntityID(SqlRunner str, int eid, final SeqRunnable rr)
+public static void getPrimaryEntityID(SqlRunner str, int eid)
 // throws SQLException
 {
 	String sql =
 		"select primaryentityid from entities where entityid = " + eid;
-	str.execSql(sql, new RssRunnable() {
-	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
-		int pid = rss[0].getInt(1);
-		rss[0].close();
-		if (rr != null) rr.run(pid, nstr);
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		int pid = rs.getInt(1);
+		str.put("primaryentityid", pid);
 	}});
 }
 
@@ -273,14 +273,14 @@ public static String sqlCountIDList(String idSql)
 	return sql;
 }
 
-public static void countIDList(SqlRunner str, String idSql, final SeqRunnable rr)
+public static void countIDList(final String retVar, SqlRunner str, String idSql)
 //throws SQLException
 {
 	String sql = sqlCountIDList(idSql);
-	str.execSql(sql, new RssRunnable() {
-	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
-		final int nn = rss[0].getInt(1);
-		if (rr != null) rr.run(nn, nstr);
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		final int nn = rs.getInt(1);
+		str.put(retVar, nn);
 	}});
 
 //System.out.println(sql);
@@ -362,7 +362,8 @@ public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 //	return rs;
 }
 // -------------------------------------------------------------------------------
-public static void r_acct_balance(SqlRunner str, final int entityid, final int actypeid, final DoubleRunnable rr)
+public static void r_acct_balance(final String retVar, SqlRunner str,
+final int entityid, final int actypeid, final UpdRunnable rr)
 //throws SQLException
 {
 	String sql;
@@ -373,9 +374,8 @@ public static void r_acct_balance(SqlRunner str, final int entityid, final int a
 		" where entityid = " + SqlInteger.sql(entityid) +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
 		" order by dtime desc";
-	str.execSql(sql, new RssRunnable() {
-	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
-		ResultSet rs = rss[0];
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
 		double bal = 0;
 		String sdtime = null;
 		if (rs.next()) {
@@ -391,11 +391,12 @@ public static void r_acct_balance(SqlRunner str, final int entityid, final int a
 			" where entityid = " + SqlInteger.sql(entityid) +
 			" and actypeid = " + SqlInteger.sql(actypeid) +
 			(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
-		nstr.execSql(sql, new RssRunnable() {
-		public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
-			rss[0].next();
-			double bal = fbal + rss[0].getDouble(1);
-			rr.run(bal, nstr);
+		str.next().execSql(sql, new RsRunnable() {
+		public void run(SqlRunner str, ResultSet rs) throws Exception {
+			rs.next();
+			double bal = fbal + rs.getDouble(1);
+			str.put(retVar, bal);
+			rr.run(str);
 		}});
 	}});
 //	
@@ -407,7 +408,8 @@ public static void r_acct_balance(SqlRunner str, final int entityid, final int a
 //	return bal;
 }
 // -------------------------------------------------------------------------------
-public static void w_meetings_autofill(SqlRunner str, final int courseid, final TimeZone tz)
+public static void w_meetings_autofill(SqlRunner str,
+final int courseid, final TimeZone tz, final UpdRunnable rr)
 //throws SQLException
 {
 	
@@ -416,9 +418,8 @@ public static void w_meetings_autofill(SqlRunner str, final int courseid, final 
 		" from termids t, courseids c" +
 		" where t.groupid = c.termid" +
 		" and c.courseid = " + SqlInteger.sql(courseid);
-	str.execSql(sql, new RssRunnable() {
-	public void run(ResultSet[] rss, SqlRunner nstr) throws SQLException {
-		ResultSet rs = rss[0];
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws SQLException {
 		SqlTimestamp sts = new SqlTimestamp("GMT");
 		SqlDate sdt = new SqlDate(tz, true);
 		SqlTime stm = new SqlTime();
@@ -444,7 +445,7 @@ public static void w_meetings_autofill(SqlRunner str, final int courseid, final 
 				sts.toSql(ts1) + ");\n");
 			cal.add(Calendar.WEEK_OF_YEAR, 1);
 		}
-		nstr.execSql(sbuf.toString());
+		str.next().execSql(sbuf.toString(), rr);
 	}});
 }
 // --------------------------------------------------

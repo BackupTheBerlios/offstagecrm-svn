@@ -65,7 +65,7 @@ public void setValue(final Object o)
 //	// Machine is setting "value", it really means it wants to
 //	// change entities...
 //	app.runApp(new StRunnable() {
-//	public void run(java.sql.SqlRunner str) throws Throwable {
+//	public void run(java.sql.SqlRunner str) throws Exception {
 //		// We don't have the value in our table; re-load
 //		setPrimaryEntityID(st, (Integer)o);			
 //	}});
@@ -74,7 +74,7 @@ public void setValue(final Object o)
 
 //int primaryEntityID;
 public void setPrimaryEntityID(SqlRunner str, int primaryEntityID)
-throws SQLException
+//throws SQLException
 {
 //int primaryEntityID;
 	executeQuery(str,

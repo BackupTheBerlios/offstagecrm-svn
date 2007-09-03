@@ -235,7 +235,7 @@ throws SQLException
 				DB.sqlCountIDList(sql0) + ";\n" +
 				DB.sqlCountIDList(DB.removeDupsIDSql(sql0));
 			str.execSql(sql, new RssRunnable() {
-			public void run(ResultSet[] rss, SqlRunner nstr) throws SQLException {
+			public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
 				rss[0].next();
 				int fullSize = rss[0].getInt(1);
 				rss[1].next();

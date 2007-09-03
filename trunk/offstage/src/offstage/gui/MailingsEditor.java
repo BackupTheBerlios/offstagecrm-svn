@@ -71,7 +71,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 		public void doubleClicked(final int row) {
 			citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
 			app.runGui(MailingsEditor.this, new BatchRunnable() {
-			public void run(SqlRunner str) throws Throwable {
+			public void run(SqlRunner str) throws Exception {
 				// Make sure it's selected in the GUI
 				tMailingIds.getSelectionModel().setSelectionInterval(row, row);
 
@@ -219,14 +219,14 @@ public class MailingsEditor extends javax.swing.JPanel {
 
 private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bInsertActionPerformed
 	app.runGui(MailingsEditor.this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Throwable {
+	public void run(SqlRunner str) throws Exception {
 		mailing.newAddress();
 	}});
 }//GEN-LAST:event_bInsertActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 		app.runGui(MailingsEditor.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Throwable {
+		public void run(SqlRunner str) throws Exception {
 			bUndo.requestFocus();
 			mailing.doSelect(str);
 		}});
@@ -234,7 +234,7 @@ private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
 		app.runGui(MailingsEditor.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Throwable {
+		public void run(SqlRunner str) throws Exception {
 			bSave.requestFocus();
 			mailing.doUpdate(str);
 			mailing.getMailingidsDb().doSelect(str);
@@ -251,7 +251,7 @@ private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 	private void bViewLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bViewLabelsActionPerformed
 		citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
 		app.runGui(MailingsEditor.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Throwable {
+		public void run(SqlRunner str) throws Exception {
 //			throw new Exception("Bobs Exception");
 			bViewLabels.requestFocus();
 			mailing.doUpdate(str);
@@ -285,7 +285,7 @@ System.out.println("MailingsEditor: done with doUpdate");
     // End of variables declaration//GEN-END:variables
 
 	
-//	public static void main(String[] args) throws Throwable
+//	public static void main(String[] args) throws Exception
 //    {
 //		FrontApp app = new FrontApp();
 //		SqlRunner str = app.createStatement();

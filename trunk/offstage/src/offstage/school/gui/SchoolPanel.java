@@ -39,6 +39,7 @@ import citibob.text.*;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.*;
 import java.awt.*;
+import offstage.db.*;
 
 /**
  *
@@ -62,7 +63,10 @@ JoinedSchemaBufDbModel enrolledDb;
 IntKeyedDbModel actransDb;
 boolean studentDirty;		// Does the student record needs saving?
 
-MultiDbModel all = new MultiDbModel() {
+// ====================================================
+MultiDbModel all = new AllDbModel();
+class AllDbModel extends MultiDbModel
+{
 	public void doSelect(SqlRunner str)
 	{
 		studentDm.doSelect(str);
@@ -93,37 +97,42 @@ MultiDbModel all = new MultiDbModel() {
 			" and courseids.termid = " + SqlInteger.sql(termid) +
 			" and enrollments.entityid = " + SqlInteger.sql(entityid));
 	}
-	public void doUpdate(SqlRunner str) throws java.sql.SQLException
+	void superDoUpdate(SqlRunner str)
+		{ super.doUpdate(str); }
+	public void doUpdate(SqlRunner str)
 	{
 		if (schoolRm.get("parentid") == null || schoolRm.get("adultid") == null) {
 			JOptionPane.showMessageDialog(SchoolPanel.this,
 				"Cannot save record.  You must have a payer\nand parent in order to save.");
 			return;
 		}
-		
-		
-		// Transfer main parent over as primary entity id (family relationships)
-		studentRm.set("primaryentityid",
-			offstage.db.DB.getPrimaryEntityID(st, (Integer)schoolRm.get("parentid")));
-		
-		super.doUpdate(st);
 
 		// Make sure payer has record in school system
 		Integer payerid = (Integer)schoolRm.get("adultid");
-		if (payerid != null && !SchoolDB.isInSchool(st, payerid)) {
-			SchoolDB.w_payer_create(st, payerid);
-		}
-		
-		// Calculate the tuition
-		int col = schoolRm.findColumn("adultid");
-		Integer Oldadultid = (Integer)schoolRm.getOrigValue(col);
-		Integer Adultid = (Integer)schoolRm.get(col);
+		if (payerid != null) str.execSql(SchoolDB.createPayerSql(payerid));
 
-		actransDb.doUpdate(st);
-		int termid = (Integer)vTermID.getValue();
-		if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(st, termid, Oldadultid);
-		if (Adultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(st, termid, Adultid);	}
-};
+		// Transfer main parent over as primary entity id (family relationships)
+		offstage.db.DB.getPrimaryEntityID(str, (Integer)schoolRm.get("parentid"));
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			studentRm.set("primaryentityid", str.get("primaryentityid"));
+
+			// Do the rest
+			superDoUpdate(str.next());
+
+			// Calculate the tuition
+			int col = schoolRm.findColumn("adultid");
+			Integer Oldadultid = (Integer)schoolRm.getOrigValue(col);
+			Integer Adultid = (Integer)schoolRm.get(col);
+
+			actransDb.doUpdate(str.next());
+			int termid = (Integer)vTermID.getValue();
+			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Oldadultid, null);
+			if (Adultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Adultid, null);
+		}});
+	}
+}
+// ====================================================
 
 int getTermID(){
 	int termid = (Integer)vTermID.getValue();
@@ -180,15 +189,15 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		// Do something when user moves to a different student
 		public void curRowChanged(final int col) {
 			setIDDirty(true);
-			fapp.runApp(new StRunnable() {
+			fapp.runApp(new BatchRunnable() {
 			public void run(SqlRunner str) throws Exception {
 				Integer ID = (Integer)studentRm.get(col);
 				if (ID == null) return;
 				String lastname = (String)studentRm.get(studentRm.findColumn("lastname"));
-				vPayerID.setSearch(st, lastname);
+				vPayerID.setSearch(str, lastname);
 //				vHouseholdID.setSearch(st, lastname);
-				vParentID.setSearch(st, lastname);
-				vParent2ID.setSearch(st, lastname);
+				vParentID.setSearch(str, lastname);
+				vParent2ID.setSearch(str, lastname);
 			}});
 		}
 	});
@@ -196,11 +205,11 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	// Change person when user clicks on family...
 	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(final PropertyChangeEvent evt) {
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)evt.getNewValue();
 			if (EntityID == null) return;
-			changeStudent(st, EntityID);
+			changeStudent(str, EntityID);
 		}});
 	}});
 
@@ -219,7 +228,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	// Payer
 	final SchemaBufRowModel payerRm = new SchemaBufRowModel(payerDm.personDb.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(PayerPanel, payerRm, smap);
-	payerPhonePanel.initRuntime(st, payerDm.phoneDb.getSchemaBuf(),
+	payerPhonePanel.initRuntime(str, payerDm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, smap);
 	payerCCInfo.initRuntime(fapp.getKeyRing());
@@ -279,12 +288,12 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		public void valueChanged(int col) {}
 		// Do something when user saves and re-loads
 		public void curRowChanged(final int col) {
-			fapp.runApp(new StRunnable() {
+			fapp.runApp(new BatchRunnable() {
 			public void run(SqlRunner str) throws Exception {
 
 				Integer ID = (Integer)schoolRm.get(col);
 				if (ID == null) return;
-				changeAccount(st, ID);
+				changeAccount(str, ID);
 			}});
 		}
 	});
@@ -317,12 +326,12 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	// Parents
 	SchemaBufRowModel parentRm = new SchemaBufRowModel(parentDm.personDb.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(ParentPanel, parentRm, smap);
-	ParentPhonePanel.initRuntime(st, parentDm.phoneDb.getSchemaBuf(),
+	ParentPhonePanel.initRuntime(str, parentDm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, smap);
 	SchemaBufRowModel parent2Rm = new SchemaBufRowModel(parent2Dm.personDb.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(Parent2Panel, parent2Rm, smap);
-	Parent2PhonePanel.initRuntime(st, parent2Dm.phoneDb.getSchemaBuf(),
+	Parent2PhonePanel.initRuntime(str, parent2Dm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, smap);
 	RowModel.ColListener idDirtyListener = new RowModel.ColAdapter() {
@@ -339,34 +348,34 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	searchBox.initRuntime(fapp);
 	searchBox.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
-		fapp.runApp(new StRunnable() {
+		fapp.runApp(new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)searchBox.getValue();
 			if (EntityID == null) return;
 			int entityid = EntityID;
-			changeStudent(st, entityid);
+			changeStudent(str, entityid);
 		}});
 	}});
 
 	// Set up terms selector
-	vTermID.setKeyedModel(new DbKeyedModel(st, fapp.getDbChange(), "termids",
+	vTermID.setKeyedModel(new DbKeyedModel(str, fapp.getDbChange(), "termids",
 		"select groupid, name from termids where iscurrent order by firstdate desc"));
 	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
-		fapp.runApp(new StRunnable() {
+		fapp.runApp(new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			termChanged(st);
+			termChanged(str);
 		}});
 	}});
 
 //	vStudentID.setValue((Integer)12633);
-	changeStudent(st, 12633);
+	changeStudent(str, 12633);
 //	all.setKey(new Integer(12633));
-	all.doSelect(st);
+	all.doSelect(str);
 	
 }
 
-public void changeStudent(SqlRunner str, int entityid) throws SQLException
+public void changeStudent(SqlRunner str, int entityid)// throws SQLException
 {
 	// See if old student needs saving...
 	if (studentDirty || all.valueChanged()) {
@@ -383,53 +392,53 @@ public void changeStudent(SqlRunner str, int entityid) throws SQLException
         dialog.dispose();
 		
 		if (pane.getValue() == options[0]) {
-			all.doUpdate(st);		// Save
+			all.doUpdate(str);		// Save
 		} else if (pane.getValue() == options[1]) {
 		} else {
 			return;		// cancel
 		}
 	}
 	
-	// Make sure person has record in school system
-	if (!SchoolDB.isInSchool(st, entityid)) {
-		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
-			"The person or payer you selected is not yet\n" +
-			"in the school system.\n" +
-			"Should that person be added now?",
-			"Person Not in School", JOptionPane.YES_NO_OPTION)
-			!= JOptionPane.YES_OPTION) return;
-		SchoolDB.w_student_create(st, entityid);
-//		SchoolDB.w_payer_create(st, entityid);
-//		String sql =
-//			" insert into entities_school (entityid)" +
-//			" values (" + SqlInteger.sql(entityid) + ")";
-//		st.executeUpdate(sql);
-	}
+//	if (!SchoolDB.isInSchool(st, entityid)) {
+//		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
+//			"The person or payer you selected is not yet\n" +
+//			"in the school system.\n" +
+//			"Should that person be added now?",
+//			"Person Not in School", JOptionPane.YES_NO_OPTION)
+//			!= JOptionPane.YES_OPTION) return;
+//		SchoolDB.w_student_create(st, entityid);
+//	}
 	
-	// Ensure a registration record for this term
-	SchoolDB.w_student_register(st, getTermID(), entityid, fapp.sqlDate);
+	String sql =
+		// Make sure person has record in school system
+		SchoolDB.createStudentSql(entityid) + ";\n" +
+		// Ensure a registration record for this term
+		SchoolDB.registerStudentSql(getTermID(), entityid, fapp.sqlDate) + "\n;";
+	str.execSql(sql);
 
 	// Go to that record
 //	vHouseholdID.setEntityID(entityid);	// So it knows when we try to emancipate.
 	all.setKey(entityid);
-	all.doSelect(st);
+	all.doSelect(str);
 }
 
 public void changeAccount(SqlRunner str, int payerid) throws SQLException
 {
 
 	actransDb.setKey(payerid);
-	refreshAccount(st);
+	refreshAccount(str);
 }
 public void refreshAccount(SqlRunner str) throws SQLException
 {
-	actransDb.doSelect(st);
+	actransDb.doSelect(str);
 	
 	// Set up account balance
 	acbal.setJType(new JavaJType(Double.class),
-		new FormatFormatter(java.text.NumberFormat.getCurrencyInstance()));
-	acbal.setValue(new Double(offstage.db.DB.r_acct_balance(
-		st, actransDb.getIntKey(), ActransSchema.AC_SCHOOL)));
+		new FormatFormatter(java.text.NumberFormat.getCurrencyInstance()));		
+	DB.r_acct_balance("bal", str, actransDb.getIntKey(), ActransSchema.AC_SCHOOL,
+	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
+		acbal.setValue(str.get("bal"));
+	}});
 }
 
 void termChanged(SqlRunner str) throws SQLException
@@ -437,9 +446,9 @@ void termChanged(SqlRunner str) throws SQLException
 	Integer eid = (Integer)studentRm.get("entityid");
 	
 	// Ensure a registration record for this term
-	SchoolDB.w_student_register(st, getTermID(), eid, fapp.sqlDate);
+	str.execSql(SchoolDB.registerStudentSql(getTermID(), eid, fapp.sqlDate));
 	
-	termregsDm.doUpdate(st);
+	termregsDm.doUpdate(str);
 }
 
 void setIDDirty(boolean dirty)
@@ -2523,26 +2532,26 @@ void setIDDirty(boolean dirty)
 
 	private void bConfirmationLettersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bConfirmationLettersActionPerformed
 	{//GEN-HEADEREND:event_bConfirmationLettersActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
-			YDPConfirmationLetter.doReport(fapp, st, termid);
+			YDPConfirmationLetter.doReport(str, fapp, termid);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bConfirmationLettersActionPerformed
 
 	private void bRecalcTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRecalcTuitionActionPerformed
 	{//GEN-HEADEREND:event_bRecalcTuitionActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			SchoolDB.w_tuitiontrans_recalcAllTuitions(st, getTermID());
+			SchoolDB.w_tuitiontrans_recalcAllTuitions(str, getTermID());
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bRecalcTuitionActionPerformed
 
 	private void bParentLabelsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bParentLabelsActionPerformed
 	{//GEN-HEADEREND:event_bParentLabelsActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			String idSql =
@@ -2564,10 +2573,12 @@ void setIDDirty(boolean dirty)
 System.out.println("==================");
 System.out.println(sql);
 System.out.println("==================");
-			ResultSet rs = st.executeQuery(sql); // + LabelReport.cleanupSql());
-			JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
-			ReportOutput.viewJasperReport(fapp, "AddressLabels.jasper", jrdata, new HashMap());
-			rs.close();
+			str.execSql(sql, new RsRunnable() {
+			public void run(SqlRunner str, ResultSet rs) throws Exception {
+				JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
+				ReportOutput.viewJasperReport(fapp, "AddressLabels.jasper", jrdata, new HashMap());
+				rs.close();
+			}});
 //			st.executeUpdate(LabelReport.cleanupSql());
 		}});
 // TODO add your handling code here:
@@ -2575,21 +2586,21 @@ System.out.println("==================");
 
 	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
 	{//GEN-HEADEREND:event_jButton4ActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
-			AcctStatement.doAccountStatements(fapp, st, termid, -1, new java.util.Date());
+			AcctStatement.doAccountStatements(str, fapp, termid, -1, new java.util.Date());
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_jButton4ActionPerformed
 
 	private void bAcctStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAcctStatementActionPerformed
 	{//GEN-HEADEREND:event_bAcctStatementActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			Integer payerid = (Integer)schoolRm.get("adultid");
-			AcctStatement.doAccountStatements(fapp, st, termid, payerid, new java.util.Date());
+			AcctStatement.doAccountStatements(str, fapp, termid, payerid, new java.util.Date());
 		}});
 	}//GEN-LAST:event_bAcctStatementActionPerformed
 
@@ -2612,10 +2623,10 @@ System.out.println("==================");
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
 	{//GEN-HEADEREND:event_jButton1ActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			RollBook report = new RollBook(fapp, getTermID());
-			report.doSelect(st);
+			report.doSelect(str);
 			JTypeTableModel model = report.newTableModel();
 
 			JRDataSource jrdata = new JRTableModelDataSource(model);
@@ -2625,21 +2636,21 @@ System.out.println("==================");
 
 	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
 	{//GEN-HEADEREND:event_jButton3ActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			Integer eid = (Integer)studentRm.get("entityid");
-			doStudentSchedules(st, getTermID(), eid);
+			doStudentSchedules(str, getTermID(), eid);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_jButton3ActionPerformed
 
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
 	{//GEN-HEADEREND:event_jButton2ActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 //			Integer eid = (Integer)studentRm.get("entityid");
 			int termid = (Integer)vTermID.getValue();
-			doStudentSchedules(st, termid, -1);
+			doStudentSchedules(str, termid, -1);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_jButton2ActionPerformed
@@ -2648,7 +2659,7 @@ void doStudentSchedules(SqlRunner str, int termid, int entityid)
 throws Exception
 {
 	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
-		rsmod.executeQuery(st, offstage.reports.StudentSchedule.getSql(termid, entityid));
+		rsmod.executeQuery(str, offstage.reports.StudentSchedule.getSql(termid, entityid));
 
 	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"};
 	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
@@ -2667,32 +2678,32 @@ throws Exception
 
 void newAdultAction(final String colName)
 {
-	fapp.runGui(SchoolPanel.this, new StRunnable() {
+	fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
-		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
+		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
 		wizard.runWizard();
 		Integer eid = (Integer)wizard.getVal("entityid");
 		if (eid != null) {
 			schoolRm.set(colName, eid);
-			all.doUpdate(st);
-			all.doSelect(st);
+			all.doUpdate(str);
+			all.doSelect(str);
 		}
 	}});
 }
 
 	private void bNewHouseholdActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewHouseholdActionPerformed
 	{//GEN-HEADEREND:event_bNewHouseholdActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
-			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
+			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
 			wizard.runWizard();
 			Integer eid = (Integer)wizard.getVal("entityid");
 			if (eid != null) {
 				studentRm.set("primaryentityid", eid);
-				all.doUpdate(st);
-				all.doSelect(st);
+				all.doUpdate(str);
+				all.doSelect(str);
 			}
 		}});
 // TODO add your handling code here:
@@ -2706,15 +2717,15 @@ void newAdultAction(final String colName)
 
 	private void bNewStudentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewStudentActionPerformed
 	{//GEN-HEADEREND:event_bNewStudentActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
-			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
+			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
 			wizard.runWizard();
 			Integer eid = (Integer)wizard.getVal("entityid");
 			if (eid != null) {
-				SchoolDB.w_student_create(st, eid);		// Add to school table as well.
-				changeStudent(st, eid);
+				str.execSql(SchoolDB.createStudentSql(eid));
+				changeStudent(str, eid);
 			}
 		}});
 	}//GEN-LAST:event_bNewStudentActionPerformed
@@ -2727,7 +2738,7 @@ void newAdultAction(final String colName)
 			"Remove Enrollment", JOptionPane.YES_NO_OPTION)
 			== JOptionPane.NO_OPTION) return;
 		
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			
 			int row = enrollments.getSelectedRow();
@@ -2736,10 +2747,10 @@ void newAdultAction(final String colName)
 			CitibobTableModel model = enrollments.getModelU();
 			int courseid = (Integer)model.getValueAt(row, model.findColumn("enrollments_courseid"));
 			int entityid = (Integer)model.getValueAt(row, model.findColumn("enrollments_entityid"));
-			st.executeUpdate("delete from enrollments" +
+			str.execSql("delete from enrollments" +
 				" where courseid = " + SqlInteger.sql(courseid) +
 				" and entityid = " + SqlInteger.sql(entityid));
-			enrolledDb.doSelect(st);
+			enrolledDb.doSelect(str);
 			studentDirty = true;
 		}});
 		
@@ -2748,10 +2759,10 @@ void newAdultAction(final String colName)
 
 	private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddEnrollmentActionPerformed
 	{//GEN-HEADEREND:event_bAddEnrollmentActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			enrolledDb.doUpdate(st);
-			Wizard wizard = new EnrollWizard(fapp, st, null);
+			enrolledDb.doUpdate(str);
+			Wizard wizard = new EnrollWizard(fapp, null);
 			TypedHashMap v = new TypedHashMap();
 				v.put("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
 				v.put("sperson", vStudentID.getText());
@@ -2763,7 +2774,7 @@ void newAdultAction(final String colName)
 //		"courseroles", "courseroleid", "name", "orderid")));
 
 			wizard.runWizard("add", v);
-			enrolledDb.doSelect(st);
+			enrolledDb.doSelect(str);
 			studentDirty = true;
 		}});
 // TODO add your handling code here:
@@ -2777,7 +2788,7 @@ void newAdultAction(final String colName)
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			studentRm.set("primaryentityid", all.getIntKey());
 		}});
@@ -2786,73 +2797,73 @@ void newAdultAction(final String colName)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			all.doSelect(st);
+			all.doSelect(str);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bUndoActionPerformed
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable() {
+		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			all.doUpdate(st);
-			all.doSelect(st);
+			all.doUpdate(str);
+			all.doSelect(str);
 		}});
 	}//GEN-LAST:event_bSaveActionPerformed
 
 	private void bAdjustActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAdjustActionPerformed
 	{//GEN-HEADEREND:event_bAdjustActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable()
+		fapp.runGui(SchoolPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				Wizard wizard = new TransactionWizard(fapp, st, null,
+				Wizard wizard = new TransactionWizard(fapp, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
 				wizard.runWizard("adjpayment");
-				actransDb.doSelect(st);
+				actransDb.doSelect(str);
 			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bAdjustActionPerformed
 
 	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
 	{//GEN-HEADEREND:event_bCcActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable()
+		fapp.runGui(SchoolPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				Wizard wizard = new TransactionWizard(fapp, st, null,
+				Wizard wizard = new TransactionWizard(fapp, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
 				wizard.runWizard("ccpayment");
-				actransDb.doSelect(st);
+				actransDb.doSelect(str);
 			}});
 	}//GEN-LAST:event_bCcActionPerformed
 
 	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
 	{//GEN-HEADEREND:event_bCheckActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable()
+		fapp.runGui(SchoolPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				Wizard wizard = new TransactionWizard(fapp, st, null,
+				Wizard wizard = new TransactionWizard(fapp, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
 				wizard.runWizard("checkpayment");
-				actransDb.doSelect(st);
+				actransDb.doSelect(str);
 			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bCheckActionPerformed
 
 	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
 	{//GEN-HEADEREND:event_bCashActionPerformed
-		fapp.runGui(SchoolPanel.this, new StRunnable()
+		fapp.runGui(SchoolPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				Wizard wizard = new TransactionWizard(fapp, st, null,
+				Wizard wizard = new TransactionWizard(fapp, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
 				wizard.runWizard("cashpayment");
-				actransDb.doSelect(st);
+				actransDb.doSelect(str);
 			}});
 	}//GEN-LAST:event_bCashActionPerformed
 	
@@ -3076,21 +3087,21 @@ void newAdultAction(final String colName)
     private citibob.swing.typed.JTypedTextField zip2;
     private citibob.swing.typed.JTypedTextField zip3;
     // End of variables declaration//GEN-END:variables
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	SqlRunner str = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-
-	SchoolPanel panel = new SchoolPanel();
-	panel.initRuntime(fapp, st);
-	
-	JFrame frame = new JFrame();
-	frame.setSize(600,800);
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.getContentPane().add(panel);
-
-	frame.setVisible(true);
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	SqlRunner str = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//
+//	SchoolPanel panel = new SchoolPanel();
+//	panel.initRuntime(fapp, st);
+//	
+//	JFrame frame = new JFrame();
+//	frame.setSize(600,800);
+//	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//	frame.getContentPane().add(panel);
+//
+//	frame.setVisible(true);
+//}
 
 }

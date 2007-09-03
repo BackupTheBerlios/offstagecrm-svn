@@ -54,7 +54,7 @@ FrontApp fapp;
 int courseid;
 
 	/** Creates new form CompleteStatusPanel */
-	public MeetingsWiz(FrontApp xfapp, Statement xst, int termid, int courseid)
+	public MeetingsWiz(FrontApp xfapp, SqlRunner str, int termid, int courseid)
 	throws SQLException
 	{
 		super("Edit Meetings");
@@ -63,15 +63,17 @@ int courseid;
 		this.fapp = xfapp;
 		
 		// Set up terms selector
-		ResultSet rs;
-		rs = xst.executeQuery("select name from termids where groupid = " + SqlInteger.sql(termid));	
-		rs.next();
-		term.setText(rs.getString(1));
-		rs.close();
-		rs = xst.executeQuery("select name from courseids where courseid = " + SqlInteger.sql(courseid));	
-		rs.next();
-		course.setText(rs.getString(1));
-		rs.close();
+		String sql =
+			" select name from termids where groupid = " + SqlInteger.sql(termid) + ";\n" +
+			" select name from courseids where courseid = " + SqlInteger.sql(courseid) + ";\n";
+		str.execSql(sql, new RssRunnable() {
+		public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+			ResultSet rs;
+			rs = rss[0]; rs.next();
+			term.setText(rs.getString(1));
+			rs = rss[1]; rs.next();
+			course.setText(rs.getString(1));
+		}});
 		
 //		term.setJType(new DbKeyedModel(xst, fapp.getDbChange(), "termids",
 //			"select termid, name from termids where iscurrent order by firstdate"), "<none>");
@@ -92,7 +94,7 @@ int courseid;
 		meetings.setRenderEditU("dtstart", swing);
 		meetings.setRenderEditU("dtnext", swing);
 		
-		meetingsSb.doSelect(xst);
+		meetingsSb.doSelect(str);
 	}
 	
 	/** After the Wiz is done running, report its output into a Map. */
@@ -105,11 +107,11 @@ int courseid;
 
 	public void saveCur()
 	{
-		fapp.runGui(MeetingsWiz.this, new StRunnable() {
+		fapp.runGui(MeetingsWiz.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			if (meetingsSb.valueChanged()) {
-				meetingsSb.doUpdate(st);
-				meetingsSb.doSelect(st);
+				meetingsSb.doUpdate(str);
+				meetingsSb.doSelect(str);
 			}
 		}});
 	}
@@ -232,10 +234,12 @@ int courseid;
 
 	private void bAutoFillActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAutoFillActionPerformed
 	{//GEN-HEADEREND:event_bAutoFillActionPerformed
-		fapp.runGui(MeetingsWiz.this, new StRunnable() {
+		fapp.runGui(MeetingsWiz.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			offstage.db.DB.w_meetings_autofill(st, courseid, fapp.getTimeZone());
-			meetingsSb.doSelect(st);
+			offstage.db.DB.w_meetings_autofill(str, courseid, fapp.getTimeZone(),
+			new UpdRunnable() { public void run(SqlRunner str) throws Exception {
+				meetingsSb.doSelect(str.next());
+			}});
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bAutoFillActionPerformed
@@ -253,10 +257,10 @@ int courseid;
 
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
-		fapp.runGui(MeetingsWiz.this, new StRunnable() {
+		fapp.runGui(MeetingsWiz.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception
 		  {
-			  meetingsSb.doSelect(st);
+			  meetingsSb.doSelect(str);
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bRestoreActionPerformed

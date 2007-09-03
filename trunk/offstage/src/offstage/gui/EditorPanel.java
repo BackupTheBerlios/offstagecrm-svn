@@ -166,7 +166,7 @@ FrontApp app;
 	private void bNewOrgActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewOrgActionPerformed
 	{//GEN-HEADEREND:event_bNewOrgActionPerformed
 	app.runGui(this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Throwable {
+	public void run(SqlRunner str) throws Exception {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
 		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
@@ -181,14 +181,14 @@ FrontApp app;
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 	app.runGui(this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Throwable {
+	public void run(SqlRunner str) throws Exception {
 		model.doSelect(str);
 	}});
 	}//GEN-LAST:event_bUndoActionPerformed
 
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
 	app.runGui(this, "admin", new BatchRunnable() {
-	public void run(SqlRunner str) throws Throwable {
+	public void run(SqlRunner str) throws Exception {
 		if (JOptionPane.showConfirmDialog(EditorPanel.this,
 			"Are you sure you wish to permanently delete this record?",
 			"Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -200,7 +200,7 @@ private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewPersonActionPerformed
 	app.runGui(this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Throwable {
+	public void run(SqlRunner str) throws Exception {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
 		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
@@ -215,7 +215,7 @@ private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 
 private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
 	app.runGui(this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Throwable {
+	public void run(SqlRunner str) throws Exception {
 		model.doUpdate(str);
 		model.doSelect(str);
 	}});
@@ -233,7 +233,7 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private offstage.gui.SimpleSearchPanel simpleSearch;
     // End of variables declaration//GEN-END:variables
 
-//	public static void main(String[] args) throws Throwable
+//	public static void main(String[] args) throws Exception
 //    {
 //
 //

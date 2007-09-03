@@ -68,7 +68,7 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 		" select count(*) as npayments from ccpayments" +
 		" where ccbatchid is null and ccinfo is not null";
 	str.execSql(sql, new RsRunnable() {
-	public void run(ResultSet rs) throws SQLException {
+	public void run(SqlRunner str, ResultSet rs) throws SQLException {
 		rs.next();
 		npayments.setValue(rs.getInt(1));
 		rs.close();

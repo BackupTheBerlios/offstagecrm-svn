@@ -119,7 +119,7 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 		" and isgood" +
 		" order by country, zip";
 	str.execSql(sql, new RsRunnable() {
-	public void run(ResultSet rs) throws Exception {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
 		InputStream in = null;
 		try {
 			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");

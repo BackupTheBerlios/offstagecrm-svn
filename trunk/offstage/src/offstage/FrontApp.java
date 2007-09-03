@@ -90,6 +90,7 @@ public SwingPrefs getSwingPrefs() { return swingPrefs; }
 public QueryLogger getLogger() { return logger; }
 public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
+public ExpHandler getExpHandler() { return expHandler; }
 public File getConfigDir() { return configDir; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
 /** Only runs the action if logged-in user is a member of the correct group.
@@ -188,7 +189,7 @@ Properties loadProps() throws IOException
 }
 // -------------------------------------------------------
 public FrontApp(ConnPool pool, javax.swing.text.Document stdoutDoc)
-throws Throwable
+throws Exception
 //SQLException, java.io.IOException, javax.mail.internet.AddressException,
 //java.security.GeneralSecurityException
 {
@@ -233,7 +234,7 @@ throws Throwable
 	String sql = "select entityid from dblogins where username = " +
 		SqlString.sql(System.getProperty("user.name"));
 	str.execSql(sql, new RsRunnable() {
-	public void run(ResultSet rs) throws SQLException {
+	public void run(SqlRunner str, ResultSet rs) throws SQLException {
 		if (rs.next()) {
 			loginID = rs.getInt("entityid");
 		} else {
@@ -248,7 +249,7 @@ throws Throwable
 		" where g.entityid=" + SqlInteger.sql(loginID) +
 		" and g.groupid = gid.groupid";
 	str.execSql(sql, new RsRunnable() {
-	public void run(ResultSet rs) throws SQLException {
+	public void run(SqlRunner str, ResultSet rs) throws SQLException {
 		while (rs.next()) loginGroups.add(rs.getString("name"));
 		rs.close();
 	}});

@@ -52,7 +52,7 @@ protected ConsoleFrame consoleFrame;
 
 
     /** Creates a new instance of FrameSet */
-    public FrameSet() throws Throwable {
+    public FrameSet() throws Exception {
 new com.Ostermiller.util.CSVPrinter(System.out);
 
 //System.out.println(System.getProperty("os.name"));
@@ -87,7 +87,7 @@ app.getFullEntityDm().doSelect(str);
 
 
 	
-	public static void main(String[] args) throws Throwable
+	public static void main(String[] args) throws Exception
     {
 		System.setProperty("swing.metalTheme", "ocean");
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");

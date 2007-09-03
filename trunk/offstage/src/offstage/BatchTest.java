@@ -38,7 +38,7 @@ public static void processResults(ResultSet[] rss) throws SQLException
 	}
 }
 
-public static void main(String[] args) throws Throwable
+public static void main(String[] args) throws Exception
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	Statement st = pool.checkout().createStatement();
@@ -97,6 +97,6 @@ public static void main(String[] args) throws Throwable
 
 }
 
-    protected void finalize() throws Throwable {
+    protected void finalize() throws Exception {
     }
 }

@@ -49,7 +49,7 @@ offstage.FrontApp fapp;
 			fapp.getSchema("termids"), fapp.getDbChange());
 		tm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent)");
 		tm.setOrderClause("firstdate");
-		tm.doSelect(st);
+		tm.doSelect(str);
 		
 //		termPNC = new StatusPNC();
 		termPNC.initRuntime(tm,

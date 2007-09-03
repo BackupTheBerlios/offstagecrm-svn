@@ -59,12 +59,11 @@ addState(new State("", "", "") {
 public EditCoursesWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("Edit Courses", xfapp, xframe, "termlist");
-	this.st = xst;
 // ---------------------------------------------
 addState(new State("termlist", null, "courselist") {
 	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new JPanelWizWrapper(frame, null, ">> Courses",
-			  new TermsWiz(fapp, st)); }
+			  new TermsWiz(fapp, str)); }
 	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
@@ -77,7 +76,7 @@ addState(new State("courselist", "termlist", "meetings") {
 	{
 		Integer Termid = (Integer)v.get("termid");
 		return new JPanelWizWrapper(frame, "", ">> Meetings",
-			  new CoursesWiz(fapp, st, Termid));
+			  new CoursesWiz(fapp, str, Termid));
 	}
 	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
@@ -92,7 +91,7 @@ addState(new State("meetings", "courselist", null) {
 		Integer Termid = (Integer)v.get("termid");
 		Integer Courseid = (Integer)v.get("courseid");
 		return new JPanelWizWrapper(frame, "", "Finished",
-			  new MeetingsWiz(fapp, st, Termid, Courseid));
+			  new MeetingsWiz(fapp, str, Termid, Courseid));
 	}
 	public void process(citibob.sql.SqlRunner str) throws Exception
 		{}

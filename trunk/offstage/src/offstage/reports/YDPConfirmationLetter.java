@@ -46,25 +46,18 @@ public static String getSql(int termid)
 	return sql;
 }
 
-public static void doReport(citibob.app.App app, Statement st, int termid)
+public static void doReport(SqlRunner str, final citibob.app.App app, int termid)
 throws Exception
 {
-	RSTableModel rsmod = new RSTableModel(app.getSqlTypeSet());
-		rsmod.executeQuery(st, getSql(termid));
-
-	String[] gcols = new String[] {"line1", "line2", "line3", "city", "state", "zip", "firstname"};
-	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
-//	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
-//	SFormatter[] sformatters = {
-//		new JDateSFormatter("EEEEE, MMMMM d"),
-//		new JDateSFormatter("yyyy"),
-//		new JDateSFormatter("yyyy")
-//	};
-//	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
-//		"Save Student Schedules",
-//		group, sformattercols, sformatters);
-	ReportOutput.viewJodReport(app, "YDPConfirmationLetter.odt",
-		group, null, null);//sformattercols, sformatters);
+	final RSTableModel rsmod = new RSTableModel(app.getSqlTypeSet());
+	rsmod.executeQuery(str, getSql(termid));
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		String[] gcols = new String[] {"line1", "line2", "line3", "city", "state", "zip", "firstname"};
+		TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
+		ReportOutput.viewJodReport(app, "YDPConfirmationLetter.odt",
+			group, null, null);//sformattercols, sformatters);
+	}});
 }
 
 }

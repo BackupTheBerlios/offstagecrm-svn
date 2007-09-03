@@ -43,7 +43,7 @@ public class HouseholdIDEditableLabel extends EntityIDEditableLabel
 
 int entityid;		// EntityID of the person having this widget.
 
-void setSuperValue(Object o)
+void superSetValue(Object o)
 { super.setValue(o); }
 
 /** Called when parent record changes. */
@@ -65,13 +65,13 @@ public void setValue(Object o)
 	}
 
 	// Make sure we're only pointing to a head of household.
-	app.runApp(new BatchRunnable() {
-	public void run(SqlRunner str) throws SQLException {
-		offstage.db.DB.getPrimaryEntityID(str, ID, new SeqRunnable() {
-		public void run(int pid, SqlRunner nstr) {
-			setSuperValue(pid);
-		}});
-	}});
+//	app.runApp(new BatchRunnable() {
+//	public void run(SqlRunner str) throws SQLException {
+		
+	SqlBatch str = new SqlBatch();
+	offstage.db.DB.getPrimaryEntityID(str, ID);
+	str.exec(app);
+	super.setValue((Integer)str.get("primaryentityid"));
 }
 }
 

@@ -109,7 +109,8 @@ System.out.println("qsc = " + qsc);
 }
 // ------------------------------------------------------
 /** Returns the mailing id */
-public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema, final SeqRunnable rr) throws SQLException
+public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema,
+final UpdRunnable rr) throws SQLException
 {
 	String eqXml = toXML();
 	String eqSql = getSql(schema);

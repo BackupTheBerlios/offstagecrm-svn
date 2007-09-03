@@ -82,14 +82,16 @@ addState(new State("newquery", null, "editquery") {
 	}
 	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
-		SqlSerial.getNextVal(str, "equeries_equeryid_seq", new SeqRunnable() {
-		public void run(int equeryID, SqlRunner nstr) {
+		SqlSerial.getNextVal(str, "equeries_equeryid_seq");
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) {
+			int equeryID = (Integer)str.get("equeries_equeryid_seq");
 			v.put("equeryid", equeryID);
 			String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
 				SqlInteger.sql(equeryID) + ", " +
 				SqlString.sql(v.getString("queryname")) +
 				", '', now())";
-			nstr.execSql(sql);
+			str.next().execSql(sql);
 		}});
 	}
 });
@@ -120,10 +122,11 @@ addState(new State("reporttype", "editquery", null) {
 		EQuery equery = (EQuery)v.get("equery");
 		String equeryName = v.getString("equeryname");
 		if ("mailinglabels".equals(submit)) {
-			equery.makeMailing(str, equeryName, fapp.getEquerySchema(), new SeqRunnable() {
-			public void run(int mailingID, SqlRunner nstr) {
+			equery.makeMailing(str, equeryName, fapp.getEquerySchema(), new UpdRunnable() {
+			public void run(SqlRunner str) {
+				final int mailingID = (Integer)str.get("groupids_groupid_seq");
 				fapp.getMailingModel().setKey(mailingID);
-				fapp.getMailingModel().doSelect(nstr);
+				fapp.getMailingModel().doSelect(str.next());
 				fapp.setScreen(FrontApp.MAILINGS_SCREEN);
 			}});
 			state = stateRec.next;

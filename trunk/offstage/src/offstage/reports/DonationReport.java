@@ -52,12 +52,11 @@ public class DonationReport extends MultiTableDbModel
 //SqlDbModel main;
 String idSql;		// Set of IDs for our report
 
-public void doSelect(Statement st)
-throws java.sql.SQLException
+public void doSelect(SqlRunner str)
 {
-	DB.createIDList(st, idSql, "ids_donor");
-	super.doSelect(st);
-	st.executeUpdate("drop table ids_donor");
+	DB.createIDList(str, idSql, "ids_donor");
+	super.doSelect(str);
+	str.execSql("drop table ids_donor");
 }
 	
 /** Creates a new instance of DonorReport */

@@ -53,7 +53,7 @@ IntKeyedDbModel coursesSb;
 FrontApp fapp;
 
 	/** Creates new form CompleteStatusPanel */
-	public CoursesWiz(FrontApp xfapp, Statement xst, int termid)
+	public CoursesWiz(FrontApp xfapp, SqlRunner str, int termid)
 	throws SQLException
 	{
 		super("Edit Courses");
@@ -61,13 +61,13 @@ FrontApp fapp;
 		this.fapp = xfapp;
 		
 		// Set up terms selector
-		terms.setKeyedModel(new DbKeyedModel(xst, fapp.getDbChange(), "termids",
+		terms.setKeyedModel(new DbKeyedModel(str, fapp.getDbChange(), "termids",
 			"select groupid, name from termids where iscurrent order by firstdate"));
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 	    public void propertyChange(PropertyChangeEvent evt) {
-			fapp.runApp(new StRunnable() {
+			fapp.runApp(new BatchRunnable() {
 			public void run(SqlRunner str) throws Exception {
-				termChanged(st);
+				termChanged(str);
 			}});
 		}});
 		
@@ -76,7 +76,7 @@ FrontApp fapp;
 			"termid", fapp.getDbChange());
 		coursesSb.setOrderClause("dayofweek, tstart, name");
 		
-		termChanged(xst);
+		termChanged(str);
 //		terms.setSelectedIndex(0);		// Should throw a value changed event
 		courses.setModelU(coursesSb.getSchemaBuf(),
 			new String[] {"Name", "Day", "Start", "End", "Enroll Limit"},
@@ -110,9 +110,12 @@ FrontApp fapp;
 
 void termChanged(SqlRunner str) throws SQLException
 {
-	coursesSb.doUpdate(st);
 	coursesSb.setKey((Integer)terms.getValue());
-	coursesSb.doSelect(st);
+	coursesSb.doUpdate(str);
+//	str.execUpdate(new UpdRunnable() {
+//	public void run(SqlRunner str) throws Exception {
+//	}});
+	coursesSb.doSelect(str);
 }
 	
 	/** After the Wiz is done running, report its output into a Map. */
@@ -127,11 +130,11 @@ void termChanged(SqlRunner str) throws SQLException
 
 	public void saveCur()
 	{
-		fapp.runGui(CoursesWiz.this, new StRunnable() {
+		fapp.runGui(CoursesWiz.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			if (coursesSb.valueChanged()) {
-				coursesSb.doUpdate(st);
-				coursesSb.doSelect(st);
+				coursesSb.doUpdate(str);
+				coursesSb.doSelect(str);
 			}
 		}});
 	}
@@ -250,10 +253,10 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
-		fapp.runGui(CoursesWiz.this, new StRunnable()
+		fapp.runGui(CoursesWiz.this, new BatchRunnable()
 		{ public void run(SqlRunner str) throws Exception
 		  {
-			  coursesSb.doSelect(st);
+			  coursesSb.doSelect(str);
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bRestoreActionPerformed

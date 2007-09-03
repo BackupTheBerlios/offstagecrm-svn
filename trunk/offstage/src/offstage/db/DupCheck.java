@@ -160,11 +160,11 @@ public void addScore(Integer EntityID)
 }
 
 void addScores(SqlRunner str, String table, String whereClause)
-throws SQLException
+//throws SQLException
 {
 	String sql = "select distinct entityid from " + table + " where " + whereClause;
 	str.execSql(sql, new RsRunnable() {
-	public void run(ResultSet rs) throws SQLException {
+	public void run(SqlRunner str, ResultSet rs) throws SQLException {
 		while (rs.next()) {
 			Integer EntityID = (Integer)rs.getObject(1);
 			addScore(EntityID);
@@ -174,13 +174,13 @@ throws SQLException
 	}});
 }
 void addScores(SqlRunner str, String whereClause)
-throws SQLException
+//throws SQLException
 {
 	addScores(str, "entities", "not obsolete and " + whereClause);
 }
 /** Returns entityid of possible dups */
 void scoreDups(SqlRunner str)
-throws SQLException
+//throws SQLException
 {
 	scores = new HashMap();
 	String sql;
@@ -224,7 +224,7 @@ String getIDSql(int minScore, int maxDups)
 // --------------------------------------------------------------
 /** Creates a new instance of DupCheck */
 private DupCheck(SqlRunner str, TypedHashMap v)
-throws SQLException
+//throws SQLException
 {
 	parse(v);
 	scoreDups(str);
@@ -232,14 +232,15 @@ throws SQLException
 // --------------------------------------------------------------
 /** @param v a set of (name,value) pairs corresponding to wizard screen or database row. */
 public static void checkDups(SqlRunner str, TypedHashMap v,
-	final int minScore, final int maxDups, final StringRunnable rr)
-throws SQLException
+final int minScore, final int maxDups, final UpdRunnable rr)
+//throws SQLException
 {
 	final DupCheck dc = new DupCheck(str, v);
-	str.execSql("", new RssRunnable() {
-	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+	str.next().execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
 		String idSql = dc.getIDSql(minScore, maxDups);
-		rr.run(idSql, nstr);
+		str.put("idsql", idSql);
+		rr.run(str);
 	}});
 }
 }
