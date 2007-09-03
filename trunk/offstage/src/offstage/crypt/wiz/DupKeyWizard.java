@@ -52,11 +52,11 @@ public DupKeyWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("New Key", xfapp, xframe, "insertkey1");
 // ---------------------------------------------
 addState(new State("insertkey1", null, "removekey1") {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Insert Key", true,
 			getResourceName("dupkey_InsertKey1.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) state = "keynotinserted";
@@ -73,11 +73,11 @@ addState(new State("insertkey1", null, "removekey1") {
 });
 // ---------------------------------------------
 addState(new State("removekey1", null, "insertkey2") {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("dupkey_RemoveKey1.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.isUsbInserted()) state = "keynotremoved";
@@ -85,11 +85,11 @@ addState(new State("removekey1", null, "insertkey2") {
 });
 // ---------------------------------------------
 addState(new State("insertkey2", null, "removekey2") {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Insert Key", true,
 			getResourceName("dupkey_InsertKey2.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) state = "keynotinserted";
@@ -104,11 +104,11 @@ addState(new State("insertkey2", null, "removekey2") {
 });
 // ---------------------------------------------
 addState(new State("removekey2", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("dupkey_RemoveKey2.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.isUsbInserted()) state = "keynotremoved";
@@ -116,45 +116,36 @@ addState(new State("removekey2", null, null) {
 });
 // ---------------------------------------------
 addState(new State("keyerror", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Error", true,
 			getResourceName("dupkey_KeyError.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new State("keynotinserted", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Not Inserted", true,
 			getResourceName("KeyNotInserted.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new State("keynotremoved", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Not Removed", true,
 			getResourceName("KeyNotRemoved.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 }
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new DupKeyWizard(fapp, null);
-	wizard.runWizard();
-	System.exit(0);
-}
 
 }

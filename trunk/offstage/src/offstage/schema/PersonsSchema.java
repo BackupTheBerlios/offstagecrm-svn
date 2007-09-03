@@ -27,10 +27,10 @@ import java.sql.*;
 public class PersonsSchema extends EntitiesSchema
 {
 
-public PersonsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public PersonsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
-	super(st, change);
+	super(str, change);
 	table = "persons";
 	appendCols(new Column[] {
 //		new Column(new SqlString(1), "gender", false),

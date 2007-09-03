@@ -66,7 +66,7 @@ FrontApp fapp;
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 	    public void propertyChange(PropertyChangeEvent evt) {
 			fapp.runApp(new StRunnable() {
-			public void run(Statement st) throws Exception {
+			public void run(SqlRunner str) throws Exception {
 				termChanged(st);
 			}});
 		}});
@@ -108,7 +108,7 @@ FrontApp fapp;
 
 	}
 
-void termChanged(Statement st) throws SQLException
+void termChanged(SqlRunner str) throws SQLException
 {
 	coursesSb.doUpdate(st);
 	coursesSb.setKey((Integer)terms.getValue());
@@ -128,7 +128,7 @@ void termChanged(Statement st) throws SQLException
 	public void saveCur()
 	{
 		fapp.runGui(CoursesWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			if (coursesSb.valueChanged()) {
 				coursesSb.doUpdate(st);
 				coursesSb.doSelect(st);
@@ -241,7 +241,7 @@ void termChanged(Statement st) throws SQLException
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		saveCur();
 //		fapp.runGui(CoursesWiz.this, new StRunnable() {
-//		public void run(Statement st) throws Exception {
+//		public void run(SqlRunner str) throws Exception {
 //			  coursesSb.doUpdate(st);
 //			  coursesSb.doSelect(st);
 //		  }});
@@ -251,7 +251,7 @@ void termChanged(Statement st) throws SQLException
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
 		fapp.runGui(CoursesWiz.this, new StRunnable()
-		{ public void run(Statement st) throws Exception
+		{ public void run(SqlRunner str) throws Exception
 		  {
 			  coursesSb.doSelect(st);
 		  }});

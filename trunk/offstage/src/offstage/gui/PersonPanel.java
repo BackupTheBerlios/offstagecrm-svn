@@ -39,6 +39,8 @@ import citibob.multithread.*;
 import citibob.app.App;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import citibob.sql.*;
+
 /**
  *
  * @author  citibob
@@ -87,12 +89,12 @@ extends javax.swing.JPanel {
 		
 		familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			app.runGui(PersonPanel.this, new StRunnable() {
-			public void run(Statement st) throws Exception {
+			app.runGui(PersonPanel.this, new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
 				Integer EntityID = (Integer)familyTable.getValue();
 				if (EntityID == null) return;
 				dm.setKey(EntityID);
-				dm.doSelect(st);
+				dm.doSelect(str);
 			}});
 		}});
 		
@@ -102,8 +104,8 @@ extends javax.swing.JPanel {
 
 	}
 	
-	public void initRuntime(Statement st, App xapp, FullEntityDbModel dm)
-	throws java.sql.SQLException
+	public void initRuntime(SqlRunner str, App xapp, FullEntityDbModel dm)
+	//throws java.sql.SQLException
 	{
 		this.app = xapp;
 		this.dm = dm;
@@ -121,8 +123,8 @@ extends javax.swing.JPanel {
 		// Change family table contents when user re-reads from db
 		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			app.runApp(new StRunnable() {
-			public void run(Statement st) throws Exception {
+			app.runApp(new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
 				if (model.getCurRow() < 0) return;
 //				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
@@ -134,7 +136,7 @@ extends javax.swing.JPanel {
 					// Orig == Value --- greater class probably just re-read from DB.
 					// So now we need to re-read too.  This problem should REALLY be
 					// solved by adding events to DbModel.
-					familyTable.setPrimaryEntityID(st, EntityID);
+					familyTable.setPrimaryEntityID(str, EntityID);
 //					vHouseholdID.setEntityID(EntityID);
 				}
 			}});
@@ -142,8 +144,8 @@ extends javax.swing.JPanel {
 
 		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			app.runApp(new StRunnable() {
-			public void run(Statement st) throws Exception {
+			app.runApp(new ERunnable() {
+			public void run() throws Exception {
 				if (model.getCurRow() < 0) return;
 //				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
@@ -167,7 +169,7 @@ extends javax.swing.JPanel {
 
 		this.entitySubPanel1.initRuntime(app);
 		
-		phonePanel.initRuntime(st, dm.getPhonesSb(),
+		phonePanel.initRuntime(str, dm.getPhonesSb(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, app.getSwingerMap());
 		
@@ -638,12 +640,10 @@ extends javax.swing.JPanel {
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
-		app.runGui(PersonPanel.this, new StRunnable()
-		{
-			public void run(Statement st) throws Exception
-			{
+		app.runGui(PersonPanel.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
 				model.set("primaryentityid", dm.getPersonSb().getValueAt(0, "entityid"));
-			}});
+		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bEmancipateActionPerformed
 

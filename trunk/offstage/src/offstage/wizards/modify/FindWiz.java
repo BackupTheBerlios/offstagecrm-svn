@@ -38,6 +38,7 @@ import offstage.wizards.*;
 import offstage.*;
 import offstage.gui.*;
 import citibob.wizard.*;
+import citibob.sql.*;
 
 /**
  *
@@ -52,13 +53,13 @@ SearchViewer listView;
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public FindWiz(java.awt.Frame owner, java.sql.Statement st, FrontApp fapp)
+public FindWiz(java.awt.Frame owner, SqlRunner str, FrontApp fapp)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "Possible Duplicate Name", true);
 
 	listView = new SearchViewer();
-	listView.initRuntime(st, fapp);
+	listView.initRuntime(str, fapp);
 //	html.getMap().put("idlistviewer", listView);
 	html.addWidget("searchview", listView);
 	this.setSize(new java.awt.Dimension(750, 550));

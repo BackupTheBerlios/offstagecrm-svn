@@ -26,14 +26,14 @@ import citibob.util.KeyedModel;
 public class TicketeventsSchema extends ConstSchema
 {
 
-public TicketeventsSchema(Statement st, DbChangeModel change)
+public TicketeventsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	super();
 	table = "ticketeventsales";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"ticketeventids", "groupid", "name", "name");
-	KeyedModel kTicketTypes = new DbKeyedModel(st, change,
+	KeyedModel kTicketTypes = new DbKeyedModel(str, change,
 		"tickettypes", "tickettypeid", "tickettype", "tickettype");
 
 	cols = new Column[] {

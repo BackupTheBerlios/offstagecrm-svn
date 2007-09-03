@@ -27,10 +27,10 @@ import java.sql.*;
 public class AdjpaymentsSchema extends ActransSchema
 {
 
-public AdjpaymentsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public AdjpaymentsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
-	super(st, change, tz);
+	super(str, change, tz);
 	table = "adjpayments";
 //	appendCols(new Column[] {
 //		new Column(new SqlChar(), "gender", false),

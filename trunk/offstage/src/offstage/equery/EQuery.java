@@ -109,25 +109,13 @@ System.out.println("qsc = " + qsc);
 }
 // ------------------------------------------------------
 /** Returns the mailing id */
-public int makeMailing(Statement st, String queryName, EQuerySchema schema) throws SQLException
+public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema, final SeqRunnable rr) throws SQLException
 {
-	EQuery eqy = this;
-//	if (eqy == null) return;
-	String eqXml = eqy.toXML();
-	String eqSql = eqy.getSql(schema);
-
-	String sql;
+	String eqXml = toXML();
+	String eqSql = getSql(schema);
 
 	// Create the mailing list and insert EntityID records
-//	sql = "select w_mailingids_create(" + SqlString.sql(eqXml) + ", " + SqlString.sql(eqSql) + ")";
-//	int xmailingID = SQL.readInt(st, sql);
-	int xmailingID = DB.w_mailingids_create(st, queryName, eqXml, eqSql);
-System.out.println("Created Mailing list ID: " + xmailingID);
-//	sql = "select w_mailings_correctlist(" + SqlInteger.sql(xmailingID) + ", FALSE)";
-//	st.executeQuery(sql);
-//	sql = "update mailingids set name = " + SqlString.sql(queryName) + " where groupid = " + xmailingID;
-//	st.executeUpdate(sql);
-	return xmailingID;
+	DB.w_mailingids_create(str, queryName, eqXml, eqSql, rr);
 }
 
 }

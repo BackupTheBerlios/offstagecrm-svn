@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.db;
 
 import java.sql.*;
+import citibob.sql.*;
 import citibob.jschema.*;
 import citibob.multithread.*;
 import citibob.swing.table.*;
@@ -46,7 +47,7 @@ public class EntityDbModel extends IntKeyedDbModel
 	}
 
 	/** Override insert stuff */
-	public void doInsert(Statement st) throws SQLException
+	public void doInsert(SqlRunner str)
 	{
 		SchemaBuf sb = this.getSchemaBuf();
 		Integer Entityid = (Integer)sb.getValueAt(0, "entityid");
@@ -56,7 +57,7 @@ public class EntityDbModel extends IntKeyedDbModel
 		if (sb.getValueAt(0, pei) == null) sb.setValueAt(Entityid, 0, pei);
 		
 		// Now do the insert query!
-		super.doInsert(st);
+		super.doInsert(str);
 	}
 
 }

@@ -36,6 +36,7 @@ import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
 import citibob.multithread.*;
 import offstage.school.gui.*;
+import citibob.sql.*;
 
 /**
  *
@@ -52,15 +53,15 @@ FrontApp app;
 	public EditorPanel() {
 		initComponents();
 	}
-	public void initRuntime(Statement st, FrontApp fapp)
+	public void initRuntime(SqlRunner str, FrontApp fapp)
 //ActionRunner guiRunner, FullEntityDbModel)
-	throws java.sql.SQLException
+//	throws java.sql.SQLException
 	{
 		this.app = fapp;
 //		this.runner = fapp.getGuiRunner();
 		this.model = fapp.getFullEntityDm();
 		//JSchemaWidgetTree.bindToPool(this, fapp.getPool());
-		entityPanel.initRuntime(st, fapp, model);
+		entityPanel.initRuntime(str, fapp, model);
 		simpleSearch.initRuntime(fapp);
 	}
 	/** This method is called from within the constructor to
@@ -164,59 +165,59 @@ FrontApp app;
 
 	private void bNewOrgActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewOrgActionPerformed
 	{//GEN-HEADEREND:event_bNewOrgActionPerformed
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Throwable {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
-		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, st, root);
+		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
 		wizard.runWizard("org");
 		Integer EntityID = (Integer)wizard.getVal("entityid");
 		if (EntityID != null) {
 			model.setKey(EntityID);
-			model.doSelect(st);
+			model.doSelect(str);
 		}
 	}});// TODO add your handling code here:
 	}//GEN-LAST:event_bNewOrgActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
-		model.doSelect(st);
+	app.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Throwable {
+		model.doSelect(str);
 	}});
 	}//GEN-LAST:event_bUndoActionPerformed
 
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-	app.runGui(this, "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runGui(this, "admin", new BatchRunnable() {
+	public void run(SqlRunner str) throws Throwable {
 		if (JOptionPane.showConfirmDialog(EditorPanel.this,
 			"Are you sure you wish to permanently delete this record?",
 			"Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-				model.doDelete(st);
+				model.doDelete(str);
 		}
 //		this.simpleSearch.runSearch();
 	}});
 }//GEN-LAST:event_bDeleteActionPerformed
 
 private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewPersonActionPerformed
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Throwable {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(EditorPanel.this);
-		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, st, root);
+		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
 		wizard.runWizard("person");
 		Integer EntityID = (Integer)wizard.getVal("entityid");
 		if (EntityID != null) {
 			model.setKey(EntityID);
-			model.doSelect(st);
+			model.doSelect(str);
 		}
 	}});
 }//GEN-LAST:event_bNewPersonActionPerformed
 
 private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
-		model.doUpdate(st);
-		model.doSelect(st);
+	app.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Throwable {
+		model.doUpdate(str);
+		model.doSelect(str);
 	}});
 }//GEN-LAST:event_bSaveActionPerformed
 	
@@ -232,14 +233,14 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
     private offstage.gui.SimpleSearchPanel simpleSearch;
     // End of variables declaration//GEN-END:variables
 
-//	public static void main(String[] args) throws Exception
+//	public static void main(String[] args) throws Throwable
 //    {
 //
 //
 //		FrontApp app = new FrontApp();
 //		FullEntityDbModel dm = app.getFullEntityDm();
-//		//Statement st = app.createStatement();
-//		Statement st = app.getPool().checkout().createStatement();
+//		//SqlRunner str = app.createStatement();
+//		SqlRunner str = app.getPool().checkout().createStatement();
 //
 //		dm.setKey(139208);
 //		dm.doSelect(st);

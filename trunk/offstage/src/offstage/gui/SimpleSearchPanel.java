@@ -33,6 +33,7 @@ import offstage.db.*;
 import java.awt.event.*;
 import offstage.swing.typed.*;
 import citibob.swing.typed.*;
+import citibob.sql.*;
 //import java.beans.*;
 
 /**import 
@@ -55,8 +56,8 @@ implements java.beans.PropertyChangeListener
 //		table.addMouseListener(
 //		new DClickTableMouseListener(table) {
 //		public void doubleClicked(final int row) {
-//			app.runGui(SimpleSearchPanel.this, new StRunnable() {
-//			public void run(Statement st) throws Exception {
+//			app.runGui(SimpleSearchPanel.this, new BatchRunnable() {
+//			public void run(SqlRunner str) throws Exception {
 //				// Make sure it's selected in the GUI
 //				table.getSelectionModel().setSelectionInterval(row, row);
 //
@@ -68,7 +69,7 @@ implements java.beans.PropertyChangeListener
 //			}});
 //		}});
 	}
-	public void initRuntime(FrontApp fapp) //Statement st, FullEntityDbModel dm)
+	public void initRuntime(FrontApp fapp) //SqlRunner str, FullEntityDbModel dm)
 	{
 		this.app = fapp;
 		this.dm = fapp.getFullEntityDm();
@@ -77,14 +78,14 @@ implements java.beans.PropertyChangeListener
 
 public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
-	app.runGui(SimpleSearchPanel.this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runGui(SimpleSearchPanel.this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
 		Integer Entityid = (Integer)evt.getNewValue();
 		if (Entityid == null) return;
 		int entityid = Entityid;
 		if (entityid < 0) return;
 		dm.setKey(entityid);
-		dm.doSelect(st);
+		dm.doSelect(str);
 	}});
 }	
 

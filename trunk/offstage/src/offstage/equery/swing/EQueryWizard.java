@@ -49,62 +49,61 @@ import offstage.gui.*;
  */
 public class EQueryWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
 });
 */
 	
-public EQueryWizard(offstage.FrontApp xfapp, Statement xst, javax.swing.JFrame xframe, String startState)
+public EQueryWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String startState)
 {
 	super("Query Wizard", xfapp, xframe, startState);
-	this.st = xst;
 // ---------------------------------------------
 addState(new State("listquery", null, "editquery") {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new JPanelWizWrapper(frame, null, "",
-			  new ListQueryWiz(st, fapp)); }
-	public void process() throws Exception
+			  new ListQueryWiz(str, fapp)); }
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		if ("newquery".equals(v.get("submit"))) state = "newquery";
 	}
 });
 // ---------------------------------------------
 addState(new State("newquery", null, "editquery") {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 	{
 		NewQueryWiz w = new NewQueryWiz(frame);
 		return w;
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
-		int equeryID = DB.r_nextval(st, "equeries_equeryid_seq");
-		String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
-			SqlInteger.sql(equeryID) + ", " +
-			SqlString.sql(v.getString("queryname")) +
-			", '', now())";
-		st.executeUpdate(sql);
-		v.put("equeryid", equeryID);
-//		System.out.println(sql);
+		SqlSerial.getNextVal(str, "equeries_equeryid_seq", new SeqRunnable() {
+		public void run(int equeryID, SqlRunner nstr) {
+			v.put("equeryid", equeryID);
+			String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
+				SqlInteger.sql(equeryID) + ", " +
+				SqlString.sql(v.getString("queryname")) +
+				", '', now())";
+			nstr.execSql(sql);
+		}});
 	}
 });
 // ---------------------------------------------
 addState(new State("editquery", "listquery", "reporttype") {
-	public Wiz newWiz() throws Exception {
-		EditQueryWiz eqw = new EditQueryWiz(st, fapp, v.getInt("equeryid"));
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+		EditQueryWiz eqw = new EditQueryWiz(str, fapp, v.getInt("equeryid"));
 		return new JPanelWizWrapper(frame, "", "", eqw);
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		if ("deletequery".equals(v.get("submit"))) {
 //			equeryDm.doDelete(st);
-			st.executeUpdate("delete from equeries where equeryid = " + SqlInteger.sql(v.getInt("equeryid")));
+			str.execSql("delete from equeries where equeryid = " + SqlInteger.sql(v.getInt("equeryid")));
 			state = stateRec.back;
 		}
 
@@ -112,33 +111,35 @@ addState(new State("editquery", "listquery", "reporttype") {
 });
 // ---------------------------------------------
 addState(new State("reporttype", "editquery", null) {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new ReportTypeWiz(frame); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 //		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.WAIT_CURSOR);
 		String submit = v.getString("submit");
 		EQuery equery = (EQuery)v.get("equery");
 		String equeryName = v.getString("equeryname");
 		if ("mailinglabels".equals(submit)) {
-			int mailingID = equery.makeMailing(st, equeryName, fapp.getEquerySchema());
-			fapp.getMailingModel().setKey(mailingID);
-			fapp.getMailingModel().doSelect(st);
-			fapp.setScreen(FrontApp.MAILINGS_SCREEN);
+			equery.makeMailing(str, equeryName, fapp.getEquerySchema(), new SeqRunnable() {
+			public void run(int mailingID, SqlRunner nstr) {
+				fapp.getMailingModel().setKey(mailingID);
+				fapp.getMailingModel().doSelect(nstr);
+				fapp.setScreen(FrontApp.MAILINGS_SCREEN);
+			}});
 			state = stateRec.next;
 		} else if ("peopletab".equals(submit)) {
 			EntityListTableModel res = fapp.getSimpleSearchResults();
 			String sql = equery.getSql(fapp.getEquerySchema());
-			res.setRows(st, sql, null);
+			res.setRows(str, sql, null);
 			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
 			state = stateRec.next;
 		} else if ("donationreport".equals(submit)) {
 			String sql = equery.getSql(fapp.getEquerySchema());
-			state = (doDonationReport("Donation Report", sql) ? stateRec.next : stateRec.name);
+			state = (doDonationReport(str, "Donation Report", sql) ? stateRec.next : stateRec.name);
 		} else if ("donationreport_nodup".equals(submit)) {
 			String sql = equery.getSql(fapp.getEquerySchema());
 			sql = DB.removeDupsIDSql(sql);
-			state = (doDonationReport("Donation Report (One per Household)", sql) ? stateRec.next : stateRec.name);
+			state = (doDonationReport(str, "Donation Report (One per Household)", sql) ? stateRec.next : stateRec.name);
 		}
 		
 //		// Go on no matter what we chose...
@@ -155,10 +156,10 @@ addState(new State("reporttype", "editquery", null) {
 
 }
 // ==================================================================
-public boolean doDonationReport(String title, String sql) throws Exception
+public boolean doDonationReport(SqlRunner str, String title, String sql) throws Exception
 {
 	DonationReport report = new DonationReport(fapp, sql);
-	report.doSelect(st);
+	report.doSelect(str);
 	ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());
 	return true;
 }
@@ -202,14 +203,5 @@ public boolean doDonationReport(String title, String sql) throws Exception
 //}
 // ==================================================================
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new EQueryWizard(fapp, st, null, "listquery");
-	wizard.runWizard();
-	System.exit(0);
-}
 
 }

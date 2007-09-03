@@ -41,6 +41,7 @@ import citibob.jschema.*;
 import citibob.util.*;
 import offstage.*;
 import offstage.swing.typed.*;
+import citibob.sql.*;
 
 /**
  *
@@ -52,7 +53,7 @@ public class CcpaymentWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public CcpaymentWiz(java.awt.Frame owner, java.sql.Statement st, int entityid, FrontApp app)
+public CcpaymentWiz(java.awt.Frame owner, SqlRunner str, int entityid, FrontApp app)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "New Cash Payment", app.getSwingerMap(), true);
@@ -66,7 +67,7 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 	addTextField("description", schema);
 	offstage.swing.typed.CCChooser ccchooser = new CCChooser();
 		ccchooser.initRuntime(app.getKeyRing());
-		ccchooser.setEntityID(st, entityid, app);
+		ccchooser.setEntityID(str, entityid, app);
 	addWidget("ccchooser", ccchooser);
 	addWidget("date", schema).setValue(schema.getCol("date").newDate());
 //	addWidgetRecursive(ccinfo);

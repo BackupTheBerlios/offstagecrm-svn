@@ -45,12 +45,11 @@ import citibob.jschema.log.*;
  */
 public class EnrollWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
@@ -65,15 +64,14 @@ addState(new State("", "", "") {
 //}
 //Params prm;
 
-public EnrollWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public EnrollWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("Enrollments", xfapp, xframe, "person");
-	this.st = xst;
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;
@@ -82,11 +80,11 @@ public EnrollWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xfram
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
 addState(new State("add", null, null) {
-	public HtmlWiz newWiz() throws Exception
-		{ return new AddEnrollWiz(frame, st, fapp, v); }
-	public void process() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+		{ return new AddEnrollWiz(frame, str, fapp, v); }
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
-		st.executeUpdate(newInsertQuery("enrollments", v).getSql());
+		str.execSql(newInsertQuery("enrollments", v).getSql());
 	}
 });
 

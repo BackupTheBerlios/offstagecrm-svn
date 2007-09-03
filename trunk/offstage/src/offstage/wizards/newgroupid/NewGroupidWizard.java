@@ -44,27 +44,25 @@ import citibob.jschema.*;
  */
 public class NewGroupidWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
 });
 */
 	
-public NewGroupidWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public NewGroupidWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("New Category", xfapp, xframe, "grouplist");
-	this.st = xst;
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;
@@ -73,9 +71,9 @@ public NewGroupidWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame x
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
 addState(new State("grouplist", null, "catname") {
-	public HtmlWiz newWiz() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new GroupListWiz(frame); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		String table = v.getString("submit");
 		v.put("table", table);
@@ -86,9 +84,9 @@ addState(new State("grouplist", null, "catname") {
 // ---------------------------------------------
 // Query for name of new category
 addState(new State("catname", "grouplist", "finished") {
-	public HtmlWiz newWiz() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new CatNameWiz(frame, v.getString("table")); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		String catname = v.getString("catname");
 		if (catname == null || "".equals(catname)) return;
@@ -97,16 +95,16 @@ addState(new State("catname", "grouplist", "finished") {
 			" insert into " + table +
 			" (name) values (" + SqlString.sql(catname) + ")";
 System.out.println(sql);
-		st.executeUpdate(sql);
-		fapp.getDbChange().fireTableChanged(st, table);
+		str.execSql(sql);
+		fapp.getDbChange().fireTableWillChange(str, table);
 	}
 });
 // ---------------------------------------------
 // Query for name of new donation category
 addState(new State("donationname", "grouplist", "finished") {
-	public HtmlWiz newWiz() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new DonationNameWiz(frame); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		String catname = v.getString("catname");
 		if (catname == null || "".equals(catname)) return;
@@ -116,16 +114,16 @@ addState(new State("donationname", "grouplist", "finished") {
 			" (name, fiscalyear) values (" +
 			SqlString.sql(catname) + ", " + SqlInteger.sql(fiscalyear) + ")";
 System.out.println(sql);
-		st.executeUpdate(sql);
-		fapp.getDbChange().fireTableChanged(st, "donationids");
+		str.execSql(sql);
+		fapp.getDbChange().fireTableWillChange(str, "donationids");
 	}
 });
 // ---------------------------------------------
 // Query for name of new donation category
 addState(new State("finished", null, null) {
-	public HtmlWiz newWiz() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new FinishedWiz(frame); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
@@ -137,13 +135,5 @@ addState(new State("finished", null, null) {
 
 
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new NewGroupidWizard(fapp, st, null);
-	wizard.runWizard();
-}
 
 }

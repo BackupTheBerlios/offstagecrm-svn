@@ -26,12 +26,12 @@ import citibob.util.KeyedModel;
 public class NotesSchema extends ConstSchema
 {
 
-public NotesSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public NotesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
 	table = "notes";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"noteids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),

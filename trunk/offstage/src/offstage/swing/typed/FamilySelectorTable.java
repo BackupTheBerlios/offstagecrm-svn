@@ -39,7 +39,7 @@ public class FamilySelectorTable extends IdSqlTable
 {
 
 	
-public void initRuntime(citibob.app.App app) //Statement st, FullEntityDbModel dm)
+public void initRuntime(citibob.app.App app) //SqlRunner str, FullEntityDbModel dm)
 {
 	super.initRuntime(app);
 }
@@ -65,7 +65,7 @@ public void setValue(final Object o)
 //	// Machine is setting "value", it really means it wants to
 //	// change entities...
 //	app.runApp(new StRunnable() {
-//	public void run(java.sql.Statement st) throws Throwable {
+//	public void run(java.sql.SqlRunner str) throws Throwable {
 //		// We don't have the value in our table; re-load
 //		setPrimaryEntityID(st, (Integer)o);			
 //	}});
@@ -73,11 +73,11 @@ public void setValue(final Object o)
 }
 
 //int primaryEntityID;
-public void setPrimaryEntityID(Statement st, int primaryEntityID)
+public void setPrimaryEntityID(SqlRunner str, int primaryEntityID)
 throws SQLException
 {
 //int primaryEntityID;
-	executeQuery(st,
+	executeQuery(str,
 		" select pe.entityid from entities pe, entities pq" +
 		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
 		" and pe.primaryentityid = pq.primaryentityid" +
@@ -85,27 +85,27 @@ throws SQLException
 		"isprimary desc, name");
 }
 // ===========================================================
-
-	
-public static void main(String[] args) throws Exception
-{	
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	
-	javax.swing.JFrame frame = new javax.swing.JFrame();
-	FamilySelectorTable table = new FamilySelectorTable();
-	table.initRuntime(fapp);
-	table.setPreferredSize(new Dimension(400,300));
-	JScrollPane pane = new JScrollPane();
-		pane.add(table);
-	JPanel panel = new JPanel();
-		panel.add(pane);
-	frame.getContentPane().add(panel);
-	frame.pack();
-	table.setPrimaryEntityID(st, 12633);
-	frame.setVisible(true);
-}
+//
+//	
+//public static void main(String[] args) throws Exception
+//{	
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	SqlRunner str = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//	
+//	javax.swing.JFrame frame = new javax.swing.JFrame();
+//	FamilySelectorTable table = new FamilySelectorTable();
+//	table.initRuntime(fapp);
+//	table.setPreferredSize(new Dimension(400,300));
+//	JScrollPane pane = new JScrollPane();
+//		pane.add(table);
+//	JPanel panel = new JPanel();
+//		panel.add(pane);
+//	frame.getContentPane().add(panel);
+//	frame.pack();
+//	table.setPrimaryEntityID(st, 12633);
+//	frame.setVisible(true);
+//}
 
 	
 }

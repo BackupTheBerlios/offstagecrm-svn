@@ -45,38 +45,13 @@ public class OffstageWizard extends citibob.swing.SwingWizard
 {
 
 protected FrontApp fapp;
-java.util.prefs.Preferences wizardPref;		// Root node for this wizard
-SwingPrefs swingPrefs = new SwingPrefs();
 
-//	public Wiz createWiz() throws Exception { return newWiz(); }		// Override this to post-process wiz after it's created
-
-public Wiz createWiz(State state) throws Exception
+/** Creates a new instance of OffstageWizard */
+public OffstageWizard(String wizardName, FrontApp fapp, java.awt.Frame frame, String startState)
 {
-	// Overridden to post-process wiz after it's created
-	Wiz wiz = super.createWiz(state);
-	Preferences wizPref = wizardPref.node(state.name);
-	swingPrefs.setPrefs((Component)wiz, "", wizPref);
-	return wiz;
+	super(wizardName, fapp, frame, startState);
+	this.fapp = fapp;
 }
-	
-//protected abstract class OState extends citibob.swing.SwingWizard.State
-//{
-//	public abstract void process() throws Exception;
-//	
-//	public OState(String name, String back, String next) {
-//		super(name, back, next);
-//	}
-//}
-
-
-    /** Creates a new instance of OffstageWizard */
-    public OffstageWizard(String wizardName, FrontApp fapp, java.awt.Frame frame, String startState)
-	{
-		super(wizardName, frame, startState);
-//		wizardPref = Preferences.userRoot();
-		wizardPref = fapp.userRoot().node("wizard").node(wizardName);
-		this.fapp = fapp;
-    }
 	
 /** Creates an INSERT query from the values of the HashMap v, and the schema. */
 protected citibob.sql.ConsSqlQuery newInsertQuery(String maintable, TypedHashMap v)

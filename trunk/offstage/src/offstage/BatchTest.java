@@ -38,7 +38,7 @@ public static void processResults(ResultSet[] rss) throws SQLException
 	}
 }
 
-public static void main(String[] args) throws Exception
+public static void main(String[] args) throws Throwable
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	Statement st = pool.checkout().createStatement();

@@ -27,10 +27,10 @@ import java.sql.*;
 public class OrgSchema extends EntitiesSchema
 {
 
-public OrgSchema(Statement st, DbChangeModel change)
+public OrgSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
-	super(st, change);
+	super(str, change);
 	table = "organizations";
 	appendCols(new Column[] {
 		new Column(new SqlString(100), "name", false)

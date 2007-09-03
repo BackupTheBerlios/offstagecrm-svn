@@ -36,6 +36,7 @@ import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.multithread.*;
+import citibob.sql.*;
 
 public class HouseholdIDEditableLabel extends EntityIDEditableLabel
 {
@@ -64,10 +65,12 @@ public void setValue(Object o)
 	}
 
 	// Make sure we're only pointing to a head of household.
-	app.runApp(new StRunnable() {
-	public void run(Statement st) throws SQLException {
-		Integer PID = offstage.db.DB.getPrimaryEntityID(st, ID);
-		setSuperValue(PID);
+	app.runApp(new BatchRunnable() {
+	public void run(SqlRunner str) throws SQLException {
+		offstage.db.DB.getPrimaryEntityID(str, ID, new SeqRunnable() {
+		public void run(int pid, SqlRunner nstr) {
+			setSuperValue(pid);
+		}});
 	}});
 }
 }

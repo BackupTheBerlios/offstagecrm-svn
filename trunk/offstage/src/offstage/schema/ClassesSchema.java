@@ -27,12 +27,12 @@ import citibob.util.KeyedModel;
 public class ClassesSchema extends ConstSchema
 {
 
-public ClassesSchema(Statement st, DbChangeModel change)
+public ClassesSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	super();
 	table = "classes";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"classids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),

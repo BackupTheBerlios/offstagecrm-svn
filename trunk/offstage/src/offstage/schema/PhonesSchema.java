@@ -28,12 +28,12 @@ import offstage.types.*;
 public class PhonesSchema extends ConstSchema
 {
 
-public PhonesSchema(Statement st, DbChangeModel change)
+public PhonesSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	super();
 	table = "phones";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"phoneids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),

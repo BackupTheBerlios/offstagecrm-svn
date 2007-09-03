@@ -68,6 +68,7 @@ SwingActionRunner guiRunner;		// Run user-initiated actions; when user hits butt
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
+ExpHandler expHandler;
 
 int loginID;			// entityID of logged-in database application user
 TreeSet<String> loginGroups;	// Groups to which logged-in user belongs (by name)
@@ -187,12 +188,10 @@ Properties loadProps() throws IOException
 }
 // -------------------------------------------------------
 public FrontApp(ConnPool pool, javax.swing.text.Document stdoutDoc)
-throws SQLException, java.io.IOException, javax.mail.internet.AddressException,
-java.security.GeneralSecurityException
+throws Throwable
+//SQLException, java.io.IOException, javax.mail.internet.AddressException,
+//java.security.GeneralSecurityException
 {
-	Connection dbb = null;
-	Statement st = null;
-
 	configDir = new File(System.getProperty("user.dir"), "config");
 	props = loadProps();
 
@@ -220,51 +219,58 @@ java.security.GeneralSecurityException
 	this.sFormatterMap = new offstage.types.OffstageSFormatterMap();
 	
 	this.pool = pool;
+	// ================
+	SqlBatch str = new SqlBatch();
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
-	ExpHandler expHandler = new MailExpHandler(sender,
+	expHandler = new MailExpHandler(sender,
 			new InternetAddress("citibob@comcast.net"), "OffstageArts", stdoutDoc);
 	guiRunner = new BusybeeDbActionRunner(pool, expHandler);
 	appRunner = new SimpleDbActionRunner(pool, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
-	try {
-		dbb = pool.checkout();
-		st = dbb.createStatement();
 	
-		// Figure out who we're logged in as
-		String sql = "select entityid from dblogins where username = " +
-			SqlString.sql(System.getProperty("user.name"));
-		ResultSet rs = st.executeQuery(sql);
+	// Figure out who we're logged in as
+	String sql = "select entityid from dblogins where username = " +
+		SqlString.sql(System.getProperty("user.name"));
+	str.execSql(sql, new RsRunnable() {
+	public void run(ResultSet rs) throws SQLException {
 		if (rs.next()) {
 			loginID = rs.getInt("entityid");
 		} else {
 			loginID = -1;
 		}
 		rs.close();
-		
-		// Figure out what groups we belong to (for action permissions)
-		loginGroups = new TreeSet();
-		sql = " select distinct name from dblogingroups g, dblogingroupids gid" +
-			" where g.entityid=" + SqlInteger.sql(loginID) +
-			" and g.groupid = gid.groupid";
-		rs = st.executeQuery(sql);
+	}});
+
+	// Figure out what groups we belong to (for action permissions)
+	loginGroups = new TreeSet();
+	sql = " select distinct name from dblogingroups g, dblogingroupids gid" +
+		" where g.entityid=" + SqlInteger.sql(loginID) +
+		" and g.groupid = gid.groupid";
+	str.execSql(sql, new RsRunnable() {
+	public void run(ResultSet rs) throws SQLException {
 		while (rs.next()) loginGroups.add(rs.getString("name"));
 		rs.close();
+	}});
+	
+	dbChange = new DbChangeModel();
+	this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
+	str.exec(pool);		// Our SchemaSet must be set up before we go on.
+	// ================
+	
+	// ================
+	str = new SqlBatch();
+	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
+	fullEntityDm = new FullEntityDbModel(sset, this);
+	mailings = new MailingModel2(str, sset);//, appRunner);
 
-		dbChange = new DbChangeModel();
-		this.sset = new OffstageSchemaSet(st, dbChange, getTimeZone());
-		logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
-		fullEntityDm = new FullEntityDbModel(sset, this);
-		mailings = new MailingModel2(st, sset);//, appRunner);
-		
 //	mailings.refreshMailingids();
 //		equeries = new EQueryModel2(st, mailings, sset);
-		simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
-	} finally {
-		st.close();
-		pool.checkin(dbb);
-	}
+	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
+	
 	equerySchema = new EQuerySchema(getSchemaSet());
+	str.exec(pool);
+	// ================
 }
 public EntityListTableModel getSimpleSearchResults()
 	{ return simpleSearchResults; }
@@ -319,5 +325,7 @@ for (Iterator ii = listeners.iterator(); ii.hasNext(); ) {
 }
 }
 // ===================================================
+
+
 
 }

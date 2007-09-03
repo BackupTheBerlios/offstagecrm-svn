@@ -51,36 +51,36 @@ public class EntityPanel extends javax.swing.JPanel {
 
 	EntityPanel getThis() { return this; }
 	
-	public void initRuntime(Statement st, FrontApp fapp, FullEntityDbModel dm)
-	throws java.sql.SQLException
+	public void initRuntime(SqlRunner str, FrontApp fapp, FullEntityDbModel dm)
+	//throws java.sql.SQLException
 	{
 		citibob.app.App app = fapp;
 		
-		mainPanel.initRuntime(st, app, dm);
+		mainPanel.initRuntime(str, app, dm);
 		
 		// Init the credit card panel
 		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.getSwingerMap());
 		cryptCCInfo.initRuntime(fapp.getKeyRing());
 		
-		donationsPanel.initRuntime(st, dm.getDonationSb(),
+		donationsPanel.initRuntime(str, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
 			new String[] {"groupid", "date", "amount"}, app.getSwingerMap());
-		flagsPanel.initRuntime(st, dm.getFlagSb(),
+		flagsPanel.initRuntime(str, dm.getFlagSb(),
 			new String[] {"Type"},
 			new String[] {"groupid"}, app.getSwingerMap());
-		eventsPanel.initRuntime(st, dm.getEventsSb(),
+		eventsPanel.initRuntime(str, dm.getEventsSb(),
 			new String[] {"Event", "Role"},
 			new String[] {"groupid", "role"}, app.getSwingerMap());
-		notesPanel.initRuntime(st, dm.getNotesSb(),
+		notesPanel.initRuntime(str, dm.getNotesSb(),
 			new String[] {"Type", "Date", "Note"},
 			new String[] {"groupid", "date", "note"}, app.getSwingerMap());
-		ticketsPanel.initRuntime(st, dm.getTicketsSb(),
+		ticketsPanel.initRuntime(str, dm.getTicketsSb(),
 			new String[] {"Event", "Type", "#Tix", "Payment"},
 			new String[] {"groupid", "tickettypeid", "numberoftickets", "payment"}, app.getSwingerMap());
-		interestsPanel.initRuntime(st, dm.getInterestsSb(),
+		interestsPanel.initRuntime(str, dm.getInterestsSb(),
 			new String[] {"Interest", "By Person", "Referred By"},
 			new String[] {"groupid", "byperson", "referredby"}, app.getSwingerMap());
-		classesPanel.initRuntime(st, dm.getClassesSb(),
+		classesPanel.initRuntime(str, dm.getClassesSb(),
 			new String[] {"Class", "Comments"},
 			new String[] {"groupid", "comments"}, app.getSwingerMap());
 //		dm.addListener(new FullEntityDbModel.Adapter() {

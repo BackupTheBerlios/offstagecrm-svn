@@ -49,34 +49,31 @@ import citibob.text.*;
  * @author citibob
  */
 public class CCBatchWizard extends OffstageWizard {
-
-Statement st;
 	
-public CCBatchWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public CCBatchWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("New Key", xfapp, xframe, "initial");
-	this.st = xst;
 
 addState(new State("initial", null, "insertkey1") {
-	public Wiz newWiz() throws Exception {
-		return new CCBatchInitial(frame, st, fapp);
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+		return new CCBatchInitial(frame, str, fapp);
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.privKeysLoaded()) {
-			processBatch(st);
+			processBatch(str);
 			state = null;
 		}
 	}
 });
 // ---------------------------------------------
 addState(new State("insertkey1", null, "removekey1") {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("ccbatch_InsertKey1.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) state = "keynotinserted";
@@ -92,45 +89,45 @@ addState(new State("insertkey1", null, "removekey1") {
 });
 // ---------------------------------------------
 addState(new State("removekey1", null, "insertkey2") {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("ccbatch_RemoveKey1.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		if (fapp.getKeyRing().isUsbInserted()) state = "keynotremoved";
-		else processBatch(st);
+		else processBatch(str);
 //		KeyRing kr = fapp.getKeyRing();
 	}
 });
 // ---------------------------------------------
 // ---------------------------------------------
 addState(new State("keyerror", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Error", true,
 			getResourceName("dupkey_KeyError.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new State("keynotinserted", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Not Inserted", true,
 			getResourceName("KeyNotInserted.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new State("keynotremoved", null, null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Not Removed", true,
 			getResourceName("KeyNotRemoved.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
@@ -143,63 +140,67 @@ static {
 	fexpdate = new offstage.types.ExpDateFormatter();
 }
 
-void processBatch(Statement st)
-throws SQLException, java.io.IOException,
-java.security.GeneralSecurityException, java.text.ParseException, JRException
+void processBatch(SqlRunner str)
+//throws SQLException, java.io.IOException,
+//java.security.GeneralSecurityException, java.text.ParseException, JRException
 {
-	KeyRing kr = fapp.getKeyRing();
-	SqlTimestamp sqlt = new SqlTimestamp("GMT");
+	final SqlTimestamp sqlt = new SqlTimestamp("GMT");
 	
 	// Process empty batch
-	int ccbatchid = DB.r_nextval(st, "ccbatch_ccbatchid_seq");
-	String sql =
-		" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(ccbatchid) + ");" +
-		" update ccpayments set ccbatchid = " + SqlInteger.sql(ccbatchid) +
-		" where ccbatchid is null and ccinfo is not null";
-	st.executeUpdate(sql);
+	SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq", new SeqRunnable() {
+	public void run(final int ccbatchid, SqlRunner nstr) {
+		String sql =
+			" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(ccbatchid) + ");" +
+			
+			" update ccpayments set ccbatchid = " + SqlInteger.sql(ccbatchid) +
+			" where ccbatchid is null and ccinfo is not null;\n"+
+			// rss[0]
+			"select dtime from ccbatches where ccbatchid = " + SqlInteger.sql(ccbatchid) + ";\n" +
+			// rss[1]
+			"select e.firstname, e.lastname, p.* from ccpayments p, entities e" +
+				" where e.entityid = p.entityid" +
+				" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
+				" order by dtime";
+		nstr.execSql(sql, new RssRunnable() {
+		public void run(ResultSet[] rss, SqlRunner nstr) throws Exception {
+			ResultSet rs;
+			
+			// =============== rss[0]: incidental items
+			rs = rss[0];
+			rs.next();
+			
+			final HashMap params = new HashMap();
+			params.put("ccbatchid", ccbatchid);
+			params.put("dtime", sqlt.get(rs, "dtime"));
+			rs.close();
 
-	// Get main report parameters
-	HashMap params = new HashMap();
-	ResultSet rs = st.executeQuery("select dtime from ccbatches where ccbatchid = " + SqlInteger.sql(ccbatchid) );
-	rs.next();
-	params.put("ccbatchid", ccbatchid);
-	params.put("dtime", sqlt.get(rs, "dtime"));
-	
-	ArrayList<Map> details = new ArrayList();
-	sql = "select e.firstname, e.lastname, p.* from ccpayments p, entities e" +
-		" where e.entityid = p.entityid" +
-		" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
-		" order by dtime";
-	rs = st.executeQuery(sql);
-	while (rs.next()) {
-		String cryptCcinfo = rs.getString("ccinfo");
-		String ccinfo = kr.decrypt(cryptCcinfo);
-//System.out.println(rs.getDouble("amount") + " " + ccinfo);
-		Map map = CCEncoding.decode(ccinfo);
-		map.put("ccbatchid", ccbatchid);
-		map.put("ccnumber", fccnumber.valueToString(map.get("ccnumber")));
-		map.put("expdate", fexpdate.valueToString(map.get("expdate")));
-		map.put("firstname", rs.getString("firstname"));
-		map.put("lastname", rs.getString("lastname"));
-		map.put("entityid", rs.getInt("entityid"));
-		map.put("dtime", sqlt.get(rs, "dtime"));
-		map.put("amount", -rs.getDouble("amount"));
-		
-		details.add(map);
-	}
-	JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-	offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jasper", jrdata, params);
+			// =============== rss[1]: main report
+			rs = rss[1];
+			KeyRing kr = fapp.getKeyRing();
+			ArrayList<Map> details = new ArrayList();
+			while (rs.next()) {
+				String cryptCcinfo = rs.getString("ccinfo");
+				String ccinfo = kr.decrypt(cryptCcinfo);
+		//System.out.println(rs.getDouble("amount") + " " + ccinfo);
+				Map map = CCEncoding.decode(ccinfo);
+				map.put("ccbatchid", ccbatchid);
+				map.put("ccnumber", fccnumber.valueToString(map.get("ccnumber")));
+				map.put("expdate", fexpdate.valueToString(map.get("expdate")));
+				map.put("firstname", rs.getString("firstname"));
+				map.put("lastname", rs.getString("lastname"));
+				map.put("entityid", rs.getInt("entityid"));
+				map.put("dtime", sqlt.get(rs, "dtime"));
+				map.put("amount", -rs.getDouble("amount"));
+
+				details.add(map);
+			}
+			JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
+			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jasper", jrdata, params);
+		}});
+	}});
 
 }
 
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new CCBatchWizard(fapp, st, null);
-	wizard.runWizard("initial");
-}
 
 }

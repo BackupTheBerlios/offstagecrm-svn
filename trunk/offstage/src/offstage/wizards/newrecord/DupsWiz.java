@@ -38,6 +38,7 @@ import offstage.wizards.*;
 import offstage.*;
 import offstage.gui.*;
 import citibob.wizard.*;
+import citibob.sql.*;
 
 /**
  *
@@ -51,14 +52,14 @@ public boolean getCacheWiz() { return false; }
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public DupsWiz(java.awt.Frame owner, java.sql.Statement st, FrontApp fapp, String idSql)
+public DupsWiz(java.awt.Frame owner, SqlRunner str, FrontApp fapp, String idSql)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "Possible Duplicate Name", true);
 
 	
 	IDListViewer listView = new IDListViewer();
-	listView.initRuntime(st, fapp.getFullEntityDm(),
+	listView.initRuntime(str, fapp.getFullEntityDm(),
 		idSql, null, fapp);
 //		fapp.getGuiRunner(), fapp.getSwingerMap());
 //	html.getMap().put("idlistviewer", listView);

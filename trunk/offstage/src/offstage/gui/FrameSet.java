@@ -52,7 +52,7 @@ protected ConsoleFrame consoleFrame;
 
 
     /** Creates a new instance of FrameSet */
-    public FrameSet() throws Exception {
+    public FrameSet() throws Throwable {
 new com.Ostermiller.util.CSVPrinter(System.out);
 
 //System.out.println(System.getProperty("os.name"));
@@ -63,40 +63,31 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 		Statement st = dbb.createStatement();
 		OffstageVersion.fetchDbVersion(st);
 		
-//ResultSet rs = st.executeQuery("select dtime from querylog");
-//rs.next();
-//java.util.Date dt = rs.getTimestamp(1);
-//String s = rs.getString(1);
-//
-//
-////java.util.Date dt2 = new java.util.Date(ms);
-//System.out.println(dt);
-//System.out.println(s);
-
-
-
 // TODO: This should not be needed.  But run for now until upgrade is in place.
 st.execute("update entities set primaryentityid=entityid where primaryentityid is null");
 		st.close();
 		pool.checkin(dbb);
 
+		SqlBatch str = new SqlBatch();
+		
 		consoleFrame = new ConsoleFrame();
 		consoleFrame.initRuntime("Java Console", OffstageVersion.guiPrefs.absolutePath() + "/ConsoleFrame");
 		
 		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
 		offstageGui = new OffstageGui();
-		offstageGui.initRuntime(app, this, OffstageVersion.guiPrefs);
+		offstageGui.initRuntime(str, app, this, OffstageVersion.guiPrefs);
 
 app.getFullEntityDm().setKey(12633);	// Go to Bob's record (for debuggin)'
-app.getFullEntityDm().doSelect(st);
-
+app.getFullEntityDm().doSelect(str);
+		str.exec(pool);
+		
 		offstageGui.pack();
 	    offstageGui.setVisible(true);
     }
 
 
 	
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args) throws Throwable
     {
 		System.setProperty("swing.metalTheme", "ocean");
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");

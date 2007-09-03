@@ -45,9 +45,9 @@ SchemaBuf groupSb;
 	}
 
 	// st good
-	public void initRuntime(Statement st, SchemaBuf groupSb,
+	public void initRuntime(SqlRunner str, SchemaBuf groupSb,
 	String[] colNames, String[] sColMap, citibob.swing.typed.SwingerMap swingers)
-	throws java.sql.SQLException
+	//throws java.sql.SQLException
 	{
 		JEnum addJType = (JEnum)groupSb.getSchema().getCol("groupid").getType();
 		groupTable.setModelU(groupSb, colNames, sColMap, null, swingers);
@@ -58,12 +58,12 @@ SchemaBuf groupSb;
 //		groupTable.setColMap(sColMap);
 //		groupTable.setIDTableName(idTableName);
 //		groupTable.initRuntime(st, groupSb);
-		initRuntime(st, groupSb, addJType, groupTable, swingers);
+		initRuntime(str, groupSb, addJType, groupTable, swingers);
 	}
 	
-	public void initRuntime(Statement st, SchemaBuf groupSb, JEnum addJType,
+	public void initRuntime(SqlRunner str, SchemaBuf groupSb, JEnum addJType,
 	GroupsTable groupTable, SwingerMap swingers)
-	throws java.sql.SQLException
+	//throws java.sql.SQLException
 	{
 		this.groupSb = groupSb;
 		this.groupTable = groupTable;

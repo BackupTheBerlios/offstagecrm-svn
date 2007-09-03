@@ -28,6 +28,7 @@ import citibob.jschema.*;
 import citibob.jschema.gui.*;
 import citibob.multithread.*;
 import java.sql.*;
+import citibob.sql.*;
 
 /**
  *
@@ -39,7 +40,7 @@ public class TermsWiz extends citibob.swing.JPanelWiz
 offstage.FrontApp fapp;
 
 	/** Creates new form TermWiz */
-	public TermsWiz(offstage.FrontApp fapp, Statement st) throws SQLException
+	public TermsWiz(offstage.FrontApp fapp, SqlRunner str) throws SQLException
 	{
 		super("Edit School Terms");
 		this.fapp = fapp;
@@ -63,7 +64,7 @@ offstage.FrontApp fapp;
 	public void nextPressed() {
 //		// Save but don't update; so we can still go to the selected row.
 //		fapp.runGui(TermsWiz.this, new StRunnable() {
-//		public void run(Statement st) throws Exception {
+//		public void run(SqlRunner str) throws Exception {
 //			SchemaBufDbModel dbm = termPNC.getDbModel();
 //			if (dbm.valueChanged()) {
 //				dbm.doUpdate(st);
@@ -76,7 +77,7 @@ offstage.FrontApp fapp;
 //void saveCur()
 //{
 //	fapp.runGui(this, new StRunnable() {
-//	public void run(Statement st) throws SQLException {
+//	public void run(SqlRunner str) throws SQLException {
 //		termPNC.getDbModel().doUpdate(st);
 //	}});
 //}

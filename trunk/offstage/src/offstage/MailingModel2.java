@@ -38,6 +38,7 @@ import net.sf.jasperreports.engine.export.*;
 import javax.print.*;
 import javax.print.attribute.*;
 import javax.print.attribute.standard.*;
+import citibob.sql.*;
 
 /**
  *
@@ -50,7 +51,7 @@ SchemaBufDbModel mailingids;		// Set to just one record (for 1 mailing)
 IntKeyedDbModel mailings;		// Set to entire mailing info
 //IntKeyedDbModel oneMailingid;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
-//Statement st;
+//SqlRunner str;
 ActionRunner runner;
 
 public IntKeyedDbModel getMailingsDb()
@@ -77,8 +78,8 @@ public void newAddress() throws KeyViolationException
 
 
 /** Creates a new instance of MailingDbModel */
-public MailingModel2(final Statement st, OffstageSchemaSet sset)
-throws SQLException
+public MailingModel2(final SqlRunner str, OffstageSchemaSet sset)
+//throws SQLException
 {
 	this.runner = runner;
 	mailings = new IntKeyedDbModel(sset.mailings, "groupid", false, null);
@@ -92,8 +93,8 @@ throws SQLException
 	mailingids = new SchemaBufDbModel(new SchemaBuf(sset.mailingids), null);
 	mailingids.setWhereClause("created >= now() - interval '30 days'");
 	mailingids.setOrderClause("created desc");
-	mailingids.doSelect(st);
 	add(mailingids);
+	mailingids.doSelect(str);
 	
 //	mailingids.setInstantUpdate(runner, true);
 
@@ -108,56 +109,35 @@ throws SQLException
 //	}});
 }
 
-public void makeReport(Statement st) throws SQLException, JRException
+public void makeReport(SqlRunner str) throws SQLException, JRException
 {
-	ResultSet rs = null;
-	InputStream in = null;
-	try {
-		DB.w_mailings_makereport(st, mailings.getIntKey());
+	DB.w_mailings_makereport(str, mailings.getIntKey());
 
-		in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");
-		String sql =
-			"select * from mailings" +
-			" where groupid=" + mailings.getIntKey() +
-			" and isgood" +
-			" order by country, zip";
-		rs = st.executeQuery(sql);
-		HashMap params = new HashMap();
-		JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
-		JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
-		offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
-		net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
-//JasperPrintManager.printReport(jprint,false);
-
-
-
-
-//            PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
-//            /* Set the number of copies */
-//            printRequestAttributeSet.add(new Copies(1));
-//            printRequestAttributeSet.add(new JobName("Job Name", null));
-//
-//            net.sf.jasperreports.engine.export.JRPrintServiceExporter exporter;
-//            exporter = new net.sf.jasperreports.engine.export.JRPrintServiceExporter();  
-//            exporter.setParameter( JRExporterParameter.JASPER_PRINT, jprint);
-//            exporter.setParameter( JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet);
-//            exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE);
-//            exporter.setParameter( JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.TRUE);
-//            exporter.exportReport();
-
-
-
-
-	} finally {
-		try { rs.close(); } catch(Exception e) {}
-		try { in.close(); } catch(Exception e) {}		
-	}
+	String sql =
+		"select * from mailings" +
+		" where groupid=" + mailings.getIntKey() +
+		" and isgood" +
+		" order by country, zip";
+	str.execSql(sql, new RsRunnable() {
+	public void run(ResultSet rs) throws Exception {
+		InputStream in = null;
+		try {
+			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");
+			HashMap params = new HashMap();
+			JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
+			JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
+			offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
+			net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
+		} finally {
+			in.close();
+		}
+	}});
 }
 
 //public void makeReport() throws SQLException, JRException
 //{
 ////	runner.doRun(new StRunnable() {
-////	public void run(Statement st) throws Exception {
+////	public void run(SqlRunner str) throws Exception {
 //		ResultSet rs = null;
 //		InputStream in = null;
 //		try {

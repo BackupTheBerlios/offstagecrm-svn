@@ -38,6 +38,7 @@ import citibob.wizard.*;
 import offstage.schema.*;
 import citibob.util.*;
 import java.sql.*;
+import citibob.sql.*;
 
 /**
  *
@@ -48,7 +49,7 @@ public class PersonWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public PersonWiz(java.awt.Frame owner, java.sql.Statement st, citibob.app.App app)
+public PersonWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, "New Person Record", app.getSwingerMap(), true);
@@ -71,7 +72,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	
 //	addWidget("interestid", "groupid", app.getSchema("interests"));
 	
-	KeyedModel kmodel = new citibob.sql.DbKeyedModel(st, null,
+	KeyedModel kmodel = new citibob.sql.DbKeyedModel(str, null,
 		"interestids", "groupid", "name", "name");
 	kmodel.addItem(null, "<No Interest Specified>");
 	JKeyedComboBox interests = new JKeyedComboBox(kmodel);

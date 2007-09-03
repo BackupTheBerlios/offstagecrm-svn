@@ -27,11 +27,11 @@ import citibob.util.KeyedModel;
 public class DonationsSchema extends ConstSchema
 {
 
-public DonationsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public DonationsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	table = "donations";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"donationids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlInteger(false), "serialid", true),

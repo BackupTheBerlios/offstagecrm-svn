@@ -31,6 +31,7 @@ import java.sql.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.app.*;
+import citibob.sql.*;
 
 /**
  *
@@ -46,7 +47,7 @@ public IDListViewer() {
 	initComponents();
 }
 
-//public void initRuntime(Statement st,
+//public void initRuntime(SqlRunner str,
 //EntityListTableModel dupsModel, FullEntityDbModel entityDb,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
@@ -54,7 +55,7 @@ public IDListViewer() {
 //	this.entityDb = entityDb;
 //}
 
-public void initRuntime(Statement st,
+public void initRuntime(SqlRunner str,
 FullEntityDbModel xentityDb,
 String idSql, String orderBy,
 final App app)
@@ -64,15 +65,15 @@ throws SQLException
 //	final App app = xapp;
 //	final ActionRunner guiRunner = app.getGuiRunner();
 	dupsModel = new EntityListTableModel(app.getSqlTypeSet());
-	dupsModel.setRows(st, idSql, orderBy);
+	dupsModel.setRows(str, idSql, orderBy);
 	this.entityDb = xentityDb;
 	dupsTable.initRuntime(dupsModel);
-	mainEntityPanel.initRuntime(st, app, entityDb);
+	mainEntityPanel.initRuntime(str, app, entityDb);
 	DClickTableMouseListener dclick =
 		new DClickTableMouseListener(dupsTable) {
 		public void doubleClicked(final int row) {
-			app.runGui(IDListViewer.this, new StRunnable() {
-			public void run(Statement st) throws Exception {
+			app.runGui(IDListViewer.this, new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
 				// Make sure it's selected in the GUI
 				dupsTable.getSelectionModel().setSelectionInterval(row, row);
 
@@ -80,7 +81,7 @@ throws SQLException
 				int entityid = getSelectedEntityID(dupsTable);
 				if (entityid < 0) return;
 				entityDb.setKey(entityid);
-				entityDb.doSelect(st);
+				entityDb.doSelect(str);
 			}});
 		}};
 	

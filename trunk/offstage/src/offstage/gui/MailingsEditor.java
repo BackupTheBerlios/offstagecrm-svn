@@ -34,6 +34,7 @@ import offstage.MailingModel2;
 //import offstage.MailingsDbModel;
 import citibob.swing.typed.*;
 import java.awt.Cursor;
+import citibob.sql.*;
 
 /**
  *
@@ -44,14 +45,15 @@ public class MailingsEditor extends javax.swing.JPanel {
 	MailingModel2 mailing;
 	citibob.app.App app;
 //	ActionRunner runner;
-//	Statement st;
+//	SqlRunner str;
 	
 	/** Creates new form MailingsEditor */
 	public MailingsEditor() {
 		initComponents();
 	}
 	public MailingsEditor getThis() { return this; }
-	public void initRuntime(Statement st, FrontApp xapp) throws SQLException
+	public void initRuntime(SqlRunner str, FrontApp xapp)
+	//throws SQLException
 	{
 		this.app = xapp;
 		mailing = xapp.getMailingModel();
@@ -68,8 +70,8 @@ public class MailingsEditor extends javax.swing.JPanel {
 		tMailingIds.addMouseListener(new DClickTableMouseListener(tMailingIds) {
 		public void doubleClicked(final int row) {
 			citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
-			app.runGui(MailingsEditor.this, new StRunnable() {
-			public void run(Statement st) throws Exception {
+			app.runGui(MailingsEditor.this, new BatchRunnable() {
+			public void run(SqlRunner str) throws Throwable {
 				// Make sure it's selected in the GUI
 				tMailingIds.getSelectionModel().setSelectionInterval(row, row);
 
@@ -77,7 +79,7 @@ public class MailingsEditor extends javax.swing.JPanel {
 				Integer Mailingid = (Integer)mailing.getMailingidsDb().getSchemaBuf().getValueAt(row, "groupid");
 				if (Mailingid == null) return;
 				mailing.setKey(Mailingid.intValue());
-				mailing.doSelect(st);
+				mailing.doSelect(str);
 			}});
 			citibob.swing.SwingUtil.setCursor(getThis(), Cursor.DEFAULT_CURSOR);
 		}});
@@ -216,26 +218,26 @@ public class MailingsEditor extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bInsertActionPerformed
-	app.runGui(MailingsEditor.this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runGui(MailingsEditor.this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Throwable {
 		mailing.newAddress();
 	}});
 }//GEN-LAST:event_bInsertActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
-		app.runGui(MailingsEditor.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		app.runGui(MailingsEditor.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Throwable {
 			bUndo.requestFocus();
-			mailing.doSelect(st);
+			mailing.doSelect(str);
 		}});
 	}//GEN-LAST:event_bUndoActionPerformed
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-		app.runGui(MailingsEditor.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		app.runGui(MailingsEditor.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Throwable {
 			bSave.requestFocus();
-			mailing.doUpdate(st);
-			mailing.getMailingidsDb().doSelect(st);
+			mailing.doUpdate(str);
+			mailing.getMailingidsDb().doSelect(str);
 		}});
 	}//GEN-LAST:event_bSaveActionPerformed
 
@@ -248,13 +250,13 @@ private void bInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 
 	private void bViewLabelsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bViewLabelsActionPerformed
 		citibob.swing.SwingUtil.setCursor(getThis(), Cursor.WAIT_CURSOR);
-		app.runGui(MailingsEditor.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		app.runGui(MailingsEditor.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Throwable {
 //			throw new Exception("Bobs Exception");
 			bViewLabels.requestFocus();
-			mailing.doUpdate(st);
+			mailing.doUpdate(str);
 System.out.println("MailingsEditor: done with doUpdate");
-			mailing.makeReport(st);
+			mailing.makeReport(str);
 		}});
 		citibob.swing.SwingUtil.setCursor(getThis(), Cursor.DEFAULT_CURSOR);
 		// TODO add your handling code here:
@@ -283,10 +285,10 @@ System.out.println("MailingsEditor: done with doUpdate");
     // End of variables declaration//GEN-END:variables
 
 	
-//	public static void main(String[] args) throws Exception
+//	public static void main(String[] args) throws Throwable
 //    {
 //		FrontApp app = new FrontApp();
-//		Statement st = app.createStatement();
+//		SqlRunner str = app.createStatement();
 //		MailingsDbModel dm = new MailingsDbModel(st);
 //		
 //		dm.setKey(250);

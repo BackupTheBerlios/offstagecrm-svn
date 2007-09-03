@@ -30,6 +30,7 @@ import citibob.jschema.swing.*;
 import citibob.gui.*;
 import offstage.FrontApp;
 //import offstage.EQueryBrowserApp;
+import citibob.sql.*;
 
 /**
  *
@@ -45,52 +46,42 @@ FrontApp app;
 		initComponents();
 	}
 
-	public void initRuntime(final FrontApp app, FrameSet frameSet, Preferences guiPrefs)
+	public void initRuntime(SqlRunner str, final FrontApp app, FrameSet frameSet, Preferences guiPrefs)
 //	throws java.sql.SQLException
-	throws Exception
+//	throws Exception
+	throws org.xml.sax.SAXException, java.io.IOException
 	{
-		this.app = app;
-		this.frameSet = frameSet;
-		Connection dbb = null;
-		Statement st = null;
-		try {
-			dbb = app.getPool().checkout();
-			st = dbb.createStatement();
-			//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
-			actions.initRuntime(app);
-			people.initRuntime(st, app);
-			school.initRuntime(app, st);
+		//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
+		actions.initRuntime(app);
+		people.initRuntime(str, app);
+		school.initRuntime(str, app);
 //			queries.initRuntime(app);
-			mailings.initRuntime(st, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
+		mailings.initRuntime(str, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
 
-			//JSchemaWidgetTree.initWithStatement(this, st);
+		//JSchemaWidgetTree.initWithStatement(this, st);
 
-			app.addListener(new FrontApp.Adapter() {
-			public void screenChanged() {
-				switch(app.getScreen()) {
-					case FrontApp.ACTIONS_SCREEN :
-						tabs.setSelectedIndex(0);
-					break;
-					case FrontApp.PEOPLE_SCREEN :
-						tabs.setSelectedIndex(1);
-					break;
-					case FrontApp.SCHOOL_SCREEN :
-						tabs.setSelectedIndex(2);
-					break;
-					case FrontApp.MAILINGS_SCREEN :
-						tabs.setSelectedIndex(3);
-					break;
-				}
-			}});
+		app.addListener(new FrontApp.Adapter() {
+		public void screenChanged() {
+			switch(app.getScreen()) {
+				case FrontApp.ACTIONS_SCREEN :
+					tabs.setSelectedIndex(0);
+				break;
+				case FrontApp.PEOPLE_SCREEN :
+					tabs.setSelectedIndex(1);
+				break;
+				case FrontApp.SCHOOL_SCREEN :
+					tabs.setSelectedIndex(2);
+				break;
+				case FrontApp.MAILINGS_SCREEN :
+					tabs.setSelectedIndex(3);
+				break;
+			}
+		}});
 
-			// Mess with preferences
+		// Mess with preferences
 //			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-			Preferences prefs = app.userRoot().node("OffstageGui");
-			new SwingPrefs().setPrefs(this, "", prefs);
-		} finally {
-			st.close();
-			app.getPool().checkin(dbb);
-		}
+		Preferences prefs = app.userRoot().node("OffstageGui");
+		new SwingPrefs().setPrefs(this, "", prefs);
 	}
 
 	/** This method is called from within the constructor to

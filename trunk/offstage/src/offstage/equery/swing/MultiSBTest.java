@@ -139,7 +139,7 @@ App app;
     private citibob.swing.JTypeTable jTypeTable1;
     // End of variables declaration//GEN-END:variables
 	
-public static void main(String[] args) throws Exception
+public static void main(String[] args) throws Throwable
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	Statement st = pool.checkout().createStatement();

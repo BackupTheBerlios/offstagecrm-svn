@@ -42,12 +42,14 @@ public EntityListTableModel(SqlTypeSet tset)
 //}
 // --------------------------------------------------
 /** idSql is Sql statement to select a bunch of IDs */
-private void addAllRows(Statement st, String idSql, String orderBy) throws SQLException
+private void addAllRows(SqlRunner str, String idSql, String orderBy) throws SQLException
 {
-	ResultSet rs = DB.rs_entities_namesByIDList(st, idSql, orderBy);
-	super.setColHeaders(rs);
-	super.addAllRows(rs);
-	rs.close();
+	DB.rs_entities_namesByIDList(str, idSql, orderBy, new RsRunnable() {
+	public void run(ResultSet rs) throws SQLException {
+		setColHeaders(rs);
+		addAllRows(rs);
+		rs.close();
+	}});
 }
 // --------------------------------------------------
 /** Hardwire the column names, so they can exist even before data has been put in. */
@@ -83,10 +85,10 @@ public void addAllRows(Statement st, ResultSet rs) throws java.sql.SQLException
 }
  */
 // --------------------------------------------------
-public void setRows(Statement st, String idSql, String orderBy) throws java.sql.SQLException
+public void setRows(SqlRunner str, String idSql, String orderBy) throws java.sql.SQLException
 {
 	setRowCount(0);
-	addAllRows(st, idSql, orderBy);
+	addAllRows(str, idSql, orderBy);
 }
 // --------------------------------------------------
 public int getEntityID(int row)

@@ -26,12 +26,12 @@ import citibob.util.*;
 public class TermregsSchema extends ConstSchema
 {
 
-public TermregsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public TermregsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
 	table = "termregs";
-	KeyedModel kmodel = new DbKeyedModel(st, change, "programids",
+	KeyedModel kmodel = new DbKeyedModel(str, change, "programids",
 		"select programid, name from programids order by name");
 	cols = new Column[] {
 		new Column(new SqlInteger(false), "groupid", true),	// links to termids

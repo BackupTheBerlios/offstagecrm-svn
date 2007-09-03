@@ -27,11 +27,11 @@ import citibob.util.KeyedModel;
 public class FlagsSchema extends ConstSchema
 {
 
-public FlagsSchema(Statement st, DbChangeModel change)
+public FlagsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	table = "flags";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"flagids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),

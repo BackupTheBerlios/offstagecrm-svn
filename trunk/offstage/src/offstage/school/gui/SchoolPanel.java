@@ -63,21 +63,21 @@ IntKeyedDbModel actransDb;
 boolean studentDirty;		// Does the student record needs saving?
 
 MultiDbModel all = new MultiDbModel() {
-	public void doSelect(Statement st) throws java.sql.SQLException
+	public void doSelect(SqlRunner str)
 	{
-		studentDm.doSelect(st);
-		termregsDm.doSelect(st);
+		studentDm.doSelect(str);
+		termregsDm.doSelect(str);
 		parentDm.setKey((Integer)schoolRm.get("parentid"));
-		parentDm.doSelect(st);
+		parentDm.doSelect(str);
 		parent2Dm.setKey((Integer)schoolRm.get("parent2id"));
-		parent2Dm.doSelect(st);
+		parent2Dm.doSelect(str);
 		Integer pid = (Integer)studentRm.get("primaryentityid");
-		familyTable.setPrimaryEntityID(st, pid);
+		familyTable.setPrimaryEntityID(str, pid);
 		payerDm.setKey(studentDm.getAdultID());
-		payerDm.doSelect(st);
+		payerDm.doSelect(str);
 //		householdDm.setKey(pid);
 //		householdDm.doSelect(st);
-		enrolledDb.doSelect(st);
+		enrolledDb.doSelect(str);
 		studentDirty = false;
 		setIDDirty(false);
 	}
@@ -93,7 +93,7 @@ MultiDbModel all = new MultiDbModel() {
 			" and courseids.termid = " + SqlInteger.sql(termid) +
 			" and enrollments.entityid = " + SqlInteger.sql(entityid));
 	}
-	public void doUpdate(Statement st) throws java.sql.SQLException
+	public void doUpdate(SqlRunner str) throws java.sql.SQLException
 	{
 		if (schoolRm.get("parentid") == null || schoolRm.get("adultid") == null) {
 			JOptionPane.showMessageDialog(SchoolPanel.this,
@@ -135,7 +135,8 @@ public SchoolPanel()
 	initComponents();
 }
 
-public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
+public void initRuntime(SqlRunner str, FrontApp xfapp)
+//throws SQLException
 {
 	this.fapp = xfapp;
 
@@ -180,7 +181,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		public void curRowChanged(final int col) {
 			setIDDirty(true);
 			fapp.runApp(new StRunnable() {
-			public void run(Statement st) throws Exception {
+			public void run(SqlRunner str) throws Exception {
 				Integer ID = (Integer)studentRm.get(col);
 				if (ID == null) return;
 				String lastname = (String)studentRm.get(studentRm.findColumn("lastname"));
@@ -196,7 +197,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(final PropertyChangeEvent evt) {
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)evt.getNewValue();
 			if (EntityID == null) return;
 			changeStudent(st, EntityID);
@@ -279,7 +280,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 		// Do something when user saves and re-loads
 		public void curRowChanged(final int col) {
 			fapp.runApp(new StRunnable() {
-			public void run(Statement st) throws Exception {
+			public void run(SqlRunner str) throws Exception {
 
 				Integer ID = (Integer)schoolRm.get(col);
 				if (ID == null) return;
@@ -339,7 +340,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 	searchBox.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
 		fapp.runApp(new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)searchBox.getValue();
 			if (EntityID == null) return;
 			int entityid = EntityID;
@@ -353,7 +354,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
 		fapp.runApp(new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			termChanged(st);
 		}});
 	}});
@@ -365,7 +366,7 @@ public void initRuntime(FrontApp xfapp, Statement st) throws SQLException
 	
 }
 
-public void changeStudent(Statement st, int entityid) throws SQLException
+public void changeStudent(SqlRunner str, int entityid) throws SQLException
 {
 	// See if old student needs saving...
 	if (studentDirty || all.valueChanged()) {
@@ -414,13 +415,13 @@ public void changeStudent(Statement st, int entityid) throws SQLException
 	all.doSelect(st);
 }
 
-public void changeAccount(Statement st, int payerid) throws SQLException
+public void changeAccount(SqlRunner str, int payerid) throws SQLException
 {
 
 	actransDb.setKey(payerid);
 	refreshAccount(st);
 }
-public void refreshAccount(Statement st) throws SQLException
+public void refreshAccount(SqlRunner str) throws SQLException
 {
 	actransDb.doSelect(st);
 	
@@ -431,7 +432,7 @@ public void refreshAccount(Statement st) throws SQLException
 		st, actransDb.getIntKey(), ActransSchema.AC_SCHOOL)));
 }
 
-void termChanged(Statement st) throws SQLException
+void termChanged(SqlRunner str) throws SQLException
 {
 	Integer eid = (Integer)studentRm.get("entityid");
 	
@@ -2523,7 +2524,7 @@ void setIDDirty(boolean dirty)
 	private void bConfirmationLettersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bConfirmationLettersActionPerformed
 	{//GEN-HEADEREND:event_bConfirmationLettersActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			YDPConfirmationLetter.doReport(fapp, st, termid);
 		}});
@@ -2533,7 +2534,7 @@ void setIDDirty(boolean dirty)
 	private void bRecalcTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRecalcTuitionActionPerformed
 	{//GEN-HEADEREND:event_bRecalcTuitionActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			SchoolDB.w_tuitiontrans_recalcAllTuitions(st, getTermID());
 		}});
 // TODO add your handling code here:
@@ -2542,7 +2543,7 @@ void setIDDirty(boolean dirty)
 	private void bParentLabelsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bParentLabelsActionPerformed
 	{//GEN-HEADEREND:event_bParentLabelsActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			String idSql =
 				" select xx.entityid\n" +
@@ -2575,7 +2576,7 @@ System.out.println("==================");
 	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
 	{//GEN-HEADEREND:event_jButton4ActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			AcctStatement.doAccountStatements(fapp, st, termid, -1, new java.util.Date());
 		}});
@@ -2585,7 +2586,7 @@ System.out.println("==================");
 	private void bAcctStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAcctStatementActionPerformed
 	{//GEN-HEADEREND:event_bAcctStatementActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			Integer payerid = (Integer)schoolRm.get("adultid");
 			AcctStatement.doAccountStatements(fapp, st, termid, payerid, new java.util.Date());
@@ -2612,7 +2613,7 @@ System.out.println("==================");
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
 	{//GEN-HEADEREND:event_jButton1ActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			RollBook report = new RollBook(fapp, getTermID());
 			report.doSelect(st);
 			JTypeTableModel model = report.newTableModel();
@@ -2625,7 +2626,7 @@ System.out.println("==================");
 	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
 	{//GEN-HEADEREND:event_jButton3ActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			Integer eid = (Integer)studentRm.get("entityid");
 			doStudentSchedules(st, getTermID(), eid);
 		}});
@@ -2635,7 +2636,7 @@ System.out.println("==================");
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
 	{//GEN-HEADEREND:event_jButton2ActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 //			Integer eid = (Integer)studentRm.get("entityid");
 			int termid = (Integer)vTermID.getValue();
 			doStudentSchedules(st, termid, -1);
@@ -2643,7 +2644,7 @@ System.out.println("==================");
 // TODO add your handling code here:
 	}//GEN-LAST:event_jButton2ActionPerformed
 
-void doStudentSchedules(Statement st, int termid, int entityid)
+void doStudentSchedules(SqlRunner str, int termid, int entityid)
 throws Exception
 {
 	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
@@ -2667,7 +2668,7 @@ throws Exception
 void newAdultAction(final String colName)
 {
 	fapp.runGui(SchoolPanel.this, new StRunnable() {
-	public void run(Statement st) throws Exception {
+	public void run(SqlRunner str) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
 		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
 		wizard.runWizard();
@@ -2683,7 +2684,7 @@ void newAdultAction(final String colName)
 	private void bNewHouseholdActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewHouseholdActionPerformed
 	{//GEN-HEADEREND:event_bNewHouseholdActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
 			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
 			wizard.runWizard();
@@ -2706,7 +2707,7 @@ void newAdultAction(final String colName)
 	private void bNewStudentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewStudentActionPerformed
 	{//GEN-HEADEREND:event_bNewStudentActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
 			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, st, root);
 			wizard.runWizard();
@@ -2727,7 +2728,7 @@ void newAdultAction(final String colName)
 			== JOptionPane.NO_OPTION) return;
 		
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			
 			int row = enrollments.getSelectedRow();
 			if (row < 0) return;
@@ -2748,7 +2749,7 @@ void newAdultAction(final String colName)
 	private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddEnrollmentActionPerformed
 	{//GEN-HEADEREND:event_bAddEnrollmentActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			enrolledDb.doUpdate(st);
 			Wizard wizard = new EnrollWizard(fapp, st, null);
 			TypedHashMap v = new TypedHashMap();
@@ -2777,7 +2778,7 @@ void newAdultAction(final String colName)
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			studentRm.set("primaryentityid", all.getIntKey());
 		}});
 // TODO add your handling code here:
@@ -2786,7 +2787,7 @@ void newAdultAction(final String colName)
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			all.doSelect(st);
 		}});
 // TODO add your handling code here:
@@ -2795,7 +2796,7 @@ void newAdultAction(final String colName)
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			all.doUpdate(st);
 			all.doSelect(st);
 		}});
@@ -2805,7 +2806,7 @@ void newAdultAction(final String colName)
 	{//GEN-HEADEREND:event_bAdjustActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable()
 		{
-			public void run(Statement st) throws Exception
+			public void run(SqlRunner str) throws Exception
 			{
 				Wizard wizard = new TransactionWizard(fapp, st, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
@@ -2819,7 +2820,7 @@ void newAdultAction(final String colName)
 	{//GEN-HEADEREND:event_bCcActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable()
 		{
-			public void run(Statement st) throws Exception
+			public void run(SqlRunner str) throws Exception
 			{
 				Wizard wizard = new TransactionWizard(fapp, st, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
@@ -2832,7 +2833,7 @@ void newAdultAction(final String colName)
 	{//GEN-HEADEREND:event_bCheckActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable()
 		{
-			public void run(Statement st) throws Exception
+			public void run(SqlRunner str) throws Exception
 			{
 				Wizard wizard = new TransactionWizard(fapp, st, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
@@ -2846,7 +2847,7 @@ void newAdultAction(final String colName)
 	{//GEN-HEADEREND:event_bCashActionPerformed
 		fapp.runGui(SchoolPanel.this, new StRunnable()
 		{
-			public void run(Statement st) throws Exception
+			public void run(SqlRunner str) throws Exception
 			{
 				Wizard wizard = new TransactionWizard(fapp, st, null,
 					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
@@ -3078,7 +3079,7 @@ void newAdultAction(final String colName)
 public static void main(String[] args) throws Exception
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
+	SqlRunner str = pool.checkout().createStatement();
 	FrontApp fapp = new FrontApp(pool,null);
 
 	SchoolPanel panel = new SchoolPanel();

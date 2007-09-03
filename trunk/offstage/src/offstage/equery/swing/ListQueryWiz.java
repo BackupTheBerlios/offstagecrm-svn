@@ -35,6 +35,7 @@ import citibob.multithread.*;
 import offstage.gui.*;
 import citibob.swing.typed.*;
 import offstage.db.*;
+import citibob.sql.*;
 
 /**
  *
@@ -45,7 +46,7 @@ public class ListQueryWiz extends citibob.swing.JPanelWiz {
 citibob.app.App fapp;
 //EQueryModel2 app;
 EntityListTableModel testResults;
-//Statement st;
+//SqlRunner str;
 ActionRunner runner;
 
 SchemaBufDbModel equeriesDm;
@@ -58,8 +59,8 @@ public ListQueryWiz(citibob.app.App fapp) {
 	this.fapp = fapp;
 	initComponents();
 }
-public ListQueryWiz(Statement st, final citibob.app.App fapp)
-//public void initRuntime(Statement st, final citibob.app.App fapp)
+public ListQueryWiz(SqlRunner str, final citibob.app.App fapp)
+//public void initRuntime(SqlRunner str, final citibob.app.App fapp)
 throws SQLException
 {
 	this(fapp);
@@ -73,12 +74,12 @@ throws SQLException
 	
 	// Read the data
 	equeriesDm.setOrderClause("lastmodified desc");
-	equeriesDm.doSelect(st);
+	equeriesDm.doSelect(str);
 	
 	tQueries.addMouseListener(new DClickTableMouseListener(tQueries) {
 	public void doubleClicked(final int row) {
-		fapp.runGui(ListQueryWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		fapp.runGui(ListQueryWiz.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
 			tQueries.getSelectionModel().setSelectionInterval(row, row);
 			wrapper.doSubmit("next");
 		}});
@@ -183,8 +184,8 @@ public void getAllValues(java.util.Map m)
 	private void bDeleteQueryActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteQueryActionPerformed
 	{//GEN-HEADEREND:event_bDeleteQueryActionPerformed
 //System.out.println("hoi");
-		fapp.runGui(ListQueryWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		fapp.runGui(ListQueryWiz.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
 			final int row = tQueries.getSelectionModel().getMinSelectionIndex();
 			if (row < 0) return;
 			SchemaBuf sb = equeriesDm.getSchemaBuf();
@@ -196,9 +197,9 @@ public void getAllValues(java.util.Map m)
 				"Delete Confirmation",
 			JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
 			sb.deleteRow(row);
-			equeriesDm.doUpdate(st);
+			equeriesDm.doUpdate(str);
 //			equeriesDm.doDelete(st);
-			equeriesDm.doSelect(st);
+			equeriesDm.doSelect(str);
 		}});
 	}//GEN-LAST:event_bDeleteQueryActionPerformed
 

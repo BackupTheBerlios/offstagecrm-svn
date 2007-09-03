@@ -30,6 +30,7 @@ import citibob.swing.typed.*;
 import java.sql.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
+import citibob.sql.*;
 
 /**
  *
@@ -45,7 +46,7 @@ public SearchViewer() {
 	initComponents();
 }
 
-//public void initRuntime(Statement st,
+//public void initRuntime(SqlRunner str,
 //EntityListTableModel dupsModel, FullEntityDbModel entityDb,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
@@ -53,7 +54,7 @@ public SearchViewer() {
 //	this.entityDb = entityDb;
 //}
 
-public void initRuntime(Statement st,
+public void initRuntime(SqlRunner str,
 FrontApp fapp)
 //FullEntityDbModel xentityDb,
 //String idSql, String orderBy,
@@ -61,7 +62,7 @@ FrontApp fapp)
 throws SQLException
 {
 	searchPanel.initRuntime(fapp);
-	mainEntityPanel.initRuntime(st, fapp, fapp.getFullEntityDm());
+	mainEntityPanel.initRuntime(str, fapp, fapp.getFullEntityDm());
 	entityDb = fapp.getFullEntityDm();
 //entityDb, smap);
 //

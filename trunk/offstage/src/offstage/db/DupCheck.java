@@ -31,6 +31,7 @@ import citibob.wizard.*;
 import citibob.sql.pgsql.*;
 import java.sql.*;
 import java.util.*;
+import citibob.sql.*;
 
 /**
  * Try to find possible duplicate records, given the data from one record
@@ -39,7 +40,7 @@ import java.util.*;
  */
 public class DupCheck {
 
-TypedHashMap v;
+//TypedHashMap v;
 // Results of trying to parse
 
 
@@ -60,14 +61,14 @@ static class Score
 HashMap scores;
 int nfields;		// # fields scores is based upon...
 // -------------------------------------------------------------
-String getString(String name)
+String getString(TypedHashMap v, String name)
 {
 	String addr1 = v.getString(name);
 	if (addr1 == null) addr1 = "";
 	else addr1 = addr1.trim();
 	return addr1;
 }
-String getStringNull(String name)
+String getStringNull(TypedHashMap v, String name)
 {
 	String addr1 = v.getString(name);
 	if (addr1 == null) return null;
@@ -103,13 +104,13 @@ static boolean isNumeric(String s)
 	return true;
 }
 
-void parse()
+void parse(TypedHashMap v)
 //throws java.text.ParseException
 {
 	// Try to parse out the street name
 	streetName = null;
-	String addr1 = getString("addr1");
-	String addr2 = getString("addr2");
+	String addr1 = getString(v, "addr1");
+	String addr2 = getString(v, "addr2");
 	String addr = "".equals(addr2) ? addr1 : addr2;
 	if (!"".equals(addr)) {
 		String[] tok = splitWords(addr);
@@ -129,20 +130,20 @@ void parse()
 	
 	// Parse out 5-digit zip code
 	zip = null;
-	String z = getString("zip");
+	String z = getString(v, "zip");
 	if (z.length() >= 5) {
 		z = z.substring(0,5);
 		if (isNumeric(z)) zip = z;
 	}
 	
 	// Get first and last name --- easy!
-	lastName = getStringNull("lastname");
-	firstName = getStringNull("firstname");
+	lastName = getStringNull(v, "lastname");
+	firstName = getStringNull(v, "firstname");
 	
 	// Parse out phone number
 //	phone = offstage.types.PhoneFormatter.unformat(getStringNull("phone"));
-	phone = getStringNull("phone");
-	email = getStringNull("email");
+	phone = getStringNull(v, "phone");
+	email = getStringNull(v, "email");
 }
 // --------------------------------------------------------------
 public void addScore(Integer EntityID)
@@ -158,44 +159,45 @@ public void addScore(Integer EntityID)
 	}
 }
 
-void addScores(Statement st, String table, String whereClause)
+void addScores(SqlRunner str, String table, String whereClause)
 throws SQLException
 {
 	String sql = "select distinct entityid from " + table + " where " + whereClause;
-System.out.println("DupCheck: " + sql);
-	ResultSet rs = st.executeQuery(sql);
-	while (rs.next()) {
-		Integer EntityID = (Integer)rs.getObject(1);
-		addScore(EntityID);
-	}
-	++nfields;
-	rs.close();
+	str.execSql(sql, new RsRunnable() {
+	public void run(ResultSet rs) throws SQLException {
+		while (rs.next()) {
+			Integer EntityID = (Integer)rs.getObject(1);
+			addScore(EntityID);
+		}
+		++nfields;
+		rs.close();
+	}});
 }
-void addScores(Statement st, String whereClause)
+void addScores(SqlRunner str, String whereClause)
 throws SQLException
 {
-	addScores(st, "entities", "not obsolete and " + whereClause);
+	addScores(str, "entities", "not obsolete and " + whereClause);
 }
 /** Returns entityid of possible dups */
-void scoreDups(Statement st)
+void scoreDups(SqlRunner str)
 throws SQLException
 {
 	scores = new HashMap();
 	String sql;
 
 	if (firstName != null)
-		addScores(st, "firstname ilike " + SqlString.sql("%" + firstName + "%"));
+		addScores(str, "firstname ilike " + SqlString.sql("%" + firstName + "%"));
 	if (lastName != null)
-		addScores(st, "lastname ilike " + SqlString.sql("%" + lastName + "%"));
+		addScores(str, "lastname ilike " + SqlString.sql("%" + lastName + "%"));
 	if (streetName != null)
-		addScores(st, "address1 ilike " + SqlString.sql("%" + streetName + "%") +
+		addScores(str, "address1 ilike " + SqlString.sql("%" + streetName + "%") +
 			" or address2 ilike " + SqlString.sql("%" + streetName + "%"));
 	if (zip != null)
-		addScores(st, "zip ilike " + SqlString.sql("%" + zip + "%"));
+		addScores(str, "zip ilike " + SqlString.sql("%" + zip + "%"));
 	if (phone != null)
-		addScores(st, "phones", "phone = " + SqlString.sql(phone));
+		addScores(str, "phones", "phone = " + SqlString.sql(phone));
 	if (email != null)
-		addScores(st, "persons", "email ilike " + SqlString.sql(email));
+		addScores(str, "persons", "email ilike " + SqlString.sql(email));
 	
 }
 // --------------------------------------------------------------------
@@ -221,19 +223,23 @@ String getIDSql(int minScore, int maxDups)
 }
 // --------------------------------------------------------------
 /** Creates a new instance of DupCheck */
-public DupCheck(Statement st, TypedHashMap v)
+private DupCheck(SqlRunner str, TypedHashMap v)
 throws SQLException
 {
-	this.v = v;
-	parse();
-	scoreDups(st);
+	parse(v);
+	scoreDups(str);
 }
 // --------------------------------------------------------------
 /** @param v a set of (name,value) pairs corresponding to wizard screen or database row. */
-public static String checkDups(Statement st, TypedHashMap v, int minScore, int maxDups)
+public static void checkDups(SqlRunner str, TypedHashMap v,
+	final int minScore, final int maxDups, final StringRunnable rr)
 throws SQLException
 {
-	DupCheck dc = new DupCheck(st, v);
-	return dc.getIDSql(minScore, maxDups);
+	final DupCheck dc = new DupCheck(str, v);
+	str.execSql("", new RssRunnable() {
+	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+		String idSql = dc.getIDSql(minScore, maxDups);
+		rr.run(idSql, nstr);
+	}});
 }
 }

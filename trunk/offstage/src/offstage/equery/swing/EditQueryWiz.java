@@ -38,6 +38,7 @@ import citibob.swing.typed.*;
 import offstage.db.*;
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
+import citibob.sql.*;
 
 /**
  *
@@ -63,8 +64,8 @@ public EditQueryWiz() {
 
 //protected EQueryWiz1 getThis() { return this; }
 
-public EditQueryWiz(Statement st, offstage.FrontApp fapp, int equeryID)
-//public void initRuntime(Statement st, citibob.app.App fapp, int equeryID)
+public EditQueryWiz(SqlRunner str, offstage.FrontApp fapp, int equeryID)
+//public void initRuntime(SqlRunner str, citibob.app.App fapp, int equeryID)
 throws SQLException
 {
 	this();
@@ -82,7 +83,7 @@ throws SQLException
 	citibob.swing.typed.TypedWidgetBinder.bindRecursive(this, row, fapp.getSwingerMap());
 	
 	equeryDm.setWhereClause("equeryid = " + equeryID);
-	equeryDm.doSelect(st);
+	equeryDm.doSelect(str);
 	
 	testResults = new EntityListTableModel(fapp.getSqlTypeSet());
 	tTestResults.initRuntime(testResults);
@@ -205,7 +206,7 @@ throws SQLException
 	private void bDeleteQueryActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteQueryActionPerformed
 	{//GEN-HEADEREND:event_bDeleteQueryActionPerformed
 //		fapp.runGui(EditQueryWiz.this, new StRunnable() {
-//		public void run(Statement st) throws Exception {
+//		public void run(SqlRunner str) throws Exception {
 			
 			if (JOptionPane.showConfirmDialog(EditQueryWiz.this,
 				"Are you sure you wish to permanently\n" +
@@ -220,15 +221,27 @@ throws SQLException
 
 	private void bApplyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bApplyActionPerformed
 	{//GEN-HEADEREND:event_bApplyActionPerformed
-		fapp.runGui(this, new StRunnable() {
-		public void run(Statement st) throws SQLException {
+		fapp.runGui(this, new BatchRunnable() {
+		public void run(SqlRunner str) throws SQLException {
 			eQueryEditor.commitValue();
 			EQuery eqy = eQueryEditor.getEQuery();
-			String sql = eqy.getSql(fapp.getEquerySchema());
-			int fullSize = DB.countIDList(st, sql);
-			int nodupSize = DB.countIDList(st, DB.removeDupsIDSql(sql));
-			lQuerySize.setText(""+fullSize + " (" + nodupSize + " for mailing)");
-			testResults.setRows(st, sql, null);
+			
+			// Main table
+			String sql0 = eqy.getSql(fapp.getEquerySchema());
+			testResults.setRows(str, sql0, null);
+			
+			// Summary counts
+			String sql =
+				DB.sqlCountIDList(sql0) + ";\n" +
+				DB.sqlCountIDList(DB.removeDupsIDSql(sql0));
+			str.execSql(sql, new RssRunnable() {
+			public void run(ResultSet[] rss, SqlRunner nstr) throws SQLException {
+				rss[0].next();
+				int fullSize = rss[0].getInt(1);
+				rss[1].next();
+				int nodupSize = rss[1].getInt(1);
+				lQuerySize.setText(""+fullSize + " (" + nodupSize + " for mailing)");
+			}});
 		}});
 	}//GEN-LAST:event_bApplyActionPerformed
 
@@ -239,10 +252,10 @@ public void nextPressed()
 
 void saveCurQuery()
 {
-	fapp.runGui(this, new StRunnable() {
-	public void run(Statement st) throws SQLException {
+	fapp.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws SQLException {
 		eQueryEditor.commitValue();
-		equeryDm.doUpdate(st);
+		equeryDm.doUpdate(str);
 //		equery = eQueryEditor.getEQuery();
 //		String equery = eQueryEditor.getValue();
 //		String sql = "update equeries set lastmodified=now(), equery = "

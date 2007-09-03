@@ -44,11 +44,11 @@ int primaryCol;
 SchemaRowModel bufRow;
 App app;
 // --------------------------------------------------------------
-public void setValue(Statement st, int primaryEntityID)
+public void setValue(SqlRunner str, int primaryEntityID)
 throws SQLException
 {
 	// Now do the read-only stuff
-	String sql =
+	String idSql =
 		" select pe.entityid from entities pe" +
 		" where pe.primaryentityid = " + primaryEntityID +
 		" and not obsolete";
@@ -56,7 +56,7 @@ throws SQLException
 	
 //System.out.println("*****************\n" + sql);
 	// ResultSet rs = st.executeQuery(sql);
-	setRows(st, sql, orderBy);
+	setRows(str, idSql, orderBy);
 }
 // ===============================================================
 /** Binds this widget to listen/edit a particular column in a RowModel, using the type for that column derived from the associated Schema.  NOTE: This requires a correspondence in the numbering of columns in the Schema and in the RowModel.  No permutions inbetween are allowed!  This should not be a problem, just make sure the TableRowModel binds DIRECTLY to the source SchemaBuf, not to some permutation thereof. */
@@ -74,15 +74,15 @@ public void bind(SchemaRowModel bufRow)
 /** Propagate data from underlying model to widget. */
 public void valueChanged(final int col)
 {
-	app.runApp(new StRunnable() {
-	public void run(Statement st) throws Exception {
+	app.runApp(new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
 		Integer Primaryid = (Integer)bufRow.get(primaryCol);
 		if (Primaryid == null) {
 			setRowCount(0);		// Just clear it out...
 		} else {
 			int primaryid = Primaryid.intValue();
 System.out.println("FamilyTableModel: value changed to: " + primaryid);
-			setValue(st, primaryid);
+			setValue(str, primaryid);
 		}
 	}});
 }

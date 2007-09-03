@@ -42,10 +42,10 @@ public IdSqlTableModel()
 	});
 }
 
-//public void executeQuery(Statement st, String idSql) throws SQLException {
+//public void executeQuery(SqlRunner str, String idSql) throws SQLException {
 //	executeQuery(st, idSql, "name");
 //}
-public void executeQuery(Statement st, String idSql, String orderBy) throws SQLException {
+public void executeQuery(SqlRunner str, String idSql, String orderBy) throws SQLException {
 	// Convert text to a search query for entityid's
 	if (idSql == null) return;		// no query
 	if (orderBy == null) orderBy = "name";
@@ -78,10 +78,12 @@ public void executeQuery(Statement st, String idSql, String orderBy) throws SQLE
 
 		" drop table _ids";
 System.out.println(sql);
-	ResultSet rs = st.executeQuery(sql);
-	setNumRows(0);
-	addAllRows(rs);
-	rs.close();
+	str.execSql(sql, new RsRunnable() {
+	public void run(ResultSet rs) throws SQLException {
+		setNumRows(0);
+		addAllRows(rs);
+		rs.close();
+	}});
 }
 
 }

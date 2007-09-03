@@ -27,12 +27,12 @@ import citibob.util.KeyedModel;
 public class EventsSchema extends ConstSchema
 {
 
-public EventsSchema(Statement st, DbChangeModel change)
+public EventsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	super();
 	table = "events";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"eventids", "groupid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),

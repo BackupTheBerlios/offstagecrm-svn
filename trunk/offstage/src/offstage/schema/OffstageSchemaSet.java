@@ -57,38 +57,38 @@ public Schema classes, interests;
 public Schema equeries;
 
 /** Creates a new instance of OffstageSchema */
-public OffstageSchemaSet(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public OffstageSchemaSet(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	map.put("courseids", courseids = new CourseidsSchema());
-	map.put("donations", donations = new DonationsSchema(st, change, tz));
-	map.put("flags", new FlagsSchema(st, change));
-	map.put("entities", entities = new EntitiesSchema(st, change));
-	map.put("events", events = new EventsSchema(st, change));
+	map.put("donations", donations = new DonationsSchema(str, change, tz));
+	map.put("flags", new FlagsSchema(str, change));
+	map.put("entities", entities = new EntitiesSchema(str, change));
+	map.put("events", events = new EventsSchema(str, change));
 	map.put("groupids", groupids = new GroupidsSchema());
 	map.put("mailingids", mailingids = new MailingidsSchema());
-	map.put("mailings", mailings = new MailingsSchema(st, change));
-	map.put("notes", notes = new NotesSchema(st, change, tz));
-	map.put("tickets", tickets = new TicketeventsSchema(st, change));
-	map.put("org", org = new OrgSchema(st, change));
-	map.put("persons", persons = new PersonsSchema(st, change, tz));
-	map.put("phones", phones = new PhonesSchema(st, change));
-	map.put("termids", termids = new TermidsSchema(st, change, tz));
+	map.put("mailings", mailings = new MailingsSchema(str, change));
+	map.put("notes", notes = new NotesSchema(str, change, tz));
+	map.put("tickets", tickets = new TicketeventsSchema(str, change));
+	map.put("org", org = new OrgSchema(str, change));
+	map.put("persons", persons = new PersonsSchema(str, change, tz));
+	map.put("phones", phones = new PhonesSchema(str, change));
+	map.put("termids", termids = new TermidsSchema(str, change, tz));
 	map.put("termtypes", termtypes = new TermtypesSchema());
-	map.put("classes", classes = new ClassesSchema(st, change));
-	map.put("interests", interests = new InterestsSchema(st, change));
+	map.put("classes", classes = new ClassesSchema(str, change));
+	map.put("interests", interests = new InterestsSchema(str, change));
 	map.put("equeries", equeries = new EQueriesSchema());
 	map.put("donationids", new DonationidsSchema());
 	map.put("phoneids", new PhoneidsSchema());
 	map.put("meetings", new MeetingsSchema());
-	map.put("enrollments", new EnrollmentsSchema(st, change, tz));
-	map.put("entities_school", new EntitiesSchoolSchema(st, change));
-	map.put("actrans", new ActransSchema(st, change, tz));
-	map.put("cashpayments", new CashpaymentsSchema(st, change,tz));
-	map.put("checkpayments", new CheckpaymentsSchema(st, change,tz));
-	map.put("ccpayments", new CcpaymentsSchema(st, change,tz));
-	map.put("adjpayments", new CcpaymentsSchema(st, change,tz));
-	map.put("termregs", new TermregsSchema(st, change,tz));
+	map.put("enrollments", new EnrollmentsSchema(str, change, tz));
+	map.put("entities_school", new EntitiesSchoolSchema(str, change));
+	map.put("actrans", new ActransSchema(str, change, tz));
+	map.put("cashpayments", new CashpaymentsSchema(str, change,tz));
+	map.put("checkpayments", new CheckpaymentsSchema(str, change,tz));
+	map.put("ccpayments", new CcpaymentsSchema(str, change,tz));
+	map.put("adjpayments", new CcpaymentsSchema(str, change,tz));
+	map.put("termregs", new TermregsSchema(str, change,tz));
 }
 	
 }

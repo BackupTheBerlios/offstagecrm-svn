@@ -39,6 +39,7 @@ import offstage.*;
 import offstage.gui.*;
 import citibob.wizard.*;
 import java.sql.*;
+import citibob.sql.*;
 
 /**
  *
@@ -52,26 +53,27 @@ public boolean getCacheWiz() { return false; }
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public CCBatchInitial(java.awt.Frame owner, java.sql.Statement st, FrontApp fapp)
+public CCBatchInitial(java.awt.Frame owner, SqlRunner str, FrontApp fapp)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "Insert Key", true);
 
-	String sql =
-//" update ccpayments set ccbatchid = null;" +
-		" select count(*) as npayments from ccpayments" +
-		" where ccbatchid is null and ccinfo is not null";
-	ResultSet rs = st.executeQuery(sql);
-	rs.next();
-	JTypedLabel npayments = new JTypedLabel();
-//	npayments.setColName("npayments");
-//	TypedWidgetBinder.setValueRecursive(npayments, rs, fapp.getSwingerMap(), fapp.getSqlTypeSet());
+	final JTypedLabel npayments = new JTypedLabel();
 	npayments.setJType(new JavaJType(Integer.class),
 		new FormatFormatter(new java.text.DecimalFormat("#")));
-	npayments.setValue(rs.getInt(1));
-	rs.close();
-	
 	addWidget("npayments", npayments);
+	
+	// Populate npayments
+	String sql =
+		" select count(*) as npayments from ccpayments" +
+		" where ccbatchid is null and ccinfo is not null";
+	str.execSql(sql, new RsRunnable() {
+	public void run(ResultSet rs) throws SQLException {
+		rs.next();
+		npayments.setValue(rs.getInt(1));
+		rs.close();
+	}});
+	
 //	this.setSize(new java.awt.Dimension(750, 550));
 	loadHtml();
 }

@@ -40,24 +40,24 @@ public static final int ORG=2;
 // Key field.
 private int entityID;
 
-// Reflects what's ACTUALLY loaded, not the key field.
-private int entityType;
+//// Reflects what's ACTUALLY loaded, not the key field.
+//private int entityType;
 
-/** Returns type (Person or Organization) of data currently in the buffers.  If neither, returns NONE. */
-private void setEntityType()
-{
-//System.err.println("setEntityType: " + getPersonSb().getRowCount() + ", " + getOrgSb().getRowCount());
-	int oldET = getEntityType();
-
-	if (getPersonSb().getRowCount() > 0) entityType = PERSON;
-	else if (getOrgSb().getRowCount() > 0) entityType = ORG;
-	else entityType = NONE;
-
-	if (getEntityType() != oldET)
-		fireEntityTypeChanged(getEntityType());
-}
-public int getEntityType()
-	{ return entityType; }
+///** Returns type (Person or Organization) of data currently in the buffers.  If neither, returns NONE. */
+//private void setEntityType()
+//{
+////System.err.println("setEntityType: " + getPersonSb().getRowCount() + ", " + getOrgSb().getRowCount());
+//	int oldET = getEntityType();
+//
+//	if (getPersonSb().getRowCount() > 0) entityType = PERSON;
+//	else if (getOrgSb().getRowCount() > 0) entityType = ORG;
+//	else entityType = NONE;
+//
+//	if (getEntityType() != oldET)
+//		fireEntityTypeChanged(getEntityType());
+//}
+//public int getEntityType()
+//	{ return entityType; }
 // -------------------------------------------------------
 
 QueryLogger logger;
@@ -164,65 +164,65 @@ public void insertPhone(int groupTypeID) throws KeyViolationException
 	getPhonesSb().insertRow(-1, "groupid", new Integer(groupTypeID));
 }
 
-public void doSelect(Statement st)
-throws java.sql.SQLException
-{
-	super.doSelect(st);
-	setEntityType();
-	
-//	// Now do the read-only stuff
-//	String sql =
-//		" select e.entityid from entities e, entities pe" +
-//		" where pe.entityid = " + entityID +
-//		" and e.primaryentityid = pe.primaryentityid";
-//	String orderBy = "isprimary desc, relation, name";
+//public void doSelect(SqlRunner str)
+////throws java.sql.SQLException
+//{
+//	super.doSelect(str);
+//	setEntityType();
 //	
-////System.out.println("*****************\n" + sql);
-//	// ResultSet rs = st.executeQuery(sql);
-//	family.setRows(st, sql, orderBy);
-	//rs.close();
-}
+////	// Now do the read-only stuff
+////	String sql =
+////		" select e.entityid from entities e, entities pe" +
+////		" where pe.entityid = " + entityID +
+////		" and e.primaryentityid = pe.primaryentityid";
+////	String orderBy = "isprimary desc, relation, name";
+////	
+//////System.out.println("*****************\n" + sql);
+////	// ResultSet rs = st.executeQuery(sql);
+////	family.setRows(st, sql, orderBy);
+//	//rs.close();
+//}
 
 /** Override standard delete.  Don't actually delete record, just set obsolete bit. */
-public void doDelete(Statement st)
-throws java.sql.SQLException
+public void doDelete(SqlRunner str)
+//throws java.sql.SQLException
 {
 	// Delete the immediate record
 	SchemaBufDbModel dm = getEntity();
 	SchemaBuf sb = dm.getSchemaBuf();
 	sb.setValueAt(Boolean.TRUE, 0, sb.findColumn("obsolete"));
-	dm.doUpdate(st);
+	dm.doUpdate(str);
 
 	// Reassign any other family members
-	st.executeUpdate("update entities set primaryentityid=entityid" +
+	str.execSql("update entities set primaryentityid=entityid" +
 		" where primaryentityid = " + SqlInteger.sql(this.getEntityId()));
 	
 	// Stop displaying it
-	this.setKey(-1);
-	this.doSelect(st);
+	setKey(-1);
+	this.doSelect(str);
 }
 
-/** Sets up the SchemaBufs for a new person,
-which will be inserted into the DB upon doUpdate(). */
-public void newEntity(Statement st, int entityType) throws java.sql.SQLException
-{
-	// Clear all existing data --- including in sub-DBModels.
-	doClear();
-
-	// Get a new entityID for this record.
-	int entityID = DB.r_nextval(st, "entities_entityid_seq");
-	setKey(entityID);
-
-	// Insert a blank record with that entityID
-	try {
-		SchemaBuf sb = (entityType == PERSON ? getPersonSb() : getOrgSb());
-		sb.insertRow(-1, new String[] {"entityid", "primaryentityid", "isorg"},
-			new Object[] {new Integer(entityID), new Integer(entityID), Boolean.FALSE});
-	} catch(KeyViolationException e) {}	// can't happen, buffer is clear.
-
-	// Switch to person view.
-	setEntityType();
-}
+///** Sets up the SchemaBufs for a new person,
+//which will be inserted into the DB upon doUpdate(). */
+//public void newEntity(Statement st, int entityType) throws java.sql.SQLException
+//{
+//	// Clear all existing data --- including in sub-DBModels.
+//	doClear();
+//
+//	// Get a new entityID for this record.
+//	int entityID = DB.r_nextval(st, "entities_entityid_seq");
+//	setKey(entityID);
+//
+//	// Insert a blank record with that entityID
+//	try {
+//		SchemaBuf sb = (entityType == PERSON ? getPersonSb() : getOrgSb());
+//		sb.insertRow(-1, new String[] {"entityid", "primaryentityid", "isorg"},
+//			new Object[] {new Integer(entityID), new Integer(entityID), Boolean.FALSE});
+//	} catch(KeyViolationException e) {}	// can't happen, buffer is clear.
+//
+//	// Switch to person view.
+////	setEntityType();
+//}
 
 // ===================================================
 public static interface Listener

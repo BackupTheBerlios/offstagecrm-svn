@@ -28,10 +28,10 @@ import citibob.util.KeyedModel;
 public class TermidsSchema extends GroupidsSchema
 {
 
-public TermidsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public TermidsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	table = "termids";
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"termtypes", "termtypeid", "name", "orderid");
 	appendCols(new Column[] {
 		new Column(new SqlEnum(kmodel, false), "termtypeid", false),

@@ -44,27 +44,25 @@ import citibob.jschema.*;
  */
 public class AmendRecordWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
 });
 */
 	
-public AmendRecordWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public AmendRecordWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("New Person", xfapp, xframe, "find");
-	this.st = xst;
 // ---------------------------------------------
 addState(new State("find", null, null) {
-	public HtmlWiz newWiz() throws Exception
-		{ return new FindWiz(frame, st, fapp); }
-	public void process() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+		{ return new FindWiz(frame, str, fapp); }
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		FindWiz w = (FindWiz)wiz;
 //System.out.println("entityid = " + w.getEntityID());

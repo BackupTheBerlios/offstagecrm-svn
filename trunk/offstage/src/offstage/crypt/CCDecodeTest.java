@@ -67,71 +67,71 @@ static {
 //}
 // ---------------------------------------------
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-
-	KeyRing kr = fapp.getKeyRing();
-	kr.loadPrivKeys();
-	SqlTimestamp sqlt = new SqlTimestamp("GMT");
-	
-	// Process empty batch
-	int ccbatchid = DB.r_nextval(st, "ccbatch_ccbatchid_seq");
-	String sql =
-		" update ccpayments set ccbatchid = null;" +
-		" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(ccbatchid) + ");" +
-		" update ccpayments set ccbatchid = " + SqlInteger.sql(ccbatchid) +
-		" where ccbatchid is null and ccinfo is not null";
-	st.executeUpdate(sql);
-
-	// Get main report parameters
-	HashMap params = new HashMap();
-	ResultSet rs = st.executeQuery("select dtime from ccbatches where ccbatchid = " + SqlInteger.sql(ccbatchid) );
-	rs.next();
-	params.put("ccbatchid", ccbatchid);
-	params.put("dtime", sqlt.get(rs, "dtime"));
-	
-	ArrayList<Map> details = new ArrayList();
-	sql = "select e.firstname, e.lastname, p.* from ccpayments p, entities e" +
-		" where e.entityid = p.entityid" +
-		" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
-		" order by dtime";
-	rs = st.executeQuery(sql);
-	while (rs.next()) {
-		String cryptCcinfo = rs.getString("ccinfo");
-		String ccinfo = kr.decrypt(cryptCcinfo);
-//System.out.println(rs.getDouble("amount") + " " + ccinfo);
-		Map map = CCEncoding.decode(ccinfo);
-		map.put("ccbatchid", ccbatchid);
-		map.put("ccnumber", fccnumber.valueToString(map.get("ccnumber")));
-		map.put("expdate", fexpdate.valueToString(map.get("expdate")));
-		map.put("firstname", rs.getString("firstname"));
-		map.put("lastname", rs.getString("lastname"));
-		map.put("entityid", rs.getInt("entityid"));
-		map.put("dtime", sqlt.get(rs, "dtime"));
-		map.put("amount", -rs.getDouble("amount"));
-		
-		details.add(map);
-	}
-	JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-//	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jasper", jrdata, params);
-	
-//	// Convert ccinfo to full table representation
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	Statement st = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//
+//	KeyRing kr = fapp.getKeyRing();
+//	kr.loadPrivKeys();
+//	SqlTimestamp sqlt = new SqlTimestamp("GMT");
+//	
+//	// Process empty batch
+//	int ccbatchid = DB.r_nextval(st, "ccbatch_ccbatchid_seq");
+//	String sql =
+//		" update ccpayments set ccbatchid = null;" +
+//		" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(ccbatchid) + ");" +
+//		" update ccpayments set ccbatchid = " + SqlInteger.sql(ccbatchid) +
+//		" where ccbatchid is null and ccinfo is not null";
+//	st.executeUpdate(sql);
+//
+//	// Get main report parameters
 //	HashMap params = new HashMap();
-//	InputStream in = Object.class.getResourceAsStream("/offstage/reports/CCPayments.jasper");
-//System.out.println("MailingModel2: BBB");
-//	JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
-//System.out.println("MailingModel2: CCC");
-//	offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
-//	net.sf.jasperreports.view.JasperViewer.viewReport(jprint, true);
-//System.out.println("MailingModel2: DDD");
-
-	
-	
-	
-//	System.exit(0);
-}
+//	ResultSet rs = st.executeQuery("select dtime from ccbatches where ccbatchid = " + SqlInteger.sql(ccbatchid) );
+//	rs.next();
+//	params.put("ccbatchid", ccbatchid);
+//	params.put("dtime", sqlt.get(rs, "dtime"));
+//	
+//	ArrayList<Map> details = new ArrayList();
+//	sql = "select e.firstname, e.lastname, p.* from ccpayments p, entities e" +
+//		" where e.entityid = p.entityid" +
+//		" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
+//		" order by dtime";
+//	rs = st.executeQuery(sql);
+//	while (rs.next()) {
+//		String cryptCcinfo = rs.getString("ccinfo");
+//		String ccinfo = kr.decrypt(cryptCcinfo);
+////System.out.println(rs.getDouble("amount") + " " + ccinfo);
+//		Map map = CCEncoding.decode(ccinfo);
+//		map.put("ccbatchid", ccbatchid);
+//		map.put("ccnumber", fccnumber.valueToString(map.get("ccnumber")));
+//		map.put("expdate", fexpdate.valueToString(map.get("expdate")));
+//		map.put("firstname", rs.getString("firstname"));
+//		map.put("lastname", rs.getString("lastname"));
+//		map.put("entityid", rs.getInt("entityid"));
+//		map.put("dtime", sqlt.get(rs, "dtime"));
+//		map.put("amount", -rs.getDouble("amount"));
+//		
+//		details.add(map);
+//	}
+//	JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
+////	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jasper", jrdata, params);
+//	
+////	// Convert ccinfo to full table representation
+////	HashMap params = new HashMap();
+////	InputStream in = Object.class.getResourceAsStream("/offstage/reports/CCPayments.jasper");
+////System.out.println("MailingModel2: BBB");
+////	JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
+////System.out.println("MailingModel2: CCC");
+////	offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
+////	net.sf.jasperreports.view.JasperViewer.viewReport(jprint, true);
+////System.out.println("MailingModel2: DDD");
+//
+//	
+//	
+//	
+////	System.exit(0);
+//}
 
 }

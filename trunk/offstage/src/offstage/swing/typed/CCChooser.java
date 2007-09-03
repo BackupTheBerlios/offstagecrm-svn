@@ -36,7 +36,7 @@ public void initRuntime(offstage.crypt.KeyRing kr)
 	oldCard.initRuntime();
 	newCard.initRuntime(kr);
 }
-public void setEntityID(Statement st, int entityid, App app)
+public void setEntityID(SqlRunner str, int entityid, final App app)
 throws SQLException
 {
 	ResultSet rs = null;
@@ -44,19 +44,22 @@ throws SQLException
 		this.entityid = entityid;
 		String sql =
 			" select * from entities where entityid = " + SqlInteger.sql(entityid);
-		rs = st.executeQuery(sql);
-		rs.next();
-		TypedWidgetBinder.setValueRecursive(oldCard, rs, app.getSwingerMap(), app.getSqlTypeSet());
-		if (oldCard.isFullySet()) {
-			// Old card is good --- give option to use it
-			jTabbedPane1.setEnabledAt(T_OLD, true);
-			jTabbedPane1.setSelectedIndex(T_OLD);
-		} else {
-			jTabbedPane1.setEnabledAt(T_OLD, false);
-			jTabbedPane1.setSelectedIndex(T_NEW);
-		}
-		newCard.initValue(oldCard);
-		this.saveCard.setValue(false);
+		str.execSql(sql, new RsRunnable() {
+		public void run(ResultSet rs) throws SQLException {
+			rs.next();
+			TypedWidgetBinder.setValueRecursive(oldCard, rs, app.getSwingerMap(), app.getSqlTypeSet());
+			if (oldCard.isFullySet()) {
+				// Old card is good --- give option to use it
+				jTabbedPane1.setEnabledAt(T_OLD, true);
+				jTabbedPane1.setSelectedIndex(T_OLD);
+			} else {
+				jTabbedPane1.setEnabledAt(T_OLD, false);
+				jTabbedPane1.setSelectedIndex(T_NEW);
+			}
+			newCard.initValue(oldCard);
+			saveCard.setValue(false);
+	
+		}});
 	} finally {
 		rs.close();
 	}

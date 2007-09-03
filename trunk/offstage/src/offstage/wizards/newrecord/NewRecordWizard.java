@@ -47,24 +47,24 @@
 //	Statement st;		// Datbase connection
 //	/*
 //addState(new State("", "", "") {
-//	public HtmlWiz newWiz()
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 //		{ return new }
-//	public void process()
+//	public void process(citibob.sql.SqlRunner str)
 //	{
 //		
 //	}
 //});
 //*/
 //	
-//public NewRecordWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+//public NewRecordWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //{
 //	super("New Record Wizard", xfapp, xframe, "init");
 //	this.st = xst;
 //// ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;
@@ -72,9 +72,9 @@
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new PersonWiz(frame, st, fapp); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		if (state == null) {
 //			String idSql = offstage.db.DupCheck.checkDups(st, v, 3, 20);
@@ -94,9 +94,9 @@
 //// ---------------------------------------------
 //// Duplicates were found; double-check.
 //addState(new State("checkperson", "person", null) {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new DupsWiz(frame, st, fapp, v.getString("idsql")); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String submit = v.getString("submit");
 //		if ("dontadd".equals(submit)) state = null;
@@ -110,9 +110,9 @@
 //// ---------------------------------------------
 //// Duplicates were found; double-check.
 //addState(new State("finished", null, null) {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new FinishedWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //		{}
 //});
 //// ---------------------------------------------

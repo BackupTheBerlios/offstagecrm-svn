@@ -54,13 +54,13 @@ throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFou
 		return pool;
 }
 // -------------------------------------------------------------------------------
-/** Gets the next value from a sequence. */
-public static int r_nextval(Statement st, String sequence) throws SQLException
-{
-	return SQL.readInt(st, "select nextval('" + sequence + "')");
-}
+///** Gets the next value from a sequence. */
+//public static int r_nextval(SqlRunner str, String sequence) throws SQLException
+//{
+//	return SQL.readInt(st, "select nextval('" + sequence + "')");
+//}
 // -------------------------------------------------------------------------------
-//public static int w_mailingids_create(Statement st, String eqXml, String eqSql)
+//public static int w_mailingids_create(SqlRunner str, String eqXml, String eqSql)
 //throws SQLException
 //{
 //	int groupID = r_nextval(st, "groupids_groupid_seq");
@@ -87,97 +87,103 @@ public static int r_nextval(Statement st, String sequence) throws SQLException
 //}
 // -------------------------------------------------------------------------------
 /** @param eqSql an idSql that selects the entityids we wish to mail to. */
-public static int w_mailingids_create(Statement st, String queryName, String eqXml, String eqSql)
-throws SQLException
+public static void w_mailingids_create(SqlRunner str, final String queryName, final String eqXml, final String eqSql,
+final SeqRunnable rr)
 {
-	int groupID = r_nextval(st, "groupids_groupid_seq");
-	//SQL.readInt(st, "select nextval('groupids_groupid_seq')");
-	try { st.executeUpdate("drop table _ids"); } catch(SQLException sqe) {}
-	String sql;
-	sql =
-		// Create Mailing List 
-		" insert into mailingids" + 
-		" (groupid, name, created, equery) values" + 
-		" (" + groupID + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
-
-		// Create temporary table of IDs for this mailing list
-		// These are primaryentityids (i.e. the people we REALLY want to send to)
-		" create temporary table _ids (id int);" + 
-		" delete from _ids;" + 
-		" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
-
-		// Insert into Mailing List
-		" insert into mailings (groupid, entityid) select " + groupID + ", id from _ids;" + 
-		" drop table _ids;\n" +
-	
-		// ========= Set addressto from multiple sources
-		// 1. Try customaddressto
-		"	update mailings\n" +
-		"	set addressto = customaddressto\n" +
-		"	from entities p\n" +
-		"	where p.entityid = mailings.entityid\n" +
-		"	and p.customaddressto is not null\n" +
-		"	and addressto is null\n" +
-		"	and mailings.groupid = " + groupID + ";\n" +
+	SqlSerial.getNextVal(str, "groupids_groupid_seq", new SeqRunnable() {
+	public void run(int val, SqlRunner nstr) {
+		final int groupID = val; //r_nextval(st, "groupids_groupid_seq");
 		
-		// 2. Try pre-computed names
-		"	update mailings\n" +
-		"	set addressto = ename\n" +
-		"	where addressto is null and ename is not null\n" +
-		"	and groupid = " + groupID + ";\n" +
-		
-		// 3. Try addressto as name of person
-		"	update mailings\n" +
-		"	set addressto = \n" +
-		"		coalesce(p.firstname || ' ', '') ||\n" +
-		"		coalesce(p.middlename || ' ', '') ||\n" +
-		"		coalesce(p.lastname, '')\n" +
-		"	from entities p\n" +
-		"	where mailings.entityid = p.entityid\n" +
-		"	and mailings.groupid = " + groupID + "\n" +
-		"	and addressto is null;\n" +
-		
-		// 4. Try addressto as name of organization
-		"	update mailings\n" +
-		"	set addressto = p.name\n" +
-		"	from organizations p\n" +
-		"	where mailings.entityid = p.entityid\n" +
-		"	and mailings.groupid = " + groupID + "\n" +
-		"	and addressto is null;\n" +
+		String sql =
+			// Conditionally drop our temporary able before creating it
+			" select drop_table('_ids');\n" +
 
-		// Set the rest of the address\n" +
-		"	update mailings\n" +
-		"	set address1 = e.address1,\n" +
-		"	address2 = e.address2,\n" +
-		"	city = e.city,\n" +
-		"	state = e.state,\n" +
-		"	zip = e.zip,\n" +
-		"	country = e.country\n" +
-		"	from entities e\n" +
-		"	where mailings.entityid = e.entityid\n" +
-		"	and mailings.groupid = " + groupID + ";\n";
-	
-System.out.println(sql);
-	st.executeUpdate(sql);
-	return groupID;
+			// Create Mailing List 
+			" insert into mailingids" + 
+			" (groupid, name, created, equery) values" + 
+			" (" + groupID + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
+
+			// Create temporary table of IDs for this mailing list
+			// These are primaryentityids (i.e. the people we REALLY want to send to)
+			" create temporary table _ids (id int);" + 
+			" delete from _ids;" + 
+			" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
+
+			// Insert into Mailing List
+			" insert into mailings (groupid, entityid) select " + groupID + ", id from _ids;" + 
+			" drop table _ids;\n" +
+
+			// ========= Set addressto from multiple sources
+			// 1. Try customaddressto
+			"	update mailings\n" +
+			"	set addressto = customaddressto\n" +
+			"	from entities p\n" +
+			"	where p.entityid = mailings.entityid\n" +
+			"	and p.customaddressto is not null\n" +
+			"	and addressto is null\n" +
+			"	and mailings.groupid = " + groupID + ";\n" +
+
+			// 2. Try pre-computed names
+			"	update mailings\n" +
+			"	set addressto = ename\n" +
+			"	where addressto is null and ename is not null\n" +
+			"	and groupid = " + groupID + ";\n" +
+
+			// 3. Try addressto as name of person
+			"	update mailings\n" +
+			"	set addressto = \n" +
+			"		coalesce(p.firstname || ' ', '') ||\n" +
+			"		coalesce(p.middlename || ' ', '') ||\n" +
+			"		coalesce(p.lastname, '')\n" +
+			"	from entities p\n" +
+			"	where mailings.entityid = p.entityid\n" +
+			"	and mailings.groupid = " + groupID + "\n" +
+			"	and addressto is null;\n" +
+
+			// 4. Try addressto as name of organization
+			"	update mailings\n" +
+			"	set addressto = p.name\n" +
+			"	from organizations p\n" +
+			"	where mailings.entityid = p.entityid\n" +
+			"	and mailings.groupid = " + groupID + "\n" +
+			"	and addressto is null;\n" +
+
+			// Set the rest of the address\n" +
+			"	update mailings\n" +
+			"	set address1 = e.address1,\n" +
+			"	address2 = e.address2,\n" +
+			"	city = e.city,\n" +
+			"	state = e.state,\n" +
+			"	zip = e.zip,\n" +
+			"	country = e.country\n" +
+			"	from entities e\n" +
+			"	where mailings.entityid = e.entityid\n" +
+			"	and mailings.groupid = " + groupID + ";\n";
+
+		nstr.execSql(sql, new RssRunnable() {
+		public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+			if (rr != null) rr.run(groupID, nstr);
+		}});
+	}});
+//System.out.println(sql);
+//	st.executeUpdate(sql);
+//	return groupID;
 }
 // -------------------------------------------------------------------------------
-public static void w_mailings_makereport(Statement st, int mailingID)
-throws SQLException
+public static void w_mailings_makereport(SqlRunner str, int mailingID)
 {
-	String sql;
-	st.executeUpdate(
+	String sql =
 		" update mailings set line1=trim(addressto), line2=trim(address1), line3=trim(address2)" +
 		" where groupid = " + mailingID +
-		" and address1 is not null and address2 is not null");
-	st.executeUpdate(
+		" and address1 is not null and address2 is not null\n;" +
+
 		" update mailings set line1=null, line2=trim(addressto), line3=trim(address2)" +
 		" where groupid = " + mailingID +
-		" and address1 is null and address2 is not null");
-	st.executeUpdate(
+		" and address1 is null and address2 is not null\n;" +
+
 		" update mailings set line1=null, line2=trim(addressto), line3=trim(address1)" +
 		" where groupid = " + mailingID +
-		" and address1 is not null and address2 is null;" +
+		" and address1 is not null and address2 is null\n;" +
 		
 		" update mailings set isgood = true where groupid = " + mailingID + ";\n" +
 
@@ -194,56 +200,59 @@ throws SQLException
 		" or (zip is null and trim(country) = 'USA')" +
 		" or city is null" +
 		" or state is null" +
-		");");
+		");";
+	str.execSql(sql);
 }
 // -------------------------------------------------------------------------------
-public static int getPrimaryEntityID(Statement st, int eid)
-throws SQLException
+public static void getPrimaryEntityID(SqlRunner str, int eid, final SeqRunnable rr)
+// throws SQLException
 {
-	ResultSet rs = st.executeQuery(
-		"select primaryentityid from entities where entityid = " + eid);
-	rs.next();
-	int peid = rs.getInt(1);
-	rs.close();
-	return peid;
+	String sql =
+		"select primaryentityid from entities where entityid = " + eid;
+	str.execSql(sql, new RssRunnable() {
+	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+		int pid = rss[0].getInt(1);
+		rss[0].close();
+		if (rr != null) rr.run(pid, nstr);
+	}});
 }
 
-public static int getTransitivePrimaryEntityID(Statement st, int eid)
-throws SQLException
-{
-	int origID = eid;
-	TreeSet ids = new TreeSet();
-	for (;;) {
-		ResultSet rs = st.executeQuery(
-			"select primaryentityid from entities where entityid = " + eid);
-		rs.next();
-		int neid = rs.getInt(1);
-		rs.close();
-		if (neid == 0) return eid;	// null in SQL table
-		if (neid == eid) return eid;	// We've found the root
-		Integer Neid = new Integer(neid);
-		if (ids.contains(Neid)) return origID;	// Cycle found :-(
-		ids.add(Neid);
-		eid = neid;
-	}
-}
+//public static int getTransitivePrimaryEntityID(SqlRunner str, int eid)
+//throws SQLException
+//{
+//	int origID = eid;
+//	TreeSet ids = new TreeSet();
+//	for (;;) {
+//		ResultSet rs = st.executeQuery(
+//			"select primaryentityid from entities where entityid = " + eid);
+//		rs.next();
+//		int neid = rs.getInt(1);
+//		rs.close();
+//		if (neid == 0) return eid;	// null in SQL table
+//		if (neid == eid) return eid;	// We've found the root
+//		Integer Neid = new Integer(neid);
+//		if (ids.contains(Neid)) return origID;	// Cycle found :-(
+//		ids.add(Neid);
+//		eid = neid;
+//	}
+//}
 // -------------------------------------------------------------------------------
 /** Creates a temporary table full of entity id's from an SQL query designed
  to select those IDs. */
-public static void createIDList(Statement st, String idSql, String idTable)
-throws SQLException
+public static void createIDList(SqlRunner str, String idSql, String idTable)
+//throws SQLException
 {
 	String sql =
 		" create temporary table " + idTable + " (id int);\n" +
 		" delete from " + idTable + ";\n" +
 		" insert into " + idTable + " (id) " + idSql + ";\n";
 //System.out.println(sql);	
-	st.execute(sql);
+	str.execSql(sql);
 }
 // -------------------------------------------------------------------------------
 /** Creates a temporary table full of entity id's from a list of IDs. */
-public static void createIDList(Statement st, int[] ids, String idTable)
-throws SQLException
+public static void createIDList(SqlRunner str, int[] ids, String idTable)
+//throws SQLException
 {
 	StringBuffer sbuf = new StringBuffer();
 	sbuf.append(
@@ -251,23 +260,34 @@ throws SQLException
 		" COPY " + idTable + " (entityid) FROM stdin;\n");
 	for (int i=0; i<ids.length; ++i) sbuf.append("" + ids[i] + "\n");
 	sbuf.append("\\.\n");
-	st.execute(sbuf.toString());
+	str.execSql(sbuf.toString());
 }
 // -------------------------------------------------------------------------------
 /** Counts the number of items in an ID table. */
 //"select entityid from entities where lastname = 'Fischer'"
 //"select e.entityid from entities e, donations d where e.entityid = d.entityid and d.amount > 500"
 
-public static int countIDList(Statement st, String idSql)
-throws SQLException
+public static String sqlCountIDList(String idSql)
 {
 	String sql = "select count(*) from (" + idSql + ") xx";
-System.out.println(sql);
-	ResultSet rs = st.executeQuery(sql);
-	rs.next();
-	int n = rs.getInt(1);
-	rs.close();
-	return n;
+	return sql;
+}
+
+public static void countIDList(SqlRunner str, String idSql, final SeqRunnable rr)
+//throws SQLException
+{
+	String sql = sqlCountIDList(idSql);
+	str.execSql(sql, new RssRunnable() {
+	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+		final int nn = rss[0].getInt(1);
+		if (rr != null) rr.run(nn, nstr);
+	}});
+
+//System.out.println(sql);
+//	ResultSet rs = st.executeQuery(sql);
+//	rs.next();
+//	rs.close();
+//	return n;
 }
 // -------------------------------------------------------------------------------
 /** Removes duplicates (multiple people in same home) from a list of IDs to mail... replaces with sendentityid */
@@ -282,12 +302,10 @@ public static String removeDupsIDSql(String idSql)
 	return sql;
 }
 // -------------------------------------------------------------------------------
-public static ResultSet rs_entities_namesByIDList(Statement st, String idSql, String orderBy)
-throws SQLException
+public static void rs_entities_namesByIDList(SqlRunner str, String idSql, String orderBy, final RsRunnable rr)
+//throws SQLException
 {
 	if (orderBy == null) orderBy = "relation, name";
-//orderBy = "relation, name";
-	// Construct sql query to covert IDs to names
 	String sql =
 		" create temporary table _ids (id int); delete from _ids;\n" +
 
@@ -308,41 +326,15 @@ throws SQLException
 		" , p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, _ids" +
 		" where p.entityid = _ids.id" +
-//		" and not p.isorg" +
-//		"   union\n" +
-//		" select p.entityid, 'persons' as relation," +
-//		" orgname as name" +
-//		" , p.entityid = p.primaryentityid as isprimary" +
-//		" from persons p, _ids" +
-//		" where p.entityid = _ids.id" +
-//		" and p.isorg)" +
 		" ) order by " + orderBy + ";\n" +
 		
 		" drop table _ids";
 
-	/*
-	String sql =
-		" (select entityid, 'organizations' as relation, name as name" +
-		" from organizations" +
-		" where entityid in (" + ids + ")" +
-		"   union" +
-		" select entityid, 'persons' as relation," +
-		" case when lastname is null then '' else lastname || ', ' end ||" +
-		" case when firstname is null then '' else firstname || ' ' end ||" +
-		" case when middlename is null then '' else middlename end" +
-		" from persons" +
-		" where entityid in (" + ids + "))" +
-		" order by relation, name";
-	 */
-System.out.println(sql);
-	ResultSet rs = st.executeQuery(sql);
-	return rs;
-//	super.addAllRows(rs);
-//	rs.close();
+	str.execSql(sql, rr);
 }
 // -------------------------------------------------------------------------------
 public static String sql_entities_namesByIDList2(String idSql, String orderBy)
-throws SQLException
+//throws SQLException
 {
 	if (orderBy == null) orderBy = "relation, name";
 	String sql =
@@ -370,11 +362,10 @@ throws SQLException
 //	return rs;
 }
 // -------------------------------------------------------------------------------
-public static double r_acct_balance(Statement st, int entityid, int actypeid)
-throws SQLException
+public static void r_acct_balance(SqlRunner str, final int entityid, final int actypeid, final DoubleRunnable rr)
+//throws SQLException
 {
 	String sql;
-	double bal = 0;
 	
 	// Figure out latest balance
 	sql =
@@ -382,70 +373,79 @@ throws SQLException
 		" where entityid = " + SqlInteger.sql(entityid) +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
 		" order by dtime desc";
-	ResultSet rs = st.executeQuery(sql);
-	String sdtime = null;
-	if (rs.next()) {
-		bal = rs.getDouble("bal");
-		sdtime = rs.getString("dtime");
-	}
-	rs.close();
-	
-	// Get transactions since then
-	sql =
-		" select sum(amount) from actrans" +
-		" where entityid = " + SqlInteger.sql(entityid) +
-		" and actypeid = " + SqlInteger.sql(actypeid) +
-		(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
-	rs = st.executeQuery(sql);
-	rs.next();
-	bal += rs.getDouble(1);
-	rs.close();
-	
-	return bal;
+	str.execSql(sql, new RssRunnable() {
+	public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+		ResultSet rs = rss[0];
+		double bal = 0;
+		String sdtime = null;
+		if (rs.next()) {
+			bal = rs.getDouble("bal");
+			sdtime = rs.getString("dtime");
+		}
+		rs.close();
+		final double fbal = bal;
+		
+		// Get transactions since then
+		String sql =
+			" select sum(amount) from actrans" +
+			" where entityid = " + SqlInteger.sql(entityid) +
+			" and actypeid = " + SqlInteger.sql(actypeid) +
+			(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
+		nstr.execSql(sql, new RssRunnable() {
+		public void run(ResultSet[] rss, SqlRunner nstr) throws Throwable {
+			rss[0].next();
+			double bal = fbal + rss[0].getDouble(1);
+			rr.run(bal, nstr);
+		}});
+	}});
+//	
+//	rs = st.executeQuery(sql);
+//	rs.next();
+//	bal += rs.getDouble(1);
+//	rs.close();
+//	
+//	return bal;
 }
 // -------------------------------------------------------------------------------
-public static void w_meetings_autofill(Statement st, int courseid, TimeZone tz)
-throws SQLException
+public static void w_meetings_autofill(SqlRunner str, final int courseid, final TimeZone tz)
+//throws SQLException
 {
-	SqlTimestamp sts = new SqlTimestamp("GMT");
-	SqlDate sdt = new SqlDate(tz, true);
-	SqlTime stm = new SqlTime();
-
-	int dayofweek;			// Day of week for the class
-	java.util.Date day0, day1;		// First and last day of term range
-	long tstartMS, tnextMS;
-	ResultSet rs;
-	String sql;
 	
 	// Get basic parameters
-	sql = "select t.firstdate, t.nextdate, c.dayofweek, c.tstart, c.tnext" +
+	String sql = "select t.firstdate, t.nextdate, c.dayofweek, c.tstart, c.tnext" +
 		" from termids t, courseids c" +
 		" where t.groupid = c.termid" +
 		" and c.courseid = " + SqlInteger.sql(courseid);
-	rs = st.executeQuery(sql);
-	rs.next();
-	day0 = sdt.get(rs, 1);
-	day1 = sdt.get(rs, 2);
-	dayofweek = rs.getInt(3);
-	tstartMS = stm.get(rs, 4).getTime();
-	tnextMS = stm.get(rs, 5).getTime();
-	rs.close();
+	str.execSql(sql, new RssRunnable() {
+	public void run(ResultSet[] rss, SqlRunner nstr) throws SQLException {
+		ResultSet rs = rss[0];
+		SqlTimestamp sts = new SqlTimestamp("GMT");
+		SqlDate sdt = new SqlDate(tz, true);
+		SqlTime stm = new SqlTime();
+		rs.next();
+		final java.util.Date day0 = sdt.get(rs, 1);
+		final java.util.Date day1 = sdt.get(rs, 2);
+		final int dayofweek = rs.getInt(3);
+		final long tstartMS = stm.get(rs, 4).getTime();
+		final long tnextMS = stm.get(rs, 5).getTime();
+		rs.close();
 	
-	// Start generating the timestamps...
-	StringBuffer sbuf = new StringBuffer("delete from meetings where courseid = " + SqlInteger.sql(courseid) + ";\n");
-	Calendar cal = Calendar.getInstance(tz);
-	cal.setTime(day0);
-	cal.set(Calendar.DAY_OF_WEEK, dayofweek);
-	while (cal.getTimeInMillis() < day1.getTime()) {
-		java.util.Date ts0 = new java.util.Date(cal.getTimeInMillis() + tstartMS);
-		java.util.Date ts1 = new java.util.Date(cal.getTimeInMillis() + tnextMS);
-		sbuf.append("insert into meetings (courseid, dtstart, dtnext)" +
-			" values (" + SqlInteger.sql(courseid) + ", " +
-			sts.toSql(ts0) + ", " +
-			sts.toSql(ts1) + ");\n");
-		cal.add(Calendar.WEEK_OF_YEAR, 1);
-	}
-	st.executeUpdate(sbuf.toString());
+		// Start generating the timestamps...
+		StringBuffer sbuf = new StringBuffer("delete from meetings where courseid = " + SqlInteger.sql(courseid) + ";\n");
+		Calendar cal = Calendar.getInstance(tz);
+		cal.setTime(day0);
+		cal.set(Calendar.DAY_OF_WEEK, dayofweek);
+		while (cal.getTimeInMillis() < day1.getTime()) {
+			java.util.Date ts0 = new java.util.Date(cal.getTimeInMillis() + tstartMS);
+			java.util.Date ts1 = new java.util.Date(cal.getTimeInMillis() + tnextMS);
+			sbuf.append("insert into meetings (courseid, dtstart, dtnext)" +
+				" values (" + SqlInteger.sql(courseid) + ", " +
+				sts.toSql(ts0) + ", " +
+				sts.toSql(ts1) + ");\n");
+			cal.add(Calendar.WEEK_OF_YEAR, 1);
+		}
+		nstr.execSql(sbuf.toString());
+	}});
 }
 // --------------------------------------------------
 public static String dbversion(Statement st)
@@ -458,7 +458,7 @@ throws SQLException
 }
 // --------------------------------------------------
 /** Re-encrypts all encrypted data in the database, after a master key has been changed. */
-public static void rekeyEncryptedData(Statement st, offstage.crypt.KeyRing kr)
+public static void rekeyEncryptedData(SqlRunner str, offstage.crypt.KeyRing kr)
 {
 
 }

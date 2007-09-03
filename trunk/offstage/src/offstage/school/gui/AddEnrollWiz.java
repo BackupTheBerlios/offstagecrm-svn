@@ -38,6 +38,7 @@ import citibob.wizard.*;
 import offstage.schema.*;
 import citibob.util.*;
 import java.sql.*;
+import citibob.sql.*;
 
 /**
  *
@@ -48,7 +49,7 @@ public class AddEnrollWiz extends HtmlWiz {
 /**
  * Creates a new instance of OrgWiz 
  */
-public AddEnrollWiz(java.awt.Frame owner, java.sql.Statement st, citibob.app.App app, TypedHashMap v)
+public AddEnrollWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, "New Org Record", app.getSwingerMap(), true);

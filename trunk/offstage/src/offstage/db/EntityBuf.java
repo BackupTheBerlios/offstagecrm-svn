@@ -51,11 +51,13 @@ public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged)
 }
 
 /** Changes primary entity id to be the same as the primaryentityid of someone else. */
-public void setPrimaryEntityID(Statement st, int entityid)
+public void setPrimaryEntityID(SqlRunner str, int entityid)
 throws SQLException
 {
-	int peid = DB.getPrimaryEntityID(st, entityid);
-	setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
+	DB.getPrimaryEntityID(str, entityid, new SeqRunnable() {
+	public void run(int peid, SqlRunner nstr) {
+		setValueAt(new Integer(peid), 0, findColumn("primaryentityid"));
+	}});
 }
 // ==================================================================
 // Custom edits to data in the buffer...

@@ -49,30 +49,28 @@ import offstage.gui.*;
  */
 public class ReportWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
 });
 */
 	
-public ReportWizard(offstage.FrontApp xfapp, Statement xst, javax.swing.JFrame xframe, String startState)
+public ReportWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String startState)
 {
 	super("Report Wizard", xfapp, xframe, startState);
-	this.st = xst;
 // ---------------------------------------------
 addState(new State("ticketparams", null, "editquery") {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new TicketParamsWiz(frame, fapp); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		int groupid = v.getInt("groupid");
-		SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
+		final SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
 			" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +
 			" t.numberoftickets,t.payment,tt.tickettype\n" +
 			" from persons p, ticketeventsales t, tickettypes tt\n" +
@@ -80,28 +78,31 @@ addState(new State("ticketparams", null, "editquery") {
 			" and t.tickettypeid = tt.tickettypeid\n" +
 			" and t.groupid = " + SqlInteger.sql(groupid) + "\n" +
 			" order by p.lastname,p.firstname\n");
-		report.executeQuery(st);
-		ReportOutput.saveCSVReport(fapp, frame, "Save Ticket Sales Repot",report);
+		report.executeQuery(str);
+		str.execUpdate(new UpdRunnable() {
+		public void run() throws Exception {
+			ReportOutput.saveCSVReport(fapp, frame, "Save Ticket Sales Repot",report);
+		}});
 	}
 });
 //// ---------------------------------------------
 //addState(new State("listquery", null, "editquery") {
-//	public Wiz newWiz() throws Exception
+//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new JPanelWizWrapper(frame, null, "",
 //			  new ListQueryWiz(st, fapp)); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		if ("newquery".equals(v.get("submit"))) state = "newquery";
 //	}
 //});
 //// ---------------------------------------------
 //addState(new State("newquery", null, "editquery") {
-//	public Wiz newWiz() throws Exception
+//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		NewQueryWiz w = new NewQueryWiz(frame);
 //		return w;
 //	}
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		int equeryID = DB.r_nextval(st, "equeries_equeryid_seq");
 //		String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
@@ -115,11 +116,11 @@ addState(new State("ticketparams", null, "editquery") {
 //});
 //// ---------------------------------------------
 //addState(new State("editquery", "listquery", "reporttype") {
-//	public Wiz newWiz() throws Exception {
+//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 //		EditQueryWiz eqw = new EditQueryWiz(st, fapp, v.getInt("equeryid"));
 //		return new JPanelWizWrapper(frame, "", "", eqw);
 //	}
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		if ("deletequery".equals(v.get("submit"))) {
 ////			equeryDm.doDelete(st);
@@ -131,9 +132,9 @@ addState(new State("ticketparams", null, "editquery") {
 //});
 //// ---------------------------------------------
 //addState(new State("reporttype", "editquery", null) {
-//	public Wiz newWiz() throws Exception
+//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new ReportTypeWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 ////		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.WAIT_CURSOR);
 //		String submit = v.getString("submit");
@@ -222,14 +223,5 @@ addState(new State("ticketparams", null, "editquery") {
 ////}
 //// ==================================================================
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new ReportWizard(fapp, st, null, "ticketparams");
-	wizard.runWizard();
-	System.exit(0);
-}
 
 }

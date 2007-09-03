@@ -58,89 +58,90 @@ ActionPanel getThis() { return this; }
 
 
 /** Creates a new instance of ActionPanel */
-public void initRuntime(FrontApp xfapp) throws Exception
+public void initRuntime(FrontApp xfapp)
+throws org.xml.sax.SAXException, java.io.IOException
 {
 	this.fapp = xfapp;
 
-	actionMap.put("newperson", new CBTask("", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("newperson", new CBTask("", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new NewPersonWizard(fapp, st, root);
+		Wizard wizard = new NewPersonWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 
-//	actionMap.put("amend", new StRunnable() {
-//	public void run(Statement st) throws Exception {
+//	actionMap.put("amend", new ERunnable() {
+//	public void run() throws Throwable {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 //		Wizard wizard = new AmendRecordWizard(fapp, st, root);
 //		wizard.runWizard();
 //	}});
 
-//	actionMap.put("newquery", new StRunnable() {
-//	public void run(Statement st) throws Exception {
+//	actionMap.put("newquery", new ERunnable() {
+//	public void run() throws Throwable {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 //		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, st, root, "newquery");
 //		wizard.runWizard();
 //	}});
 
-	actionMap.put("ticketsalesreport", new CBTask("", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("ticketsalesreport", new CBTask("", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.reports.ReportWizard(fapp, st, root, "ticketparams");
+		Wizard wizard = new offstage.reports.ReportWizard(fapp, root, "ticketparams");
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("editquery", new CBTask("", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("editquery", new CBTask("", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, st, root, "listquery");
+		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, root, "listquery");
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("newcategory", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("newcategory", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.wizards.newgroupid.NewGroupidWizard(fapp, st, root);
+		Wizard wizard = new offstage.wizards.newgroupid.NewGroupidWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("newkey", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("newkey", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.crypt.wiz.NewKeyWizard(fapp, st, root);
+		Wizard wizard = new offstage.crypt.wiz.NewKeyWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("dupkey", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("dupkey", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new offstage.crypt.wiz.DupKeyWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("restorekey", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("restorekey", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new offstage.crypt.wiz.RestoreKeyWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("ccbatch", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("ccbatch", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.crypt.wiz.CCBatchWizard(fapp, st, root);
+		Wizard wizard = new offstage.crypt.wiz.CCBatchWizard(fapp, root);
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("testjodreports", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("testjodreports", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		offstage.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
 	}}));
 	
-	actionMap.put("editcourses", new CBTask("", "admin", new StRunnable() {
-	public void run(Statement st) throws Exception {
+	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {
+	public void run() throws Throwable {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.wizard.editcourses.EditCoursesWizard(fapp, st, root);
+		Wizard wizard = new offstage.wizard.editcourses.EditCoursesWizard(fapp, root);
 		wizard.runWizard();
 //		SchemaBufDbModel tm = new SchemaBufDbModel(
 //			fapp.getSchema("termids"), fapp.getDbChange());
@@ -162,8 +163,8 @@ public void initRuntime(FrontApp xfapp) throws Exception
 //		frame.setVisible(true);
 	}}));
 
-//	actionMap.put("editcourses", new CBTask("", "admin", new StRunnable() {
-//	public void run(Statement st) throws Exception {
+//	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {
+//	public void run() throws Throwable {
 //		CoursesEditor panel = new CoursesEditor();
 //		panel.initRuntime(st, fapp);
 //		
@@ -193,7 +194,7 @@ public void linkSelected(java.net.URL href, String target)
 }
 
 //
-//public boolean doTicketSalesReport(String title, int groupid) throws Exception
+//public boolean doTicketSalesReport(String title, int groupid) throws Throwable
 //{
 //	SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
 //		" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +

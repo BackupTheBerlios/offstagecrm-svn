@@ -43,7 +43,7 @@ public static final int T_CHECKPAYMENTS = 6;
 public final KeyedModel tableKmodel;
 public final KeyedModel tableoidKmodel;
 	
-public ActransSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public ActransSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
@@ -58,13 +58,14 @@ throws SQLException
 	tableKmodel.addItem(new Integer(T_CHECKPAYMENTS), "check payment");
 	
 	table = "actrans";
-	KeyedModel actypeKmodel = new DbKeyedModel(st, change,
+	KeyedModel actypeKmodel = new DbKeyedModel(str, change,
 		"actypes", "actypeid", "name", "name");
 	tableoidKmodel = new KeyedModel();
-	tableoidKmodel.addAllItems(
-		st.executeQuery(
+	tableoidKmodel.addAllItems(str,
 			"select oid,relname from pg_class where relname in" +
-			" ('invoices', 'tuitiontrans', 'actrans', 'cashpayments', 'adjpayments', 'ccpayments', 'checkpayments')"), "oid", "relname");
+			" ('invoices', 'tuitiontrans', 'actrans', 'cashpayments'," +
+			" 'adjpayments', 'ccpayments', 'checkpayments')",
+			"oid", "relname");
 	cols = new Column[] {
 		new Column(new SqlInteger(false), "actransid", true),
 		new Column(new SqlEnum(tableoidKmodel, false), "tableoid"),

@@ -106,7 +106,7 @@ int courseid;
 	public void saveCur()
 	{
 		fapp.runGui(MeetingsWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			if (meetingsSb.valueChanged()) {
 				meetingsSb.doUpdate(st);
 				meetingsSb.doSelect(st);
@@ -233,7 +233,7 @@ int courseid;
 	private void bAutoFillActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAutoFillActionPerformed
 	{//GEN-HEADEREND:event_bAutoFillActionPerformed
 		fapp.runGui(MeetingsWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception {
+		public void run(SqlRunner str) throws Exception {
 			offstage.db.DB.w_meetings_autofill(st, courseid, fapp.getTimeZone());
 			meetingsSb.doSelect(st);
 		}});
@@ -244,7 +244,7 @@ int courseid;
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		saveCur();
 //		fapp.runGui(MeetingsWiz.this, new StRunnable() {
-//		public void run(Statement st) throws Exception {
+//		public void run(SqlRunner str) throws Exception {
 //			  meetingsSb.doUpdate(st);
 //			  meetingsSb.doSelect(st);
 //		  }});
@@ -254,7 +254,7 @@ int courseid;
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
 		fapp.runGui(MeetingsWiz.this, new StRunnable() {
-		public void run(Statement st) throws Exception
+		public void run(SqlRunner str) throws Exception
 		  {
 			  meetingsSb.doSelect(st);
 		  }});

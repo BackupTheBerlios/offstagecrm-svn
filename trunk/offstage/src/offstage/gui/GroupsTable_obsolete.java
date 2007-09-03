@@ -31,6 +31,7 @@ import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
 import citibob.swing.*;
+import citibob.sql.*;
 //import offstage.schema.GroupTypeKeyedModel;
 
 /**
@@ -69,7 +70,7 @@ public void setIDTableName(String s)
 //		new String[] {"S", "Type", "Phone"},
 //		new String[] {"__status__", "groupid", "phone"});
 
-public void initRuntime(Statement st, SchemaBuf phonesSb)
+public void initRuntime(SqlRunner str, SchemaBuf phonesSb)
 throws java.sql.SQLException
 {
 	// Prepend 2 columns to column list

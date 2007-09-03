@@ -27,7 +27,7 @@ import citibob.util.KeyedModel;
 public class MailingsSchema extends ConstSchema
 {
 
-public MailingsSchema(Statement st, DbChangeModel change)
+public MailingsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	super();

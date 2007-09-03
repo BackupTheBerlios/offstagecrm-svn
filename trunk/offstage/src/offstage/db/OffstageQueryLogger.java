@@ -65,7 +65,8 @@ public void log(final QueryLogRec rec)
 			case INSERT : ctype = 'I'; break;
 			case DELETE : ctype = 'D'; break;
 		}
-		int id = DB.r_nextval(st, "querylog_queryid_seq");
+		int id = SQL.readInt(st, "select nextval('querylog_queryid_seq')");
+//		int id = DB.r_nextval(st, "querylog_queryid_seq");
 		StringBuffer sql = new StringBuffer();
 		sql.append("insert into querylog (loginid, queryid, type, dbtable, dtime)" +
 			" values (" + SqlInteger.sql(loginID) + ", " + SqlInteger.sql(id) + ", " + SqlChar.sql(ctype) +

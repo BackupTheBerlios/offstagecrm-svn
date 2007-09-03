@@ -45,20 +45,18 @@ import offstage.crypt.*;
  */
 public class NewKeyWizard extends OffstageWizard {
 
-Statement st;
 //	StatemNewKeyWizardDatbase connection
 	
-public NewKeyWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public NewKeyWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("New Key", xfapp, xframe, "insertkey");
-	this.st = xst;
 // ---------------------------------------------
 addState(new State("insertkey", null, "removekey") {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Insert Key", true,
 			getResourceName("newkey_InsertKey.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) state = "keynotinserted";
@@ -67,7 +65,7 @@ addState(new State("insertkey", null, "removekey") {
 				kr.createNewMasterKey();
 				kr.clearPrivKeys();
 				kr.loadPubKey();
-				DB.rekeyEncryptedData(st, kr);
+				DB.rekeyEncryptedData(str, kr);
 			} catch(Exception e) {
 				state = "keyerror";
 			}
@@ -76,11 +74,11 @@ addState(new State("insertkey", null, "removekey") {
 });
 // ---------------------------------------------
 addState(new State("removekey", "insertkey", null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("newkey_RemoveKey.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.isUsbInserted()) state = "keynotremoved";
@@ -88,45 +86,36 @@ addState(new State("removekey", "insertkey", null) {
 });
 // ---------------------------------------------
 addState(new State("keyerror", "insertkey", null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Error", true,
 			getResourceName("newkey_KeyError.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new State("keynotinserted", "insertkey", null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Not Inserted", true,
 			getResourceName("KeyNotInserted.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new State("keynotremoved", "removekey", null) {
-	public Wiz newWiz() throws Exception {
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
 		return new HtmlWiz(frame, "Key Not Removed", true,
 			getResourceName("KeyNotRemoved.html"));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 }
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new NewKeyWizard(fapp, st, null);
-	wizard.runWizard();
-	System.exit(0);
-}
 
 }

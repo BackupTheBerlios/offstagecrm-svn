@@ -25,12 +25,12 @@ import java.sql.*;
 public class EnrollmentsSchema extends ConstSchema
 {
 
-public EnrollmentsSchema(Statement st, DbChangeModel change, java.util.TimeZone tz)
+public EnrollmentsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
 	table = "enrollments";
-	citibob.util.KeyedModel kmodel = new DbKeyedModel(st, change,
+	citibob.util.KeyedModel kmodel = new DbKeyedModel(str, change,
 		"courseroles", "courseroleid", "name", "orderid,name");
 	cols = new Column[] {
 		new Column(new SqlInteger(false), "courseid", true),

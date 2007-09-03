@@ -45,27 +45,25 @@ import citibob.jschema.log.*;
  */
 public class NewPersonWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
 });
 */
 
-public NewPersonWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public NewPersonWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("New Record", xfapp, xframe, "person");
-	this.st = xst;
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;
@@ -74,9 +72,9 @@ public NewPersonWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xf
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
 addState(new State("person", null, null) {
-	public HtmlWiz newWiz() throws Exception
-		{ return new PersonWiz(frame, st, fapp); }
-	public void process() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+		{ return new PersonWiz(frame, str, fapp); }
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		if (state == null) {
 			// First: do a simple check of data entry
@@ -85,17 +83,21 @@ addState(new State("person", null, null) {
 					"Invalid input.\nPlease fill in all required (starred) fields!");
 				state = "person";
 			} else {
-				String idSql = offstage.db.DupCheck.checkDups(st, v, 3, 20);
-				v.put("idsql", idSql);
-				System.out.println("DupCheck sql: " + idSql);
-				int ndups = DB.countIDList(st, idSql);
-				if (ndups == 0) {
-					createPerson(false);
-					state = null; //"finished";
-				} else {
-					state = "checkdups";
-				}
-				//state = (ndups == 0 ? "finished" : "checkdups");
+				offstage.db.DupCheck.checkDups(str, v, 3, 20, new StringRunnable() {
+				public void run(String idSql, SqlRunner nstr) {
+					v.put("idsql", idSql);
+					System.out.println("DupCheck sql: " + idSql);
+					DB.countIDList(nstr, idSql, new SeqRunnable() {
+					public void run(int ndups, SqlRunner nstr) throws SQLException {
+						if (ndups == 0) {
+							createPerson(nstr, false);
+							state = null; //"finished";
+						} else {
+							state = "checkdups";
+						}
+					}});
+					//state = (ndups == 0 ? "finished" : "checkdups");
+				}});
 			}
 		}
 	}
@@ -103,14 +105,14 @@ addState(new State("person", null, null) {
 // ---------------------------------------------
 // Duplicates were found; double-check.
 addState(new State("checkdups", null, null) {
-	public HtmlWiz newWiz() throws Exception
-		{ return new DupsWiz(frame, st, fapp, v.getString("idsql")); }
-	public void process() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+		{ return new DupsWiz(frame, str, fapp, v.getString("idsql")); }
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		String submit = v.getString("submit");
 		if ("dontadd".equals(submit)) state = null;
 		if ("addanyway".equals(submit)) {
-			createPerson(false);
+			createPerson(str, false);
 			state = "finished";
 System.out.println("Add anyway!");
 		}
@@ -118,9 +120,9 @@ System.out.println("Add anyway!");
 });
 // ---------------------------------------------
 addState(new State("org", null, null) {
-	public HtmlWiz newWiz() throws Exception
-		{ return new OrgWiz(frame, st, fapp); }
-	public void process() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+		{ return new OrgWiz(frame, str, fapp); }
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		if (state == null) {
 			// First: do a simple check of data entry
@@ -129,17 +131,21 @@ addState(new State("org", null, null) {
 					"Invalid input.\nPlease fill in all required (starred) fields!");
 				state = "org";
 			} else {
-				String idSql = offstage.db.DupCheck.checkDups(st, v, 3, 20);
-				v.put("idsql", idSql);
-				System.out.println("DupCheck sql: " + idSql);
-				int ndups = DB.countIDList(st, idSql);
-				if (ndups == 0) {
-					createPerson(true);
-					state = null;// "finished";
-				} else {
-					state = "checkdups";
-				}
+				offstage.db.DupCheck.checkDups(str, v, 3, 20, new StringRunnable() {
+				public void run(String idSql, SqlRunner nstr) {
+					v.put("idsql", idSql);
+					System.out.println("DupCheck sql: " + idSql);
+					DB.countIDList(nstr, idSql, new SeqRunnable() {
+					public void run(int ndups, SqlRunner nstr) throws SQLException {
+						if (ndups == 0) {
+							createPerson(nstr, true);
+							state = null;// "finished";
+						} else {
+							state = "checkdups";
+						}
+					}});
 				//state = (ndups == 0 ? "finished" : "checkdups");
+				}});
 			}
 		}
 	}
@@ -147,9 +153,9 @@ addState(new State("org", null, null) {
 // ---------------------------------------------
 // Duplicates were found; double-check.
 addState(new State("finished", null, null) {
-	public HtmlWiz newWiz() throws Exception
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new FinishedWiz(frame); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 		{}
 });
 // ---------------------------------------------
@@ -162,59 +168,61 @@ private void addSCol(ConsSqlQuery q, String col)
 	String val = v.getString(col);
 	if (val != null) q.addColumn(col, SqlString.sql(val));
 }
-void createPerson(boolean isorg) throws SQLException
+void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 {
 	// Make main record
-	int id = DB.r_nextval(st, "entities_entityid_seq");
-	v.put("entityid", new Integer(id));
-	ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
-	q.addColumn("entityid", SqlInteger.sql(id));
-	q.addColumn("primaryentityid", SqlInteger.sql(id));
-	addSCol(q, "lastname");
-	addSCol(q, "middlename");
-	addSCol(q, "firstname");
-	addSCol(q, "address1");
-	addSCol(q, "address2");
-	addSCol(q, "city");
-	addSCol(q, "state");
-	addSCol(q, "zip");
-	addSCol(q, "occupation");
-	addSCol(q, "title");
-	addSCol(q, "orgname");
-	addSCol(q, "email");
-	addSCol(q, "url");
-	q.addColumn("isorg", SqlBool.sql(isorg));
-	String sql = q.getSql();
-System.out.println(sql);
-	st.execute(sql);
-	fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("persons")));
-	
-	// Make phone record --- first dig for keyed model...
-	String phone = v.getString("phone");
-	if (phone != null) {
-		String phoneType = (isorg ? "work" : "home");
-		q = new ConsSqlQuery("phones", ConsSqlQuery.INSERT);
+	SqlSerial.getNextVal(str, "entities_entityid_seq", new SeqRunnable() {
+	public void run(int id, SqlRunner nstr) {
+		v.put("entityid", new Integer(id));
+		ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
 		q.addColumn("entityid", SqlInteger.sql(id));
-		q.addColumn("groupid", "(select groupid from phoneids where name = " + SqlString.sql(phoneType) + ")");
-		q.addColumn("phone", SqlString.sql(phone));
-		sql = q.getSql();
-System.out.println(sql);
-		st.execute(sql);
-		
-		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
-	}
+		q.addColumn("primaryentityid", SqlInteger.sql(id));
+		addSCol(q, "lastname");
+		addSCol(q, "middlename");
+		addSCol(q, "firstname");
+		addSCol(q, "address1");
+		addSCol(q, "address2");
+		addSCol(q, "city");
+		addSCol(q, "state");
+		addSCol(q, "zip");
+		addSCol(q, "occupation");
+		addSCol(q, "title");
+		addSCol(q, "orgname");
+		addSCol(q, "email");
+		addSCol(q, "url");
+		q.addColumn("isorg", SqlBool.sql(isorg));
+		String sql = q.getSql();
+	System.out.println(sql);
+		nstr.execSql(sql);
+		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("persons")));
 
-	// Do interests
-	Integer interestid = v.getInteger("interestid");
-	if (interestid != null) {
-		q = new ConsSqlQuery("interests", ConsSqlQuery.INSERT);
-		q.addColumn("entityid", SqlInteger.sql(id));
-		q.addColumn("groupid", SqlInteger.sql(interestid));
-		sql = q.getSql();
-System.out.println(sql);
-		st.execute(sql);
-		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
-	}
+		// Make phone record --- first dig for keyed model...
+		String phone = v.getString("phone");
+		if (phone != null) {
+			String phoneType = (isorg ? "work" : "home");
+			q = new ConsSqlQuery("phones", ConsSqlQuery.INSERT);
+			q.addColumn("entityid", SqlInteger.sql(id));
+			q.addColumn("groupid", "(select groupid from phoneids where name = " + SqlString.sql(phoneType) + ")");
+			q.addColumn("phone", SqlString.sql(phone));
+			sql = q.getSql();
+	System.out.println(sql);
+			nstr.execSql(sql);
+
+			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
+		}
+
+		// Do interests
+		Integer interestid = v.getInteger("interestid");
+		if (interestid != null) {
+			q = new ConsSqlQuery("interests", ConsSqlQuery.INSERT);
+			q.addColumn("entityid", SqlInteger.sql(id));
+			q.addColumn("groupid", SqlInteger.sql(interestid));
+			sql = q.getSql();
+	System.out.println(sql);
+			nstr.execSql(sql);
+			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
+		}
+	}});
 }
 
 boolean notnull(String field)
@@ -233,13 +241,6 @@ boolean isValidOrg()
 	return notnull("orgname");
 }
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new NewPersonWizard(fapp, st, null);
-	wizard.runWizard();
-}
+
 
 }

@@ -31,6 +31,7 @@ import citibob.swing.table.*;
 import citibob.multithread.*;
 import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
 //import offstage.gui.MultiSBTest;
+import citibob.sql.*;
 
 /**
  *
@@ -47,7 +48,7 @@ SchemaBufDbModel mdm;
 		initComponents();
 	}
 
-	public void initRuntime(App app, Statement st) throws SQLException
+	public void initRuntime(SqlRunner str, App app) // throws SQLException
 	{
 		this.app = app;
 //		SchemaBuf persons = new SchemaBuf(app.getSchema("persons"));
@@ -66,7 +67,7 @@ SchemaBufDbModel mdm;
 		jTypeTable1.setSwingerMap(app.getSwingerMap());
 //		jTypeTable1.setModel(mdm.newJTypeTableModel());
 		jTypeTable1.setModel(mdm.getSchemaBuf());
-		mdm.doSelect(st);
+		mdm.doSelect(str);
 	}
 	
 	/** This method is called from within the constructor to
@@ -115,9 +116,9 @@ SchemaBufDbModel mdm;
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
 	{//GEN-HEADEREND:event_jButton1ActionPerformed
-	app.runGui(this, new StRunnable() {
-	public void run(Statement st) throws Exception {
-		mdm.doUpdate(st);
+	app.runGui(this, new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		mdm.doUpdate(str);
 	}});
 
 // TODO add your handling code here:
@@ -143,16 +144,16 @@ SchemaBufDbModel mdm;
     private citibob.swing.JTypeTable jTypeTable1;
     // End of variables declaration//GEN-END:variables
 	
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	
-	TableEditor
-		frame = new TableEditor();
-	frame.initRuntime(fapp, st);
-	frame.setVisible(true);
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	SqlRunner str = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//	
+//	TableEditor
+//		frame = new TableEditor();
+//	frame.initRuntime(fapp, st);
+//	frame.setVisible(true);
+//}
 
 }

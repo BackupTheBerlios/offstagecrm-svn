@@ -45,28 +45,27 @@ import citibob.jschema.*;
  */
 public class EditCoursesWizard extends OffstageWizard {
 
-	Statement st;		// Datbase connection
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz()
+	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
 		{ return new }
-	public void process()
+	public void process(citibob.sql.SqlRunner str)
 	{
 		
 	}
 });
 */
 	
-public EditCoursesWizard(offstage.FrontApp xfapp, Statement xst, java.awt.Frame xframe)
+public EditCoursesWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("Edit Courses", xfapp, xframe, "termlist");
 	this.st = xst;
 // ---------------------------------------------
 addState(new State("termlist", null, "courselist") {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 		{ return new JPanelWizWrapper(frame, null, ">> Courses",
 			  new TermsWiz(fapp, st)); }
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		if (Termid == null) state = "termlist";
@@ -74,13 +73,13 @@ addState(new State("termlist", null, "courselist") {
 });
 // ---------------------------------------------
 addState(new State("courselist", "termlist", "meetings") {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		return new JPanelWizWrapper(frame, "", ">> Meetings",
 			  new CoursesWiz(fapp, st, Termid));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		Integer Termid = (Integer)v.get("courseid");
 		if (Termid == null) state = "courselist";
@@ -88,22 +87,22 @@ addState(new State("courselist", "termlist", "meetings") {
 });
 // ---------------------------------------------
 addState(new State("meetings", "courselist", null) {
-	public Wiz newWiz() throws Exception
+	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		Integer Courseid = (Integer)v.get("courseid");
 		return new JPanelWizWrapper(frame, "", "Finished",
 			  new MeetingsWiz(fapp, st, Termid, Courseid));
 	}
-	public void process() throws Exception
+	public void process(citibob.sql.SqlRunner str) throws Exception
 		{}
 });
 // ---------------------------------------------
 //// Query for name of new category
 //addState(new State("catname", "grouplist", "finished") {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new CatNameWiz(frame, v.getString("table")); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String catname = v.getString("catname");
 //		if (catname == null || "".equals(catname)) return;
@@ -119,9 +118,9 @@ addState(new State("meetings", "courselist", null) {
 //// ---------------------------------------------
 //// Query for name of new donation category
 //addState(new State("donationname", "grouplist", "finished") {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new DonationNameWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //		String catname = v.getString("catname");
 //		if (catname == null || "".equals(catname)) return;
@@ -138,9 +137,9 @@ addState(new State("meetings", "courselist", null) {
 //// ---------------------------------------------
 //// Query for name of new donation category
 //addState(new State("finished", null, null) {
-//	public HtmlWiz newWiz() throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
 //		{ return new FinishedWiz(frame); }
-//	public void process() throws Exception
+//	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
 //	}
 //});
@@ -151,14 +150,5 @@ addState(new State("meetings", "courselist", null) {
 
 
 
-
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	Wizard wizard = new EditCoursesWizard(fapp, st, null);
-	wizard.runWizard();
-}
 
 }

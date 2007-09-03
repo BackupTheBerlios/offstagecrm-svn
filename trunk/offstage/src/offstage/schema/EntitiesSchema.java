@@ -35,12 +35,12 @@ static {
 	ccTypeModel.addItem("v", "Visa");
 }
 
-public EntitiesSchema(Statement st, DbChangeModel change)
+public EntitiesSchema(citibob.sql.SqlRunner str, DbChangeModel change)
 throws SQLException
 {
 	table = "entities";
 
-	KeyedModel kmodel = new DbKeyedModel(st, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"relprimarytypes", "relprimarytypeid", "name", "name");
 	cols = new Column[] {
 			new Column(new SqlInteger(false), "entityid", true),
@@ -69,7 +69,7 @@ throws SQLException
 		new Column(new SqlString(100), "orgname", false),
 		new Column(new SqlBool(false), "isorg", false),
 		new Column(new SqlEnum(
-			new DbKeyedModel(st, change, "mailprefids", "mailprefid", "name", "mailprefid"),
+			new DbKeyedModel(str, change, "mailprefids", "mailprefid", "name", "mailprefid"),
 			"<No Preference>"), "mailprefid"),
 		new Column(new SqlString(50), "ccname"),
 		new Column(new SqlString(1), "cctype"),
