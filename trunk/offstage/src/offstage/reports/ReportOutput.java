@@ -117,6 +117,7 @@ String title, JTypeTableModel report) throws Exception
 {
 	File file = chooseReportOutput(app, parent,
 		"csvreport", ".csv", title);
+	if (file == null) return null;
 
 	CSVReportOutput csv = new CSVReportOutput(report, null, null, app.getSFormatterMap());
 	csv.writeReport(file);

@@ -236,7 +236,7 @@ final int minScore, final int maxDups, final UpdRunnable rr)
 //throws SQLException
 {
 	final DupCheck dc = new DupCheck(str, v);
-	str.next().execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		String idSql = dc.getIDSql(minScore, maxDups);
 		str.put("idsql", idSql);

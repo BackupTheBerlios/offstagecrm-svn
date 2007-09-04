@@ -82,7 +82,7 @@ public MailingModel2(final SqlRunner str, OffstageSchemaSet sset)
 //throws SQLException
 {
 	this.runner = runner;
-	mailings = new IntKeyedDbModel(sset.mailings, "groupid", false, null);
+	mailings = new IntKeyedDbModel(sset.mailings, "groupid", null, new IntKeyedDbModel.Params(false));
 	add(mailings);
 //	oneMailingid = new IntKeyedDbModel(sset.mailingids, "groupid", false, null);
 //	add(oneMailingid);

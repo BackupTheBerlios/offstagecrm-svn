@@ -61,8 +61,10 @@ FrontApp fapp;
 		this.fapp = xfapp;
 		
 		// Set up terms selector
-		terms.setKeyedModel(new DbKeyedModel(str, fapp.getDbChange(), "termids",
+		SqlBatch str0 = new SqlBatch();
+		terms.setKeyedModel(new DbKeyedModel(str0, fapp.getDbChange(), "termids",
 			"select groupid, name from termids where iscurrent order by firstdate"));
+		str0.exec(fapp);
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 	    public void propertyChange(PropertyChangeEvent evt) {
 			fapp.runApp(new BatchRunnable() {
@@ -70,13 +72,14 @@ FrontApp fapp;
 				termChanged(str);
 			}});
 		}});
-		
+	
 		// Set up courses editor
 		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-			"termid", fapp.getDbChange());
+			"termid", fapp.getDbChange(), new IntKeyedDbModel.Params());
 		coursesSb.setOrderClause("dayofweek, tstart, name");
 		
-		termChanged(str);
+		terms.setValue(termid);
+		//termChanged(str);
 //		terms.setSelectedIndex(0);		// Should throw a value changed event
 		courses.setModelU(coursesSb.getSchemaBuf(),
 			new String[] {"Name", "Day", "Start", "End", "Enroll Limit"},
@@ -102,7 +105,6 @@ FrontApp fapp;
 //		KeyedRenderEdit tkre = new KeyedRenderEdit(new TimeSKeyedModel(7,0, 23,0, 15*60));
 //		courses.setRenderEditU("tstart_s", tkre);
 //		courses.setRenderEditU("tnext_s", tkre);
-		terms.setValue(termid);
 		
 		if (courses.getModelU().getRowCount() > 0) courses.setRowSelectionInterval(0,0);
 

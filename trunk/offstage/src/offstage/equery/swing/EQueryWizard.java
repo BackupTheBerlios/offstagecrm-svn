@@ -122,7 +122,8 @@ addState(new State("reporttype", "editquery", null) {
 		EQuery equery = (EQuery)v.get("equery");
 		String equeryName = v.getString("equeryname");
 		if ("mailinglabels".equals(submit)) {
-			equery.makeMailing(str, equeryName, fapp.getEquerySchema(), new UpdRunnable() {
+			equery.makeMailing(str, equeryName, fapp.getEquerySchema(), null);
+			str.execUpdate(new UpdRunnable() {
 			public void run(SqlRunner str) {
 				final int mailingID = (Integer)str.get("groupids_groupid_seq");
 				fapp.getMailingModel().setKey(mailingID);
@@ -133,6 +134,7 @@ addState(new State("reporttype", "editquery", null) {
 		} else if ("peopletab".equals(submit)) {
 			EntityListTableModel res = fapp.getSimpleSearchResults();
 			String sql = equery.getSql(fapp.getEquerySchema());
+System.out.println("EQueryWizard sql: " + sql);
 			res.setRows(str, sql, null);
 			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
 			state = stateRec.next;

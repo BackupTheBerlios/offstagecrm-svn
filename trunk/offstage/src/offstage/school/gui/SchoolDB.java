@@ -141,16 +141,25 @@ throws SQLException
 		" select billingtype" +
 		" from entities_school es where entityid = " + SqlInteger.sql(adultid) + ";\n" +
 
+		// Speed up rss[3] query below
+		" create temporary table _ids (entityid int);\n" +
+		" insert into _ids select entityid from entities_school" +
+		"    where adultid = " + SqlInteger.sql(adultid) + ";\n" +
+		// Use _ids to clear tuition, in case no enrollments down below
+		" update termregs set tuition = 0" +
+		" from _ids st where termregs.entityid = st.entityid" +
+		" and termregs.groupid = " + SqlInteger.sql(termid) + ";\n" +
+		
 		// rss[3]
 		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, c.*\n" +
-		" from entities_school st, entities p, courseids c, enrollments e, termregs tr\n" +
+		" from _ids st, entities p, courseids c, enrollments e, termregs tr\n" +
 		" where st.entityid = p.entityid\n" +
 		" and tr.entityid = p.entityid and tr.groupid = c.termid" +
-		" and st.adultid = " + SqlInteger.sql(adultid) + "\n" +
 		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
 		" and e.courseid = c.courseid and e.entityid = st.entityid" +
 		" and e.courserole = (select courseroleid from courseroles where name = 'student')" +
-		" order by st.entityid, dayofweek, c.tstart";
+		" order by st.entityid, dayofweek, c.tstart;" +
+		" drop table _ids;";
 
 	str.execSql(sql, new RssRunnable() {
 	public void run(SqlRunner str, ResultSet[] rss) throws Exception {

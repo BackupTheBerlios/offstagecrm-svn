@@ -82,7 +82,7 @@ int courseid;
 		
 		// Set up courses editor
 		meetingsSb = new IntKeyedDbModel(fapp.getSchema("meetings"),
-			"courseid", fapp.getDbChange());
+			"courseid", fapp.getDbChange(), new IntKeyedDbModel.Params());
 		meetingsSb.setKey(courseid);
 		meetingsSb.setOrderClause("dtstart");
 		meetings.setModelU(meetingsSb.getSchemaBuf(),

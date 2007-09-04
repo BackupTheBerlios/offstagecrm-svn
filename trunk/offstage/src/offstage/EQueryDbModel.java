@@ -38,7 +38,7 @@ public class EQueryDbModel extends IntKeyedDbModel
 {
 	
 public EQueryDbModel(OffstageSchemaSet dbSchemaSet) {
-	super(new SchemaBuf(dbSchemaSet.equeries), "equeryid", false);
+	super(new SchemaBuf(dbSchemaSet.equeries), "equeryid", new Params(false));
 }
 
 

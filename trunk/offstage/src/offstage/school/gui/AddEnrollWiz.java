@@ -58,31 +58,21 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));
 	
 //	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
-	addWidget("courserole", new JKeyedComboBox(
-		new citibob.sql.DbKeyedModel(str, null,
-		"courseroles", "courseroleid", "name", "orderid")));
-	
-//	// Populate available courses for adding
-//	courselist.setKeyedModel(
-//	new DbKeyedModel(st, fapp.getDbChange(), "courseids",
-//		" select courseid, c.name || ' (' || dw.shortname || ')'" +
-//		" from courseids c, daysofweek dw" +
-//		" where c.dayofweek = dw.javaid" +
-//		" and termid = " + stermid +
-//		" order by c.dayofweek, c.name, c.tstart"));
-
+	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
+		"courseroles", "courseroleid", "name", "orderid");
 	String sql =
 		" select courseid, c.name || ' (' || dw.shortname || ')'" +
 		" from courseids c, daysofweek dw" +
 		" where c.dayofweek = dw.javaid" +
 		" and termid = " + v.get("termid") +
 		" order by c.dayofweek, c.name, c.tstart";
-//System.out.println(sql);
-	addWidget("courseid", new JKeyedComboBox( //new JKeyedSelectTable(
-		new citibob.sql.DbKeyedModel(str, null, "courseids", sql)));
-		//"courseid", "name", "dayofweek,tstart")));
-
-	loadHtml();
+	final KeyedModel cModel = new citibob.sql.DbKeyedModel(str, null, "courseids", sql);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		addWidget("courserole", new JKeyedComboBox(crModel));
+		addWidget("courseid", new JKeyedComboBox(cModel));
+		loadHtml();
+	}});	
 }
 
 

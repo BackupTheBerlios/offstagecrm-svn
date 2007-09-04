@@ -71,19 +71,23 @@ class AllDbModel extends MultiDbModel
 	{
 		studentDm.doSelect(str);
 		termregsDm.doSelect(str);
-		parentDm.setKey((Integer)schoolRm.get("parentid"));
-		parentDm.doSelect(str);
-		parent2Dm.setKey((Integer)schoolRm.get("parent2id"));
-		parent2Dm.doSelect(str);
-		Integer pid = (Integer)studentRm.get("primaryentityid");
-		familyTable.setPrimaryEntityID(str, pid);
-		payerDm.setKey(studentDm.getAdultID());
-		payerDm.doSelect(str);
-//		householdDm.setKey(pid);
-//		householdDm.doSelect(st);
-		enrolledDb.doSelect(str);
-		studentDirty = false;
-		setIDDirty(false);
+
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			// Keys depend on results of previous queries
+			parentDm.setKey((Integer)schoolRm.get("parentid"));
+			parent2Dm.setKey((Integer)schoolRm.get("parent2id"));
+			payerDm.setKey(studentDm.getAdultID());
+
+			parentDm.doSelect(str.next());
+			parent2Dm.doSelect(str.next());
+			Integer pid = (Integer)studentRm.get("primaryentityid");
+			familyTable.setPrimaryEntityID(str.next(), pid);
+			payerDm.doSelect(str.next());
+			enrolledDb.doSelect(str.next());
+			studentDirty = false;
+			setIDDirty(false);
+		}});
 	}
 	public void setKey(int entityid)
 	{
@@ -128,7 +132,7 @@ class AllDbModel extends MultiDbModel
 			actransDb.doUpdate(str.next());
 			int termid = (Integer)vTermID.getValue();
 			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Oldadultid, null);
-			if (Adultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Adultid, null);
+			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Adultid, null);
 		}});
 	}
 }
@@ -269,7 +273,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		java.util.Date now = new java.util.Date();
 		return (now.getTime() - created.getTime() < 86400 * 1000L);
 	}};
-	actransDb = new IntKeyedDbModel(actransSb, "entityid", true);
+	actransDb = new IntKeyedDbModel(actransSb, "entityid", new IntKeyedDbModel.Params(true));
 	actransDb.setWhereClause(
 		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
 		" and now()-date < '450 days'");
@@ -358,20 +362,26 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	}});
 
 	// Set up terms selector
-	vTermID.setKeyedModel(new DbKeyedModel(str, fapp.getDbChange(), "termids",
-		"select groupid, name from termids where iscurrent order by firstdate desc"));
-	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
-	public void propertyChange(PropertyChangeEvent evt) {
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			termChanged(str);
+//setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
+	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.getDbChange(), "termids",
+		"select groupid, name from termids where iscurrent order by firstdate desc");
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		vTermID.setKeyedModel(tkmodel);
+		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent evt) {
+			fapp.runApp(new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				termChanged(str);
+			}});
 		}});
-	}});
 
-//	vStudentID.setValue((Integer)12633);
-	changeStudent(str, 12633);
-//	all.setKey(new Integer(12633));
-	all.doSelect(str);
+	//	vStudentID.setValue((Integer)12633);
+		changeStudent(str.next(), 12633);
+	//	all.setKey(new Integer(12633));
+		all.doSelect(str.next());
+
+	}});
 	
 }
 
@@ -691,6 +701,7 @@ void setIDDirty(boolean dirty)
 
         setLayout(new java.awt.BorderLayout());
 
+        setBackground(new java.awt.Color(255, 51, 51));
         vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
 
@@ -2003,7 +2014,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1462, Short.MAX_VALUE))
+                .addContainerGap(1638, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2489,22 +2500,16 @@ void setIDDirty(boolean dirty)
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jButton1)
+                    .add(jButton2)
                     .add(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jButton1)
-                            .add(jButton2)
-                            .add(jPanel3Layout.createSequentialGroup()
-                                .add(jButton4)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(bRecalcTuition))))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(bConfirmationLetters))
-                    .add(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(bParentLabels)))
+                        .add(jButton4)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(bRecalcTuition))
+                    .add(bConfirmationLetters)
+                    .add(bParentLabels))
                 .addContainerGap(513, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -2686,8 +2691,9 @@ void newAdultAction(final String colName)
 		Integer eid = (Integer)wizard.getVal("entityid");
 		if (eid != null) {
 			schoolRm.set(colName, eid);
-			all.doUpdate(str);
-			all.doSelect(str);
+			doUpdateSelect(str);
+//			all.doUpdate(str);
+//			all.doSelect(str);
 		}
 	}});
 }
@@ -2702,8 +2708,9 @@ void newAdultAction(final String colName)
 			Integer eid = (Integer)wizard.getVal("entityid");
 			if (eid != null) {
 				studentRm.set("primaryentityid", eid);
-				all.doUpdate(str);
-				all.doSelect(str);
+				doUpdateSelect(str);
+	//			all.doUpdate(str);
+	//			all.doSelect(str);
 			}
 		}});
 // TODO add your handling code here:
@@ -2804,12 +2811,21 @@ void newAdultAction(final String colName)
 // TODO add your handling code here:
 	}//GEN-LAST:event_bUndoActionPerformed
 
+	
+private void doUpdateSelect(SqlRunner str) throws Exception
+{
+	// TODO: We should really append all into one batch for maximum parallelism
+	SqlBatch str0 = new SqlBatch();
+	all.doUpdate(str0);
+	str0.exec(fapp.getPool());
+	all.doSelect(str);
+}
+	
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			all.doUpdate(str);
-			all.doSelect(str);
+			doUpdateSelect(str);
 		}});
 	}//GEN-LAST:event_bSaveActionPerformed
 

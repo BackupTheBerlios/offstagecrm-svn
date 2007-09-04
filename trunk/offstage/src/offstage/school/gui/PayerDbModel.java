@@ -39,8 +39,10 @@ public PayerDbModel(citibob.app.App app)
 {
 	super(app);
 	QueryLogger logger = app.getLogger();
-	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid", true));
-	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid", true));
+	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid",
+		new IntKeyedDbModel.Params(true)));
+	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid",
+		new IntKeyedDbModel.Params(true)));
 }
 
 }

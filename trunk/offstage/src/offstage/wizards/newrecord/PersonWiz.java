@@ -72,12 +72,15 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	
 //	addWidget("interestid", "groupid", app.getSchema("interests"));
 	
-	KeyedModel kmodel = new citibob.sql.DbKeyedModel(str, null,
+	final KeyedModel kmodel = new citibob.sql.DbKeyedModel(str, null,
 		"interestids", "groupid", "name", "name");
-	kmodel.addItem(null, "<No Interest Specified>");
-	JKeyedComboBox interests = new JKeyedComboBox(kmodel);
-	interests.setValue(null);
-	addWidget("interestid", interests);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		kmodel.addItem(null, "<No Interest Specified>");
+		JKeyedComboBox interests = new JKeyedComboBox(kmodel);
+		interests.setValue(null);
+		addWidget("interestid", interests);
+	}});
 
 	loadHtml();
 }

@@ -212,6 +212,7 @@ public static void getPrimaryEntityID(SqlRunner str, int eid)
 		"select primaryentityid from entities where entityid = " + eid;
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		rs.next();
 		int pid = rs.getInt(1);
 		str.put("primaryentityid", pid);
 	}});
@@ -279,6 +280,7 @@ public static void countIDList(final String retVar, SqlRunner str, String idSql)
 	String sql = sqlCountIDList(idSql);
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		rs.next();
 		final int nn = rs.getInt(1);
 		str.put(retVar, nn);
 	}});
