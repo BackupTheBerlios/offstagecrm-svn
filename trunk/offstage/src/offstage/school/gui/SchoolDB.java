@@ -137,11 +137,14 @@ throws SQLException
 		" from termids t" +
 		" where t.groupid = " + SqlInteger.sql(termid) + ";\n" +
 
-		// rss[2]
+		// rss[2] --- NOP... make sure next ResultSet has data
+		"select w_student_create(" + SqlInteger.sql(adultid) + ");\n" +
+
+		// rss[3]
 		" select billingtype" +
 		" from entities_school es where entityid = " + SqlInteger.sql(adultid) + ";\n" +
 
-		// Speed up rss[3] query below
+		// Speed up rss[4] query below
 		" create temporary table _ids (entityid int);\n" +
 		" insert into _ids select entityid from entities_school" +
 		"    where adultid = " + SqlInteger.sql(adultid) + ";\n" +
@@ -150,7 +153,7 @@ throws SQLException
 		" from _ids st where termregs.entityid = st.entityid" +
 		" and termregs.groupid = " + SqlInteger.sql(termid) + ";\n" +
 		
-		// rss[3]
+		// rss[4]
 		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, c.*\n" +
 		" from _ids st, entities p, courseids c, enrollments e, termregs tr\n" +
 		" where st.entityid = p.entityid\n" +
@@ -163,6 +166,7 @@ throws SQLException
 
 	str.execSql(sql, new RssRunnable() {
 	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+System.out.println("Processing results, adultid = " + adultid);
 		ResultSet rs;
 		HashMap<String,String> duedates = new HashMap();
 		final StringBuffer sqlOut = new StringBuffer();	// SQL to store results
@@ -181,7 +185,7 @@ throws SQLException
 		String termName = rs.getString("termname");
 	
 		// Get billing type for this payer
-		rs = rss[2];
+		rs = rss[3];
 		rs.next();
 		String sBillingType = rs.getString("billingtype");
 		char btype = (sBillingType == null ? 'y' : sBillingType.charAt(0));
@@ -193,7 +197,7 @@ throws SQLException
 			" and entityid = " + SqlInteger.sql(adultid) + ";\n");
 	
 		// Calculate sum of hours in enrolled courses, per student
-		rs = rss[3];
+		rs = rss[4];
 		TuitionRec tr = null;
 		double scholarship = 0;
 		int nsiblings = 0;				// Total number of siblings
