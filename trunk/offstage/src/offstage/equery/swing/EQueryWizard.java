@@ -161,11 +161,14 @@ System.out.println("EQueryWizard sql: " + sql);
 
 }
 // ==================================================================
-public boolean doDonationReport(SqlRunner str, String title, String sql) throws Exception
+public boolean doDonationReport(SqlRunner str, final String title, String sql) throws Exception
 {
-	DonationReport report = new DonationReport(fapp, sql);
+	final DonationReport report = new DonationReport(fapp, sql);
 	report.doSelect(str);
-	ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
+	}});
 	return true;
 }
 //		

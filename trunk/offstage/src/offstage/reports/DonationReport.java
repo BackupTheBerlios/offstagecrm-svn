@@ -93,6 +93,8 @@ public DonationReport(App app, String idSql)
 				int year = rs.getInt("fiscalyear");
 				//int col = findColumn(""+year);
 				int col = Arrays.binarySearch(years, year); //findColumn(""+year);
+System.out.println("(" + row + ", " + col + ") = " + rs.getDouble("amount"));
+System.out.println("year = " + year);
 				setValueAt(rs.getDouble("amount"), row, col);
 			}
 		});

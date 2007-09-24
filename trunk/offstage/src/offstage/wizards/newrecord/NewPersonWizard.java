@@ -140,7 +140,7 @@ addState(new State("org", null, null) {
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
 					DB.countIDList("ndups", str.next(), idSql);
-					str.execUpdate(new UpdRunnable() {
+					str.next().execUpdate(new UpdRunnable() {
 					public void run(SqlRunner str) throws SQLException {
 						int ndups = (Integer)str.get("ndups");
 						if (ndups == 0) {

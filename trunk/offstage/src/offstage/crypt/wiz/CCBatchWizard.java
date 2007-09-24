@@ -145,7 +145,8 @@ void processBatch(SqlRunner str)
 //java.security.GeneralSecurityException, java.text.ParseException, JRException
 {
 	final SqlTimestamp sqlt = new SqlTimestamp("GMT");
-	
+	final SqlDate sqld = new SqlDate(fapp.getTimeZone(), false);
+
 	// Process empty batch
 	SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq");
 	str.execUpdate(new UpdRunnable() {
@@ -162,7 +163,7 @@ void processBatch(SqlRunner str)
 			"select e.firstname, e.lastname, p.* from ccpayments p, entities e" +
 				" where e.entityid = p.entityid" +
 				" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
-				" order by dtime";
+				" order by date";
 		str.next().execSql(sql, new RssRunnable() {
 		public void run(SqlRunner str, ResultSet[] rss) throws Exception {
 			ResultSet rs;
@@ -191,7 +192,8 @@ void processBatch(SqlRunner str)
 				map.put("firstname", rs.getString("firstname"));
 				map.put("lastname", rs.getString("lastname"));
 				map.put("entityid", rs.getInt("entityid"));
-				map.put("dtime", sqlt.get(rs, "dtime"));
+				map.put("actransid", rs.getInt("actransid"));
+				map.put("date", sqld.get(rs, "date"));
 				map.put("amount", -rs.getDouble("amount"));
 
 				details.add(map);
