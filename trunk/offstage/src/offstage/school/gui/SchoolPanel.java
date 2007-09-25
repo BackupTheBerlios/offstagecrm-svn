@@ -2663,22 +2663,26 @@ System.out.println("==================");
 void doStudentSchedules(SqlRunner str, int termid, int entityid)
 throws Exception
 {
-	RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
+	final RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
 		rsmod.executeQuery(str, offstage.reports.StudentSchedule.getSql(termid, entityid));
 
-	String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"};
-	TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
-	String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
-	SFormatter[] sformatters = {
-		new JDateSFormatter("EEEEE, MMMMM d"),
-		new JDateSFormatter("yyyy"),
-		new JDateSFormatter("yyyy")
-	};
-//	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
-//		"Save Student Schedules",
-//		group, sformattercols, sformatters);
-	ReportOutput.viewJodReport(fapp, "StudentSchedule.odt",
-		group, sformattercols, sformatters);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"};
+		TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
+		String[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
+		SFormatter[] sformatters = {
+			new JDateSFormatter("EEEEE, MMMMM d"),
+			new JDateSFormatter("yyyy"),
+			new JDateSFormatter("yyyy")
+		};
+	//	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
+	//		"Save Student Schedules",
+	//		group, sformattercols, sformatters);
+		ReportOutput.viewJodReport(fapp, "StudentSchedule.odt",
+			group, sformattercols, sformatters);
+
+	}});
 }
 
 void newAdultAction(final String colName)
