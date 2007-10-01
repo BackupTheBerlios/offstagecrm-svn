@@ -122,7 +122,7 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
 		InputStream in = null;
 		try {
-			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");
+			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jrxml");
 			HashMap params = new HashMap();
 			JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
 			JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
@@ -143,7 +143,7 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 //		try {
 //			DB.w_mailings_makereport(st, mailings.getKey());
 //
-//			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");
+//			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jrxml");
 //			rs = st.executeQuery("select * from mailings" +
 //					" where groupid=" + mailings.getKey() +
 //					" and isgood = 't'" +

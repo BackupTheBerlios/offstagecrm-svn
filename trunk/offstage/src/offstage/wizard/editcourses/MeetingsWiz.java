@@ -90,7 +90,10 @@ int courseid;
 			new String[] {"dtstart", "dtnext"},
 			null, fapp.getSwingerMap());
 
-		Swinger swing = new SqlTimestampSwinger("GMT", fapp.getTimeZone(), "EEE MMM dd HH:mm");
+		Swinger swing = new JDateSwinger(new SqlTimestamp("GMT"),
+			new String[] {"EEE MMM dd HH:mm"}, "", fapp.getTimeZone(),
+			citibob.swing.calendar.JCalendarDateHHMM.class);
+//		Swinger swing = new SqlTimestampSwinger("GMT", fapp.getTimeZone(), "EEE MMM dd HH:mm");
 		meetings.setRenderEditU("dtstart", swing);
 		meetings.setRenderEditU("dtnext", swing);
 		

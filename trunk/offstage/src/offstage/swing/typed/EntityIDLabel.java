@@ -42,10 +42,16 @@ public class EntityIDLabel extends JTypedLabel
 
 App app;
 
-public void setJType(Swinger swing)
+//public void setJType(Swinger swing)
+//{
+//	super.setJType(swing.getJType(), new EntityIDFormatter(app.getPool()));
+//	super.setNullText("<No Person>");
+//}
+// ---------------------------------------------------------------
+// Must override stuff in TextTypedWidget
+public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory formatter)
 {
-	super.setJType(swing.getJType(), new EntityIDFormatter(app.getPool()));
-	super.setNullText("<No Person>");
+	super.setJType(jt, JTypedTextField.newFormatterFactory(new EntityIDLabel.EntityIDFormatter(app.getPool())));
 }
 
 public void initRuntime(App app)

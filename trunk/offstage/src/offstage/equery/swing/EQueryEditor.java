@@ -36,6 +36,7 @@ import citibob.jschema.*;
 import offstage.equery.*;
 import java.io.*;
 import java.text.*;
+import citibob.sql.pgsql.*;
 
 /**
  *
@@ -54,7 +55,7 @@ implements TypedWidget
 		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eQueryTable, 15));
     }
 
-	public void initRuntime(EQueryTableModel2 qm, SwingerMap smap)
+	public void initRuntime(EQueryTableModel2 qm, SwingerMap smap, TimeZone tz)
 	throws SQLException
 	{
 		this.model = qm;
@@ -64,9 +65,10 @@ implements TypedWidget
 		
 		JDateType jt = new citibob.swing.typed.JDate(true);
 		DateFormat fmt = new SimpleDateFormat("MM-dd-yyyy");
-		Swinger swinger = new JDateSwinger(jt, fmt);
-		dtFirst.setJType(swinger);
-		dtNext.setJType(swinger);
+
+		Swinger swinger = smap.newSwinger(new SqlDate(tz, true));
+		swinger.configureWidget(dtFirst);
+		swinger.configureWidget(dtNext);
 	}
 
     /** This method is called from within the constructor to

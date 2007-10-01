@@ -44,7 +44,7 @@ DocumentFormatRegistry registry;
 ConcatPdfWriter concat;		// null if no concatenation
 Thread concatThread;
 String outExt;
-
+int nReports;				// # of times we've been written to
 // -----------------------------------------------------------------
 // ---------------------------------------------------------------
 public JodPdfWriter(String oofficeExe, String outExt) throws IOException, InterruptedException
@@ -67,6 +67,8 @@ public void close() throws IOException
 	if (concat != null && concatThread == null) concat.close();
 	ooConnect.close();
 }
+
+public int getNumReports() { return nReports; }
 
 public void writeReport(final InputStream templateIn, String ext, final Object dataModel)
 throws IOException, DocumentTemplateException, com.lowagie.text.DocumentException, InterruptedException
@@ -91,8 +93,9 @@ throws IOException, DocumentTemplateException, com.lowagie.text.DocumentExceptio
 		concatThread.setDaemon(true);
 		concatThread.start();
 
+		++nReports;
 		writeReport(templateIn, ext, dataModel, pout2);
-
+		
 		pout2.close();		// Flush out, allows concatThread to finish.
 		concatThread.join();	// Wait for concatenation to finish before moving on
 		concatThread = null;
@@ -105,7 +108,7 @@ throws IOException, DocumentTemplateException, com.lowagie.text.DocumentExceptio
 	}
 }
 	
-public void writeReport(final InputStream templateIn, String ext, final Object dataModel, final OutputStream out)
+private void writeReport(final InputStream templateIn, String ext, final Object dataModel, final OutputStream out)
 throws IOException, DocumentTemplateException
 {
 	final Exception[] exp = new Exception[1];

@@ -35,7 +35,7 @@ public static void main(String[] args) throws Exception
 	FullEntityDbModel dm = app.getFullEntityDm();
 	Statement st = app.getPool().checkout().createStatement();
 
-	InputStream in = Object.class.getResourceAsStream("/jmbt/front/reports/AddressLabels.jasper");
+	InputStream in = Object.class.getResourceAsStream("/jmbt/front/reports/AddressLabels.jrxml");
 	ResultSet rs = st.executeQuery("select * from mailings where groupid=250");
 	HashMap params = new HashMap();
 	JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
@@ -46,7 +46,7 @@ public static void main(String[] args) throws Exception
 	
 	// net.sf.jasperreports.view.JasperDesignViewer.viewReportDesign(in, false);
 //	in.close();
-//	net.sf.jasperreports.view.JasperDesignViewer.viewReportDesign("build/reports/AddressLabels.jasper", false);
+//	net.sf.jasperreports.view.JasperDesignViewer.viewReportDesign("build/reports/AddressLabels.jrxml", false);
 			
 /*	
 	FrontApp app = new FrontApp();

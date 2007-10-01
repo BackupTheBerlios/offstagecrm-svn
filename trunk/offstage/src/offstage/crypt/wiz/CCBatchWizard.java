@@ -199,7 +199,7 @@ void processBatch(SqlRunner str)
 				details.add(map);
 			}
 			JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jasper", jrdata, params);
+			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jrxml", jrdata, params);
 		}});
 	}});
 

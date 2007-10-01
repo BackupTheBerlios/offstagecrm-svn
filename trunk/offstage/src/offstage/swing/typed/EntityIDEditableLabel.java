@@ -45,14 +45,31 @@ public EntityIDEditableLabel() {}
 App app;
 EntitySelector sel;
 
-public void setJType(Swinger swing)
+//public void setJType(Swinger swing)
+//{
+//	if (swing == null) {
+//		System.out.println("Missing swinger for EntityIDLabel: " + this);
+//	}
+//	super.setJType(swing.getJType(), new EntityIDLabel.EntityIDFormatter(app.getPool()));
+//	super.setNullText("<No Person>");
+//}
+
+// ---------------------------------------------------------------
+// Must override stuff in TextTypedWidget
+public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory formatter)
 {
-	if (swing == null) {
-		System.out.println("Missing swinger for EntityIDLabel: " + this);
-	}
-	super.setJType(swing.getJType(), new EntityIDLabel.EntityIDFormatter(app.getPool()));
-	super.setNullText("<No Person>");
+	super.setJType(jt, JTypedTextField.newFormatterFactory(new EntityIDLabel.EntityIDFormatter(app.getPool())));
 }
+//public void setJType(JType jt, JFormattedTextField.AbstractFormatter formatter)
+//{
+//	label.setJType(jt, formatter);
+//	ckNull.setEnabled(jt.isInstance(null));	
+//}
+//public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory ffactory)
+//{
+//	
+//}
+// -----------------------------------------------
 
 public void initRuntime(App app)
 {

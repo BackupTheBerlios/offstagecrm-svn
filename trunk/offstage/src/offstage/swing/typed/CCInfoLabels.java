@@ -43,7 +43,7 @@ public void initRuntime()
 	lexpdate.setJType(new citibob.swing.typed.JavaJType(String.class),
 		new offstage.types.ExpDateFormatter());
 	lccinfo.setJType(new JavaJType(String.class),
-		new StringFormatter());
+		JTypedTextField.newFormatterFactory(new StringFormatter()));
 }
 
 public void clear()

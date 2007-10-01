@@ -36,6 +36,8 @@ import java.awt.*;
 import net.sf.jasperreports.engine.*;
 import java.util.*;
 import citibob.text.*;
+import net.sf.jasperreports.engine.xml.JRXmlWriter;
+import net.sf.jasperreports.engine.util.*;
 
 /**
  *
@@ -49,14 +51,17 @@ public static InputStream openTemplateFile(App app, String name) throws IOExcept
 	// First: try loading external file
 //	File dir = new File(System.getProperty("user.dir"), "config");
 	File f = new File(app.getConfigDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);
-System.out.println("Looking for template file on filesystem: " + f);
-	if (f.exists()) return new FileInputStream(f);
+	if (f.exists()) {
+System.out.println("Loading template from filesystem: " + f);
+		return new FileInputStream(f);
+	}
 
 	// File doesn't exist; read from inside JAR file instead.
 //	Class klass = offstage.config.OffstageVersion.class;
 //	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
 //	return klass.getClassLoader().getResourceAsStream(resourceName);
 	String resourceName = "offstage/reports/" + name;
+System.out.println("Loading template as resource: " + resourceName);
 	return ReportOutput.class.getClassLoader().getResourceAsStream(resourceName);
 }
 
@@ -64,10 +69,14 @@ public static void viewJasperReport(App app, String templateName, JRDataSource j
 throws JRException, IOException
 {	
 	InputStream reportIn = openTemplateFile(app, templateName);
+	JasperReport jasperReport = (templateName.endsWith(".jrxml") ?
+		JasperCompileManager.compileReport(reportIn) :
+		(JasperReport)JRLoader.loadObject(reportIn));
 	params = (params == null ? new HashMap() : params);
-	JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(reportIn, params, jrdata);
+	JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(jasperReport, params, jrdata);
 	offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
 	net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
+	reportIn.close();
 }
 
 
@@ -185,7 +194,7 @@ String[] sformattercols, SFormatter[] sformatters) throws Exception
 	String outExt = "pdf";
 	File file = File.createTempFile(outBase, "." + outExt);
 	file.deleteOnExit();
-	
+
 	int[] gcols = group.getGcols();
 	String[] sgcols = group.getGcolNames();
 	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"), new FileOutputStream(file), outExt);
@@ -202,6 +211,7 @@ String[] sformattercols, SFormatter[] sformatters) throws Exception
 				data.put("g0_" + sgcols[i], smod.getValueAt(0, gcols[i]));
 			}
 			InputStream in = ReportOutput.openTemplateFile(app, templateName);
+			System.out.println("Formatting report " + jout.getNumReports());
 			jout.writeReport(in, ext, data);
 			in.close();
 		}
@@ -209,9 +219,15 @@ String[] sformattercols, SFormatter[] sformatters) throws Exception
 		jout.close();
 	}
 
-	citibob.gui.BareBonesPdf.view(file);
+	if (jout.getNumReports() == 0) {
+		javax.swing.JOptionPane.showMessageDialog(null,
+			"The report has no pages.");
+		return null;
+	} else {
+		citibob.gui.BareBonesPdf.view(file);
+		return file;
+	}
 //	Runtime.getRuntime().exec("acroread " + file.getPath());
-	return file;
 }
 
 public static File viewJodReport(App app, String templateName,
@@ -227,7 +243,9 @@ java.util.List models) throws Exception
 	JodPdfWriter jout = new JodPdfWriter(app.getProps().getProperty("ooffice.exe"),
 		new FileOutputStream(file), outExt);
 	try {
+		int i=0;
 		for (Object model : models) {
+			System.out.println("Formatting report " + i++ + " of " + models.size());
 			InputStream in = ReportOutput.openTemplateFile(app, templateName);
 			jout.writeReport(in, ext, model);
 			in.close();
@@ -236,8 +254,16 @@ java.util.List models) throws Exception
 		jout.close();
 	}
 
-	citibob.gui.BareBonesPdf.view(file);
-	return file;
+	if (jout.getNumReports() == 0) {
+		javax.swing.JOptionPane.showMessageDialog(null,
+			"The report has no pages.");
+		return null;
+	} else {
+		citibob.gui.BareBonesPdf.view(file);
+		return file;
+	}
+//	citibob.gui.BareBonesPdf.view(file);
+//	return file;
 }
 
 public static File viewJodReport(App app, String templateName,

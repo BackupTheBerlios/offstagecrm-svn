@@ -138,7 +138,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //	try {
 //		DB.w_mailings_makereport(st, getMailingID());
 //
-//		in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jasper");
+//		in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jrxml");
 //		String sql =
 //			"select * from mailings" +
 //			" where groupid=" + getMailingID() +

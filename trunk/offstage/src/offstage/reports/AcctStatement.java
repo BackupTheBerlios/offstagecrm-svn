@@ -92,7 +92,11 @@ int termid, int payerid, final java.util.Date today)
 	int actypeid = ActransSchema.AC_SCHOOL;
 	String sql =
 		" select act.*," +
-		" p.cclast4, p.firstname || ' ' || p.lastname as payername" +
+		" p.cclast4,\n" +
+		" (case when p.firstname is null then '' else p.firstname || ' ' end ||" +
+		" case when p.lastname is null then '' else p.lastname end) as payername\n" +
+//		" case when p.orgname is null then '' else ' (' || p.orgname || ')' end) as name" +
+//		p.firstname || ' ' || p.lastname as payername" +
 		" from actrans act, persons p" +		// p is payer
 		" where act.entityid = p.entityid" +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
@@ -200,15 +204,17 @@ int termid, int payerid, final java.util.Date today)
 			SubrowTableModel rs2 = new SubrowTableModel(mod, split, mod.getRowCount());
 
 			// Split into things owed and things not yet owed
-			data.put("rs0", new TemplateTableModel(new StringTableModel(rs0, app.getSFormatterMap())));
-			data.put("rs1", new TemplateTableModel(new StringTableModel(rs1, app.getSFormatterMap())));
-			data.put("rs2", new TemplateTableModel(new StringTableModel(rs2, app.getSFormatterMap())));
+			data.put("rs0", new TemplateTableModel(new StatementTableModel(rs0, app.getSFormatterMap())));
+			data.put("rs1", new TemplateTableModel(new StatementTableModel(rs1, app.getSFormatterMap())));
+			data.put("rs2", new TemplateTableModel(new StatementTableModel(rs2, app.getSFormatterMap())));
 
 			// Add totals...
 			int balcol = mod.findColumn("balance");
 
 			// TODO: This will throw exception if no rows...
 			NumberFormat mfmt = NumberFormat.getCurrencyInstance();
+//			mfmt.setMaximumFractionDigits(2);
+//			mfmt.setMinimumFractionDigits(2);
 			double overdue = (rs0.getRowCount() == 0 ? 0 : (Double)rs0.getValueAt(rs0.getRowCount()-1, balcol));
 			data.put("overdue", overdue <= 0 ? mfmt.format(0.0D) : mfmt.format(overdue));
 			double paynow = (Double)rs1.getValueAt(rs1.getRowCount()-1, balcol);
@@ -291,4 +297,10 @@ static class BalTableModel extends javax.swing.table.DefaultTableModel implement
 	JType jString = new JavaJType(String.class);
 	public JType getJType(int row, int col) { return jString; }
 }
+private static class StatementTableModel extends StringTableModel {
+public StatementTableModel(JTypeTableModel mod, SFormatterMap sfmap) {
+	super(mod, sfmap);
+	setSFormatter("balance", new FormatSFormatter(NumberFormat.getCurrencyInstance()));
+	setSFormatter("amount", new FormatSFormatter(NumberFormat.getCurrencyInstance()));
+}}
 }

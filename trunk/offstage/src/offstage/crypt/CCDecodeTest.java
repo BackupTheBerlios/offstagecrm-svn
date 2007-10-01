@@ -116,11 +116,11 @@ static {
 //		details.add(map);
 //	}
 //	JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-////	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jasper", jrdata, params);
+////	offstage.reports.ReportOutput.viewJasperReport("CCPayments.jrxml", jrdata, params);
 //	
 ////	// Convert ccinfo to full table representation
 ////	HashMap params = new HashMap();
-////	InputStream in = Object.class.getResourceAsStream("/offstage/reports/CCPayments.jasper");
+////	InputStream in = Object.class.getResourceAsStream("/offstage/reports/CCPayments.jrxml");
 ////System.out.println("MailingModel2: BBB");
 ////	JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
 ////System.out.println("MailingModel2: CCC");

@@ -75,6 +75,6 @@ public void writePdfDoc(InputStream fin) throws IOException, DocumentException
 public void close()
 {
 	// step 5: we close the document
-	document.close();
+	if (document != null) document.close();
 }
 }

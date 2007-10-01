@@ -67,7 +67,8 @@ SchemaBuf groupSb;
 	{
 		this.groupSb = groupSb;
 		this.groupTable = groupTable;
-		this.addType.setJType(swingers.newSwinger(addJType));
+		swingers.newSwinger(addJType).configureWidget(addType);
+//		this.addType.setJType(swingers.newSwinger(addJType));
 //		this.addType.setKeyedModel(new DbKeyedModel(st, null,
 //				idTableName, "groupid", "name", "name"));
 	}

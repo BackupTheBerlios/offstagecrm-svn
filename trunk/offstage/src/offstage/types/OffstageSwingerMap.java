@@ -52,7 +52,8 @@ public OffstageSwingerMap(java.util.TimeZone tz) {
 	// OVERRIDE: SqlTime
 	this.addMaker(SqlTime.class, new SwingerMap.Maker() {
 	public Swinger newSwinger(JType sqlType) {
-		return new SqlTimeSwinger((SqlTime)sqlType, "HH:mm");
+		return new SqlTimeSwinger((JDateType)sqlType, new String[] {"hh:mm a", "HH:mm"}, "");
+		//return new SqlTimeSwinger((SqlTime)sqlType, "HH:mm");
 	}});
 	
 }

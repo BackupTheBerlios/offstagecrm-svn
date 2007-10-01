@@ -692,16 +692,16 @@ void setIDDirty(boolean dirty)
         dtSigned = new citibob.swing.typed.JTypedDateChooser();
         searchBox = new offstage.swing.typed.EntitySelector();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        bRollBooks = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        bAccountStatements = new javax.swing.JButton();
         bParentLabels = new javax.swing.JButton();
         bRecalcTuition = new javax.swing.JButton();
         bConfirmationLetters = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
-        setBackground(new java.awt.Color(255, 51, 51));
+        setBackground(new java.awt.Color(102, 255, 51));
         vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
 
@@ -2014,7 +2014,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1638, Short.MAX_VALUE))
+                .addContainerGap(1750, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2159,7 +2159,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -2200,7 +2200,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         PeopleHeader1.add(vStudentID, gridBagConstraints);
 
@@ -2256,7 +2256,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -2292,7 +2292,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -2441,12 +2441,12 @@ void setIDDirty(boolean dirty)
 
         jTabbedPane1.addTab("Registrations", RegistrationsTab);
 
-        jButton1.setText("Roll Books");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        bRollBooks.setText("Roll Books");
+        bRollBooks.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton1ActionPerformed(evt);
+                bRollBooksActionPerformed(evt);
             }
         });
 
@@ -2459,12 +2459,12 @@ void setIDDirty(boolean dirty)
             }
         });
 
-        jButton4.setText("Account Statements");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
+        bAccountStatements.setText("Account Statements");
+        bAccountStatements.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton4ActionPerformed(evt);
+                bAccountStatementsActionPerformed(evt);
             }
         });
 
@@ -2502,10 +2502,10 @@ void setIDDirty(boolean dirty)
             .add(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jButton1)
+                    .add(bRollBooks)
                     .add(jButton2)
                     .add(jPanel3Layout.createSequentialGroup()
-                        .add(jButton4)
+                        .add(bAccountStatements)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(bRecalcTuition))
                     .add(bConfirmationLetters)
@@ -2516,12 +2516,12 @@ void setIDDirty(boolean dirty)
             jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel3Layout.createSequentialGroup()
                 .add(21, 21, 21)
-                .add(jButton1)
+                .add(bRollBooks)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jButton2)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(jPanel3Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(jButton4)
+                    .add(bAccountStatements)
                     .add(bRecalcTuition))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(bConfirmationLetters)
@@ -2581,7 +2581,7 @@ System.out.println("==================");
 			str.execSql(sql, new RsRunnable() {
 			public void run(SqlRunner str, ResultSet rs) throws Exception {
 				JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
-				ReportOutput.viewJasperReport(fapp, "AddressLabels.jasper", jrdata, new HashMap());
+				ReportOutput.viewJasperReport(fapp, "AddressLabels.jrxml", jrdata, new HashMap());
 				rs.close();
 			}});
 //			st.executeUpdate(LabelReport.cleanupSql());
@@ -2589,15 +2589,15 @@ System.out.println("==================");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bParentLabelsActionPerformed
 
-	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
-	{//GEN-HEADEREND:event_jButton4ActionPerformed
+	private void bAccountStatementsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAccountStatementsActionPerformed
+	{//GEN-HEADEREND:event_bAccountStatementsActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = (Integer)vTermID.getValue();
 			AcctStatement.doAccountStatements(str, fapp, termid, -1, new java.util.Date());
 		}});
 // TODO add your handling code here:
-	}//GEN-LAST:event_jButton4ActionPerformed
+	}//GEN-LAST:event_bAccountStatementsActionPerformed
 
 	private void bAcctStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAcctStatementActionPerformed
 	{//GEN-HEADEREND:event_bAcctStatementActionPerformed
@@ -2626,18 +2626,21 @@ System.out.println("==================");
 // TODO add your handling code here:
 	}//GEN-LAST:event_billingtypeActionPerformed
 
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-	{//GEN-HEADEREND:event_jButton1ActionPerformed
+	private void bRollBooksActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRollBooksActionPerformed
+	{//GEN-HEADEREND:event_bRollBooksActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			RollBook report = new RollBook(fapp, getTermID());
+			final RollBook report = new RollBook(fapp, getTermID());
 			report.doSelect(str);
-			JTypeTableModel model = report.newTableModel();
+			str.execUpdate(new UpdRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				JTypeTableModel model = report.newTableModel();
 
-			JRDataSource jrdata = new JRTableModelDataSource(model);
-			offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jasper", jrdata, null);// TODO add your handling code here:
+				JRDataSource jrdata = new JRTableModelDataSource(model);
+				offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jrxml", jrdata, null);// TODO add your handling code here:
+			}});
 		}});
-	}//GEN-LAST:event_jButton1ActionPerformed
+	}//GEN-LAST:event_bRollBooksActionPerformed
 
 	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
 	{//GEN-HEADEREND:event_jButton3ActionPerformed
@@ -2933,6 +2936,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JPanel addressPanel1;
     private javax.swing.JPanel addressPanel2;
     private javax.swing.JPanel addressPanel3;
+    private javax.swing.JButton bAccountStatements;
     private javax.swing.JButton bAcctStatement;
     private javax.swing.JButton bAddEnrollment;
     private javax.swing.JButton bAdjust;
@@ -2953,6 +2957,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JButton bParentLabels;
     private javax.swing.JButton bRecalcTuition;
     private javax.swing.JButton bRemoveEnrollment;
+    private javax.swing.JButton bRollBooks;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
     private citibob.swing.typed.JKeyedComboBox billingtype;
@@ -2981,10 +2986,8 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private citibob.swing.typed.JTypedTextField firstname4;
     private citibob.swing.typed.JKeyedComboBox gender;
     private offstage.gui.GroupPanel householdPhonePanel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

@@ -144,7 +144,7 @@ System.out.println(sql);
 //
 //	HashMap params = new HashMap();
 //	JRDataSource jrdata = new JRTableModelDataSource(model);
-//	offstage.reports.ReportOutput.viewJasperReport("RollBook.jasper", jrdata, params);
+//	offstage.reports.ReportOutput.viewJasperReport("RollBook.jrxml", jrdata, params);
 //
 //}
 }
