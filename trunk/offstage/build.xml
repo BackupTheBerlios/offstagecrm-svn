@@ -82,7 +82,7 @@
 
 <target name="reports">
 	<mkdir dir="build/classes/offstage/reports"/> 
-	<jrc destdir="build/classes/offstage/reports">
+<!--	<jrc destdir="build/classes/offstage/reports">
 	  <src>
 		<fileset dir="./reports">
 		  <include name="*.jrxml"/>
@@ -92,9 +92,10 @@
 	    <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
 	    <fileset dir="./compilelib"><include name="*.jar"/></fileset>
 	  </classpath>
-	</jrc>
+	</jrc>-->
 	<copy todir="build/classes/offstage/reports">
 	    <fileset dir="./reports"><include name="*.odt"/></fileset>
+	    <fileset dir="./reports"><include name="*.jrxml"/></fileset>
 	</copy>
 </target>
 
@@ -108,6 +109,7 @@
         <fileset dir="./lib/jooreports"><include name="*.jar"/></fileset>
         <fileset dir="./lib/jodconverter"><include name="*.jar"/></fileset>
         <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
+        <fileset dir="./compilelib"><include name="iReport-2.0.0/**"/></fileset>
         <fileset dir="../jschema/dist">
             <include name="mail.jar"/>
             <include name="activation.jar"/>
