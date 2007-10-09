@@ -145,6 +145,9 @@ System.out.println("EQueryWizard sql: " + sql);
 			String sql = equery.getSql(fapp.getEquerySchema());
 			sql = DB.removeDupsIDSql(sql);
 			state = (doDonationReport(str, "Donation Report (One per Household)", sql) ? stateRec.next : stateRec.name);
+		} else if ("spreadsheet".equals(submit)) {
+			String sql = equery.getSql(fapp.getEquerySchema());
+			state = (doSpreadsheetReport(str, "Donation Report", sql) ? stateRec.next : stateRec.name);
 		}
 		
 //		// Go on no matter what we chose...
@@ -168,6 +171,15 @@ public boolean doDonationReport(SqlRunner str, final String title, String sql) t
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
+	}});
+	return true;
+}
+public boolean doSpreadsheetReport(SqlRunner str, final String title, String sql) throws Exception
+{
+	final SpreadsheetReport report = new SpreadsheetReport(str, fapp.getSqlTypeSet(), sql);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report);	
 	}});
 	return true;
 }
