@@ -75,8 +75,8 @@ public class EntityPanel extends javax.swing.JPanel {
 			new String[] {"Type", "Date", "Note"},
 			new String[] {"groupid", "date", "note"}, app.getSwingerMap());
 		ticketsPanel.initRuntime(str, dm.getTicketsSb(),
-			new String[] {"Event", "Type", "#Tix", "Payment"},
-			new String[] {"groupid", "tickettypeid", "numberoftickets", "payment"}, app.getSwingerMap());
+			new String[] {"Event", "Date", "Type", "Venue", "#Tix", "Payment"},
+			new String[] {"groupid", "date", "tickettypeid", "venueid", "numberoftickets", "payment"}, app.getSwingerMap());
 		interestsPanel.initRuntime(str, dm.getInterestsSb(),
 			new String[] {"Interest", "By Person", "Referred By"},
 			new String[] {"groupid", "byperson", "referredby"}, app.getSwingerMap());

@@ -69,7 +69,7 @@ throws SQLException
 	map.put("mailingids", mailingids = new MailingidsSchema());
 	map.put("mailings", mailings = new MailingsSchema(str, change));
 	map.put("notes", notes = new NotesSchema(str, change, tz));
-	map.put("tickets", tickets = new TicketeventsSchema(str, change));
+	map.put("tickets", tickets = new TicketeventsSchema(str, change, tz));
 	map.put("org", org = new OrgSchema(str, change));
 	map.put("persons", persons = new PersonsSchema(str, change, tz));
 	map.put("phones", phones = new PhonesSchema(str, change));

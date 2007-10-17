@@ -151,12 +151,19 @@ public FullEntityDbModel(OffstageSchemaSet osset, offstage.FrontApp fapp)
 	logadd(oneOrg = new EntityDbModel(osset.org, app));
 	logadd(phones = new IntKeyedDbModel(osset.phones, "entityid"));
 	logadd(donations = new IntKeyedDbModel(osset.donations, "entityid"));
+		donations.setOrderClause("date desc");
 	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityid"));
+		flags.setOrderClause("groupid");
 	logadd(notes = new IntKeyedDbModel(osset.notes, "entityid"));
+		notes.setOrderClause("date desc");
 	logadd(tickets = new IntKeyedDbModel(osset.tickets, "entityid"));
+		tickets.setOrderClause("date desc");
 	logadd(events = new IntKeyedDbModel(osset.events, "entityid"));
+		events.setOrderClause("groupid");
 	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
+		classes.setOrderClause("groupid");
 	logadd(interests = new IntKeyedDbModel(osset.interests, "entityid"));
+		interests.setOrderClause("groupid");
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

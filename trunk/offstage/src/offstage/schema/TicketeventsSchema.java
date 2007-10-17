@@ -22,11 +22,12 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import java.sql.*;
 import citibob.util.KeyedModel;
+import java.util.*;
 
 public class TicketeventsSchema extends ConstSchema
 {
 
-public TicketeventsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public TicketeventsSchema(citibob.sql.SqlRunner str, DbChangeModel change, TimeZone tz)
 throws SQLException
 {
 	super();
@@ -35,13 +36,16 @@ throws SQLException
 		"ticketeventids", "groupid", "name", "name");
 	KeyedModel kTicketTypes = new DbKeyedModel(str, change,
 		"tickettypes", "tickettypeid", "tickettype", "tickettype");
-
+	KeyedModel kVenues = new DbKeyedModel(str, change,
+		"venueids", "venueid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),
 		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlInteger(true), "numberoftickets", false),
 		new Column(new SqlNumeric(9,2,true), "payment", false),
-		new Column(new SqlEnum(kTicketTypes, true), "tickettypeid", false)
+		new Column(new SqlEnum(kTicketTypes, true), "tickettypeid", false),
+		new Column(new SqlEnum(kVenues, true), "venueid", false),
+		new Column(new SqlDate(tz, true), "date", false)
 	};
 }
 
