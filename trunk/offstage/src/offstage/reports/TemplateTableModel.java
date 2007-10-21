@@ -13,7 +13,7 @@ import freemarker.template.*;
 import javax.swing.table.TableModel;
 
 /**
- *
+ * Converts a StringTableModel to a Freemarker template.
  * @author citibob
  */
 public class TemplateTableModel implements TemplateSequenceModel
@@ -21,7 +21,7 @@ public class TemplateTableModel implements TemplateSequenceModel
 	
 StringTableModel model;
 
-/** Creates a new instance of TemplateTableModel */
+/** Wraps a TableModel for JodReports. */
 public TemplateTableModel(StringTableModel model)
 {
 	this.model = model;

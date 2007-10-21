@@ -124,7 +124,7 @@ int termid, int payerid, final java.util.Date today)
 		// Group it by payer...
 		String[] gcols = new String[] {"entityid"};
 		TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
-		JTypeTableModel sb;
+		JTypeTableModel sb;		// Current set of records being processed
 		List<HashMap<String,Object>> models = new ArrayList();
 		while ((sb = group.next()) != null) {
 
@@ -289,7 +289,7 @@ public static void main(String[] args) throws Exception
 	str.exec(pool);
 }
 // ================================================================
-static class BalTableModel extends javax.swing.table.DefaultTableModel implements JTypeTableModel
+static class BalTableModel extends DefaultJTypeTableModel
 {
 	public BalTableModel(int nrow) {
 		super(new String[] {"balance"}, nrow);
@@ -297,10 +297,12 @@ static class BalTableModel extends javax.swing.table.DefaultTableModel implement
 	JType jString = new JavaJType(String.class);
 	public JType getJType(int row, int col) { return jString; }
 }
+
+/** Set up currency formatting on balance and amount columns. */
 private static class StatementTableModel extends StringTableModel {
 public StatementTableModel(JTypeTableModel mod, SFormatterMap sfmap) {
 	super(mod, sfmap);
-	setSFormatter("balance", new FormatSFormatter(NumberFormat.getCurrencyInstance()));
-	setSFormatter("amount", new FormatSFormatter(NumberFormat.getCurrencyInstance()));
+	setSFormatter("balance", NumberFormat.getCurrencyInstance());
+	setSFormatter("amount", NumberFormat.getCurrencyInstance());
 }}
 }

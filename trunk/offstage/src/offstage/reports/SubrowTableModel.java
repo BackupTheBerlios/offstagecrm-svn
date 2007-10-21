@@ -19,12 +19,11 @@ import com.Ostermiller.util.*;
 import javax.swing.table.*;
 
 /**
- *
+ * A TableModel that represents just a subrange of rows of a parent TableModel.
+Used for grouping the parent TableModel using TableModelGrouper.
  * @author citibob
  */
-public class SubrowTableModel
-	extends AbstractTableModel
-	implements JTypeTableModel
+public class SubrowTableModel extends AbstractJTypeTableModel
 {
 
 JTypeTableModel mod;

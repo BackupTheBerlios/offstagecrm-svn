@@ -41,8 +41,8 @@ import java.io.*;
  *
  * @author citibob
  */
-public class EQueryTableModel2 extends AbstractTableModel
-implements JTypeTableModel, EClauseTableConst
+public class EQueryTableModel2 extends AbstractJTypeTableModel
+implements EClauseTableConst
 {
 
 public static final int C_ADDSUB = 0;

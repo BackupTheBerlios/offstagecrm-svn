@@ -68,6 +68,9 @@ public void setSFormatter(String uname, SFormatter fmt)
 	formatters[col] = fmt;
 }
 
+/** Convenience function. */
+public void setSFormatter(String uname, java.text.Format fmt)
+	{ setSFormatter(uname, new FormatSFormatter(fmt)); }
 // -----------------------------------------------------------------------
 
 public int getRowCount() { return mod.getRowCount(); }

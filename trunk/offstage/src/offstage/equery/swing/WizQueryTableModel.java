@@ -41,8 +41,8 @@ import java.io.*;
  *
  * @author citibob
  */
-public class WizQueryTableModel extends AbstractTableModel
-implements JTypeTableModel, EClauseTableConst
+public class WizQueryTableModel extends AbstractJTypeTableModel
+implements EClauseTableConst
 {
 
 public static final int C_ADDSUB = 0;
