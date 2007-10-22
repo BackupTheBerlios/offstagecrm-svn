@@ -48,6 +48,8 @@ public EQuerySchema(SchemaSet sset) throws SQLException
 		"phones.entityid = main.entityid");
 	addSchema(sset.get("classes"),
 		"classes.entityid = main.entityid");
+	addSchema(sset.get("termenrolls"),
+		"termenrolls.entityid = main.entityid");
 	addSchema(sset.get("interests"),
 		"interests.entityid = main.entityid");
 	addSchema(sset.get("tickets"),
@@ -84,7 +86,9 @@ private static final String[] alias = {
 	"notes.note", "note",
 	"phones.groupid", "phone-type",
 	"phones.phone", "phone",
-	"classes.groupid", "classes",
+	"classes.groupid", "classes (deprecated)",
+	"termenrolls.groupid", "terms",
+	"termenrolls.courserole", "termrole",
 	"interests.groupid", "interests",
 	"ticketeventsales.groupid", "tickets",
 	"entities.entityid", "entityid",

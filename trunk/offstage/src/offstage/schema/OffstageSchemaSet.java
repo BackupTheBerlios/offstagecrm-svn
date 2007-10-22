@@ -89,6 +89,7 @@ throws SQLException
 	map.put("ccpayments", new CcpaymentsSchema(str, change,tz));
 	map.put("adjpayments", new CcpaymentsSchema(str, change,tz));
 	map.put("termregs", new TermregsSchema(str, change,tz));
+	map.put("termenrolls", new TermenrollsSchema(str, change));
 }
 	
 }

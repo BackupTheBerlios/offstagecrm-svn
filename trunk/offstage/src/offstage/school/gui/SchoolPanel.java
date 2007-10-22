@@ -234,7 +234,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	TypedWidgetBinder.bindRecursive(PayerPanel, payerRm, smap);
 	payerPhonePanel.initRuntime(str, payerDm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, smap);
+			new String[] {"groupid", "phone"}, true, smap);
 	payerCCInfo.initRuntime(fapp.getKeyRing());
 	RowModel.ColListener payerCCListener = new RowModel.ColAdapter() {
 		public void valueChanged(final int col) {
@@ -332,12 +332,12 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	TypedWidgetBinder.bindRecursive(ParentPanel, parentRm, smap);
 	ParentPhonePanel.initRuntime(str, parentDm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, smap);
+			new String[] {"groupid", "phone"}, true, smap);
 	SchemaBufRowModel parent2Rm = new SchemaBufRowModel(parent2Dm.personDb.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(Parent2Panel, parent2Rm, smap);
 	Parent2PhonePanel.initRuntime(str, parent2Dm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, smap);
+			new String[] {"groupid", "phone"}, true, smap);
 	RowModel.ColListener idDirtyListener = new RowModel.ColAdapter() {
 		public void valueChanged(final int col) {
 			setIDDirty(true);

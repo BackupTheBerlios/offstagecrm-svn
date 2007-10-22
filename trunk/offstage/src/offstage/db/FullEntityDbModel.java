@@ -70,6 +70,7 @@ IntKeyedDbModel notes;
 IntKeyedDbModel tickets;
 IntKeyedDbModel events;
 IntKeyedDbModel classes;
+IntKeyedDbModel terms;
 IntKeyedDbModel interests;
 
 //FamilyTableModel family;
@@ -91,7 +92,8 @@ public void setKey(int entityID)
 	notes.setKey(entityID);
 	tickets.setKey(entityID);
 	events.setKey(entityID);
-	classes.setKey(entityID);
+//	classes.setKey(entityID);
+	terms.setKey(entityID);
 	interests.setKey(entityID);
 }
 public int getEntityId()
@@ -127,6 +129,8 @@ public SchemaBuf getEventsSb()
 	{ return events.getSchemaBuf(); }
 public SchemaBuf getClassesSb()
 	{ return classes.getSchemaBuf(); }
+public SchemaBuf getTermsSb()
+	{ return terms.getSchemaBuf(); }
 public SchemaBuf getInterestsSb()
 	{ return interests.getSchemaBuf(); }
 public SchemaBuf getNotesSb()
@@ -160,8 +164,10 @@ public FullEntityDbModel(OffstageSchemaSet osset, offstage.FrontApp fapp)
 		tickets.setOrderClause("date desc");
 	logadd(events = new IntKeyedDbModel(osset.events, "entityid"));
 		events.setOrderClause("groupid");
-	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
-		classes.setOrderClause("groupid");
+//	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
+//		classes.setOrderClause("groupid");
+	logadd(terms = new IntKeyedDbModel(osset.get("termenrolls"), "entityid"));
+		terms.setOrderClause("firstdate desc,name");
 	logadd(interests = new IntKeyedDbModel(osset.interests, "entityid"));
 		interests.setOrderClause("groupid");
 }

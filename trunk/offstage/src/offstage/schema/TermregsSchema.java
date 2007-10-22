@@ -34,7 +34,7 @@ throws SQLException
 	KeyedModel kmodel = new DbKeyedModel(str, change, "programids",
 		"select programid, name from programids order by name");
 	cols = new Column[] {
-		new Column(new SqlInteger(false), "groupid", true),	// links to termids
+		new Column(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
 		new Column(new SqlInteger(false), "entityid", true),
 		new Column(new SqlNumeric(9,2), "tuition"),
 		new Column(new SqlNumeric(9,2), "scholarship"),

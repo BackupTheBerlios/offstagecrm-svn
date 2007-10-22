@@ -171,7 +171,7 @@ extends javax.swing.JPanel {
 		
 		phonePanel.initRuntime(str, dm.getPhonesSb(),
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, app.getSwingerMap());
+			new String[] {"groupid", "phone"}, true, app.getSwingerMap());
 		
 			
 //		phonesTable.initRuntime(dm.getPhonesSb());

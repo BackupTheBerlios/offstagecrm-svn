@@ -43,21 +43,22 @@ SchemaBuf groupSb;
 	public GroupPanel() {
 		initComponents();
 	}
-
+	
 	// st good
 	public void initRuntime(SqlRunner str, SchemaBuf groupSb,
-	String[] colNames, String[] sColMap, citibob.swing.typed.SwingerMap swingers)
+	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
 	//throws java.sql.SQLException
 	{
+		// Set up array of which columns will be editable...
+		boolean[] xeditable = null;
+		if (!editable) {
+			xeditable = new boolean[colNames.length];
+			for (int i=0; i<xeditable.length; ++i) xeditable[i] = false;
+			remove(controller);
+		}
+		
 		JEnum addJType = (JEnum)groupSb.getSchema().getCol("groupid").getType();
-		groupTable.setModelU(groupSb, colNames, sColMap, null, swingers);
-//public void setModelU(JTypeTableModel schemaBuf,
-//		String[] colNames, String[] sColMap, boolean[] editable,
-//		citibob.swing.typed.SwingerMap swingers)
-//		groupTable.setColNames(colNames);
-//		groupTable.setColMap(sColMap);
-//		groupTable.setIDTableName(idTableName);
-//		groupTable.initRuntime(st, groupSb);
+		groupTable.setModelU(groupSb, colNames, sColMap, xeditable, swingers);
 		initRuntime(str, groupSb, addJType, groupTable, swingers);
 	}
 	

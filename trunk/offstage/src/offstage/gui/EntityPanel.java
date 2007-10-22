@@ -64,25 +64,31 @@ public class EntityPanel extends javax.swing.JPanel {
 		
 		donationsPanel.initRuntime(str, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
-			new String[] {"groupid", "date", "amount"}, app.getSwingerMap());
+			new String[] {"groupid", "date", "amount"}, true, app.getSwingerMap());
 		flagsPanel.initRuntime(str, dm.getFlagSb(),
 			new String[] {"Type"},
-			new String[] {"groupid"}, app.getSwingerMap());
+			new String[] {"groupid"}, true, app.getSwingerMap());
 		eventsPanel.initRuntime(str, dm.getEventsSb(),
 			new String[] {"Event", "Role"},
-			new String[] {"groupid", "role"}, app.getSwingerMap());
+			new String[] {"groupid", "role"}, true, app.getSwingerMap());
 		notesPanel.initRuntime(str, dm.getNotesSb(),
 			new String[] {"Type", "Date", "Note"},
-			new String[] {"groupid", "date", "note"}, app.getSwingerMap());
+			new String[] {"groupid", "date", "note"}, true, app.getSwingerMap());
 		ticketsPanel.initRuntime(str, dm.getTicketsSb(),
 			new String[] {"Event", "Date", "Type", "Venue", "#Tix", "Payment"},
-			new String[] {"groupid", "date", "tickettypeid", "venueid", "numberoftickets", "payment"}, app.getSwingerMap());
+			new String[] {"groupid", "date", "tickettypeid", "venueid", "numberoftickets", "payment"}, true, app.getSwingerMap());
 		interestsPanel.initRuntime(str, dm.getInterestsSb(),
 			new String[] {"Interest", "By Person", "Referred By"},
-			new String[] {"groupid", "byperson", "referredby"}, app.getSwingerMap());
-		classesPanel.initRuntime(str, dm.getClassesSb(),
-			new String[] {"Class", "Comments"},
-			new String[] {"groupid", "comments"}, app.getSwingerMap());
+			new String[] {"groupid", "byperson", "referredby"}, true, app.getSwingerMap());
+//		classesPanel.initRuntime(str, dm.getClassesSb(),
+//			new String[] {"Class", "Comments"},
+//			new String[] {"groupid", "comments"}, app.getSwingerMap());
+		termsPanel.initRuntime(str, dm.getTermsSb(),
+			new String[] {"Term", "Role"},
+			new String[] {"groupid", "courserole"},
+			false, app.getSwingerMap());
+			termsPanel.setEnabled(false);
+		
 //		dm.addListener(new FullEntityDbModel.Adapter() {
 //		public void entityTypeChanged(int type) {
 //			CardLayout cl = (CardLayout)(mainPanel.getLayout());
@@ -106,13 +112,14 @@ public class EntityPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
+        classesPanel = new offstage.gui.GroupPanel();
         groupPanels = new javax.swing.JTabbedPane();
         donationsPanel = new offstage.gui.GroupPanel();
         eventsPanel = new offstage.gui.GroupPanel();
         notesPanel = new offstage.gui.GroupPanel();
         ticketsPanel = new offstage.gui.GroupPanel();
         interestsPanel = new offstage.gui.GroupPanel();
-        classesPanel = new offstage.gui.GroupPanel();
+        termsPanel = new offstage.gui.GroupPanel();
         flagsPanel = new offstage.gui.GroupPanel();
         cryptCCInfo = new offstage.swing.typed.CryptCCInfo();
         mainPanel = new offstage.gui.PersonPanel();
@@ -128,7 +135,7 @@ public class EntityPanel extends javax.swing.JPanel {
 
         groupPanels.addTab("Interests", interestsPanel);
 
-        groupPanels.addTab("Classes", classesPanel);
+        groupPanels.addTab("Terms", termsPanel);
 
         groupPanels.addTab("Flags", flagsPanel);
 
@@ -138,8 +145,10 @@ public class EntityPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(groupPanels, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
             .add(mainPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .add(groupPanels, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 737, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -161,6 +170,7 @@ public class EntityPanel extends javax.swing.JPanel {
     private offstage.gui.GroupPanel interestsPanel;
     private offstage.gui.PersonPanel mainPanel;
     private offstage.gui.GroupPanel notesPanel;
+    private offstage.gui.GroupPanel termsPanel;
     private offstage.gui.GroupPanel ticketsPanel;
     // End of variables declaration//GEN-END:variables
 
