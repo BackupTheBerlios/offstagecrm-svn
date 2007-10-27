@@ -40,36 +40,36 @@ import com.Ostermiller.util.*;
  */
 public class CSVReportOutput {
 
-SFormatter[] formatters;
-ColPermuteTableModel mod;
-SFormatterMap sfmap;
+//SFormatter[] formatters;
+//ColPermuteTableModel mod;
+//SFormatterMap sfmap;
 
-/** @param colNames Name of each column in finished report --- Null if use underlying column names
- @param sColMap Name of each column in underlying uModel  --- Null if wish to use all underlying columns */
-public CSVReportOutput(JTypeTableModel uModel,
-String[] colNames, String[] sColMap,
-SFormatterMap sfmap)
-{
+///** @param colNames Name of each column in finished report --- Null if use underlying column names
+// @param sColMap Name of each column in underlying uModel  --- Null if wish to use all underlying columns */
+//public CSVReportOutput(JTypeTableModel uModel,
+//String[] colNames, String[] sColMap,
+//SFormatterMap sfmap)
+//{
+//
+//	mod = new ColPermuteTableModel(uModel, colNames, sColMap, null);
+//
+//	// Set up formatter for each column
+//	int ncol = mod.getColumnCount();
+//	formatters = new SFormatter[ncol];
+//	for (int i=0; i<ncol; ++i) {
+//		int ucol = mod.getColMap(i);
+//		JType type = uModel.getJType(0, ucol);
+//System.out.println(ucol + " " + uModel.getColumnName(ucol) + " " + type);
+//		formatters[i] = sfmap.newSFormatter(type);
+//	}
+//}
 
-	mod = new ColPermuteTableModel(uModel, colNames, sColMap, null);
-
-	// Set up formatter for each column
-	int ncol = mod.getColumnCount();
-	formatters = new SFormatter[ncol];
-	for (int i=0; i<ncol; ++i) {
-		int ucol = mod.getColMap(i);
-		JType type = uModel.getJType(0, ucol);
-System.out.println(ucol + " " + uModel.getColumnName(ucol) + " " + type);
-		formatters[i] = sfmap.newSFormatter(type);
-	}
-}
-
-/** Used to set a special (non-default) formatter for a particular column. */
-public void setSFormatterU(String uname, SFormatter fmt)
-{
-	int col = mod.findColumnU(uname);
-	formatters[col] = fmt;
-}
+///** Used to set a special (non-default) formatter for a particular column. */
+//public void setSFormatterU(String uname, SFormatter fmt)
+//{
+//	int col = mod.findColumnU(uname);
+//	formatters[col] = fmt;
+//}
 
 
 /** Creates a new instance of CSVReportOutput */

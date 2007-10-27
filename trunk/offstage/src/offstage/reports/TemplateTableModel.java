@@ -22,7 +22,7 @@ public class TemplateTableModel implements TemplateSequenceModel
 StringTableModel model;
 
 /** Wraps a TableModel for JodReports. */
-public TemplateTableModel(StringTableModel model)
+   public TemplateTableModel(StringTableModel model)
 {
 	this.model = model;
 }

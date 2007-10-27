@@ -62,7 +62,7 @@ System.out.println("sql");
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws SQLException {
 		HashMap<Integer,String> map = new HashMap();
-		TableModelGrouper tmg = new TableModelGrouper(mod, new String[] {"adultid"});
+		Grouper Grouper(moGrouper"adultid"});
 		JTypeTableModel tt;
 		while ((tt = tmg.next()) != null) {
 			for (int i=0; i<tt.getRowCount(); ++i) {
@@ -123,8 +123,8 @@ int termid, int payerid, final java.util.Date today)
 
 		// Group it by payer...
 		String[] gcols = new String[] {"entityid"};
-		TableModelGrouper group = new TableModelGrouper(rsmod, gcols);
-		JTypeTableModel sb;		// Current set of records being processed
+		Grouper group = new Grouperols);
+		JTypeGrouper/ Current set of records being processed
 		List<HashMap<String,Object>> models = new ArrayList();
 		while ((sb = group.next()) != null) {
 
@@ -223,7 +223,8 @@ int termid, int payerid, final java.util.Date today)
 			data.put("sumfees", mfmt.format(Math.abs(sumfees)));
 			data.put("sumscholarship", sumscholarship == 0 ? "" : mfmt.format(Math.abs(sumscholarship)));
 			data.put("sumpayments", mfmt.format(Math.abs(sumpayments)));
-			data.put("balance", mfmt.format(Math.abs(dbal)));
+			data.put("balance", mfmt.format(Math.abs(dbal)) +
+				(dbal < 0 ? " CREDIT" : ""));
 			data.put("paymenttype", paymenttype);
 
 			// Add misc stuff

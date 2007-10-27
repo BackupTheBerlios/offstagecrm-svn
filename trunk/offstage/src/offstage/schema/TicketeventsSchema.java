@@ -38,6 +38,10 @@ throws SQLException
 		"tickettypes", "tickettypeid", "tickettype", "tickettype");
 	KeyedModel kVenues = new DbKeyedModel(str, change,
 		"venueids", "venueid", "name", "name");
+	KeyedModel kOfferCodes = new DbKeyedModel(str, change,
+		"offercodeids", "offercodeid", "name", "name");
+	KeyedModel kPerfTypes = new DbKeyedModel(str, change,
+		"perftypeids", "perftypeid", "name", "name");
 	cols = new Column[] {
 		new Column(new SqlEnum(kmodel, false), "groupid", true),
 		new Column(new SqlInteger(false), "entityid", true),
@@ -45,6 +49,8 @@ throws SQLException
 		new Column(new SqlNumeric(9,2,true), "payment", false),
 		new Column(new SqlEnum(kTicketTypes, true), "tickettypeid", false),
 		new Column(new SqlEnum(kVenues, true), "venueid", false),
+		new Column(new SqlEnum(kOfferCodes, "<none>"), "offercodeid", false),
+		new Column(new SqlEnum(kPerfTypes, "<unknown>"), "perftypeid", false),
 		new Column(new SqlDate(tz, true), "date", false)
 	};
 }

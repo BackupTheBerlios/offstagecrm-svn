@@ -60,7 +60,17 @@ SFormatterMap sfmap)
 		formatters[i] = sfmap.newSFormatter(type);
 	}
 }
-
+/** Constructor with exceptions */
+public StringTableModel(JTypeTableModel mod,
+SFormatterMap sfmap, String[] scol, SFormatter[] cfmt)
+{
+	this(mod, sfmap);
+	if (scol != null) {
+		for (int i=0; i<scol.length; ++i) {
+			setSFormatter(scol[i], cfmt[i]);
+		}
+	}
+}
 /** Used to set a special (non-default) formatter for a particular column. */
 public void setSFormatter(String uname, SFormatter fmt)
 {

@@ -141,8 +141,10 @@ throws SQLException
 		"select w_student_create(" + SqlInteger.sql(adultid) + ");\n" +
 
 		// rss[3]
-		" select billingtype" +
-		" from entities_school es where entityid = " + SqlInteger.sql(adultid) + ";\n" +
+		" select es.billingtype, e.isorg\n" +
+		" from entities_school es, entities e\n" +
+		" where es.entityid = " + SqlInteger.sql(adultid) + "\n" +
+		" and es.entityid = e.entityid;" +
 
 		// Speed up rss[4] query below
 		" create temporary table _ids (entityid int);\n" +
@@ -189,6 +191,7 @@ System.out.println("Processing results, adultid = " + adultid);
 		rs.next();
 		String sBillingType = rs.getString("billingtype");
 		char btype = (sBillingType == null ? 'y' : sBillingType.charAt(0));
+		boolean isorg = rs.getBoolean("isorg");
 		rs.close();
 
 		// Remove previous tuition invoice records
@@ -249,7 +252,7 @@ System.out.println("Processing results, adultid = " + adultid);
 		rs.close();
 
 		// Give sibling discounts
-		if (nsiblings > 1) {
+		if (nsiblings > 1 && (!isorg)) {
 			Collections.sort(tuitions);		// Sorted by tuition; scholarships are at end
 			Iterator<TuitionRec> ii = tuitions.iterator();
 			ii.next();

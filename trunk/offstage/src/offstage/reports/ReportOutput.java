@@ -185,8 +185,7 @@ String title, JTypeTableModel report) throws Exception
 //}
 // =========================================================================
 public static File viewJodReport(App app, String templateName,
-TableModelGrouper group,
-String[] sformattercols, SFormatter[] sformatters) throws Exception
+TableModelGrouper group, Sring[] sformattercols, SFormatter[] sformatters) throws Exception
 {
 	int dot = templateName.lastIndexOf('.');
 	String outBase = templateName.substring(0, dot);
