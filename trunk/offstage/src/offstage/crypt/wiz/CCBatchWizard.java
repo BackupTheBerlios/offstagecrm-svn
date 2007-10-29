@@ -43,6 +43,7 @@ import java.util.*;
 import net.sf.jasperreports.engine.data.*;
 import net.sf.jasperreports.engine.*;
 import citibob.text.*;
+import citibob.reports.*;
 
 /**
  *
@@ -198,8 +199,10 @@ void processBatch(SqlRunner str)
 
 				details.add(map);
 			}
-			JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
-			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jrxml", jrdata, params);
+			Reports rr = fapp.getReports();
+			rr.viewJasper(rr.toJasper(details), params, "CCPayments.jrxml");
+//			JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
+//			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jrxml", jrdata, params);
 		}});
 	}});
 

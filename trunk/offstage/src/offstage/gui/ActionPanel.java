@@ -135,7 +135,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 
 	actionMap.put("testjodreports", new CBTask("", "admin", new ERunnable() {
 	public void run() throws Exception {
-		offstage.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
+		citibob.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
 	}}));
 	
 	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {

@@ -58,6 +58,7 @@ SwingerMap swingerMap;
 SFormatterMap sFormatterMap;
 OffstageSchemaSet sset;
 EQuerySchema equerySchema;
+citibob.reports.Reports reports;
 
 FullEntityDbModel fullEntityDm;
 //EQueryModel2 equeries;
@@ -125,6 +126,7 @@ public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
 public Schema getSchema(String name) { return sset.get(name); }
 public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
+public citibob.reports.Reports getReports() { return reports; }
 
 //// Legacy...
 //public SwingActionRunner getGuiRunner() { return guiRunner; }
@@ -263,7 +265,7 @@ throws Exception
 	str = new SqlBatch();
 	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
 	fullEntityDm = new FullEntityDbModel(sset, this);
-	mailings = new MailingModel2(str, sset);//, appRunner);
+	mailings = new MailingModel2(str, this);//, appRunner);
 
 //	mailings.refreshMailingids();
 //		equeries = new EQueryModel2(st, mailings, sset);
@@ -272,6 +274,8 @@ throws Exception
 	equerySchema = new EQuerySchema(getSchemaSet());
 	str.exec(pool);
 	// ================
+	
+	reports = new offstage.reports.OffstageReports(this);
 }
 public EntityListTableModel getSimpleSearchResults()
 	{ return simpleSearchResults; }

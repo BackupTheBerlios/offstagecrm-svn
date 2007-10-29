@@ -39,6 +39,7 @@ import javax.print.*;
 import javax.print.attribute.*;
 import javax.print.attribute.standard.*;
 import citibob.sql.*;
+import citibob.reports.*;
 
 /**
  *
@@ -53,6 +54,7 @@ IntKeyedDbModel mailings;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
 //SqlRunner str;
 ActionRunner runner;
+citibob.app.App app;
 
 public IntKeyedDbModel getMailingsDb()
 	{ return mailings; }
@@ -78,11 +80,13 @@ public void newAddress() throws KeyViolationException
 
 
 /** Creates a new instance of MailingDbModel */
-public MailingModel2(final SqlRunner str, OffstageSchemaSet sset)
+public MailingModel2(final SqlRunner str, citibob.app.App app) //OffstageSchemaSet sset)
 //throws SQLException
 {
+	this.app = app;
+	SchemaSet sset = app.getSchemaSet();
 	this.runner = runner;
-	mailings = new IntKeyedDbModel(sset.mailings, "groupid", null, new IntKeyedDbModel.Params(false));
+	mailings = new IntKeyedDbModel(sset.get("mailings"), "groupid", null, new IntKeyedDbModel.Params(false));
 	add(mailings);
 //	oneMailingid = new IntKeyedDbModel(sset.mailingids, "groupid", false, null);
 //	add(oneMailingid);
@@ -90,7 +94,7 @@ public MailingModel2(final SqlRunner str, OffstageSchemaSet sset)
 //	add(mailings);
 //	mailings.setInstantUpdate(runner, true);
 //	add(mailingids = new SchemaBufDbModel(sset.mailingids, "groupid", false, null));
-	mailingids = new SchemaBufDbModel(new SchemaBuf(sset.mailingids), null);
+	mailingids = new SchemaBufDbModel(new SchemaBuf(sset.get("mailingids")), null);
 	mailingids.setWhereClause("created >= now() - interval '30 days'");
 	mailingids.setOrderClause("created desc");
 	add(mailingids);
@@ -120,17 +124,8 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 		" order by country, zip";
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		InputStream in = null;
-		try {
-			in = Object.class.getResourceAsStream("/offstage/reports/AddressLabels.jrxml");
-			HashMap params = new HashMap();
-			JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
-			JasperPrint jprint = net.sf.jasperreports.engine.JasperFillManager.fillReport(in, params, jrdata);
-			offstage.reports.PrintersTest.checkAvailablePrinters();		// Java/CUPS/JasperReports bug workaround for Mac OS X
-			net.sf.jasperreports.view.JasperViewer.viewReport(jprint, false);
-		} finally {
-			in.close();
-		}
+		Reports rr = app.getReports();
+		rr.viewJasper(rr.toJasper(rs), "AddressLabels.jrxml");
 	}});
 }
 

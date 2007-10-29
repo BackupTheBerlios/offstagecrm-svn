@@ -26,7 +26,8 @@ package offstage.reports;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import offstage.reports.CSVReportOutput;
+import citibob.reports.*;
+import offstage.reports.*;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.*;
 import citibob.wizard.*;
@@ -70,18 +71,21 @@ addState(new State("ticketparams", null, "editquery") {
 	public void process(citibob.sql.SqlRunner str) throws Exception
 	{
 		int groupid = v.getInt("groupid");
-		final SqlTableModel report = new SqlTableModel(fapp.getSqlTypeSet(),
+		String sql =
 			" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +
 			" t.numberoftickets,t.payment,tt.tickettype\n" +
 			" from persons p, ticketeventsales t, tickettypes tt\n" +
 			" where p.entityid = t.entityid\n" +
 			" and t.tickettypeid = tt.tickettypeid\n" +
 			" and t.groupid = " + SqlInteger.sql(groupid) + "\n" +
-			" order by p.lastname,p.firstname\n");
-		report.executeQuery(str);
-		str.execUpdate(new UpdRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			ReportOutput.saveCSVReport(fapp, frame, "Save Ticket Sales Repot",report);
+			" order by p.lastname,p.firstname\n";
+		str.execSql(sql, new RsRunnable() {
+		public void run(SqlRunner str, ResultSet rs) throws Exception {
+			Reports rr = fapp.getReports();
+			rr.writeCSV(
+				rr.format(rr.toTableModel(rs)),
+				frame, "Save Ticket Sales Repot");
+			
 		}});
 	}
 });

@@ -9,6 +9,7 @@
 
 package offstage.reports;
 
+import citibob.reports.*;
 import com.artofsolving.jodconverter.*;
 import com.artofsolving.jodconverter.openoffice.connection.*;
 import com.artofsolving.jodconverter.openoffice.converter.*;
@@ -27,6 +28,7 @@ import citibob.jschema.*;
 import offstage.schema.*;
 import citibob.swing.typed.*;
 import java.text.*;
+import offstage.reports.*;
 
 /**
  *
@@ -61,10 +63,12 @@ System.out.println("sql");
 	mod.executeQuery(str, sql);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws SQLException {
-		HashMap<Integer,String> map = new HashMap();
-		Grouper Grouper(moGrouper"adultid"});
-		JTypeTableModel tt;
-		while ((tt = tmg.next()) != null) {
+		Map<Integer,String> map = new HashMap();
+		TableModelGrouper grouper = new TableModelGrouper(mod,
+			new String[][] {{"adultid"}});
+		List<Map> groups = grouper.groupRowsList();
+		for (Map gmap : groups) {
+			JTypeTableModel tt = (JTypeTableModel)gmap.get("rs");
 			for (int i=0; i<tt.getRowCount(); ++i) {
 				String fname = (String)tt.getValueAt(i,2) + " " + (String)tt.getValueAt(i,1);
 				Integer id = (Integer)tt.getValueAt(i,0);
@@ -116,17 +120,17 @@ int termid, int payerid, final java.util.Date today)
 		String sterm = rs.getString(1);
 		
 		// Retrieve from getStudentNames
-		final HashMap<Integer,String> studentMap = (HashMap<Integer,String>)str.get("studentNames");
+		final Map<Integer,String> studentMap = (Map<Integer,String>)str.get("studentNames");
 
 		// =========== Main processing
 
 
 		// Group it by payer...
-		String[] gcols = new String[] {"entityid"};
-		Grouper group = new Grouperols);
-		JTypeGrouper/ Current set of records being processed
+		String[][] sgcols = new String[][] {{"entityid"}};
 		List<HashMap<String,Object>> models = new ArrayList();
-		while ((sb = group.next()) != null) {
+		TableModelGrouper grouper = new TableModelGrouper(rsmod, sgcols);
+		for (Map sbo : grouper.groupRowsList()) {
+			JTypeTableModel sb = (JTypeTableModel)sbo.get("rs"); //JTypeTableModel)sbo;
 
 			HashMap<String,Object> data = new HashMap();
 			models.add(data);
@@ -249,7 +253,9 @@ throws Exception
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		List models = (List)str.get("models");
-		ReportOutput.viewJodReport(fapp, "AcctStatement.odt", models);
+		Reports reports = new OffstageReports(fapp);
+		File f = reports.writeJodPdfs(models, "AcctStatement.odt", null);
+		reports.viewPdf(f);
 	}});
 }
 //public static void main(String[] args) throws Exception
@@ -295,7 +301,7 @@ static class BalTableModel extends DefaultJTypeTableModel
 	public BalTableModel(int nrow) {
 		super(new String[] {"balance"}, nrow);
 	}
-	JType jString = new JavaJType(String.class);
+	static final JType jString = new JavaJType(String.class);
 	public JType getJType(int row, int col) { return jString; }
 }
 

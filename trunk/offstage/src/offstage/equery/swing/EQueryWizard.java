@@ -26,7 +26,8 @@ package offstage.equery.swing;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import offstage.reports.CSVReportOutput;
+import citibob.reports.*;
+import offstage.reports.*;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.*;
 import citibob.wizard.*;
@@ -170,16 +171,21 @@ public boolean doDonationReport(SqlRunner str, final String title, String sql) t
 	report.doSelect(str);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
+		Reports rr = fapp.getReports();
+		rr.writeCSV(rr.format(report.newTableModel()),
+			frame, "Save" + title);
+//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
 	}});
 	return true;
 }
-public boolean doSpreadsheetReport(SqlRunner str, final String title, String sql) throws Exception
+public boolean doSpreadsheetReport(SqlRunner str, final String title, String idSql) throws Exception
 {
-	final SpreadsheetReport report = new SpreadsheetReport(str, fapp.getSqlTypeSet(), sql);
+	final SpreadsheetReport report = new SpreadsheetReport(str, fapp.getSqlTypeSet(), idSql);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report);	
+		Reports rr = fapp.getReports();
+		rr.writeCSV(rr.format(report), frame, "Save"+title);
+//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report);	
 	}});
 	return true;
 }

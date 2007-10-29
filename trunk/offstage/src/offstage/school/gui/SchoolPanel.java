@@ -40,6 +40,8 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.*;
 import java.awt.*;
 import offstage.db.*;
+import citibob.reports.*;
+import offstage.reports.*;
 
 /**
  *
@@ -2525,9 +2527,8 @@ System.out.println(sql);
 System.out.println("==================");
 			str.execSql(sql, new RsRunnable() {
 			public void run(SqlRunner str, ResultSet rs) throws Exception {
-				JRResultSetDataSource jrdata = new JRResultSetDataSource(rs);
-				ReportOutput.viewJasperReport(fapp, "AddressLabels.jrxml", jrdata, new HashMap());
-				rs.close();
+				Reports rr = fapp.getReports();
+				rr.viewJasper(rr.toJasper(rs), "AddressLabels.jrxml");
 			}});
 //			st.executeUpdate(LabelReport.cleanupSql());
 		}});
@@ -2580,9 +2581,10 @@ System.out.println("==================");
 			str.execUpdate(new UpdRunnable() {
 			public void run(SqlRunner str) throws Exception {
 				JTypeTableModel model = report.newTableModel();
-
 				JRDataSource jrdata = new JRTableModelDataSource(model);
-				offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jrxml", jrdata, null);// TODO add your handling code here:
+				fapp.getReports().viewJasper(
+					fapp.getReports().toJasper(model), null, "RollBook.jrxml");
+//				offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jrxml", jrdata, null);// TODO add your handling code here:
 			}});
 		}});
 	}//GEN-LAST:event_bRollBooksActionPerformed
@@ -2611,24 +2613,20 @@ System.out.println("==================");
 void doStudentSchedules(SqlRunner str, int termid, int entityid)
 throws Exception
 {
-	final RSTableModel rsmod = new RSTableModel(fapp.getSqlTypeSet());
-		rsmod.executeQuery(str, offstage.reports.StudentSchedule.getSql(termid, entityid));
-
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		String[] gcols = new String[] {"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"};
-		Grouperew Grouper(rsGrouperring[] sformattercols = new String[] {"firstdate", "firstyear", "lastyear"};
-		SFormatter[] sformatters = {
-			new JDateSFormatter("EEEEE, MMMMM d"),
-			new JDateSFormatter("yyyy"),
-			new JDateSFormatter("yyyy")
-		};
-	//	ReportOutput.saveJodReport(fapp, SchoolPanel.this,
-	//		"Save Student Schedules",
-	//		group, sformattercols, sformatters);
-		ReportOutput.viewJodReport(fapp, "StudentSchedule.odt",
-			group, sformattercols, sformatters);
-
+	String sql = offstage.reports.StudentSchedule.getSql(termid, entityid);
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		citibob.reports.Reports reports = fapp.getReports();
+		
+		java.util.List models = reports.toJodList(rs,
+			new String[][] {{"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"}},
+			new String[] {"firstdate", "firstyear", "lastyear"},
+			new SFormatter[] {
+				new JDateSFormatter("EEEEE, MMMMM d"),
+				new JDateSFormatter("yyyy"),
+				new JDateSFormatter("yyyy")
+		});
+		reports.viewJodPdfs(models, "StudentSchedule.odt");
 	}});
 }
 
