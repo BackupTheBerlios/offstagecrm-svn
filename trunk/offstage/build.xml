@@ -68,7 +68,7 @@
     -->
     
     
-<taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
+<!-- <taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
   <classpath>
     <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
     <fileset dir="./lib/jasperreports">
@@ -78,7 +78,7 @@
       <include name="*.jar"/>
     </fileset>
   </classpath>
-</taskdef>
+</taskdef> -->
 
 <target name="reports">
 	<mkdir dir="build/classes/offstage/reports"/> 
@@ -105,24 +105,9 @@
 <target name="-post-jar">
     <copy todir="dist">
         <fileset dir="./lib"><include name="*.jar"/></fileset>
-        <fileset dir="./lib/jasperreports"><include name="*.jar"/></fileset>
-        <fileset dir="./lib/jooreports"><include name="*.jar"/></fileset>
-        <fileset dir="./lib/jodconverter"><include name="*.jar"/></fileset>
-        <fileset dir="./lib/commons"><include name="*.jar"/></fileset>
         <fileset dir="./compilelib"><include name="iReport-2.0.0/**"/></fileset>
-        <fileset dir="../jschema/dist">
-            <include name="mail.jar"/>
-            <include name="activation.jar"/>
-            <include name="jschema.jar"/>
-            <include name="prefedit-0.7.jar"/>
-        </fileset>
-        <fileset dir="../../prg/cobra/dist">
-            <include name="cobra.jar"/>
-        </fileset>
-        <fileset dir="../../prg/cobra/lib">
-            <include name="js.jar"/>
-            <include name="dom.jar"/>
-        </fileset>
+        <fileset dir="../jschema/dist"><include name="*.jar"/></fileset>
+        <fileset dir="../../prg/cobra/dist"><include name="*.jar"/></fileset>
     </copy>
 </target>
 
