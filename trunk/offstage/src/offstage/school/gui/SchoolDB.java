@@ -42,11 +42,15 @@ public class SchoolDB {
 /** Makes a student record for an entity --- error if student already exists. */
 public static String createStudentSql(int studentid)
 {
+	if (studentid < 0) return "";
+	
 	return "select w_student_create(" + SqlInteger.sql(studentid) + ")";
 }
 /** Makes a student record for an entity --- error if student already exists. */
 public static String registerStudentSql(int termid, int studentid, SqlDate sqlDate)
 {
+	if (termid < 0 || studentid < 0) return "";
+	
 	return "select w_student_register(" +
 		SqlInteger.sql(termid) + ", " +
 		SqlInteger.sql(studentid) + ", " +
@@ -54,6 +58,8 @@ public static String registerStudentSql(int termid, int studentid, SqlDate sqlDa
 }
 public static String createPayerSql(int payerid)
 {
+	if (payerid < 0) return "";
+	
 	return "select w_payer_create(" + SqlInteger.sql(payerid) + ")";
 }
 
@@ -110,6 +116,8 @@ throws SQLException
 {
 	ResultSet rs;
 
+	if (termid < 0) return;
+	
 	String sql = "select distinct adultid from entities_school union select entityid from entities_school";
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
@@ -316,7 +324,7 @@ System.out.println("Processing results, adultid = " + adultid);
 				" (entityid, actypeid, date, amount, description, studentid, termid)" +
 				" values (" + SqlInteger.sql(adultid) + ", " +
 				" (select actypeid from actypes where name = 'school'), " +
-				"'" + trx.sdate + "', " +
+				(trx.sdate == null ? "null" : "'" + trx.sdate + "'") + ", " +
 				money.sql(trx.tuition) + ", " + SqlString.sql(trx.description) + ", " +
 				SqlInteger.sql(trx.studentid) + ", " + SqlInteger.sql(termid) + ");\n");
 		}

@@ -57,16 +57,16 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 
 //System.out.println(System.getProperty("os.name"));
 		ConnPool pool = offstage.db.DB.newConnPool();
-		Connection dbb = pool.checkout();
-
-		// Get database version
-		Statement st = dbb.createStatement();
-		OffstageVersion.fetchDbVersion(st);
-		
-// TODO: This should not be needed.  But run for now until upgrade is in place.
-st.execute("update entities set primaryentityid=entityid where primaryentityid is null");
-		st.close();
-		pool.checkin(dbb);
+//		Connection dbb = pool.checkout();
+//
+//		// Get database version
+//		Statement st = dbb.createStatement();
+//		OffstageVersion.fetchDbVersion(st);
+//		
+//// TODO: This should not be needed.  But run for now until upgrade is in place.
+//st.execute("update entities set primaryentityid=entityid where primaryentityid is null");
+//		st.close();
+//		pool.checkin(dbb);
 
 		SqlBatch str = new SqlBatch();
 		

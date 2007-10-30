@@ -98,7 +98,7 @@ class AllDbModel extends MultiDbModel
 		termregsDm.setKey(new int[] {getTermID(), entityid});
 		
 		// Set "key" for enrollments
-		int termid = (Integer)vTermID.getValue();
+		int termid = getTermID();
 		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
 			" and courseids.termid = " + SqlInteger.sql(termid) +
 			" and enrollments.entityid = " + SqlInteger.sql(entityid));
@@ -132,7 +132,7 @@ class AllDbModel extends MultiDbModel
 			Integer Adultid = (Integer)schoolRm.get(col);
 
 			actransDb.doUpdate(str.next());
-			int termid = (Integer)vTermID.getValue();
+			int termid = getTermID(); //(Integer)vTermID.getValue();
 			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Oldadultid, null);
 			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Adultid, null);
 		}});
@@ -141,8 +141,8 @@ class AllDbModel extends MultiDbModel
 // ====================================================
 
 int getTermID(){
-	int termid = (Integer)vTermID.getValue();
-	return termid;
+	Integer Termid = (Integer)vTermID.getValue();
+	return (Termid == null ? -1 : Termid);
 }
 /** Creates new form SchoolPanel */
 public SchoolPanel()
@@ -378,10 +378,10 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 			}});
 		}});
 
-	//	vStudentID.setValue((Integer)12633);
-		changeStudent(str.next(), 12633);
-	//	all.setKey(new Integer(12633));
-		all.doSelect(str.next());
+//	//	vStudentID.setValue((Integer)12633);
+//		changeStudent(str.next(), 12633);
+//	//	all.setKey(new Integer(12633));
+//		all.doSelect(str.next());
 
 	}});
 	
@@ -2486,7 +2486,7 @@ void setIDDirty(boolean dirty)
 	{//GEN-HEADEREND:event_bConfirmationLettersActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			int termid = (Integer)vTermID.getValue();
+			int termid = getTermID();
 			YDPConfirmationLetter.doReport(str, fapp, termid);
 		}});
 // TODO add your handling code here:
@@ -2505,7 +2505,7 @@ void setIDDirty(boolean dirty)
 	{//GEN-HEADEREND:event_bParentLabelsActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			int termid = (Integer)vTermID.getValue();
+			int termid = getTermID();
 			String idSql =
 				" select xx.entityid\n" +
 				" from (\n" +
@@ -2539,7 +2539,7 @@ System.out.println("==================");
 	{//GEN-HEADEREND:event_bAccountStatementsActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			int termid = (Integer)vTermID.getValue();
+			int termid = getTermID();
 			AcctStatement.doAccountStatements(str, fapp, termid, -1, new java.util.Date());
 		}});
 // TODO add your handling code here:
@@ -2549,7 +2549,7 @@ System.out.println("==================");
 	{//GEN-HEADEREND:event_bAcctStatementActionPerformed
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			int termid = (Integer)vTermID.getValue();
+			int termid = getTermID();
 			Integer payerid = (Integer)schoolRm.get("adultid");
 			AcctStatement.doAccountStatements(str, fapp, termid, payerid, new java.util.Date());
 		}});
@@ -2604,7 +2604,7 @@ System.out.println("==================");
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 //			Integer eid = (Integer)studentRm.get("entityid");
-			int termid = (Integer)vTermID.getValue();
+			int termid = getTermID();
 			doStudentSchedules(str, termid, -1);
 		}});
 // TODO add your handling code here:
