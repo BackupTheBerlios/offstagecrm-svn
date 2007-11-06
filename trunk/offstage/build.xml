@@ -105,6 +105,7 @@
 <target name="-post-jar">
     <copy todir="dist">
         <fileset dir="./lib"><include name="*.jar"/></fileset>
+        <fileset dir="./lib/secondstring"><include name="*.jar"/></fileset>
         <fileset dir="./compilelib"><include name="iReport-2.0.0/**"/></fileset>
         <fileset dir="../jschema/dist"><include name="*.jar"/></fileset>
         <fileset dir="../cobra/dist"><include name="*.jar"/></fileset>
