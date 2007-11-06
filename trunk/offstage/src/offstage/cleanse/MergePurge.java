@@ -54,7 +54,7 @@ static class Duo implements Comparable
 static boolean empty(String s) { return (s == null || "".equals(s)); }
 static String upper(String s) { return (s == null ? "" : s.toUpperCase()); }
 
-public String getCanonical(ResultSet rs) throws SQLException
+public static String getCanonical(ResultSet rs) throws SQLException
 {
 	StringBuffer sb = new StringBuffer();
 
@@ -82,7 +82,9 @@ public String getCanonical(ResultSet rs) throws SQLException
 }
 
 
-void process(Map<Integer,String> xmap, double thresh)
+/** Process for printing to the screen
+ @returns sql to update database with. */
+static String process(Map<Integer,String> xmap, double thresh, String type)
 {
 	
 	// Prepare strings
@@ -112,13 +114,34 @@ System.out.println("Full Processing");
 		++i;
 	}
 	
-	// Report
+	// Report to screen
 	Collections.sort(report);
 	for (Duo d : report) {
 		System.out.println(d.toString());
 	}
 	System.out.println(fullHist.toString());
-
+	
+	// Report to dups table of database
+	StringBuffer sb = new StringBuffer();
+	sb.append("delete from dups where type=" + SqlString.sql(type) + ";\n");
+	Collections.sort(report);
+	for (Duo d : report) {
+		Map.Entry<Integer,StringWrapper> e0,e1;
+		if (d.aa.getKey().intValue() < d.bb.getKey().intValue()) {
+			e0 = d.aa;
+			e1 = d.bb;
+		} else {
+			e1 = d.aa;
+			e0 = d.bb;				
+		}
+		sb.append("insert into dups (type, entityid0, string0, entityid1, string1, score) values (\n" +
+			SqlString.sql(type) + ", " +
+			SqlInteger.sql(e0.getKey()) + ", " + SqlString.sql(e0.getValue().unwrap()) + ", " +
+			SqlInteger.sql(e1.getKey()) + ", " + SqlString.sql(e1.getValue().unwrap()) + ", " +
+			SqlDouble.sql(d.score) + ");\n");
+		System.out.println(d.toString());
+	}
+	return sb.toString();
 }
 
 
@@ -144,19 +167,20 @@ public MergePurge(SqlRunner str)
 			// Check for multiple entries at same address
 			int eid = rs.getInt("entityid");
 			int pid = rs.getInt("primaryentityid");
-			if (eid == pid) {
-				String canon = getCanonical(rs);
-				addrMap.put(eid, canon);				
-			}
+			
+//			if (eid == pid) {
+//				String canon = getCanonical(rs);
+//				addrMap.put(eid, canon);				
+//			}
 
 			// Check for duplicate entries (by name; can catch change of address too)
 			String name = upper(rs.getString("firstname")) + " " + upper(rs.getString("lastname"));
 			name = name.trim();
 			if (!empty(name)) nameMap.put(eid, name);
 			
-			String orgname = upper(rs.getString("orgname")).trim();
-			if (rs.getBoolean("isorg") && !empty(orgname)) orgMap.put(eid, orgname);
-			++n;
+//			String orgname = upper(rs.getString("orgname")).trim();
+//			if (rs.getBoolean("isorg") && !empty(orgname)) orgMap.put(eid, orgname);
+//			++n;
 		}
 System.out.println("Done getting names (" + n + " records)");
 		// train the distance on some strings - in general, this would
@@ -165,9 +189,9 @@ System.out.println("Done getting names (" + n + " records)");
 		// efficiency, you train on an iterator over StringWrapper
 		// objects, which are produced with the 'prepare' function.
 
-		process(nameMap, .8);
-		process(addrMap, .8);
-		process(orgMap, .8);
+		str.next().execSql(process(nameMap, .9, "n"));
+//		process(addrMap, .8, "a");
+//		process(orgMap, .8, "o");
 	}});
 }
 public static void main(String[] args) throws Exception

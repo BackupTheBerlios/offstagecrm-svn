@@ -30,18 +30,18 @@ public class WizQuerySchema extends QuerySchema
 {
 
 // --------------------------------------------------
-public WizQuerySchema(OffstageSchemaSet sset) throws SQLException
+public WizQuerySchema(SchemaSet sset) throws SQLException
 {
 	super();
-	addSchema(sset.events,
+	addSchema(sset.get("events"),
 		"events.entityid = main.entityid");
-	addSchema(sset.donations,
+	addSchema(sset.get("donations"),
 		"donations.entityid = main.entityid");
-	addSchema(sset.classes,
+	addSchema(sset.get("classes"),
 		"classes.entityid = main.entityid");
-	addSchema(sset.interests,
+	addSchema(sset.get("interests"),
 		"interests.entityid = main.entityid");
-	addSchema(sset.tickets,
+	addSchema(sset.get("tickets"),
 		"ticketeventsales.entityid = main.entityid");
 	doAlias(alias);
 }

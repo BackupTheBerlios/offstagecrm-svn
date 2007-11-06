@@ -6,6 +6,21 @@
 
 package offstage.cleanse;
 
+import citibob.jschema.*;
+import citibob.multithread.*;
+import citibob.sql.*;
+import citibob.sql.pgsql.SqlInteger;
+import java.util.*;
+import java.sql.*;
+import offstage.schema.*;
+import citibob.jschema.log.*;
+import offstage.db.*;
+import offstage.*;
+import citibob.app.*;
+import citibob.sql.pgsql.*;
+import javax.swing.*;
+import javax.swing.event.*;
+
 /**
  *
  * @author  citibob
@@ -13,10 +28,54 @@ package offstage.cleanse;
 public class CleansePanel extends javax.swing.JPanel
 {
 	
+App app;
+
+// The two records we're comparing
+FullEntityDbModel[] dm = new FullEntityDbModel[2];
+MultiDbModel allDm;		// = dm[0] and dm[1]
+RSTableModel dupModel;
+
+
 	/** Creates new form CleansePanel */
 	public CleansePanel()
 	{
 		initComponents();
+		dupTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		public void valueChanged(final ListSelectionEvent e) {
+			// User wants to switch to a new cell...
+			app.runGui(CleansePanel.this, new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				int row = e.getFirstIndex();
+				dm[0].setKey((Integer)dupModel.getValueAt(row, "entityid0"));
+				dm[1].setKey((Integer)dupModel.getValueAt(row, "entityid1"));
+				allDm.doSelect(str);
+			}});
+		}});
+	}
+	/** @param dupType = 'a' (address), 'n' (names), 'o' (organization) */
+	public void initRuntime(SqlRunner str, FrontApp fapp, String dupType)
+	{
+		this.app = fapp;
+		
+		dm[0] = new FullEntityDbModel(app);
+		entityPanel0.initRuntime(str, fapp, dm[0]);
+		dm[1] = new FullEntityDbModel(app);
+		entityPanel1.initRuntime(str, fapp, dm[1]);
+		allDm = new MultiDbModel(dm);
+		
+		String sql = "select * from dups where type=" + SqlString.sql(dupType) + " order by score desc";
+		dupModel = new RSTableModel(app.getSqlTypeSet());
+		dupModel.executeQuery(str, sql);
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			dupTable.setModelU(dupModel,
+				new String[] {"Score", "ID-0", "Name-0", "ID-1", "Name-1"},
+				new String[] {"score", "entityid0", "string0", "entityid1", "string1"},
+				new String[] {null, "string0", "string0", "string1", "string1"},
+				new boolean[] {false,false,false,false,false},
+				app.getSwingerMap(), app.getSFormatterMap());
+			dupTable.setRenderEditU("score", new citibob.swing.typed.SqlNumericSwinger(new citibob.sql.SqlNumeric(3,2)));
+		}});
 	}
 	
 	/** This method is called from within the constructor to
@@ -27,27 +86,210 @@ public class CleansePanel extends javax.swing.JPanel
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
+        java.awt.GridBagConstraints gridBagConstraints;
+
+        jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
+        entityPanel0 = new offstage.gui.EntityPanel();
         entityPanel1 = new offstage.gui.EntityPanel();
-        entityPanel2 = new offstage.gui.EntityPanel();
+        jPanel2 = new javax.swing.JPanel();
+        dupTablePane = new javax.swing.JScrollPane();
+        dupTable = new citibob.swing.JTypeColTable();
+        leftButtonPanel = new javax.swing.JPanel();
+        bMerge0 = new javax.swing.JButton();
+        bDelete0 = new javax.swing.JButton();
+        bSubordinate0 = new javax.swing.JButton();
+        jToolBar1 = new javax.swing.JToolBar();
+        bSave = new javax.swing.JButton();
+        bUndo = new javax.swing.JButton();
+        bDupOK = new javax.swing.JButton();
+        rightButtonPanel = new javax.swing.JPanel();
+        bMerge1 = new javax.swing.JButton();
+        bDelete1 = new javax.swing.JButton();
+        bSubordinate1 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.X_AXIS));
+
+        jPanel1.add(entityPanel0);
 
         jPanel1.add(entityPanel1);
 
-        jPanel1.add(entityPanel2);
+        jSplitPane1.setLeftComponent(jPanel1);
 
-        add(jPanel1, java.awt.BorderLayout.CENTER);
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        dupTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][]
+            {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String []
+            {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        dupTable.setHighlightMouseover(true);
+        dupTablePane.setViewportView(dupTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel2.add(dupTablePane, gridBagConstraints);
+
+        leftButtonPanel.setLayout(new java.awt.GridBagLayout());
+
+        bMerge0.setText("Merge");
+        bMerge0.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bMerge0ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        leftButtonPanel.add(bMerge0, gridBagConstraints);
+
+        bDelete0.setText("Delete");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        leftButtonPanel.add(bDelete0, gridBagConstraints);
+
+        bSubordinate0.setText("Subordinate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        leftButtonPanel.add(bSubordinate0, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel2.add(leftButtonPanel, gridBagConstraints);
+
+        bSave.setText("Save");
+        jToolBar1.add(bSave);
+
+        bUndo.setText("Undo");
+        jToolBar1.add(bUndo);
+
+        bDupOK.setText("Duplicate OK");
+        jToolBar1.add(bDupOK);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel2.add(jToolBar1, gridBagConstraints);
+
+        rightButtonPanel.setLayout(new java.awt.GridBagLayout());
+
+        bMerge1.setText("Merge");
+        bMerge1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bMerge1ActionPerformed(evt);
+            }
+        });
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        rightButtonPanel.add(bMerge1, gridBagConstraints);
+
+        bDelete1.setText("Delete");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        rightButtonPanel.add(bDelete1, gridBagConstraints);
+
+        bSubordinate1.setText("Subordinate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        rightButtonPanel.add(bSubordinate1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel2.add(rightButtonPanel, gridBagConstraints);
+
+        jSplitPane1.setRightComponent(jPanel2);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bMerge1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMerge1ActionPerformed
+	{//GEN-HEADEREND:event_bMerge1ActionPerformed
+		Merge.merge(dm[1], dm[0]);
+	}//GEN-LAST:event_bMerge1ActionPerformed
+
+	private void bMerge0ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMerge0ActionPerformed
+	{//GEN-HEADEREND:event_bMerge0ActionPerformed
+		Merge.merge(dm[0], dm[1]);
+	}//GEN-LAST:event_bMerge0ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bDelete0;
+    private javax.swing.JButton bDelete1;
+    private javax.swing.JButton bDupOK;
+    private javax.swing.JButton bMerge0;
+    private javax.swing.JButton bMerge1;
+    private javax.swing.JButton bSave;
+    private javax.swing.JButton bSubordinate0;
+    private javax.swing.JButton bSubordinate1;
+    private javax.swing.JButton bUndo;
+    private citibob.swing.JTypeColTable dupTable;
+    private javax.swing.JScrollPane dupTablePane;
+    private offstage.gui.EntityPanel entityPanel0;
     private offstage.gui.EntityPanel entityPanel1;
-    private offstage.gui.EntityPanel entityPanel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JPanel leftButtonPanel;
+    private javax.swing.JPanel rightButtonPanel;
     // End of variables declaration//GEN-END:variables
+
+
+	
+public static void main(String[] args) throws Exception
+{
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	FrontApp fapp = new FrontApp(pool,null);
+	SqlBatch str = new SqlBatch();
+	
+	CleansePanel panel = new CleansePanel();
+	panel.initRuntime(str, fapp, "n");
+	str.exec(pool);
+	
+	JFrame frame = new JFrame();
+	frame.setSize(600,800);
+	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	frame.getContentPane().add(panel);
+
+	frame.setVisible(true);
+}
+	
+	
 	
 }

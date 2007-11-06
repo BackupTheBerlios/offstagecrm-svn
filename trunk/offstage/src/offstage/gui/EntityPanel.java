@@ -38,6 +38,8 @@ import java.awt.*;
 import java.awt.event.*;
 import offstage.FrontApp;
 import offstage.db.FullEntityDbModel;
+import citibob.app.*;
+
 /**
  *
  * @author  citibob
@@ -54,8 +56,7 @@ public class EntityPanel extends javax.swing.JPanel {
 	public void initRuntime(SqlRunner str, FrontApp fapp, FullEntityDbModel dm)
 	//throws java.sql.SQLException
 	{
-		citibob.app.App app = fapp;
-		
+		App app = fapp;
 		mainPanel.initRuntime(str, app, dm);
 		
 		// Init the credit card panel

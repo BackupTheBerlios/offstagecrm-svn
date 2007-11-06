@@ -264,7 +264,7 @@ throws Exception
 	// ================
 	str = new SqlBatch();
 	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
-	fullEntityDm = new FullEntityDbModel(sset, this);
+	fullEntityDm = new FullEntityDbModel(this);
 	mailings = new MailingModel2(str, this);//, appRunner);
 
 //	mailings.refreshMailingids();

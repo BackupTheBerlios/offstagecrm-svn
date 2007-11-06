@@ -145,30 +145,30 @@ void logadd(SchemaBufDbModel m)
 	add(m);
 	m.setLogger(logger);
 }
-public FullEntityDbModel(OffstageSchemaSet osset, offstage.FrontApp fapp)
+public FullEntityDbModel(citibob.app.App app)
 {
-	citibob.app.App app = fapp;
-	logger = fapp.getLogger();
+	logger = app.getLogger();
+	SchemaSet osset = app.getSchemaSet();
 //	logadd(onePerson = new EntityDbModel(new EntityBuf(new PersonsSchema()), "entityid", false));
 //	logadd(oneOrg = new IntKeyedDbModel(new EntityBuf(new OrgSchema()), "entityid", false));
-	logadd(onePerson = new EntityDbModel(osset.persons, app));
-	logadd(oneOrg = new EntityDbModel(osset.org, app));
-	logadd(phones = new IntKeyedDbModel(osset.phones, "entityid"));
-	logadd(donations = new IntKeyedDbModel(osset.donations, "entityid"));
+	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
+	logadd(oneOrg = new EntityDbModel(osset.get("org"), app));
+	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
+	logadd(donations = new IntKeyedDbModel(osset.get("donations"), "entityid"));
 		donations.setOrderClause("date desc");
 	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityid"));
 		flags.setOrderClause("groupid");
-	logadd(notes = new IntKeyedDbModel(osset.notes, "entityid"));
+	logadd(notes = new IntKeyedDbModel(osset.get("notes"), "entityid"));
 		notes.setOrderClause("date desc");
-	logadd(tickets = new IntKeyedDbModel(osset.tickets, "entityid"));
+	logadd(tickets = new IntKeyedDbModel(osset.get("tickets"), "entityid"));
 		tickets.setOrderClause("date desc");
-	logadd(events = new IntKeyedDbModel(osset.events, "entityid"));
+	logadd(events = new IntKeyedDbModel(osset.get("events"), "entityid"));
 		events.setOrderClause("groupid");
 //	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
 //		classes.setOrderClause("groupid");
 	logadd(terms = new IntKeyedDbModel(osset.get("termenrolls"), "entityid"));
 		terms.setOrderClause("firstdate desc,name");
-	logadd(interests = new IntKeyedDbModel(osset.interests, "entityid"));
+	logadd(interests = new IntKeyedDbModel(osset.get("interests"), "entityid"));
 		interests.setOrderClause("groupid");
 }
 

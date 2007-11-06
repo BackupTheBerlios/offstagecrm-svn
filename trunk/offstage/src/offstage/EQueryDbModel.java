@@ -37,8 +37,8 @@ import offstage.schema.*;
 public class EQueryDbModel extends IntKeyedDbModel
 {
 	
-public EQueryDbModel(OffstageSchemaSet dbSchemaSet) {
-	super(new SchemaBuf(dbSchemaSet.equeries), "equeryid", new Params(false));
+public EQueryDbModel(SchemaSet dbSchemaSet) {
+	super(new SchemaBuf(dbSchemaSet.get("equeries")), "equeryid", new Params(false));
 }
 
 
