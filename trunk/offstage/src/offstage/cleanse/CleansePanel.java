@@ -239,12 +239,12 @@ RSTableModel dupModel;
 
 	private void bMerge1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMerge1ActionPerformed
 	{//GEN-HEADEREND:event_bMerge1ActionPerformed
-		Merge.merge(dm[1], dm[0]);
+		Merge.merge(app, dm[1], dm[0]);
 	}//GEN-LAST:event_bMerge1ActionPerformed
 
 	private void bMerge0ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMerge0ActionPerformed
 	{//GEN-HEADEREND:event_bMerge0ActionPerformed
-		Merge.merge(dm[0], dm[1]);
+		Merge.merge(app, dm[0], dm[1]);
 	}//GEN-LAST:event_bMerge0ActionPerformed
 	
 	
@@ -271,7 +271,7 @@ RSTableModel dupModel;
     // End of variables declaration//GEN-END:variables
 
 
-	
+
 public static void main(String[] args) throws Exception
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();

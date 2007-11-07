@@ -26,31 +26,281 @@ public class Merge
 {
 
 /** Merges data FROM dm0 TO dm1 */
-public static void merge(FullEntityDbModel dm0, FullEntityDbModel dm1)
+public static void merge(App app,  Object entityid0, Object entityid1)
 {
-	mergePersons(dm0.getPersonSb(), dm1.getPersonSb());
-}	
+// ONE MORE THING: need to tell mergeOneRow() about columns that default to entityid.
+// This can be done in a special update statement after-the-fact.
+// Also need to do a simple search-and-replace of entityid0 -> entityid1 on primaryentityid, adultid, etc.
+	SchemaSet sset = app.getSchemaSet();
+
+// TODO: Don't forget to delete old now-orphaned records!!
+// (or at least set to obsolete!)
+
+	// =================== Main Data
+	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1);
+	mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
+	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+	moveRows(sset.get("classes"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("donations"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("events"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("flags"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("interests"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("notes"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("phones"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("ticketevents"), "entityid", entityid0, entityid1);
+
+
+	// Accounting
+	moveRows(sset.get("actrans"), "entityid", entityid0, entityid1);
+
+	// School
+	moveRows(sset.get("entities_school"), "entityid", entityid0, entityid1);
+	mergeOneRow(sset.get("entities_school"), "entityid", entityid0, entityid1);
+	mergeOneRowEntityID(sset.get("entities_school"), "entityid",
+		new String[] {"adultid", "parentid", "parent2id"}, entityid0, entityid1);
+	searchAndReplace(sset.get("entities_school"), "adultid", entityid0, entityid1);
+	searchAndReplace(sset.get("entities_school"), "parentid", entityid0, entityid1);
+	searchAndReplace(sset.get("entities_school"), "parent2id", entityid0, entityid1);
+	moveRows(sset.get("termregs"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("enrollment"), "entityid", entityid0, entityid1);
+
+//Main Record
+//===========
+//entities:
+//	primaryentityid
+//classes,entityid
+//donations,entityid
+//events,entityid
+//flags,entityid
+//interests,entityid
+//notes,entityid
+//phones,entityid
+//ticketevents,entityid
+//XXmailings,entityid  (don't do mailings)
+//
+//Accounting
+//==========
+//actrans,entityid
+//	(Really: adjpayments,cashpayments,ccpayments,checkpayments,tuitiontrans)
+//
+//School
+//======
+//entities_school:
+//	(entityid)
+//	adultid
+//	parentid
+//	parent2id
+//termregs,entityid
+//enrollments,entityid
+
+
+}
 
 /** Merge main part of the record.. */
 public static void mergePersons(SchemaBuf sb0, SchemaBuf sb1)
 {
-	mergeMain(sb0, sb1);
-	int eidCol = sb0.findColumn("entityid");
-	int pidCol = sb0.findColumn("primaryentityid");
-	
-	int eid1 = (Integer)sb1.getValueAt(0, eidCol);
-	int pid1 = (Integer)sb1.getValueAt(0, pidCol);
-	if (eid1 == pid1) {
-		Integer Pid0 = (Integer)sb0.getValueAt(0, pidCol);
-		sb1.setValueAt(Pid0, 0, pidCol);
-	}
+	mergeRecMain(sb0, sb1);
+	mergeEntityIDCol(sb0, sb1, sb0.findColumn("primaryentityid"));
 }
 
+// -------------------------------------------------------------------
+public static void searchAndReplace(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+{
+	int entityColIx = schema.findCol(sEntityCol);
+	Column entityCol = schema.getCol(entityColIx);
+	String table = schema.getDefaultTable();
+	StringBuffer sql = new StringBuffer();
+
+	sql.append("update " + table + " set " + entityCol.getName() + " = " +
+		entityCol.toSql(entityid1) + " where " + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+}
+// -------------------------------------------------------------------
+/** Merges the (one) row fully keyed by sKeyCol. */
+public static void mergeOneRowEntityID(Schema schema, String sEntityCol,
+String[] sUpdateCols,
+Object entityid0, Object entityid1)
+{
+	int entityColIx = schema.findCol(sEntityCol);
+	Column entityCol = schema.getCol(entityColIx);
+	String table = schema.getDefaultTable();
+	int[] keyCols = getKeyCols(schema, entityColIx);
+	StringBuffer sql = new StringBuffer();
+
+	sql.append(" update " + table);
+	sql.append(" set\n");
+	for (int i=0; ;) {
+		Column col = schema.getCol(sUpdateCols[i]);
+		sql.append(col.getName() + " = " +
+			" (case when " + table + "." + col.getName() + " = " + table + "." + entityCol.getName() + " then " +
+			" t0." + col.getName() + " else " + table + "." + col.getName() + " end)");
+		if (++i >= sUpdateCols.length) break;
+		sql.append(",\n");
+	}
+	sql.append("\n");
+	sql.append(" from " + table + " as t0");
+	sql.append(" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
+		" and t0." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+	sql.append(";\n");
+	System.out.println(sql);
+}
+// -------------------------------------------------------------------
+/** Merges the (one) row fully keyed by sKeyCol. */
+public static void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+{
+	int entityColIx = schema.findCol(sEntityCol);
+	Column entityCol = schema.getCol(entityColIx);
+	String table = schema.getDefaultTable();
+	int[] keyCols = getKeyCols(schema, entityColIx);
+	StringBuffer sql = new StringBuffer();
+
+	sql.append(" update " + table);
+	sql.append(" set\n");
+	for (int i=0; ;) {
+		Column col = schema.getCol(i);
+		if (col.isKey()) {
+			++i;
+			continue;
+		}
+		sql.append(col.getName() + " = " +
+			" (case when " + table + "." + col.getName() + " is null then " +
+			" t0." + col.getName() + " else " + table + "." + col.getName() + " end)");
+		if (++i >= schema.getColCount()) break;
+		sql.append(",\n");
+	}
+	sql.append("\n");
+	sql.append(" from " + table + " as t0");
+	sql.append(" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
+		" and t0." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+	sql.append(";\n");
+	System.out.println(sql);
+}
+// -------------------------------------------------------------------
+public static int[] getKeyCols(Schema schema, int entityColIx)
+{
+	// Collect keys from schema
+	int ncols = schema.getColCount();
+	int nkeys = 0;
+	for (int i=0; i<ncols; ++i) if (i != entityColIx && schema.getCol(i).isKey()) ++nkeys;
+	int[] keyCols = new int[nkeys];
+	int k=0;
+	for (int i=0; i<ncols; ++i) if (i != entityColIx && schema.getCol(i).isKey()) keyCols[k++] = i;
+
+	return keyCols;
+}
+// -------------------------------------------------------------------
+///** Moves rows from keyCol=entityid0 to keyCol=entityid1 */
+//public static void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+//{
+//	int entityColIx = schema.findCol(sEntityCol);
+//	Column entityCol = schema.getCol(entityColIx);
+//	String table = schema.getDefaultTable();
+//	int[] keyCols = getKeyCols(schema, entityColIx);
+//	StringBuffer sql = new StringBuffer();
+//
+//	// Create list of keys in table 0 --- which we will transfer to table 1
+//	sql.append("create temporary table keys0 (");
+//	for (int i=0; ;) {
+//		Column col = schema.getCol(keyCols[i]);
+//		sql.append(col.getName() + " " + col.getType().sqlType());
+//		if (++i >= keyCols.length) break;
+//		sql.append(",");
+//	}
+//	sql.append(");\n");
+//
+//	// Fill it in
+//	sql.append("insert into keys0 select ");
+//	for (int i=0; ;) {
+//		Column col = schema.getCol(keyCols[i]);
+//		sql.append(col.getName());
+//		if (++i >= keyCols.length) break;
+//		sql.append(",");
+//	}
+//	sql.append(" from " + table +
+//		" where " + entityCol.getName() + " = " + entityCol.toSql(entityid0) + ";\n");
+//
+//	// Remove duplicates already under entityid1
+//	sql.append("delete from keys0 using " + table);
+//	sql.append(" where " + entityCol.getName() + " = " + entityCol.toSql(entityid1));
+//	for (int i=0; i<keyCols.length; ++i) {
+//		Column col = schema.getCol(keyCols[i]);
+//		sql.append(" and keys0." + col.getName() + " = " + table + "." + col.getName());
+//	}
+//	sql.append(";\n");
+//
+//	// Move the rest over to entityid1
+//	sql.append("update " + table + 
+//		" set " + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
+//		" from keys0" +
+//		" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+//	for (int i=0; i<keyCols.length; ++i) {
+//		Column col = schema.getCol(keyCols[i]);
+//		sql.append(" and keys0." + col.getName() + " = " + table + "." + col.getName());
+//	}
+//	sql.append(";\n");
+//
+//	sql.append("drop table keys0;\n");
+//
+//	System.out.println(sql);
+//}
+// -------------------------------------------------------------------
+/** Moves rows from keyCol=entityid0 to keyCol=entityid1 -- in which there are no other key columns */
+public static void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+{
+	int entityColIx = schema.findCol(sEntityCol);
+	Column entityCol = schema.getCol(entityColIx);
+	String table = schema.getDefaultTable();
+	int[] keyCols = getKeyCols(schema, entityColIx);
+	StringBuffer sql = new StringBuffer();
+
+	// Create list of keys in table 0 --- which we will transfer to table 1
+	sql.append("create temporary table keys0 (dummy int");
+	for (int i=0; i<keyCols.length; ++i) {
+		Column col = schema.getCol(keyCols[i]);
+		sql.append(", " + col.getName() + " " + col.getType().sqlType());
+	}
+	sql.append(");\n");
+
+	// Fill it in
+	sql.append("insert into keys0 select -1");
+	for (int i=0; i<keyCols.length; ++i) {
+		Column col = schema.getCol(keyCols[i]);
+		sql.append(", " + col.getName());
+	}
+	sql.append(" from " + table +
+		" where " + entityCol.getName() + " = " + entityCol.toSql(entityid0) + ";\n");
+
+	// Remove duplicates already under entityid1
+	sql.append("delete from keys0 using " + table);
+	sql.append(" where " + entityCol.getName() + " = " + entityCol.toSql(entityid1));
+	for (int i=0; i<keyCols.length; ++i) {
+		Column col = schema.getCol(keyCols[i]);
+		sql.append(" and keys0." + col.getName() + " = " + table + "." + col.getName());
+	}
+	sql.append(";\n");
+
+	// Move the rest over to entityid1
+	sql.append("update " + table + 
+		" set " + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
+		" from keys0" +
+		" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+	sql.append(" and keys0.dummy = -1");
+	for (int i=0; i<keyCols.length; ++i) {
+		Column col = schema.getCol(keyCols[i]);
+		sql.append(" and keys0." + col.getName() + " = " + table + "." + col.getName());
+	}
+	sql.append(";\n");
+
+	sql.append("drop table keys0;\n");
+
+	System.out.println(sql);
+}
+// -------------------------------------------------------------------
 /** Merge main part of the record.. */
-public static void mergeMain(SchemaBuf sb0, SchemaBuf sb1)
+public static void mergeRecMain(SchemaBuf sb0, SchemaBuf sb1)
 {
 	for (int col=0; col < sb0.getColumnCount(); ++col) mergeCol(sb0, sb1, col);
 }
+
 /** Merge main part of the record.. */
 public static void mergeCol(SchemaBuf sb0, SchemaBuf sb1, int col)
 {
@@ -61,5 +311,32 @@ System.out.println(col + " val1 = " + val1);
 		sb1.setValueAt(val0, 0, col);
 	}
 }
+
+/** Merges columns that refer to other records, and by default are set to self. */
+public static void mergeEntityIDCol(SchemaBuf sb0, SchemaBuf sb1, int col)
+{
+	int eidCol = sb0.findColumn("entityid");
+	
+	int eid1 = (Integer)sb1.getValueAt(0, eidCol);
+	int pid1 = (Integer)sb1.getValueAt(0, col);
+	if (eid1 == pid1) {
+		Integer Pid0 = (Integer)sb0.getValueAt(0, col);
+		sb1.setValueAt(Pid0, 0, col);
+	}
+}
+// -------------------------------------------------------------------
+
+
+public static void main(String[] args) throws Exception
+{
+	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+	FrontApp fapp = new FrontApp(pool,null);
+
+
+	moveRows(fapp.getSchemaSet().get("entities_school"), "entityid",
+		new Integer(12633), new Integer(16840));
+
+}
+
 
 }

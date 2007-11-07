@@ -35,7 +35,7 @@ throws SQLException
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"ticketeventids", "groupid", "name", "name");
 	KeyedModel kTicketTypes = new DbKeyedModel(str, change,
-		"tickettypes", "tickettypeid", "tickettype", "tickettype");
+		"tickettypes", "tickettypeid", "name", "name");
 	KeyedModel kVenues = new DbKeyedModel(str, change,
 		"venueids", "venueid", "name", "name");
 	KeyedModel kOfferCodes = new DbKeyedModel(str, change,
