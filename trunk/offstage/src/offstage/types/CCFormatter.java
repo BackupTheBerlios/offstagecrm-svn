@@ -35,7 +35,7 @@ import java.text.*;
  * @author citibob
  */
 public class CCFormatter extends JFormattedTextField.AbstractFormatter
-implements citibob.text.SFormatter
+implements citibob.text.SFormat
 {
 	
 	

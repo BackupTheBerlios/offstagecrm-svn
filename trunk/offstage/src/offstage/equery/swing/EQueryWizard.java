@@ -223,7 +223,7 @@ public boolean doSpreadsheetReport(SqlRunner str, final String title, String idS
 //	fapp.userRoot().put("saveReportDir", path);
 //
 //	CSVReportOutput csv = new CSVReportOutput(report.newTableModel(), null, null,
-//		fapp.getSFormatterMap());
+//		fapp.getSFormatMap());
 //	csv.writeReport(new File(fname));
 //	return true;
 //}

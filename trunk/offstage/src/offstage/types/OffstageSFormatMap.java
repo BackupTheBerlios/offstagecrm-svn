@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
- * OffstageSFormatterMap.java
+ * OffstageSFormatMap.java
  *
  * Created on October 8, 2006, 4:52 PM
  *
@@ -35,16 +35,16 @@ import citibob.types.*;
  *
  * @author citibob
  */
-public class OffstageSFormatterMap extends citibob.sql.pgsql.SqlSFormatterMap
+public class OffstageSFormatMap extends citibob.sql.pgsql.SqlSFormatMap
 {
 	
-/** Creates a new instance of OffstageSFormatterMap */
-public OffstageSFormatterMap() {
+/** Creates a new instance of OffstageSFormatMap */
+public OffstageSFormatMap() {
 	super();
 	
 	// SqlPhone
 	this.addMaker(SqlPhone.class, new Maker() {
-	public SFormatter newSFormatter(JType sqlType) {
+	public SFormat newSFormat(JType sqlType) {
 		return new PhoneFormatter();
 	}});
 }

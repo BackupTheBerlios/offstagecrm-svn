@@ -53,7 +53,7 @@ import offstage.types.*;
  */
 public class CCDecodeTest {
 
-static final SFormatter fccnumber, fexpdate;
+static final SFormat fccnumber, fexpdate;
 static {
 	fccnumber = new CCFormatter();
 	fexpdate = new ExpDateFormatter();

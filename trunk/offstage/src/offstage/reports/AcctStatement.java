@@ -209,9 +209,9 @@ int termid, int payerid, final java.util.Date today)
 			SubrowTableModel rs2 = new SubrowTableModel(mod, split, mod.getRowCount());
 
 			// Split into things owed and things not yet owed
-			data.put("rs0", new TemplateTableModel(new StatementTableModel(rs0, app.getSFormatterMap())));
-			data.put("rs1", new TemplateTableModel(new StatementTableModel(rs1, app.getSFormatterMap())));
-			data.put("rs2", new TemplateTableModel(new StatementTableModel(rs2, app.getSFormatterMap())));
+			data.put("rs0", new TemplateTableModel(new StatementTableModel(rs0, app.getSFormatMap())));
+			data.put("rs1", new TemplateTableModel(new StatementTableModel(rs1, app.getSFormatMap())));
+			data.put("rs2", new TemplateTableModel(new StatementTableModel(rs2, app.getSFormatMap())));
 
 			// Add totals...
 			int balcol = mod.findColumn("balance");
@@ -308,9 +308,9 @@ static class BalTableModel extends DefaultJTypeTableModel
 
 /** Set up currency formatting on balance and amount columns. */
 private static class StatementTableModel extends StringTableModel {
-public StatementTableModel(JTypeTableModel mod, SFormatterMap sfmap) {
+public StatementTableModel(JTypeTableModel mod, SFormatMap sfmap) {
 	super(mod, sfmap);
-	setSFormatter("balance", NumberFormat.getCurrencyInstance());
-	setSFormatter("amount", NumberFormat.getCurrencyInstance());
+	setSFormat("balance", NumberFormat.getCurrencyInstance());
+	setSFormat("amount", NumberFormat.getCurrencyInstance());
 }}
 }

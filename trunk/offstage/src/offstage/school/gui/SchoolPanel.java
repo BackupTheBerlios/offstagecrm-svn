@@ -287,7 +287,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		new String[] {null, null, null, "description"},
 		null,
 //		new boolean[] {false, false, false, false},
-		fapp.getSwingerMap(), fapp.getSFormatterMap());
+		fapp.getSwingerMap(), fapp.getSFormatMap());
 
 	// Refresh account when payer changes
 	schoolRm.addColListener("adultid", new RowModel.ColListener() {
@@ -2622,10 +2622,10 @@ throws Exception
 		java.util.List models = reports.toJodList(rs,
 			new String[][] {{"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"}},
 			new String[] {"firstdate", "firstyear", "lastyear"},
-			new SFormatter[] {
-				new JDateSFormatter("EEEEE, MMMMM d"),
-				new JDateSFormatter("yyyy"),
-				new JDateSFormatter("yyyy")
+			new SFormat[] {
+				new JDateSFormat("EEEEE, MMMMM d"),
+				new JDateSFormat("yyyy"),
+				new JDateSFormat("yyyy")
 		});
 		reports.viewJodPdfs(models, "StudentSchedule.odt");
 	}});

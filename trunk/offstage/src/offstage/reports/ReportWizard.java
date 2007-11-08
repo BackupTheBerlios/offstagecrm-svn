@@ -221,7 +221,7 @@ addState(new State("ticketparams", null, "editquery") {
 ////	fapp.userRoot().put("saveReportDir", path);
 ////
 ////	CSVReportOutput csv = new CSVReportOutput(report.newTableModel(), null, null,
-////		fapp.getSFormatterMap());
+////		fapp.getSFormatMap());
 ////	csv.writeReport(new File(fname));
 ////	return true;
 ////}

@@ -55,7 +55,7 @@ KeyRing keyRing;
 DbChangeModel dbChange;
 ConnPool pool;
 SwingerMap swingerMap;
-SFormatterMap sFormatterMap;
+SFormatMap sFormatterMap;
 OffstageSchemaSet sset;
 EQuerySchema equerySchema;
 citibob.reports.Reports reports;
@@ -219,7 +219,7 @@ throws Exception
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
 	this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 	this.swingerMap = new offstage.types.OffstageSwingerMap(getTimeZone());
-	this.sFormatterMap = new offstage.types.OffstageSFormatterMap();
+	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
 	
 	this.pool = pool;
 	// ================
@@ -296,7 +296,7 @@ public DbChangeModel getDbChange()
 	{ return dbChange; }
 public OffstageSchemaSet getSchemaSet() { return sset; }
 public SwingerMap getSwingerMap() { return swingerMap; }
-public SFormatterMap getSFormatterMap() { return sFormatterMap; }
+public SFormatMap getSFormatMap() { return sFormatterMap; }
 public EQuerySchema getEquerySchema() { return equerySchema;}
 // -------------------------------------------------
 public int getScreen()

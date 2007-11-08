@@ -36,7 +36,7 @@ import static offstage.types.CCFormatter.*;
  * @author citibob
  */
 public class DigitsFormatter extends JFormattedTextField.AbstractFormatter
-implements citibob.text.SFormatter
+implements citibob.text.SFormat
 {
 	
 int ndigits;

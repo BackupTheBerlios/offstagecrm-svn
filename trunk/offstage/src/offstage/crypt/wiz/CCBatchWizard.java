@@ -135,7 +135,7 @@ addState(new State("keynotremoved", null, null) {
 // ---------------------------------------------
 }
 // ======================================================
-static final SFormatter fccnumber, fexpdate;
+static final SFormat fccnumber, fexpdate;
 static {
 	fccnumber = new offstage.types.CCFormatter();
 	fexpdate = new offstage.types.ExpDateFormatter();
