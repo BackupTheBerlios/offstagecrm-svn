@@ -42,6 +42,7 @@ import java.awt.*;
 import offstage.db.*;
 import citibob.reports.*;
 import offstage.reports.*;
+import citibob.types.*;
 
 /**
  *

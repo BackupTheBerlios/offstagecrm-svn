@@ -29,6 +29,7 @@ package offstage.types;
 
 import citibob.swing.typed.*;
 import citibob.text.*;
+import citibob.types.*;
 
 /**
  *

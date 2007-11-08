@@ -24,7 +24,7 @@ import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
 import offstage.schema.OffstageSchemaSet;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 
 public class WizQuerySchema extends QuerySchema
 {

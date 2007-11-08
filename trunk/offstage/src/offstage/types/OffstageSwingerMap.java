@@ -31,6 +31,7 @@ import citibob.swing.typed.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.swing.pgsql.*;
+import citibob.types.*;
 
 /**
  *

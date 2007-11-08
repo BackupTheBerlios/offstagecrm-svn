@@ -22,8 +22,9 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.sql.DbChangeModel;
 import java.sql.*;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 
+/** This is for a VIEW, not a table. */
 public class TermenrollsSchema extends ConstSchema
 {
 
@@ -34,7 +35,7 @@ throws SQLException
 	table = "termenrolls";
 	KeyedModel termids_kmodel = new DbKeyedModel(str, change,
 		"termids", "groupid", "name", "firstdate desc,name");	
-	citibob.util.KeyedModel courseroles_kmodel = new DbKeyedModel(str, change,
+	KeyedModel courseroles_kmodel = new DbKeyedModel(str, change,
 		"courseroles", "courseroleid", "name", "orderid,name");
 	cols = new Column[] {
 		new Column(new SqlEnum(termids_kmodel, false), "groupid", true),

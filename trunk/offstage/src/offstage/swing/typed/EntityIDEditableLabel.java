@@ -35,6 +35,7 @@ import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
+import citibob.types.*;
 
 public class EntityIDEditableLabel extends JTypedEditableLabel
 {

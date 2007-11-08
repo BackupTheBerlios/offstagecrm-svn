@@ -20,7 +20,7 @@ package offstage.schema;
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 import java.sql.*;
 
 public class EntitiesSchoolSchema extends ConstSchema

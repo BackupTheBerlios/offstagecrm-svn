@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;
 import java.awt.*;
+import citibob.types.*;
 
 /**
  *
@@ -40,7 +41,7 @@ public void initRuntime()
 	lcctype.setJType(offstage.schema.EntitiesSchema.ccTypeModel, "<none>");
 	llast4.setJType(new JavaJType(String.class),
 		new StringFormatter());
-	lexpdate.setJType(new citibob.swing.typed.JavaJType(String.class),
+	lexpdate.setJType(new JavaJType(String.class),
 		new offstage.types.ExpDateFormatter());
 	lccinfo.setJType(new JavaJType(String.class),
 		JTypedTextField.newFormatterFactory(new StringFormatter()));

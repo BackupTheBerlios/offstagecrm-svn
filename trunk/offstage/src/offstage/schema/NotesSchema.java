@@ -21,7 +21,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import java.sql.*;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 
 public class NotesSchema extends ConstSchema
 {

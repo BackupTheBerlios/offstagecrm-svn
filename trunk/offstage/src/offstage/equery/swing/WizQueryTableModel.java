@@ -36,6 +36,7 @@ import java.util.*;
 import citibob.jschema.*;
 import offstage.equery.*;
 import java.io.*;
+import citibob.types.*;
 
 /**
  *

@@ -29,6 +29,7 @@ import offstage.schema.*;
 import citibob.swing.typed.*;
 import java.text.*;
 import offstage.reports.*;
+import citibob.types.*;
 
 /**
  *

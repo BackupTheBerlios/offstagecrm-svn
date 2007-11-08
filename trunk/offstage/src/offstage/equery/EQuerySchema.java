@@ -23,7 +23,7 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 
 public class EQuerySchema extends QuerySchema
 {

@@ -30,6 +30,7 @@ import citibob.jschema.swing.*;
 import citibob.swing.table.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
+import citibob.types.*;
 
 /**
  *

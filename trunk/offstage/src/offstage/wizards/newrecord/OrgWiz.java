@@ -39,6 +39,7 @@ import offstage.schema.*;
 import citibob.util.*;
 import java.sql.*;
 import citibob.sql.*;
+import citibob.types.*;
 
 /**
  *

@@ -31,7 +31,7 @@ import java.awt.event.*;
 import citibob.swing.typed.*;
 import citibob.exception.*;
 import citibob.jschema.*;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 import citibob.swing.*;
 
 /**

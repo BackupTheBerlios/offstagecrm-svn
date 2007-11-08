@@ -41,6 +41,7 @@ import java.util.*;
 import citibob.sql.pgsql.*;
 import citibob.swing.pgsql.*;
 import citibob.sql.*;
+import citibob.types.*;
 
 /**
  *

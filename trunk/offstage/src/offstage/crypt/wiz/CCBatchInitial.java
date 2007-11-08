@@ -40,6 +40,7 @@ import offstage.gui.*;
 import citibob.wizard.*;
 import java.sql.*;
 import citibob.sql.*;
+import citibob.types.*;
 
 /**
  *

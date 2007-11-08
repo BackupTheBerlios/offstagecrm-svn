@@ -37,6 +37,7 @@ import offstage.equery.*;
 import java.io.*;
 import java.text.*;
 import citibob.sql.pgsql.*;
+import citibob.types.*;
 
 /**
  *

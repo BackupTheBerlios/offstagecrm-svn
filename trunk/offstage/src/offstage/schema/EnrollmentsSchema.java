@@ -21,6 +21,7 @@ import citibob.jschema.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import java.sql.*;
+import citibob.types.*;
 
 public class EnrollmentsSchema extends ConstSchema
 {
@@ -30,7 +31,7 @@ throws SQLException
 {
 	super();
 	table = "enrollments";
-	citibob.util.KeyedModel kmodel = new DbKeyedModel(str, change,
+	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"courseroles", "courseroleid", "name", "orderid,name");
 	cols = new Column[] {
 		new Column(new SqlInteger(false), "courseid", true),

@@ -10,8 +10,9 @@ import offstage.crypt.*;
 import offstage.*;
 import javax.swing.*;
 import java.awt.event.*;
-import citibob.swing.typed.*;
+import citibob.types.*;
 import java.awt.*;
+import citibob.swing.typed.*;
 
 /**
  *
@@ -49,7 +50,7 @@ public void initRuntime(KeyRing kr)
 	lcctype.setJType(offstage.schema.EntitiesSchema.ccTypeModel, "<none>");
 	llast4.setJType(new JavaJType(String.class),
 		new StringFormatter());
-	lexpdate.setJType(new citibob.swing.typed.JavaJType(String.class),
+	lexpdate.setJType(new JavaJType(String.class),
 		new offstage.types.ExpDateFormatter());
 	lccinfo.setJType(new JavaJType(String.class),
 		new StringFormatter());

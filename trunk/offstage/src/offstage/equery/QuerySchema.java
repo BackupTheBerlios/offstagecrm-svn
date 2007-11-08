@@ -31,7 +31,7 @@ import offstage.schema.PhonesSchema;
 import offstage.schema.EventsSchema;
 import offstage.schema.DonationsSchema;
 import offstage.schema.EntitiesSchema;
-import citibob.util.KeyedModel;
+import citibob.types.*;
 import offstage.equery.*;
 
 public class QuerySchema

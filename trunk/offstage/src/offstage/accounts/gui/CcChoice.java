@@ -39,6 +39,7 @@ import citibob.app.*;
 import offstage.schema.*;
 import citibob.jschema.*;
 import citibob.util.*;
+import citibob.types.*;
 
 /**
  *

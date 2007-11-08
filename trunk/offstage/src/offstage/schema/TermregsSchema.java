@@ -22,6 +22,7 @@ import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import java.sql.*;
 import citibob.util.*;
+import citibob.types.*;
 
 public class TermregsSchema extends ConstSchema
 {
