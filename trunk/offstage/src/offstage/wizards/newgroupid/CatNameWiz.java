@@ -51,7 +51,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	super(owner, "New Category (2 of 2)", true);
 //	setSize(600,460);
 	addWidget("cattype", new JLabel(cattype));
-	addTextField("catname", new JStringSwinger());
+	addTextField("catname");
 	loadHtml();
 }
 

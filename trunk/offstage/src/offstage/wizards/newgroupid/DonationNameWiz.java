@@ -50,8 +50,8 @@ throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, "New Category (2 of 2)", true);
 //	setSize(600,460);
-	addTextField("catname", new JStringSwinger());
-	addTextField("fiscalyear", new JIntegerSwinger());
+	addTextField("catname");
+	addTextField("fiscalyear", Integer.class, "#");
 	loadHtml();
 }
 

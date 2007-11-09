@@ -29,43 +29,17 @@ package offstage.types;
 
 import javax.swing.*;
 import java.text.*;
+import static offstage.types.CCSFormat.*;
+import citibob.text.*;
 
 /**
  *strin
  * @author citibob
  */
-public class PhoneFormatter extends JFormattedTextField.AbstractFormatter
-implements citibob.text.SFormat
+public class ExpDateSFormat extends AbstractSFormat
 {
 	
 	
-static int countDigits(String s)
-{
-	int n=0;
-	for (int i=0; i<s.length(); ++i) {
-		char c = s.charAt(i);
-		if (c >= '0' && c <= '9') ++n;
-	}
-	return n;
-}
-
-static String removeNondigits(String s, int ndigits)
-{
-	StringBuffer ret = new StringBuffer(ndigits);
-	for (int i=0; i<s.length(); ++i) {
-		char c = s.charAt(i);
-		if (c >= '0' && c <= '9') ret.append(c);
-	}
-	return ret.toString();
-}
-
-public static String unformat(String text)
-{
-	if (text == null) return null;
-	if (countDigits(text) != 10) return text;
-	return removeNondigits(text, 10);
-}
-
 /**
  * Parses <code>text</code> returning an arbitrary Object. Some
  * formatters may return null.
@@ -77,10 +51,12 @@ public static String unformat(String text)
 public Object stringToValue(String text) throws
 ParseException
 {
-	return unformat(text);
-//	if (text == null) return null;
-//	if (countDigits(text) != 10) return text;
-//	return removeNondigits(text, 10);
+	if (text == null) return null;
+	if (countDigits(text) != 4) throw new ParseException("Wrong number of digits for Credit Card Number!", 0);
+	String val = removeNondigits(text, 4);
+	int month = Integer.parseInt(val.substring(0,2));
+	if (month < 1 || month > 12) throw new ParseException("Month out of range!", 0);
+	return  val;
 }
 
 /**
@@ -95,11 +71,11 @@ ParseException
 {
 	if (value == null) return null;
 	String text = (String)value;
-	if (countDigits(text) != 10) return text;
+	if (countDigits(text) != 4) return text;
 	
-	String digits = removeNondigits(text, 10);
-	return digits.substring(0,3) + "-" + digits.substring(3,6) + "-" + digits.substring(6);
-}
+	String digits = removeNondigits(text, 16);
+	return digits.substring(0,2) + "/" + digits.substring(2);
+ }
 
 	
 }

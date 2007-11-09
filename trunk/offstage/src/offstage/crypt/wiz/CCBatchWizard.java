@@ -137,8 +137,8 @@ addState(new State("keynotremoved", null, null) {
 // ======================================================
 static final SFormat fccnumber, fexpdate;
 static {
-	fccnumber = new offstage.types.CCFormatter();
-	fexpdate = new offstage.types.ExpDateFormatter();
+	fccnumber = new offstage.types.CCSFormat();
+	fexpdate = new offstage.types.ExpDateSFormat();
 }
 
 void processBatch(SqlRunner str)

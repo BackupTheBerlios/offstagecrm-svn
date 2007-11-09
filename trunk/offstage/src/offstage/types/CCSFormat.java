@@ -29,17 +29,34 @@ package offstage.types;
 
 import javax.swing.*;
 import java.text.*;
-import static offstage.types.CCFormatter.*;
+import citibob.text.*;
 
 /**
  *strin
  * @author citibob
  */
-public class ExpDateFormatter extends JFormattedTextField.AbstractFormatter
-implements citibob.text.SFormat
+public class CCSFormat extends AbstractSFormat
 {
-	
-	
+
+static int countDigits(String s)
+{
+	int n=0;
+	for (int i=0; i<s.length(); ++i) {
+		char c = s.charAt(i);
+		if (c >= '0' && c <= '9') ++n;
+	}
+	return n;
+}
+
+static String removeNondigits(String s, int ndigits)
+{
+	StringBuffer ret = new StringBuffer(ndigits);
+	for (int i=0; i<s.length(); ++i) {
+		char c = s.charAt(i);
+		if (c >= '0' && c <= '9') ret.append(c);
+	}
+	return ret.toString();
+}
 
 /**
  * Parses <code>text</code> returning an arbitrary Object. Some
@@ -52,12 +69,9 @@ implements citibob.text.SFormat
 public Object stringToValue(String text) throws
 ParseException
 {
-	if (text == null) return null;
-	if (countDigits(text) != 4) throw new ParseException("Wrong number of digits for Credit Card Number!", 0);
-	String val = removeNondigits(text, 4);
-	int month = Integer.parseInt(val.substring(0,2));
-	if (month < 1 || month > 12) throw new ParseException("Month out of range!", 0);
-	return  val;
+	if (text.equals(nullText)) return null;
+//	if (countDigits(text) != 16) throw new ParseException("Wrong number of digits for Credit Card Number!", 0);
+	return removeNondigits(text, 16);
 }
 
 /**
@@ -70,13 +84,14 @@ ParseException
 public String valueToString(Object value) throws
 ParseException
 {
-	if (value == null) return null;
+	if (value == null) return nullText;
 	String text = (String)value;
-	if (countDigits(text) != 4) return text;
+	if (countDigits(text) != 16) return text;
 	
 	String digits = removeNondigits(text, 16);
-	return digits.substring(0,2) + "/" + digits.substring(2);
- }
+	return digits.substring(0,4) + "-" + digits.substring(4,8) + "-" +
+		digits.substring(8,12) + "-" + digits.substring(12);
+}
 
 	
 }

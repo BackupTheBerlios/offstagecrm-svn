@@ -59,7 +59,7 @@ EntitySelector sel;
 // Must override stuff in TextTypedWidget
 public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory formatter)
 {
-	super.setJType(jt, JTypedTextField.newFormatterFactory(new EntityIDLabel.EntityIDFormatter(app.getPool())));
+	super.setJType(jt, new EntityIDLabel.EntityIDSFormat(app.getPool()));
 }
 //public void setJType(JType jt, JFormattedTextField.AbstractFormatter formatter)
 //{

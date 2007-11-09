@@ -63,7 +63,8 @@ public class MailingsEditor extends javax.swing.JPanel {
 			new String[] {"Name", "Create Date"},
 			new String[] {"name", "created"},
 			new boolean[] {false, false}, app.getSwingerMap());
-		tMailingIds.setRenderU("created", new javax.swing.table.DefaultTableCellRenderer());
+//		tMailingIds.setRenderU("created", new javax.swing.table.DefaultTableCellRenderer());
+
 //		tMailingIds.setSelectionModel(mailing.getMailingidsDb()SelectModel());
 		mailing.getMailingidsDb().setInstantUpdate(app.getAppRunner(), true);
 		

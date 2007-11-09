@@ -73,8 +73,9 @@ RSTableModel dupModel;
 				new String[] {"score", "entityid0", "string0", "entityid1", "string1"},
 				new String[] {null, "string0", "string0", "string1", "string1"},
 				new boolean[] {false,false,false,false,false},
-				app.getSwingerMap(), app.getSFormatMap());
-			dupTable.setRenderEditU("score", new citibob.swing.typed.SqlNumericSwinger(new citibob.sql.SqlNumeric(3,2)));
+				app.getSwingerMap());
+//			dupTable.setRenderEditU("score", new java.text.DecimalFormat("#.00"));
+			dupTable.setRenderEditU("score", "#.00");
 		}});
 	}
 	

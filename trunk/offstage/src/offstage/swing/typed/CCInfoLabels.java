@@ -39,12 +39,9 @@ public CCInfoLabels()
 public void initRuntime()
 {
 	lcctype.setJType(offstage.schema.EntitiesSchema.ccTypeModel, "<none>");
-	llast4.setJType(new JavaJType(String.class),
-		new StringFormatter());
-	lexpdate.setJType(new JavaJType(String.class),
-		new offstage.types.ExpDateFormatter());
-	lccinfo.setJType(new JavaJType(String.class),
-		JTypedTextField.newFormatterFactory(new StringFormatter()));
+	llast4.setJTypeString();
+	lexpdate.setJType(String.class, new offstage.types.ExpDateSFormat());
+	lccinfo.setJTypeString();
 }
 
 public void clear()

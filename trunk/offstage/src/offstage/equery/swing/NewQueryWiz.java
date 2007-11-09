@@ -51,7 +51,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	super(owner, "New Query", true);
 	setSize(600,400);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addTextField("queryname", new JStringSwinger());
+	addTextField("queryname");
 	
 	loadHtml();
 }

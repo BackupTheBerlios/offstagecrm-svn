@@ -55,8 +55,8 @@ public class CCDecodeTest {
 
 static final SFormat fccnumber, fexpdate;
 static {
-	fccnumber = new CCFormatter();
-	fexpdate = new ExpDateFormatter();
+	fccnumber = new CCSFormat();
+	fexpdate = new ExpDateSFormat();
 }
 //	cctype.setKeyedModel(offstage.schema.EntitiesSchema.ccTypeModel);
 //	ccnumber.setJType(String.class, new CCFormatter());

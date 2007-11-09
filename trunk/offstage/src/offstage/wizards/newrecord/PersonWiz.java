@@ -56,20 +56,20 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	super(owner, "New Person Record", app.getSwingerMap(), true);
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addTextField("firstname", new JStringSwinger());
-	addTextField("middlename", new JStringSwinger());
-	addTextField("lastname", new JStringSwinger());
-	addTextField("address1", new JStringSwinger());
-	addTextField("address2", new JStringSwinger());
-	addTextField("city", new JStringSwinger());
-	addTextField("state", new JStringSwinger());
-	addTextField("zip", new JStringSwinger());
+	addTextField("firstname");
+	addTextField("middlename");
+	addTextField("lastname");
+	addTextField("address1");
+	addTextField("address2");
+	addTextField("city");
+	addTextField("state");
+	addTextField("zip");
 	addTextField("phone", new PhoneSwinger());
-	addTextField("occupation", new JStringSwinger());
-	addTextField("title", new JStringSwinger());
-	addTextField("orgname", new JStringSwinger());
-	addTextField("email", new JStringSwinger());
-	addTextField("url", new JStringSwinger());
+	addTextField("occupation");
+	addTextField("title");
+	addTextField("orgname");
+	addTextField("email");
+	addTextField("url");
 	
 //	addWidget("interestid", "groupid", app.getSchema("interests"));
 	

@@ -36,6 +36,7 @@ import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.types.*;
+import citibob.text.*;
 
 public class EntityIDLabel extends JTypedLabel
 {
@@ -52,7 +53,7 @@ App app;
 // Must override stuff in TextTypedWidget
 public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory formatter)
 {
-	super.setJType(jt, JTypedTextField.newFormatterFactory(new EntityIDLabel.EntityIDFormatter(app.getPool())));
+	super.setJType(jt, new EntityIDLabel.EntityIDSFormat(app.getPool()));
 }
 
 public void initRuntime(App app)
@@ -62,10 +63,10 @@ public void initRuntime(App app)
 }
 
 // =========================EntityIDFormatter=============
-protected static class EntityIDFormatter extends DBFormatter
+protected static class EntityIDSFormat extends DBSFormat
 {
 
-public EntityIDFormatter(ConnPool pool)
+public EntityIDSFormat(ConnPool pool)
 {
 	super(pool);
 //	nullText = "<No Person Selected>";

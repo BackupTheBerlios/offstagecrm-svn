@@ -59,9 +59,8 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, "Insert Key", true);
 
-	final JTypedLabel npayments = new JTypedLabel();
-	npayments.setJType(new JavaJType(Integer.class),
-		new FormatFormatter(new java.text.DecimalFormat("#")));
+	final JTypedLabel npayments = new JTypedLabel(Integer.class, "#");
+//	npayments.setJType(Integer.class, "#");
 	addWidget("npayments", npayments);
 	
 	// Populate npayments

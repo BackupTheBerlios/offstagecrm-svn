@@ -97,7 +97,7 @@ FrontApp fapp;
 //boolean[] xEditable, SwingerMap swingers)
 
 		KeyedModel dkm = new DayOfWeekKeyedModel();
-		courses.setRenderEditU("dayofweek", new KeyedRenderEdit(dkm));
+		courses.setRenderEditU("dayofweek", dkm);
 
 //		Swinger swing = new SqlTimeSwinger(true, "HH:mm");
 //		courses.setRenderEditU("tstart", swing);

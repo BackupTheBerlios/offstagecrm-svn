@@ -45,11 +45,11 @@ public JTypedCCInfo()
 {
 	initComponents();
 //	cctype.setKeyedModel(offstage.schema.EntitiesSchema.ccTypeModel);
-	ccnumber.setJType(String.class, new CCFormatter());
-	expdate.setJType(String.class, new ExpDateFormatter());
-	ccv.setJType(String.class, new DigitsFormatter(3));
-	zip.setJType(String.class, new DigitsFormatter(5));
-	ccname.setJType(String.class, new StringFormatter());
+	ccnumber.setJType(String.class, new CCSFormat());
+	expdate.setJType(String.class, new ExpDateSFormat());
+	ccv.setJType(String.class, new DigitsSFormat(3));
+	zip.setJType(String.class, new DigitsSFormat(5));
+	ccname.setJTypeString();
 
 	// Figure out when we might need to recompute the value
 	FocusListener focus = new FocusListener() {

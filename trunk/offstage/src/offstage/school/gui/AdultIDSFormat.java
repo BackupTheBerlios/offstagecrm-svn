@@ -37,15 +37,16 @@ import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.sql.pgsql.*;
 import java.sql.*;
+import citibob.text.*;
 
 /**
  *
  * @author citibob
  */
-public class AdultIDFormatter extends DBFormatter
+public class AdultIDSFormat extends DBSFormat
 {
 
-public AdultIDFormatter(ConnPool pool)
+public AdultIDSFormat(ConnPool pool)
 { super(pool); }
 
 public String valueToString(Statement st, Object value)

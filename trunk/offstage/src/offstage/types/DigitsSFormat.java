@@ -29,19 +29,19 @@ package offstage.types;
 
 import javax.swing.*;
 import java.text.*;
-import static offstage.types.CCFormatter.*;
+//import static offstage.types.CCSFormat.*;
+import citibob.text.*;
 
 /**
  *strin
  * @author citibob
  */
-public class DigitsFormatter extends JFormattedTextField.AbstractFormatter
-implements citibob.text.SFormat
+public class DigitsSFormat extends AbstractSFormat
 {
 	
 int ndigits;
 
-public DigitsFormatter(int ndigits)
+public DigitsSFormat(int ndigits)
 {
 	this.ndigits = ndigits;
 }	
@@ -57,9 +57,11 @@ public DigitsFormatter(int ndigits)
 public Object stringToValue(String text) throws
 ParseException
 {
-	if (text == null) return null;
-	if (countDigits(text) != ndigits) throw new ParseException("Wrong number of digits (should be " + ndigits + ")", 0);
-	String val = removeNondigits(text, ndigits);
+	if (nullText.equals(text)) return null;
+	if (CCSFormat.countDigits(text) != ndigits)
+		throw new ParseException(
+		"Wrong number of digits (should be " + ndigits + ")", 0);
+	String val = CCSFormat.removeNondigits(text, ndigits);
 	return  val;
 }
 
@@ -73,10 +75,10 @@ ParseException
 public String valueToString(Object value) throws
 ParseException
 {
-	if (value == null) return null;
+	if (value == null) return nullText;
 	String text = (String)value;
-	if (countDigits(text) != ndigits) return text;
-	return removeNondigits(text, ndigits);
+	if (CCSFormat.countDigits(text) != ndigits) return text;
+	return CCSFormat.removeNondigits(text, ndigits);
  }
 
 	

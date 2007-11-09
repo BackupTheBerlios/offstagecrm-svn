@@ -43,6 +43,8 @@ import offstage.db.*;
 import citibob.reports.*;
 import offstage.reports.*;
 import citibob.types.*;
+//import citibob.swingers.*;
+import citibob.text.*;
 
 /**
  *
@@ -287,7 +289,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		new String[] {null, null, null, "description"},
 		null,
 //		new boolean[] {false, false, false, false},
-		fapp.getSwingerMap(), fapp.getSFormatMap());
+		fapp.getSwingerMap());
 
 	// Refresh account when payer changes
 	schoolRm.addColListener("adultid", new RowModel.ColListener() {
@@ -319,7 +321,10 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 			"enrollments_courserole", "enrollments_dstart", "enrollments_dend", "enrollments_dtenrolled"},
 		new boolean[] {false, false, false, false,
 			true, true, true, false}, fapp.getSwingerMap());
-	enrollments.setRenderEditU("courseids_dayofweek", new KeyedRenderEdit(new DayOfWeekKeyedModel()));
+	enrollments.setRenderEditU("courseids_dayofweek", new DayOfWeekKeyedModel());
+//		new TypedWidgetRenderEdit(new JKeyedComboBox(new DayOfWeekKeyedModel())));
+
+//		new KeyedRenderEdit(new DayOfWeekKeyedModel()));
 	
 	// ================================================================
 	// Household
@@ -446,8 +451,7 @@ public void refreshAccount(SqlRunner str) throws SQLException
 	actransDb.doSelect(str);
 	
 	// Set up account balance
-	acbal.setJType(new JavaJType(Double.class),
-		new FormatFormatter(java.text.NumberFormat.getCurrencyInstance()));		
+	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
 	DB.r_acct_balance("bal", str, actransDb.getIntKey(), ActransSchema.AC_SCHOOL,
 	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
 		acbal.setValue(str.get("bal"));
@@ -2623,9 +2627,9 @@ throws Exception
 			new String[][] {{"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"}},
 			new String[] {"firstdate", "firstyear", "lastyear"},
 			new SFormat[] {
-				new JDateSFormat("EEEEE, MMMMM d"),
-				new JDateSFormat("yyyy"),
-				new JDateSFormat("yyyy")
+				new DateSFormat("EEEEE, MMMMM d", "", fapp.getTimeZone()),
+				new DateSFormat("yyyy", "", fapp.getTimeZone()),
+				new DateSFormat("yyyy", "", fapp.getTimeZone())
 		});
 		reports.viewJodPdfs(models, "StudentSchedule.odt");
 	}});

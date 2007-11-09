@@ -32,6 +32,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.swing.pgsql.*;
 import citibob.types.*;
+import citibob.swingers.*;
 
 /**
  *
@@ -41,19 +42,19 @@ public class OffstageSwingerMap extends citibob.sql.pgsql.SqlSwingerMap
 {
 	
 /** Creates a new instance of OffstageSwingerMap */
-public OffstageSwingerMap(java.util.TimeZone tz) {
+public OffstageSwingerMap(final java.util.TimeZone tz) {
 	super(tz);
 	
 	// SqlPhone
-	this.addMaker(SqlPhone.class, new SwingerMap.Maker() {
+	this.addMaker(SqlPhone.class, new DefaultSwingerMap.Maker() {
 	public Swinger newSwinger(JType sqlType) {
 		return new PhoneSwinger();
 	}});
 
 	// OVERRIDE: SqlTime
-	this.addMaker(SqlTime.class, new SwingerMap.Maker() {
+	this.addMaker(SqlTime.class, new DefaultSwingerMap.Maker() {
 	public Swinger newSwinger(JType sqlType) {
-		return new SqlTimeSwinger((JDateType)sqlType, new String[] {"hh:mm a", "HH:mm"}, "");
+		return new JDateSwinger((JDateType)sqlType, new String[] {"hh:mm a", "HH:mm"}, "", tz, null);
 		//return new SqlTimeSwinger((SqlTime)sqlType, "HH:mm");
 	}});
 	

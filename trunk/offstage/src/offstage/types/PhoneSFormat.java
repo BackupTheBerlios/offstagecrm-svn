@@ -29,13 +29,13 @@ package offstage.types;
 
 import javax.swing.*;
 import java.text.*;
+import citibob.text.*;
 
 /**
  *strin
  * @author citibob
  */
-public class CCFormatter extends JFormattedTextField.AbstractFormatter
-implements citibob.text.SFormat
+public class PhoneSFormat extends AbstractSFormat
 {
 	
 	
@@ -59,6 +59,13 @@ static String removeNondigits(String s, int ndigits)
 	return ret.toString();
 }
 
+public static String unformat(String text)
+{
+	if (text == null) return null;
+	if (countDigits(text) != 10) return text;
+	return removeNondigits(text, 10);
+}
+
 /**
  * Parses <code>text</code> returning an arbitrary Object. Some
  * formatters may return null.
@@ -70,9 +77,10 @@ static String removeNondigits(String s, int ndigits)
 public Object stringToValue(String text) throws
 ParseException
 {
-	if (text == null) return null;
-//	if (countDigits(text) != 16) throw new ParseException("Wrong number of digits for Credit Card Number!", 0);
-	return removeNondigits(text, 16);
+	return unformat(text);
+//	if (text == null) return null;
+//	if (countDigits(text) != 10) return text;
+//	return removeNondigits(text, 10);
 }
 
 /**
@@ -87,11 +95,10 @@ ParseException
 {
 	if (value == null) return null;
 	String text = (String)value;
-	if (countDigits(text) != 16) return text;
+	if (countDigits(text) != 10) return text;
 	
-	String digits = removeNondigits(text, 16);
-	return digits.substring(0,4) + "-" + digits.substring(4,8) + "-" +
-		digits.substring(8,12) + "-" + digits.substring(12);
+	String digits = removeNondigits(text, 10);
+	return digits.substring(0,3) + "-" + digits.substring(3,6) + "-" + digits.substring(6);
 }
 
 	

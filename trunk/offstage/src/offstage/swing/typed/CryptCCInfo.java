@@ -48,12 +48,9 @@ public void initRuntime(KeyRing kr)
 {
 	ccinfo.initRuntime(kr);
 	lcctype.setJType(offstage.schema.EntitiesSchema.ccTypeModel, "<none>");
-	llast4.setJType(new JavaJType(String.class),
-		new StringFormatter());
-	lexpdate.setJType(new JavaJType(String.class),
-		new offstage.types.ExpDateFormatter());
-	lccinfo.setJType(new JavaJType(String.class),
-		new StringFormatter());
+	llast4.setJTypeString();
+	lexpdate.setJType(String.class, new offstage.types.ExpDateSFormat());
+	lccinfo.setJTypeString();
 }
 String defaultName;
 String defaultZip;
