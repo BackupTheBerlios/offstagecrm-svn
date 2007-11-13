@@ -240,7 +240,7 @@ throws SQLException
 				int fullSize = rss[0].getInt(1);
 				rss[1].next();
 				int nodupSize = rss[1].getInt(1);
-				lQuerySize.setText(""+fullSize + " (" + nodupSize + " for mailing)");
+				lQuerySize.setText(""+fullSize + " (" + nodupSize + " merged households)");
 			}});
 		}});
 	}//GEN-LAST:event_bApplyActionPerformed

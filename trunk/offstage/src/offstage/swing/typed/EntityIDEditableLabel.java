@@ -57,7 +57,7 @@ EntitySelector sel;
 
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
-public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory formatter)
+public void setJType(JType jt, citibob.text.SFormat sformat)
 {
 	super.setJType(jt, new EntityIDLabel.EntityIDSFormat(app.getPool()));
 }

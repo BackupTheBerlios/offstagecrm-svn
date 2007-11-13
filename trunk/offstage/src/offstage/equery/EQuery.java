@@ -63,50 +63,142 @@ public int getNumClauses()
 public ArrayList getClauses()
 	{ return clauses; }
 // -----------------------------------------------
-/** Creates a standard SqlQuery out of the data in this query. */
-public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
+public String getSql(Column c, Element e)
 {
-	String cwhere = "(1=0";
+	// Ferret out "is null" and "is not null""
+	if ("=".equals(e.comparator) && e.value == null) {
+		return e.colName.toString() + " is null";
+	} else if ("<>".equals(e.comparator) && e.value == null) {
+		return e.colName.toString() + " is not null";
+	} else if ("in".equals(e.comparator) &&
+	String.class.isAssignableFrom(e.value.getClass())) {
+		StringBuffer sql = new StringBuffer(e.colName.toString() + " in (");
+		String[] ll = ((String)(e.value)).trim().split(",");
+		if (ll.length == 0) return "false";
+		for (int i=0; ;) {
+			sql.append(SqlString.sql(ll[i].trim()));
+			if (++i >= ll.length) {
+				sql.append(")");
+				break;
+			}
+			sql.append(",");
+		}
+		return sql.toString();
+	} else {
+		return e.colName.toString() + " " + e.comparator + " " +
+			" (" + c.getType().toSql(e.value) + ")";
+	}
+}
+// -----------------------------------------------
+public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
+{
+	List elements = clause.elements;
+	if (elements.size() == 0) return null;		// Degenerate clause
+	StringBuffer ewhere = null;
+	for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
+		Element e = (Element)jj.next();
+		ColName cn = e.colName;
+		QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
+		Column c = qsc.col;
+		addTableInnerJoin(schema, sql, cn);
+		if (ewhere == null) ewhere = new StringBuffer("(");
+		else ewhere.append(" and\n");
+		ewhere.append(getSql(c, e));
+	}
+	ewhere.append(")");
+	return ewhere.toString();
+}
+
+
+public String getSql(QuerySchema schema, EClause clause)
+{
+	if (clause.elements.size() == 0) return null;
+	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+	sql.addTable("entities as main");
+	String ewhere = getWhereSql(schema, sql, clause);
+	sql.addWhereClause("(" + ewhere + ")");
+	sql.addColumn("main.entityid as id");
+	sql.addWhereClause("not main.obsolete");
+	sql.setDistinct(true);
+	String ssql = sql.getSql();
+//System.out.println("ssql = " + ssql);
+	return ssql;
+
+}
+public String getSql(QuerySchema schema)
+{
+	boolean first = true;
+	StringBuffer sql = new StringBuffer();
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
 		EClause clause = (EClause)ii.next();
-		List elements = clause.elements;
-		if (elements.size() == 0) continue;
-		StringBuffer ewhere = null;
-		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
-			Element e = (Element)jj.next();
-			ColName cn = e.colName;
-System.out.println("cn = " + cn);
-			QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
-System.out.println("qsc = " + qsc);
-			Column c = qsc.col;
-			addTable(schema, sql, cn);
-//			if (!sql.containsTable(e.colName.getTable())) {
-//				String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
-//				sql.addWhereClause(joinClause);
-//				sql.addTable(cn.getTable());
-//			}
-			if (ewhere == null) ewhere = new StringBuffer("(");
-			else ewhere.append(" and\n");
-			if (clause.type == EClause.SUBTRACT) {
-				// subtle outer join semantics issue...
-				ewhere.append(e.colName.toString() + " is not null and ");
-			}
-			ewhere.append(e.colName.toString() + " " + e.comparator + " " +
-				" (" + c.getType().toSql(e.value) + ")");
-		}
-		ewhere.append(")");
-		String joiner = (clause.type == EClause.ADD ? "or" : "and not");
-		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere.toString();
+		String csql = getSql(schema, clause);
+		if (csql == null) continue;
+		if (!first) sql.append(clause.type == EClause.ADD ? "\n    UNION\n" : "\n    EXCEPT\n");
+		sql.append("(" + csql + ")");
+		first = false;
 	}
-	cwhere = cwhere + ")";
-	sql.addWhereClause(cwhere);
-	
-	// Add where clause for lastupdated date range
-	if (lastUpdatedFirst != null) sql.addWhereClause(
-		"main.lastupdated >= " + SqlTimestamp.gmt(lastUpdatedFirst));
-	if (lastUpdatedNext != null) sql.addWhereClause(
-		"main.lastupdated < " + SqlTimestamp.gmt(lastUpdatedNext));
+	return sql.toString();
 }
+
+//// -----------------------------------------------
+///** Creates a standard SqlQuery out of the data in this query. */
+//public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
+//{
+//	String cwhere = "(1=0";
+//	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
+//		EClause clause = (EClause)ii.next();
+//		List elements = clause.elements;
+//		if (elements.size() == 0) continue;
+//		StringBuffer ewhere = null;
+//		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
+//			Element e = (Element)jj.next();
+//			ColName cn = e.colName;
+//System.out.println("cn = " + cn);
+//			QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
+//System.out.println("qsc = " + qsc);
+//			Column c = qsc.col;
+//			addTableOuterJoin(schema, sql, cn);
+////			if (!sql.containsTable(e.colName.getTable())) {
+////				String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
+////				sql.addWhereClause(joinClause);
+////				sql.addTable(cn.getTable());
+////			}
+//			if (ewhere == null) ewhere = new StringBuffer("(");
+//			else ewhere.append(" and\n");
+//			if (clause.type == EClause.SUBTRACT) {
+//				// subtle outer join semantics issue...
+//				ewhere.append(e.colName.toString() + " is not null and ");
+//			}
+//			ewhere.append(e.colName.toString() + " " + e.comparator + " " +
+//				" (" + c.getType().toSql(e.value) + ")");
+//		}
+//		ewhere.append(")");
+//		String joiner = (clause.type == EClause.ADD ? "or" : "and not");
+//		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere.toString();
+//	}
+//	cwhere = cwhere + ")";
+//	sql.addWhereClause(cwhere);
+//	
+//	// Add where clause for lastupdated date range
+//	if (lastUpdatedFirst != null) sql.addWhereClause(
+//		"main.lastupdated >= " + SqlTimestamp.gmt(lastUpdatedFirst));
+//	if (lastUpdatedNext != null) sql.addWhereClause(
+//		"main.lastupdated < " + SqlTimestamp.gmt(lastUpdatedNext));
+//}
+//// ------------------------------------------------------
+//// ------------------------------------------------------
+//public String getSql(QuerySchema qs)
+//{
+//	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+//	sql.addTable("entities as main");
+//	this.writeSqlQuery(qs, sql);
+//	sql.addColumn("main.entityid as id");
+//	sql.addWhereClause("not main.obsolete");
+//	sql.setDistinct(true);
+//	String ssql = sql.getSql();
+////System.out.println("ssql = " + ssql);
+//	return ssql;
+//}
 // ------------------------------------------------------
 /** Returns the mailing id */
 public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema,

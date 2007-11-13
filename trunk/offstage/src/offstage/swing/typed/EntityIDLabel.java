@@ -51,7 +51,7 @@ App app;
 //}
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
-public void setJType(JType jt, javax.swing.text.DefaultFormatterFactory formatter)
+public void setJType(JType jt, SFormat sformat)
 {
 	super.setJType(jt, new EntityIDLabel.EntityIDSFormat(app.getPool()));
 }

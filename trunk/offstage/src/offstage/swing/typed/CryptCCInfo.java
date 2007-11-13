@@ -41,7 +41,6 @@ public CryptCCInfo()
 	}});
 
 	
-	clear();
 }
 
 public void initRuntime(KeyRing kr)
@@ -51,6 +50,7 @@ public void initRuntime(KeyRing kr)
 	llast4.setJTypeString();
 	lexpdate.setJType(String.class, new offstage.types.ExpDateSFormat());
 	lccinfo.setJTypeString();
+	clear();
 }
 String defaultName;
 String defaultZip;

@@ -48,7 +48,7 @@ public abstract class Query {
 //{ this.schema = schema; }
 
 /** Used in constructing queries... */
-protected void addTable(QuerySchema schema, ConsSqlQuery sql, ColName cn)
+protected void addTableOuterJoin(QuerySchema schema, ConsSqlQuery sql, ColName cn)
 {
 	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
 	String tabString = " left outer join " + cn.getTable() + " on (" + joinClause + ")";
@@ -56,21 +56,30 @@ protected void addTable(QuerySchema schema, ConsSqlQuery sql, ColName cn)
 		sql.addTable(tabString);
 	}
 }
-/** Creates a standard ConsSqlQuery out of the data in this query. */
-public abstract void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql);
-// ------------------------------------------------------
-public String getSql(QuerySchema qs)
+/** Used in constructing queries... */
+protected void addTableInnerJoin(QuerySchema schema, ConsSqlQuery sql, ColName cn)
 {
-	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
-	sql.addTable("entities as main");
-	this.writeSqlQuery(qs, sql);
-	sql.addColumn("main.entityid as id");
-	sql.addWhereClause("not main.obsolete");
-	sql.setDistinct(true);
-	String ssql = sql.getSql();
-System.out.println("ssql = " + ssql);
-	return ssql;
+	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
+	String tabString = " inner join " + cn.getTable() + " on (" + joinClause + ")";
+	if (!sql.containsTable(tabString)) {
+		sql.addTable(tabString);
+	}
 }
+///** Creates a standard ConsSqlQuery out of the data in this query. */
+//public abstract void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql);
+// ------------------------------------------------------
+public abstract String getSql(QuerySchema qs);
+//{
+//	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+//	sql.addTable("entities as main");
+//	this.writeSqlQuery(qs, sql);
+//	sql.addColumn("main.entityid as id");
+//	sql.addWhereClause("not main.obsolete");
+//	sql.setDistinct(true);
+//	String ssql = sql.getSql();
+////System.out.println("ssql = " + ssql);
+//	return ssql;
+//}
 // ------------------------------------------------------
 /** Sets the value.  Same as method in JFormattedTextField.  Fires a
  * propertyChangeEvent("value") when calling setValue() changes the value. */
