@@ -91,6 +91,7 @@ int courseid;
 			new String[] {"dtstart", "dtnext"},
 			null, fapp.getSwingerMap());
 
+		// Dates are internally represented (in the database) in GMT, but displayed in local timezone.
 		Swinger swing = new JDateSwinger(new SqlTimestamp("GMT"),
 			new String[] {"EEE MMM dd HH:mm"}, "", fapp.getTimeZone(),
 			citibob.swing.calendar.JCalendarDateHHMM.class);

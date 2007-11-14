@@ -19,6 +19,7 @@ package offstage.schema;
 
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
+import citibob.util.*;
 
 public class CourseidsSchema extends ConstSchema
 {
@@ -32,8 +33,8 @@ public CourseidsSchema()
 		new Column(new SqlString(), "name"),
 		new Column(new SqlInteger(false), "termid", false),
 		new Column(new SqlInteger(), "dayofweek", false),
-		new Column(new SqlTime(), "tstart", false),
-		new Column(new SqlTime(), "tnext", false),
+		new Column(new SqlTime(), "tstart", false),		// TimeZone is GMT
+		new Column(new SqlTime(), "tnext", false),		// TimeZone is GMT
 		new Column(new SqlInteger(true), "enrolllimit")
 	};
 }

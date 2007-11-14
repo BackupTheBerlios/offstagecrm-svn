@@ -33,6 +33,7 @@ import citibob.sql.pgsql.*;
 import citibob.swing.pgsql.*;
 import citibob.types.*;
 import citibob.swingers.*;
+import java.util.*;
 
 /**
  *
@@ -54,7 +55,11 @@ public OffstageSwingerMap(final java.util.TimeZone tz) {
 	// OVERRIDE: SqlTime
 	this.addMaker(SqlTime.class, new DefaultSwingerMap.Maker() {
 	public Swinger newSwinger(JType sqlType) {
-		return new JDateSwinger((JDateType)sqlType, new String[] {"hh:mm a", "HH:mm"}, "", tz, null);
+		// Times represented as (timezone-free) offsets from the start
+		// of a day (in a particular timezone).  Thus, "GMT" is the timezone.
+		return new JDateSwinger((JDateType)sqlType,
+			new String[] {"hh:mm a", "HH:mm"},
+			"", TimeZone.getTimeZone("GMT"), null);
 		//return new SqlTimeSwinger((SqlTime)sqlType, "HH:mm");
 	}});
 	

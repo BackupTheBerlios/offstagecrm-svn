@@ -65,7 +65,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Number of Records Selected:"/>
+                    <Property name="text" type="java.lang.String" value="# Selected:"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lQuerySize">
@@ -73,10 +73,6 @@
                     <Property name="text" type="java.lang.String" value="0"/>
                   </Properties>
                 </Component>
-                <Container class="javax.swing.JPanel" name="jPanel4">
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
-                </Container>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="jPanel5">
