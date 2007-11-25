@@ -110,14 +110,20 @@ public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
 }
 
 
-public String getSql(QuerySchema schema, EClause clause)
+/** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
+public String getSql(QuerySchema schema, EClause clause, boolean primaryOnly)
 {
 	if (clause.elements.size() == 0) return null;
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
 	sql.addTable("entities as main");
 	String ewhere = getWhereSql(schema, sql, clause);
 	sql.addWhereClause("(" + ewhere + ")");
-	sql.addColumn("main.entityid as id");
+	if (primaryOnly) {
+		sql.addColumn("main.primaryentityid as id");
+		sql.setDistinct(true);
+	} else {
+		sql.addColumn("main.entityid as id");
+	}
 	sql.addWhereClause("not main.obsolete");
 	sql.setDistinct(true);
 	String ssql = sql.getSql();
@@ -125,13 +131,15 @@ public String getSql(QuerySchema schema, EClause clause)
 	return ssql;
 
 }
-public String getSql(QuerySchema schema)
+
+/** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
+public String getSql(QuerySchema schema, boolean primaryOnly)
 {
 	boolean first = true;
 	StringBuffer sql = new StringBuffer();
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
 		EClause clause = (EClause)ii.next();
-		String csql = getSql(schema, clause);
+		String csql = getSql(schema, clause, primaryOnly);
 		if (csql == null) continue;
 		if (!first) sql.append(clause.type == EClause.ADD ? "\n    UNION\n" : "\n    EXCEPT\n");
 		sql.append("(" + csql + ")");
@@ -205,7 +213,7 @@ public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema,
 final UpdRunnable rr) throws SQLException
 {
 	String eqXml = toXML();
-	String eqSql = getSql(schema);
+	String eqSql = getSql(schema, true);
 
 	// Create the mailing list and insert EntityID records
 	DB.w_mailingids_create(str, queryName, eqXml, eqSql, rr);

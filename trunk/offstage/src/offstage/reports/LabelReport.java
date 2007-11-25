@@ -63,7 +63,7 @@ public class LabelReport
 //}
 
 /** Creates a new instance of DonorReport */
-public static String getSql(String idSql, boolean removeHouseholdDups)
+public static String getSql(String idSql)
 {
 	String sql =
 		// Create temporary table of IDs for this mailing list
@@ -88,8 +88,7 @@ public static String getSql(String idSql, boolean removeHouseholdDups)
 		"  addressto2 varchar(100)\n" +
 		");\n" +
 		" delete from _mailings;" + 
-		" insert into _mailings (entityid) " +
-			(removeHouseholdDups ? DB.removeDupsIDSql(idSql) : idSql) + ";\n" +
+		" insert into _mailings (entityid) " + idSql + ";\n" +
 	
 		"	update _mailings\n" +
 		"	set firstname = p.firstname\n" +

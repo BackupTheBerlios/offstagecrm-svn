@@ -2526,7 +2526,7 @@ void setIDDirty(boolean dirty)
 				" ) xx, persons p\n" +
 				" where xx.entityid = p.entityid\n" +
 				" order by p.lastname, p.firstname";
-			String sql = LabelReport.getSql(idSql, false);
+			String sql = LabelReport.getSql(idSql);
 System.out.println("==================");
 System.out.println(sql);
 System.out.println("==================");

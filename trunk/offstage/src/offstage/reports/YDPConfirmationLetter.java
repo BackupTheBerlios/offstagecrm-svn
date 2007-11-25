@@ -45,7 +45,7 @@ throws Exception
 		" ) xx, persons p\n" +
 		" where xx.entityid = p.entityid\n" +
 		" order by p.lastname, p.firstname";
-	String sql = LabelReport.getSql(idSql, false);
+	String sql = LabelReport.getSql(idSql);
 	
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {

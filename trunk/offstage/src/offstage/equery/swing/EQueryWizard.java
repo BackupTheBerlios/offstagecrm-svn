@@ -134,20 +134,20 @@ addState(new State("reporttype", "editquery", null) {
 			state = stateRec.next;
 		} else if ("peopletab".equals(submit)) {
 			EntityListTableModel res = fapp.getSimpleSearchResults();
-			String sql = equery.getSql(fapp.getEquerySchema());
+			String sql = equery.getSql(fapp.getEquerySchema(), false);
 System.out.println("EQueryWizard sql: " + sql);
 			res.setRows(str, sql, null);
 			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
 			state = stateRec.next;
 		} else if ("donationreport".equals(submit)) {
-			String sql = equery.getSql(fapp.getEquerySchema());
+			String sql = equery.getSql(fapp.getEquerySchema(), false);
 			state = (doDonationReport(str, "Donation Report", sql) ? stateRec.next : stateRec.name);
 		} else if ("donationreport_nodup".equals(submit)) {
-			String sql = equery.getSql(fapp.getEquerySchema());
-			sql = DB.removeDupsIDSql(sql);
+			String sql = equery.getSql(fapp.getEquerySchema(), true);
+//			sql = DB.removeDupsIDSql(sql);
 			state = (doDonationReport(str, "Donation Report (One per Household)", sql) ? stateRec.next : stateRec.name);
 		} else if ("spreadsheet".equals(submit)) {
-			String sql = equery.getSql(fapp.getEquerySchema());
+			String sql = equery.getSql(fapp.getEquerySchema(), false);
 			state = (doSpreadsheetReport(str, "Donation Report", sql) ? stateRec.next : stateRec.name);
 		}
 		

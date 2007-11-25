@@ -217,13 +217,14 @@ throws SQLException
 			EQuery eqy = eQueryEditor.getEQuery();
 			
 			// Main table
-			String sql0 = eqy.getSql(fapp.getEquerySchema());
-			testResults.setRows(str, sql0, null);
+			String sql0_all = eqy.getSql(fapp.getEquerySchema(), false);
+			String sql0_primaryOnly = eqy.getSql(fapp.getEquerySchema(), true);
+			testResults.setRows(str, sql0_primaryOnly, null);
 			
 			// Summary counts
 			String sql =
-				DB.sqlCountIDList(sql0) + ";\n" +
-				DB.sqlCountIDList(DB.removeDupsIDSql(sql0));
+				DB.sqlCountIDList(sql0_all) + ";\n" +
+				DB.sqlCountIDList(sql0_primaryOnly);
 			str.execSql(sql, new RssRunnable() {
 			public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
 				rss[0].next();

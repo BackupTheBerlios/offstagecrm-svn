@@ -38,7 +38,7 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 
-public class FrontApp extends citibob.app.AbstractApp
+public class FrontApp extends citibob.app.App
 {
 
 public static final int ACTIONS_SCREEN = 0;

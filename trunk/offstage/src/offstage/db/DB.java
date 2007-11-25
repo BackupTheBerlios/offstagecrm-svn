@@ -86,7 +86,8 @@ throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFou
 //	return groupID;
 //}
 // -------------------------------------------------------------------------------
-/** @param eqSql an idSql that selects the entityids we wish to mail to. */
+/** @param eqSql an idSql that selects the entityids we wish to mail to.  Assumes that
+ only one of each primaryentityid has already been done. */
 public static void w_mailingids_create(SqlRunner str, final String queryName,
 final String eqXml, final String eqSql, final UpdRunnable rr)
 {
@@ -108,7 +109,8 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			// These are primaryentityids (i.e. the people we REALLY want to send to)
 			" create temporary table _ids (id int);" + 
 			" delete from _ids;" + 
-			" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
+			" insert into _ids (id) " + eqSql + ";\n" +
+//			" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
 
 			// Insert into Mailing List
 			" insert into mailings (groupid, entityid) select " + groupID + ", id from _ids;" + 
@@ -292,17 +294,18 @@ public static void countIDList(final String retVar, SqlRunner str, String idSql)
 //	return n;
 }
 // -------------------------------------------------------------------------------
-/** Removes duplicates (multiple people in same home) from a list of IDs to mail... replaces with sendentityid */
-public static String removeDupsIDSql(String idSql)
-{
-	String sql =
-		" select distinct e.primaryentityid as id from (\n" +
-			idSql +
-		" ) xx, entities e\n" +
-		" where xx.id = e.entityid\n" +
-		" and e.sendmail"; // and e.primaryentityid is not null\n";
-	return sql;
-}
+///** Removes duplicates (multiple people in same home) from a list of IDs to mail... replaces with sendentityid */
+//public static String removeDupsIDSql(String idSql)
+//{
+//	xxx
+//	String sql =
+//		" select distinct e.primaryentityid as id from (\n" +
+//			idSql +
+//		" ) xx, entities e\n" +
+//		" where xx.id = e.entityid\n" +
+//		" and e.sendmail"; // and e.primaryentityid is not null\n";
+//	return sql;
+//}
 // -------------------------------------------------------------------------------
 public static void rs_entities_namesByIDList(SqlRunner str, String idSql, String orderBy, final RsRunnable rr)
 //throws SQLException

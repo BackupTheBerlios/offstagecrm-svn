@@ -33,7 +33,6 @@ public CCInfoLabels()
 {
 	initComponents();
 	bindComponents = new Component[] {lccinfo};
-	clear();
 }
 
 public void initRuntime()
@@ -42,6 +41,7 @@ public void initRuntime()
 	llast4.setJTypeString();
 	lexpdate.setJType(String.class, new offstage.types.ExpDateSFormat());
 	lccinfo.setJTypeString();
+	clear();
 }
 
 public void clear()
