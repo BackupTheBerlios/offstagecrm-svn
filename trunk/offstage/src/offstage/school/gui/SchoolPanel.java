@@ -2769,10 +2769,16 @@ void newAdultAction(final String colName)
 private void doUpdateSelect(SqlRunner str) throws Exception
 {
 	// TODO: We should really append all into one batch for maximum parallelism
+	// (meaning: one chained bach of two steps.  Won't make much difference.)
 	SqlBatch str0 = new SqlBatch();
 	all.doUpdate(str0);
 	str0.exec(fapp.getPool());
 	all.doSelect(str);
+	
+//	// But we can't just do it the strightforward way, or else updates won't
+// redisplya properly...
+//	all.doUpdate(str);
+//	all.doSelect(str);
 }
 	
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed

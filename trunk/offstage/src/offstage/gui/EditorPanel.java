@@ -193,6 +193,9 @@ private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 			"Are you sure you wish to permanently delete this record?",
 			"Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				model.doDelete(str);
+				// Stop displaying it
+				model.setKey(-1);
+				model.doSelect(str);
 		}
 //		this.simpleSearch.runSearch();
 	}});

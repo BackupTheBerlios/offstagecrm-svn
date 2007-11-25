@@ -235,6 +235,7 @@ extends javax.swing.JPanel {
         unknownGenderButton = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        obsolete = new citibob.swing.typed.JBoolCheckbox();
         customaddressto = new citibob.swing.typed.JTypedTextField();
         jLabel10 = new javax.swing.JLabel();
         bEmancipate = new javax.swing.JButton();
@@ -504,7 +505,7 @@ extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(7, 0, 0, 0);
         GenderX.add(isorg, gridBagConstraints);
 
@@ -512,28 +513,42 @@ extends javax.swing.JPanel {
         mailprefid.setColName("mailprefid");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         GenderX.add(mailprefid, gridBagConstraints);
 
-        Gender.setLayout(new javax.swing.BoxLayout(Gender, javax.swing.BoxLayout.Y_AXIS));
+        Gender.setLayout(new java.awt.GridBagLayout());
 
+        Gender.setPreferredSize(new java.awt.Dimension(85, 50));
         maleButton.setText("Male");
         maleButton.setMargin(null);
-        maleButton.setPreferredSize(new java.awt.Dimension(54, 19));
-        Gender.add(maleButton);
+        maleButton.setPreferredSize(new java.awt.Dimension(54, 15));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        Gender.add(maleButton, gridBagConstraints);
 
         femaleButton.setText("Female");
         femaleButton.setMargin(null);
-        femaleButton.setPreferredSize(new java.awt.Dimension(69, 19));
-        Gender.add(femaleButton);
+        femaleButton.setPreferredSize(new java.awt.Dimension(69, 15));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        Gender.add(femaleButton, gridBagConstraints);
 
         unknownGenderButton.setText("Unknown");
         unknownGenderButton.setMargin(null);
-        unknownGenderButton.setPreferredSize(new java.awt.Dimension(85, 19));
-        Gender.add(unknownGenderButton);
+        unknownGenderButton.setPreferredSize(new java.awt.Dimension(85, 15));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        Gender.add(unknownGenderButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -544,7 +559,7 @@ extends javax.swing.JPanel {
         jLabel1.setText("Mail Preference");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -553,12 +568,27 @@ extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         GenderX.add(jLabel2, gridBagConstraints);
+
+        obsolete.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        obsolete.setText("obsolete");
+        obsolete.setColName("obsolete");
+        obsolete.setEnabled(false);
+        obsolete.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 0, 0);
+        GenderX.add(obsolete, gridBagConstraints);
 
         customaddressto.setColName("customaddressto");
 
@@ -614,10 +644,13 @@ extends javax.swing.JPanel {
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                             .add(bEmancipate))
-                        .add(9, 9, 9)
-                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(GenderX, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                            .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                                .add(9, 9, 9)
+                                .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(layout.createSequentialGroup()
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(GenderX, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                             .add(lPhoneNumbers)
@@ -692,6 +725,7 @@ extends javax.swing.JPanel {
     private citibob.swing.typed.JKeyedComboBox mailprefid;
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
+    private citibob.swing.typed.JBoolCheckbox obsolete;
     private citibob.swing.typed.JTypedTextField occupation;
     private citibob.swing.typed.JTypedTextField orgname;
     private offstage.gui.GroupPanel phonePanel;

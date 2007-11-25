@@ -22,19 +22,43 @@ import offstage.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 
-public class Merge
+public class MergeSql
 {
 
+StringBuffer sql = new StringBuffer();
+SchemaSet sset;
+
+public MergeSql(SchemaSet sset)
+	{ this.sset = sset; }
+
+public String toSql()
+	{ return sql.toString(); }
+
+public static String mergeEntities(App app, Object entityid0, Object entityid1)
+{
+	MergeSql merge = new MergeSql(app.getSchemaSet());
+	merge.mergeEntities(entityid0, entityid1);
+	String sql = merge.toSql();
+	return sql;
+}
+
+public void subordinateEntities(Object entityid0, Object entityid1)
+{
+	// Move the main record
+	sql.append("update entities set primaryentityid=" + entityid1 + " where entityid=" + entityid0 + ";\n");
+
+	// Move the rest of the household (if we were head of household)
+	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+}
+
 /** Merges data FROM dm0 TO dm1 */
-public static void merge(App app,  Object entityid0, Object entityid1)
+public void mergeEntities(Object entityid0, Object entityid1)
 {
 // ONE MORE THING: need to tell mergeOneRow() about columns that default to entityid.
 // This can be done in a special update statement after-the-fact.
 // Also need to do a simple search-and-replace of entityid0 -> entityid1 on primaryentityid, adultid, etc.
-	SchemaSet sset = app.getSchemaSet();
+// (This is all done)
 
-// TODO: Don't forget to delete old now-orphaned records!!
-// (or at least set to obsolete!)
 
 	// =================== Main Data
 	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1);
@@ -47,8 +71,11 @@ public static void merge(App app,  Object entityid0, Object entityid1)
 	moveRows(sset.get("interests"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("notes"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("phones"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("ticketevents"), "entityid", entityid0, entityid1);
-
+	moveRows(sset.get("tickets"), "entityid", entityid0, entityid1);
+	
+	// Don't forget to delete old now-orphaned records!!
+	// (or at least set to obsolete!)
+	sql.append("update entities set obsolete=true where entityid=" + entityid0 + ";\n");
 
 	// Accounting
 	moveRows(sset.get("actrans"), "entityid", entityid0, entityid1);
@@ -62,7 +89,7 @@ public static void merge(App app,  Object entityid0, Object entityid1)
 	searchAndReplace(sset.get("entities_school"), "parentid", entityid0, entityid1);
 	searchAndReplace(sset.get("entities_school"), "parent2id", entityid0, entityid1);
 	moveRows(sset.get("termregs"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("enrollment"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("enrollments"), "entityid", entityid0, entityid1);
 
 //Main Record
 //===========
@@ -96,27 +123,28 @@ public static void merge(App app,  Object entityid0, Object entityid1)
 
 }
 
-/** Merge main part of the record.. */
-public static void mergePersons(SchemaBuf sb0, SchemaBuf sb1)
-{
-	mergeRecMain(sb0, sb1);
-	mergeEntityIDCol(sb0, sb1, sb0.findColumn("primaryentityid"));
-}
+///** Merge main part of the record.. */
+//public void mergePersons(SchemaBuf sb0, SchemaBuf sb1)
+//{
+//	mergeRecMain(sb0, sb1);
+//	mergeEntityIDCol(sb0, sb1, sb0.findColumn("primaryentityid"));
+//}
 
 // -------------------------------------------------------------------
-public static void searchAndReplace(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+public void searchAndReplace(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	Column entityCol = schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
-	StringBuffer sql = new StringBuffer();
+//	StringBuffer sql = new StringBuffer();
 
 	sql.append("update " + table + " set " + entityCol.getName() + " = " +
-		entityCol.toSql(entityid1) + " where " + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+		entityCol.toSql(entityid1) + " where " + entityCol.getName() + " = " + entityCol.toSql(entityid0) + ";\n");
 }
 // -------------------------------------------------------------------
-/** Merges the (one) row fully keyed by sKeyCol. */
-public static void mergeOneRowEntityID(Schema schema, String sEntityCol,
+/** Merges the (one) row fully keyed by sKeyCol.  Only changes columns
+ in sUpdateCols with value == sEntityCol (typically "entityid"). */
+public void mergeOneRowEntityID(Schema schema, String sEntityCol,
 String[] sUpdateCols,
 Object entityid0, Object entityid1)
 {
@@ -124,7 +152,7 @@ Object entityid0, Object entityid1)
 	Column entityCol = schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 	int[] keyCols = getKeyCols(schema, entityColIx);
-	StringBuffer sql = new StringBuffer();
+//	StringBuffer sql = new StringBuffer();
 
 	sql.append(" update " + table);
 	sql.append(" set\n");
@@ -144,14 +172,14 @@ Object entityid0, Object entityid1)
 	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-/** Merges the (one) row fully keyed by sKeyCol. */
-public static void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+/** Merges the (one) row fully keyed by sKeyCol.  Only changes columns with null values. */
+public void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	Column entityCol = schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 	int[] keyCols = getKeyCols(schema, entityColIx);
-	StringBuffer sql = new StringBuffer();
+//	StringBuffer sql = new StringBuffer();
 
 	sql.append(" update " + table);
 	sql.append(" set\n");
@@ -175,7 +203,7 @@ public static void mergeOneRow(Schema schema, String sEntityCol, Object entityid
 	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-public static int[] getKeyCols(Schema schema, int entityColIx)
+public int[] getKeyCols(Schema schema, int entityColIx)
 {
 	// Collect keys from schema
 	int ncols = schema.getColCount();
@@ -244,13 +272,13 @@ public static int[] getKeyCols(Schema schema, int entityColIx)
 //}
 // -------------------------------------------------------------------
 /** Moves rows from keyCol=entityid0 to keyCol=entityid1 -- in which there are no other key columns */
-public static void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+public void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	Column entityCol = schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 	int[] keyCols = getKeyCols(schema, entityColIx);
-	StringBuffer sql = new StringBuffer();
+//	StringBuffer sql = new StringBuffer();
 
 	// Create list of keys in table 0 --- which we will transfer to table 1
 	sql.append("create temporary table keys0 (dummy int");
@@ -295,48 +323,49 @@ public static void moveRows(Schema schema, String sEntityCol, Object entityid0, 
 	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-/** Merge main part of the record.. */
-public static void mergeRecMain(SchemaBuf sb0, SchemaBuf sb1)
-{
-	for (int col=0; col < sb0.getColumnCount(); ++col) mergeCol(sb0, sb1, col);
-}
-
-/** Merge main part of the record.. */
-public static void mergeCol(SchemaBuf sb0, SchemaBuf sb1, int col)
-{
-	Object val1 = sb1.getValueAt(0, col);
-System.out.println(col + " val1 = " + val1);
-	if (val1 == null) {
-		Object val0 = sb0.getValueAt(0, col);
-		sb1.setValueAt(val0, 0, col);
-	}
-}
-
-/** Merges columns that refer to other records, and by default are set to self. */
-public static void mergeEntityIDCol(SchemaBuf sb0, SchemaBuf sb1, int col)
-{
-	int eidCol = sb0.findColumn("entityid");
-	
-	int eid1 = (Integer)sb1.getValueAt(0, eidCol);
-	int pid1 = (Integer)sb1.getValueAt(0, col);
-	if (eid1 == pid1) {
-		Integer Pid0 = (Integer)sb0.getValueAt(0, col);
-		sb1.setValueAt(Pid0, 0, col);
-	}
-}
-// -------------------------------------------------------------------
-
-
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	FrontApp fapp = new FrontApp(pool,null);
-
-
-	moveRows(fapp.getSchemaSet().get("entities_school"), "entityid",
-		new Integer(12633), new Integer(16840));
-
-}
+// Old merge that worked on SchemaBufs, rather than directly on database.
+///** Merge main part of the record.. */
+//public void mergeRecMain(SchemaBuf sb0, SchemaBuf sb1)
+//{
+//	for (int col=0; col < sb0.getColumnCount(); ++col) mergeCol(sb0, sb1, col);
+//}
+//
+///** Merge main part of the record.. */
+//public static void mergeCol(SchemaBuf sb0, SchemaBuf sb1, int col)
+//{
+//	Object val1 = sb1.getValueAt(0, col);
+//System.out.println(col + " val1 = " + val1);
+//	if (val1 == null) {
+//		Object val0 = sb0.getValueAt(0, col);
+//		sb1.setValueAt(val0, 0, col);
+//	}
+//}
+//
+///** Merges columns that refer to other records, and by default are set to self. */
+//public static void mergeEntityIDCol(SchemaBuf sb0, SchemaBuf sb1, int col)
+//{
+//	int eidCol = sb0.findColumn("entityid");
+//	
+//	int eid1 = (Integer)sb1.getValueAt(0, eidCol);
+//	int pid1 = (Integer)sb1.getValueAt(0, col);
+//	if (eid1 == pid1) {
+//		Integer Pid0 = (Integer)sb0.getValueAt(0, col);
+//		sb1.setValueAt(Pid0, 0, col);
+//	}
+//}
+//// -------------------------------------------------------------------
+//
+//
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	FrontApp fapp = new FrontApp(pool,null);
+//
+//
+//	moveRows(fapp.getSchemaSet().get("entities_school"), "entityid",
+//		new Integer(12633), new Integer(16840));
+//
+//}
 
 
 }

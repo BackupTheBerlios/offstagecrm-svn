@@ -152,7 +152,8 @@ public MergePurge(SqlRunner str)
 		" SELECT entityid,primaryentityid," +
 		" address1,address2,city,state,zip,country," +
 		" firstname,lastname,orgname,isorg from persons p" +
-		" where city = 'Cambridge'";
+		" where city = 'Cambridge'" +
+		" and not obsolete";
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws SQLException {
         // create a SoftTFIDF distance learner

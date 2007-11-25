@@ -814,7 +814,7 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="jPanel22" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace pref="124" max="32767" attributes="0"/>
+                                                      <EmptySpace pref="122" max="32767" attributes="0"/>
                                                   </Group>
                                               </Group>
                                             </DimensionLayout>
@@ -1163,7 +1163,7 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="jPanel26" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace pref="124" max="32767" attributes="0"/>
+                                                      <EmptySpace pref="122" max="32767" attributes="0"/>
                                                   </Group>
                                               </Group>
                                             </DimensionLayout>
@@ -1993,7 +1993,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jPanel11" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="1910" max="32767" attributes="0"/>
+                                              <EmptySpace pref="1926" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>

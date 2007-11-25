@@ -41,6 +41,8 @@ import javax.swing.*;
 import offstage.school.gui.*;
 import citibob.jschema.*;
 import citibob.jschema.gui.*;
+import offstage.cleanse.*;
+import citibob.sql.*;
 
 /**
  *
@@ -133,10 +135,19 @@ throws org.xml.sax.SAXException, java.io.IOException
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("testjodreports", new CBTask("", "admin", new ERunnable() {
-	public void run() throws Exception {
-		citibob.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
+	actionMap.put("processdupnames", new CBTask("", "admin", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		CleansePanel.showFrame(str, fapp, "n", "Duplicate Names");
 	}}));
+	actionMap.put("processdupaddrs", new CBTask("", "admin", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		CleansePanel.showFrame(str, fapp, "a", "Duplicate Addresses");
+	}}));
+	
+//	actionMap.put("testjodreports", new CBTask("", "admin", new ERunnable() {
+//	public void run() throws Exception {
+//		citibob.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
+//	}}));
 	
 	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {
 	public void run() throws Exception {

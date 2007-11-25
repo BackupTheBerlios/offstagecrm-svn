@@ -210,9 +210,6 @@ public void doDelete(SqlRunner str)
 	str.execSql("update entities set primaryentityid=entityid" +
 		" where primaryentityid = " + SqlInteger.sql(this.getEntityId()));
 	
-	// Stop displaying it
-	setKey(-1);
-	this.doSelect(str);
 }
 
 ///** Sets up the SchemaBufs for a new person,
