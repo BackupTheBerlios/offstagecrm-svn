@@ -47,7 +47,7 @@ public class NewPersonWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -61,7 +61,7 @@ public NewPersonWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("New Record", xfapp, xframe, "person");
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new InitWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
@@ -71,19 +71,19 @@ public NewPersonWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-addState(new State("person", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
-		{ return new PersonWiz(frame, str, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("person", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
+		{ return new PersonWiz(frame, con.str, fapp); }
+	public void process(WizState.Context con) throws Exception
 	{
-		if (state == null) {
+		if (stateName == null) {
 			// First: do a simple check of data entry
 			if (!isValid()) {
 				JOptionPane.showMessageDialog((JDialog)wiz,
 					"Invalid input.\nPlease fill in all required (starred) fields!");
-				state = "person";
+				stateName = "person";
 			} else {
-				offstage.db.DupCheck.checkDups(str, v, 3, 20, new UpdRunnable() {
+				offstage.db.DupCheck.checkDups(con.str, v, 3, 20, new UpdRunnable() {
 				public void run(SqlRunner str) {
 					String idSql = (String)str.get("idsql");
 					v.put("idsql", idSql);
@@ -94,9 +94,9 @@ addState(new State("person", null, null) {
 						int ndups = (Integer)str.get("count");
 						if (ndups == 0) {
 							createPerson(str.next(), false);
-							state = null; //"finished";
+							stateName = null; //"finished";
 						} else {
-							state = "checkdups";
+							stateName = "checkdups";
 						}
 					}});
 					//state = (ndups == 0 ? "finished" : "checkdups");
@@ -107,34 +107,34 @@ addState(new State("person", null, null) {
 });
 // ---------------------------------------------
 // Duplicates were found; double-check.
-addState(new State("checkdups", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
-		{ return new DupsWiz(frame, str, fapp, v.getString("idsql")); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("checkdups", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
+		{ return new DupsWiz(frame, con.str, fapp, con.v.getString("idsql")); }
+	public void process(WizState.Context con) throws Exception
 	{
 		String submit = v.getString("submit");
-		if ("dontadd".equals(submit)) state = null;
+		if ("dontadd".equals(submit)) stateName = null;
 		if ("addanyway".equals(submit)) {
-			createPerson(str, false);
-			state = "finished";
+			createPerson(con.str, false);
+			stateName = "finished";
 System.out.println("Add anyway!");
 		}
 	}
 });
 // ---------------------------------------------
-addState(new State("org", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
-		{ return new OrgWiz(frame, str, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("org", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
+		{ return new OrgWiz(frame, con.str, fapp); }
+	public void process(WizState.Context con) throws Exception
 	{
-		if (state == null) {
+		if (stateName == null) {
 			// First: do a simple check of data entry
 			if (!isValidOrg()) {
 				JOptionPane.showMessageDialog((JDialog)wiz,
 					"Invalid input.\nPlease fill in all required (starred) fields!");
-				state = "org";
+				stateName = "org";
 			} else {
-				offstage.db.DupCheck.checkDups(str, v, 3, 20, new UpdRunnable() {
+				offstage.db.DupCheck.checkDups(con.str, con.v, 3, 20, new UpdRunnable() {
 				public void run(SqlRunner str) {
 					String idSql = (String)str.get("idsql");
 					v.put("idsql", idSql);
@@ -145,9 +145,9 @@ addState(new State("org", null, null) {
 						int ndups = (Integer)str.get("ndups");
 						if (ndups == 0) {
 							createPerson(str.next(), true);
-							state = null;// "finished";
+							stateName = null;// "finished";
 						} else {
-							state = "checkdups";
+							stateName = "checkdups";
 						}
 					}});
 				//state = (ndups == 0 ? "finished" : "checkdups");
@@ -158,10 +158,10 @@ addState(new State("org", null, null) {
 });
 // ---------------------------------------------
 // Duplicates were found; double-check.
-addState(new State("finished", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("finished", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new FinishedWiz(frame); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 		{}
 });
 // ---------------------------------------------

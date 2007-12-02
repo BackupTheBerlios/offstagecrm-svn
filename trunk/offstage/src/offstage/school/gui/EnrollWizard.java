@@ -47,7 +47,7 @@ public class EnrollWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -69,7 +69,7 @@ public EnrollWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("Enrollments", xfapp, xframe, "person");
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new InitWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
@@ -79,12 +79,12 @@ public EnrollWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-addState(new State("add", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
-		{ return new AddEnrollWiz(frame, str, fapp, v); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("add", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
+		{ return new AddEnrollWiz(frame, con.str, fapp, con.v); }
+	public void process(WizState.Context con) throws Exception
 	{
-		str.execSql(newInsertQuery("enrollments", v).getSql());
+		con.str.execSql(newInsertQuery("enrollments", con.v).getSql());
 	}
 });
 

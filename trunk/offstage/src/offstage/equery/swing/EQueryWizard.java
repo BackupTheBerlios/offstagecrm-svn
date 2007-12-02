@@ -52,7 +52,7 @@ public class EQueryWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -65,94 +65,94 @@ public EQueryWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String s
 {
 	super("Query Wizard", xfapp, xframe, startState);
 // ---------------------------------------------
-addState(new State("listquery", null, "editquery") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("listquery", null, "editquery") {
+	public Wiz newWiz(WizState.Context con) throws Exception
 		{ return new JPanelWizWrapper(frame, null, "",
-			  new ListQueryWiz(str, fapp)); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+			  new ListQueryWiz(con.str, fapp)); }
+	public void process(WizState.Context con) throws Exception
 	{
-		if ("newquery".equals(v.get("submit"))) state = "newquery";
+		if ("newquery".equals(con.v.get("submit"))) stateName = "newquery";
 	}
 });
 // ---------------------------------------------
-addState(new State("newquery", null, "editquery") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("newquery", null, "editquery") {
+	public Wiz newWiz(WizState.Context con) throws Exception
 	{
 		NewQueryWiz w = new NewQueryWiz(frame);
 		return w;
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(final WizState.Context con) throws Exception
 	{
-		SqlSerial.getNextVal(str, "equeries_equeryid_seq");
-		str.execUpdate(new UpdRunnable() {
+		SqlSerial.getNextVal(con.str, "equeries_equeryid_seq");
+		con.str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) {
-			int equeryID = (Integer)str.get("equeries_equeryid_seq");
-			v.put("equeryid", equeryID);
+			int equeryID = (Integer)con.str.get("equeries_equeryid_seq");
+			con.v.put("equeryid", equeryID);
 			String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
 				SqlInteger.sql(equeryID) + ", " +
-				SqlString.sql(v.getString("queryname")) +
+				SqlString.sql(con.v.getString("queryname")) +
 				", '', now())";
-			str.next().execSql(sql);
+			con.str.next().execSql(sql);
 		}});
 	}
 });
 // ---------------------------------------------
-addState(new State("editquery", "listquery", "reporttype") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
-		EditQueryWiz eqw = new EditQueryWiz(str, fapp, v.getInt("equeryid"));
+addState(new AbstractWizState("editquery", "listquery", "reporttype") {
+	public Wiz newWiz(WizState.Context con) throws Exception {
+		EditQueryWiz eqw = new EditQueryWiz(con.str, fapp, con.v.getInt("equeryid"));
 		return new JPanelWizWrapper(frame, "", "", eqw);
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
-		if ("deletequery".equals(v.get("submit"))) {
+		if ("deletequery".equals(con.v.get("submit"))) {
 //			equeryDm.doDelete(st);
-			str.execSql("delete from equeries where equeryid = " + SqlInteger.sql(v.getInt("equeryid")));
-			state = stateRec.back;
+			con.str.execSql("delete from equeries where equeryid = " + SqlInteger.sql(con.v.getInt("equeryid")));
+			stateName = stateRec.getBack();
 		}
 
 	}
 });
 // ---------------------------------------------
-addState(new State("reporttype", "editquery", null) {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("reporttype", "editquery", null) {
+	public Wiz newWiz(WizState.Context con) throws Exception
 		{ return new ReportTypeWiz(frame); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(final WizState.Context con) throws Exception
 	{
 //		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.WAIT_CURSOR);
-		String submit = v.getString("submit");
-		EQuery equery = (EQuery)v.get("equery");
-		String equeryName = v.getString("equeryname");
+		String submit = con.v.getString("submit");
+		EQuery equery = (EQuery)con.v.get("equery");
+		String equeryName = con.v.getString("equeryname");
 		if ("mailinglabels".equals(submit)) {
-			equery.makeMailing(str, equeryName, fapp.getEquerySchema(), null);
-			str.execUpdate(new UpdRunnable() {
+			equery.makeMailing(con.str, equeryName, fapp.getEquerySchema(), null);
+			con.str.execUpdate(new UpdRunnable() {
 			public void run(SqlRunner str) {
-				final int mailingID = (Integer)str.get("groupids_groupid_seq");
+				final int mailingID = (Integer)con.str.get("groupids_groupid_seq");
 				fapp.getMailingModel().setKey(mailingID);
-				fapp.getMailingModel().doSelect(str.next());
+				fapp.getMailingModel().doSelect(con.str.next());
 				fapp.setScreen(FrontApp.MAILINGS_SCREEN);
 			}});
-			state = stateRec.next;
+			stateName = stateRec.getNext();
 		} else if ("peopletab".equals(submit)) {
 			EntityListTableModel res = fapp.getSimpleSearchResults();
 			String sql = equery.getSql(fapp.getEquerySchema(), false);
 System.out.println("EQueryWizard sql: " + sql);
-			res.setRows(str, sql, null);
+			res.setRows(con.str, sql, null);
 			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
-			state = stateRec.next;
+			stateName = stateRec.getNext();
 		} else if ("donationreport".equals(submit)) {
 			String sql = equery.getSql(fapp.getEquerySchema(), false);
-			state = (doDonationReport(str, "Donation Report", sql) ? stateRec.next : stateRec.name);
+			stateName = (doDonationReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
 		} else if ("donationreport_nodup".equals(submit)) {
 			String sql = equery.getSql(fapp.getEquerySchema(), true);
 //			sql = DB.removeDupsIDSql(sql);
-			state = (doDonationReport(str, "Donation Report (One per Household)", sql) ? stateRec.next : stateRec.name);
+			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
 		} else if ("spreadsheet".equals(submit)) {
 			String sql = equery.getSql(fapp.getEquerySchema(), false);
-			state = (doSpreadsheetReport(str, "Donation Report", sql) ? stateRec.next : stateRec.name);
+			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
 		}
 		
 //		// Go on no matter what we chose...
-//		if (!"back".equals(submit)) state = stateRec.next;
+//		if (!"back".equals(submit)) state = stateRec.getNext();
 //		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.DEFAULT_CURSOR);
 	}
 });
@@ -224,7 +224,7 @@ public boolean doSpreadsheetReport(SqlRunner str, final String title, String idS
 //
 //	CSVReportOutput csv = new CSVReportOutput(report.newTableModel(), null, null,
 //		fapp.getSFormatMap());
-//	csv.writeReport(new File(fname));
+//	cscon.v.writeReport(new File(fname));
 //	return true;
 //}
 // ==================================================================

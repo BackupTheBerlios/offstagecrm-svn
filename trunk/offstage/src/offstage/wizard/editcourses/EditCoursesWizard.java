@@ -47,7 +47,7 @@ public class EditCoursesWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -60,46 +60,46 @@ public EditCoursesWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("Edit Courses", xfapp, xframe, "termlist");
 // ---------------------------------------------
-addState(new State("termlist", null, "courselist") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("termlist", null, "courselist") {
+	public Wiz newWiz(WizState.Context con) throws Exception
 		{ return new JPanelWizWrapper(frame, null, ">> Courses",
-			  new TermsWiz(fapp, str)); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+			  new TermsWiz(fapp, con.str)); }
+	public void process(WizState.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
-		if (Termid == null) state = "termlist";
+		if (Termid == null) stateName = "termlist";
 	}
 });
 // ---------------------------------------------
-addState(new State("courselist", "termlist", "meetings") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("courselist", "termlist", "meetings") {
+	public Wiz newWiz(WizState.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		return new JPanelWizWrapper(frame, "", ">> Meetings",
-			  new CoursesWiz(fapp, str, Termid));
+			  new CoursesWiz(fapp, con.str, Termid));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("courseid");
-		if (Termid == null) state = "courselist";
+		if (Termid == null) stateName = "courselist";
 	}
 });
 // ---------------------------------------------
-addState(new State("meetings", "courselist", null) {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("meetings", "courselist", null) {
+	public Wiz newWiz(WizState.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		Integer Courseid = (Integer)v.get("courseid");
 		return new JPanelWizWrapper(frame, "", "Finished",
-			  new MeetingsWiz(fapp, str, Termid, Courseid));
+			  new MeetingsWiz(fapp, con.str, Termid, Courseid));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 		{}
 });
 // ---------------------------------------------
 //// Query for name of new category
 //addState(new State("catname", "grouplist", "finished") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new CatNameWiz(frame, v.getString("table")); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
@@ -117,7 +117,7 @@ addState(new State("meetings", "courselist", null) {
 //// ---------------------------------------------
 //// Query for name of new donation category
 //addState(new State("donationname", "grouplist", "finished") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new DonationNameWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
@@ -136,7 +136,7 @@ addState(new State("meetings", "courselist", null) {
 //// ---------------------------------------------
 //// Query for name of new donation category
 //addState(new State("finished", null, null) {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new FinishedWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{

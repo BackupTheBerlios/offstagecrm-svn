@@ -52,7 +52,7 @@ public class ReportWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -65,10 +65,10 @@ public ReportWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String s
 {
 	super("Report Wizard", xfapp, xframe, startState);
 // ---------------------------------------------
-addState(new State("ticketparams", null, "editquery") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("ticketparams", null, "editquery") {
+	public Wiz newWiz(WizState.Context con) throws Exception
 		{ return new TicketParamsWiz(frame, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		int groupid = v.getInt("groupid");
 		String sql =
@@ -79,7 +79,7 @@ addState(new State("ticketparams", null, "editquery") {
 			" and t.tickettypeid = tt.tickettypeid\n" +
 			" and t.groupid = " + SqlInteger.sql(groupid) + "\n" +
 			" order by p.lastname,p.firstname\n";
-		str.execSql(sql, new RsRunnable() {
+		con.str.execSql(sql, new RsRunnable() {
 		public void run(SqlRunner str, ResultSet rs) throws Exception {
 			Reports rr = fapp.getReports();
 			rr.writeCSV(
@@ -91,7 +91,7 @@ addState(new State("ticketparams", null, "editquery") {
 });
 //// ---------------------------------------------
 //addState(new State("listquery", null, "editquery") {
-//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public Wiz newWiz(WizState.Context con) throws Exception
 //		{ return new JPanelWizWrapper(frame, null, "",
 //			  new ListQueryWiz(st, fapp)); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
@@ -101,7 +101,7 @@ addState(new State("ticketparams", null, "editquery") {
 //});
 //// ---------------------------------------------
 //addState(new State("newquery", null, "editquery") {
-//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public Wiz newWiz(WizState.Context con) throws Exception
 //	{
 //		NewQueryWiz w = new NewQueryWiz(frame);
 //		return w;
@@ -120,7 +120,7 @@ addState(new State("ticketparams", null, "editquery") {
 //});
 //// ---------------------------------------------
 //addState(new State("editquery", "listquery", "reporttype") {
-//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+//	public Wiz newWiz(WizState.Context con) throws Exception {
 //		EditQueryWiz eqw = new EditQueryWiz(st, fapp, v.getInt("equeryid"));
 //		return new JPanelWizWrapper(frame, "", "", eqw);
 //	}
@@ -136,7 +136,7 @@ addState(new State("ticketparams", null, "editquery") {
 //});
 //// ---------------------------------------------
 //addState(new State("reporttype", "editquery", null) {
-//	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public Wiz newWiz(WizState.Context con) throws Exception
 //		{ return new ReportTypeWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{

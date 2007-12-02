@@ -46,7 +46,7 @@ public class NewGroupidWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -60,7 +60,7 @@ public NewGroupidWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("New Category", xfapp, xframe, "grouplist");
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new InitWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
@@ -70,23 +70,23 @@ public NewGroupidWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-addState(new State("grouplist", null, "catname") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("grouplist", null, "catname") {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new GroupListWiz(frame); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		String table = v.getString("submit");
 		v.put("table", table);
-		if ("donationids".equals(table)) state = "donationname";
-		else state = "catname";
+		if ("donationids".equals(table)) stateName = "donationname";
+		else stateName = "catname";
 	}
 });
 // ---------------------------------------------
 // Query for name of new category
-addState(new State("catname", "grouplist", "finished") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("catname", "grouplist", "finished") {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new CatNameWiz(frame, v.getString("table")); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		String catname = v.getString("catname");
 		if (catname == null || "".equals(catname)) return;
@@ -95,16 +95,16 @@ addState(new State("catname", "grouplist", "finished") {
 			" insert into " + table +
 			" (name) values (" + SqlString.sql(catname) + ")";
 System.out.println(sql);
-		str.execSql(sql);
-		fapp.getDbChange().fireTableWillChange(str, table);
+		con.str.execSql(sql);
+		fapp.getDbChange().fireTableWillChange(con.str, table);
 	}
 });
 // ---------------------------------------------
 // Query for name of new donation category
-addState(new State("donationname", "grouplist", "finished") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("donationname", "grouplist", "finished") {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new DonationNameWiz(frame); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		String catname = v.getString("catname");
 		if (catname == null || "".equals(catname)) return;
@@ -114,16 +114,16 @@ addState(new State("donationname", "grouplist", "finished") {
 			" (name, fiscalyear) values (" +
 			SqlString.sql(catname) + ", " + SqlInteger.sql(fiscalyear) + ")";
 System.out.println(sql);
-		str.execSql(sql);
-		fapp.getDbChange().fireTableWillChange(str, "donationids");
+		con.str.execSql(sql);
+		fapp.getDbChange().fireTableWillChange(con.str, "donationids");
 	}
 });
 // ---------------------------------------------
 // Query for name of new donation category
-addState(new State("finished", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("finished", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new FinishedWiz(frame); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 	}
 });

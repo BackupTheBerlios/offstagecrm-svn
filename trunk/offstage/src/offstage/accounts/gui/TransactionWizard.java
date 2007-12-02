@@ -51,8 +51,8 @@ public class TransactionWizard extends OffstageWizard {
 	int entityid, actypeid;
 	SqlDate sqlDate;
 /*
-addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+addState(new AbstractWizState("", "", "") {
+	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
 	public void process(citibob.sql.SqlRunner str)
 	{
@@ -62,14 +62,14 @@ addState(new State("", "", "") {
 */
 
 /** Does an insert, using all the field names in v automatically. */
-void vInsert(SqlRunner str, String table, TypedHashMap v) throws SQLException
+void vInsert(WizState.Context con, String table) throws SQLException
 {
-	ConsSqlQuery sql = newInsertQuery(table, v);
+	ConsSqlQuery sql = newInsertQuery(table, con.v);
 	sql.addColumn("entityid", SqlInteger.sql(entityid));
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 //	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 	sql.addColumn("datecreated", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
-	str.execSql(sql.getSql());
+	con.str.execSql(sql.getSql());
 }
 
 public TransactionWizard(offstage.FrontApp xfapp, java.awt.Frame xframe,
@@ -80,8 +80,8 @@ int xentityid, int xactypeid)
 	this.actypeid = xactypeid;
 	sqlDate = new SqlDate(fapp.getTimeZone(), false);
 // ---------------------------------------------
-//addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//addState(new AbstractWizState("init", "init", "init") {
+//	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new InitWiz(frame); }
 //	public void process(citibob.sql.SqlRunner str) throws Exception
 //	{
@@ -90,46 +90,46 @@ int xentityid, int xactypeid)
 //	}
 //});
 // ---------------------------------------------
-addState(new State("cashpayment", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("cashpayment", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new CashpaymentWiz(frame, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
-		v.put("amount", new Double(-namount));
-		vInsert(str, "cashpayments", v);
+		con.v.put("amount", new Double(-namount));
+		vInsert(con, "cashpayments");
 	}
 });
-addState(new State("adjpayment", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("adjpayment", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new AdjpaymentWiz(frame, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
-		v.put("amount", new Double(-namount));
-		vInsert(str, "adjpayments", v);
+		con.v.put("amount", new Double(-namount));
+		vInsert(con, "adjpayments");
 	}
 });
-addState(new State("checkpayment", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("checkpayment", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
 		{ return new CheckpaymentWiz(frame, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
-		vInsert(str, "checkpayments", v);
+		vInsert(con, "checkpayments");
 	}
 });
-addState(new State("ccpayment", null, null) {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
-		{ return new CcpaymentWiz(frame, str, entityid, fapp); }
-	public void process(citibob.sql.SqlRunner str) throws Exception
+addState(new AbstractWizState("ccpayment", null, null) {
+	public HtmlWiz newWiz(WizState.Context con) throws Exception
+		{ return new CcpaymentWiz(frame, con.str, entityid, fapp); }
+	public void process(WizState.Context con) throws Exception
 	{
 		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;
 //		cwiz.getWidget("ccchooser")
 		CCChooser cc = (CCChooser)cwiz.getWidget("ccchooser");
 		// TODO: Log change to credit card # on file (or should I?)
-		cc.saveNewCardIfNeeded(str);
+		cc.saveNewCardIfNeeded(con.str);
 		
 		ConsSqlQuery sql = new ConsSqlQuery("ccpayments", ConsSqlQuery.INSERT);
 		cc.getCard(sql);
@@ -139,7 +139,7 @@ addState(new State("ccpayment", null, null) {
 		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 		sql.addColumn("date", sqlDate.toSql(v.get("date")));		// Store day that it is in home timezone
 //		sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
-		str.execSql(sql.getSql());
+		con.str.execSql(sql.getSql());
 	}
 });
 // ---------------------------------------------

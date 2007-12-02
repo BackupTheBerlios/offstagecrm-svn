@@ -52,66 +52,66 @@ public LoadKeyWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 {
 	super("Load Key", xfapp, xframe, "insertkey1");
 // ---------------------------------------------
-addState(new State("insertkey1", null, "removekey1") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+addState(new AbstractWizState("insertkey1", null, "removekey1") {
+	public Wiz newWiz(WizState.Context con) throws Exception {
 		return new HtmlWiz(frame, "Insert Key", true,
 			getResourceName("loadkey_InsertKey.html"));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
-		if (!kr.isUsbInserted()) state = "keynotinserted";
+		if (!kr.isUsbInserted()) stateName = "keynotinserted";
 		else {
 			try {
 				List<KeyRing.PlainFile> keys = kr.readAllKeyFiles();
 				v.put("keys", keys);
 			} catch(Exception e) {
 				e.printStackTrace();
-				state = "keyerror";
+				stateName = "keyerror";
 			}
 		}
 	}
 });
 // ---------------------------------------------
-addState(new State("removekey1", null, "insertkey2") {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+addState(new AbstractWizState("removekey1", null, "insertkey2") {
+	public Wiz newWiz(WizState.Context con) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("loadkey_RemoveKey.html"));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
-		if (kr.isUsbInserted()) state = "keynotremoved";
+		if (kr.isUsbInserted()) stateName = "keynotremoved";
 	}
 });
 // ---------------------------------------------
 // ---------------------------------------------
-addState(new State("keyerror", null, null) {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+addState(new AbstractWizState("keyerror", null, null) {
+	public Wiz newWiz(WizState.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Error", true,
 			getResourceName("dupkey_KeyError.html"));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
-addState(new State("keynotinserted", null, null) {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+addState(new AbstractWizState("keynotinserted", null, null) {
+	public Wiz newWiz(WizState.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Not Inserted", true,
 			getResourceName("KeyNotInserted.html"));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
-addState(new State("keynotremoved", null, null) {
-	public Wiz newWiz(citibob.sql.SqlRunner str) throws Exception {
+addState(new AbstractWizState("keynotremoved", null, null) {
+	public Wiz newWiz(WizState.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Not Removed", true,
 			getResourceName("KeyNotRemoved.html"));
 	}
-	public void process(citibob.sql.SqlRunner str) throws Exception
+	public void process(WizState.Context con) throws Exception
 	{
 	}
 });
