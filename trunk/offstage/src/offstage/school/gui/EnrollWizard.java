@@ -80,9 +80,9 @@ public EnrollWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
 addState(new AbstractWizState("add", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new AddEnrollWiz(frame, con.str, fapp, con.v); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		con.str.execSql(newInsertQuery("enrollments", con.v).getSql());
 	}

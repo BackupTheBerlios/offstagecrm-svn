@@ -61,10 +61,10 @@ public EditCoursesWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("Edit Courses", xfapp, xframe, "termlist");
 // ---------------------------------------------
 addState(new AbstractWizState("termlist", null, "courselist") {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 		{ return new JPanelWizWrapper(frame, null, ">> Courses",
 			  new TermsWiz(fapp, con.str)); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		if (Termid == null) stateName = "termlist";
@@ -72,13 +72,13 @@ addState(new AbstractWizState("termlist", null, "courselist") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("courselist", "termlist", "meetings") {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		return new JPanelWizWrapper(frame, "", ">> Meetings",
 			  new CoursesWiz(fapp, con.str, Termid));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("courseid");
 		if (Termid == null) stateName = "courselist";
@@ -86,14 +86,14 @@ addState(new AbstractWizState("courselist", "termlist", "meetings") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("meetings", "courselist", null) {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 	{
 		Integer Termid = (Integer)v.get("termid");
 		Integer Courseid = (Integer)v.get("courseid");
 		return new JPanelWizWrapper(frame, "", "Finished",
 			  new MeetingsWiz(fapp, con.str, Termid, Courseid));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 		{}
 });
 // ---------------------------------------------

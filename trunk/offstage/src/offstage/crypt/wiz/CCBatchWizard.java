@@ -56,10 +56,10 @@ public CCBatchWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("New Key", xfapp, xframe, "initial");
 
 addState(new AbstractWizState("initial", null, "insertkey1") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new CCBatchInitial(frame, con.str, fapp);
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.privKeysLoaded()) {
@@ -70,11 +70,11 @@ addState(new AbstractWizState("initial", null, "insertkey1") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("insertkey1", null, "removekey1") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("ccbatch_InsertKey1.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) stateName = "keynotinserted";
@@ -90,11 +90,11 @@ addState(new AbstractWizState("insertkey1", null, "removekey1") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("removekey1", null, "insertkey2") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("ccbatch_RemoveKey1.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		if (fapp.getKeyRing().isUsbInserted()) stateName = "keynotremoved";
 		else processBatch(con.str);
@@ -104,31 +104,31 @@ addState(new AbstractWizState("removekey1", null, "insertkey2") {
 // ---------------------------------------------
 // ---------------------------------------------
 addState(new AbstractWizState("keyerror", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Error", true,
 			getResourceName("dupkey_KeyError.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new AbstractWizState("keynotinserted", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Not Inserted", true,
 			getResourceName("KeyNotInserted.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new AbstractWizState("keynotremoved", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Not Removed", true,
 			getResourceName("KeyNotRemoved.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });

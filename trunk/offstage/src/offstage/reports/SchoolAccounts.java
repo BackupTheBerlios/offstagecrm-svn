@@ -16,14 +16,16 @@ import java.util.*;
 import citibob.app.*;
 import citibob.types.*;
 import citibob.sql.pgsql.*;
+import javax.swing.table.*;
 
 /**
- *
+ * To be written out to XLS, so we don't need to include JType information
  * @author citibob
  */
-public class SchoolAccounts
+public class SchoolAccounts extends DefaultTableModel
 {
 	
+// =================================================================
 static class Bill
 {
 	int termid;
@@ -40,6 +42,7 @@ static class Bill
 		this.amountUnpaid = amount;
 	}
 }
+// =================================================================
 static class Acct
 {
 	int entityid;
@@ -118,11 +121,19 @@ static class Acct
 	}
 
 }
+// =================================================================
 
-
-SqlDate sqlDate;
+SqlDate sqlDate;		// Used for reading date from database
 public SchoolAccounts(App app)
 {
+//	JType money = new SqlNumeric(10,2);
+//	JType string = new JavaJType(String.class);
+//	JType integer = new JavaJType(Integer.class);
+	super(
+		new String[] {"entityid", "lastname", "firstname", "totalbilled_term",
+			"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term","unpaid_all","overpay"},
+//		new JType[] {integer, string, string, money, money, money, money, money, money, money},
+		0);
 	sqlDate = new SqlDate(app.getTimeZone(), false);
 }
 
@@ -176,8 +187,8 @@ public void findUnpaid(SqlRunner str, final int termid)
 			}
 		}
 		
-		System.out.println("entityid,lastname,firstname,totalbilled_term,(regfees_term)," +
-			"(paid+adj)_term,scholarships_term,unpaid_term,unpaid_all,overpay");
+//		System.out.println("entityid,lastname,firstname,totalbilled_term,(regfees_term)," +
+//			"(paid+adj)_term,scholarships_term,unpaid_term,unpaid_all,overpay");
 		for (Acct ac : accts) {
 			double unpaid_term = 0;
 			double unpaid_all = 0;
@@ -185,13 +196,14 @@ public void findUnpaid(SqlRunner str, final int termid)
 				if (b.termid == termid) unpaid_term += b.amountUnpaid;
 				unpaid_all += b.amountUnpaid;
 			}
-			System.out.println(ac.entityid + ", " + ac.lastname + ", " + ac.firstname + ", " +
-				ac.totalbilled_term + ", " +
-				ac.regfees_term + ", " +
-				(ac.totalbilled_term - unpaid_term - ac.rebates_term) + ", " +
+			addRow(new Object[] {
+				ac.entityid, ac.lastname, ac.firstname,
+				ac.totalbilled_term,
+				ac.regfees_term,
+				(ac.totalbilled_term - unpaid_term - ac.rebates_term),
 				//(ac.rebates_term - ac.scholarship_term) + ", " +		// adj_term
-				ac.scholarship_term + ", " +
-				unpaid_term + ", " + unpaid_all + ", " + ac.overpay);
+				ac.scholarship_term,
+				unpaid_term, unpaid_all, ac.overpay});
 		}
 		
 		
@@ -208,6 +220,11 @@ public static void main(String[] args) throws Exception
 	SchoolAccounts sa = new SchoolAccounts(fapp);
 	sa.findUnpaid(str, termid);
 	str.exec(pool);
+
+	Map<String,Object> map = new TreeMap();
+	map.put("rs", sa);
+	map.put("date", new java.util.Date());
+	fapp.getReports().writeXls(map, "StudentAccounts.xls", new java.io.File("x2.xls"));
 }
 
 }

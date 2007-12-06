@@ -91,6 +91,13 @@ private static final String[] alias = {
 	"termenrolls.courserole", "termrole",
 	"interests.groupid", "interests",
 	"ticketeventsales.groupid", "tickets",
+	"ticketeventsales.date", "tix-date",
+	"ticketeventsales.numberoftickets", "#-tix",
+	"ticketeventsales.payment", "tix-payment",
+	"ticketeventsales.tickettypeid", "tix-type",
+	"ticketeventsales.venueid", "venue",
+	"ticketeventsales.offercodeid", "offercode",
+	"ticketeventsales.perftypeid", "performance-type",
 	"entities.entityid", "entityid",
 	"entities.obsolete", "obsolete",
 };

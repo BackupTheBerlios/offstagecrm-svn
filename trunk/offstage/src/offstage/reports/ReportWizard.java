@@ -66,9 +66,9 @@ public ReportWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String s
 	super("Report Wizard", xfapp, xframe, startState);
 // ---------------------------------------------
 addState(new AbstractWizState("ticketparams", null, "editquery") {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 		{ return new TicketParamsWiz(frame, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		int groupid = v.getInt("groupid");
 		String sql =
@@ -89,7 +89,17 @@ addState(new AbstractWizState("ticketparams", null, "editquery") {
 		}});
 	}
 });
-//// ---------------------------------------------
+// ---------------------------------------------
+addState(new AbstractWizState("savecsv") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new JPanelWizWrapper(frame, null, null,
+			  new ChooseFileWiz(app, "Please select file in which to save report", con.v.getString("reportname"), ".csv")); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		if ("newquery".equals(con.v.get("submit"))) stateName = "newquery";
+	}
+});
+// ---------------------------------------------
 //addState(new State("listquery", null, "editquery") {
 //	public Wiz newWiz(WizState.Context con) throws Exception
 //		{ return new JPanelWizWrapper(frame, null, "",

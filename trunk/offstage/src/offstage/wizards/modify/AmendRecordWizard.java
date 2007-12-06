@@ -60,9 +60,9 @@ public AmendRecordWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("New Person", xfapp, xframe, "find");
 // ---------------------------------------------
 addState(new AbstractWizState("find", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new FindWiz(frame, con.str, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		FindWiz w = (FindWiz)wiz;
 //System.out.println("entityid = " + w.getEntityID());

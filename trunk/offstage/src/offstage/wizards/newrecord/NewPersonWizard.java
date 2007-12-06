@@ -72,9 +72,9 @@ public NewPersonWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
 addState(new AbstractWizState("person", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new PersonWiz(frame, con.str, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		if (stateName == null) {
 			// First: do a simple check of data entry
@@ -108,9 +108,9 @@ addState(new AbstractWizState("person", null, null) {
 // ---------------------------------------------
 // Duplicates were found; double-check.
 addState(new AbstractWizState("checkdups", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new DupsWiz(frame, con.str, fapp, con.v.getString("idsql")); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		String submit = v.getString("submit");
 		if ("dontadd".equals(submit)) stateName = null;
@@ -123,9 +123,9 @@ System.out.println("Add anyway!");
 });
 // ---------------------------------------------
 addState(new AbstractWizState("org", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new OrgWiz(frame, con.str, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		if (stateName == null) {
 			// First: do a simple check of data entry
@@ -159,9 +159,9 @@ addState(new AbstractWizState("org", null, null) {
 // ---------------------------------------------
 // Duplicates were found; double-check.
 addState(new AbstractWizState("finished", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new FinishedWiz(frame); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 		{}
 });
 // ---------------------------------------------

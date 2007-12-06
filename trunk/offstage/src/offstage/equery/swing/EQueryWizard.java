@@ -66,22 +66,22 @@ public EQueryWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String s
 	super("Query Wizard", xfapp, xframe, startState);
 // ---------------------------------------------
 addState(new AbstractWizState("listquery", null, "editquery") {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 		{ return new JPanelWizWrapper(frame, null, "",
 			  new ListQueryWiz(con.str, fapp)); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		if ("newquery".equals(con.v.get("submit"))) stateName = "newquery";
 	}
 });
 // ---------------------------------------------
 addState(new AbstractWizState("newquery", null, "editquery") {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 	{
 		NewQueryWiz w = new NewQueryWiz(frame);
 		return w;
 	}
-	public void process(final WizState.Context con) throws Exception
+	public void process(final Wizard.Context con) throws Exception
 	{
 		SqlSerial.getNextVal(con.str, "equeries_equeryid_seq");
 		con.str.execUpdate(new UpdRunnable() {
@@ -98,11 +98,11 @@ addState(new AbstractWizState("newquery", null, "editquery") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("editquery", "listquery", "reporttype") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		EditQueryWiz eqw = new EditQueryWiz(con.str, fapp, con.v.getInt("equeryid"));
 		return new JPanelWizWrapper(frame, "", "", eqw);
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		if ("deletequery".equals(con.v.get("submit"))) {
 //			equeryDm.doDelete(st);
@@ -114,9 +114,9 @@ addState(new AbstractWizState("editquery", "listquery", "reporttype") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("reporttype", "editquery", null) {
-	public Wiz newWiz(WizState.Context con) throws Exception
+	public Wiz newWiz(Wizard.Context con) throws Exception
 		{ return new ReportTypeWiz(frame); }
-	public void process(final WizState.Context con) throws Exception
+	public void process(final Wizard.Context con) throws Exception
 	{
 //		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.WAIT_CURSOR);
 		String submit = con.v.getString("submit");

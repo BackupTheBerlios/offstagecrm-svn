@@ -52,11 +52,11 @@ public DupKeyWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 	super("New Key", xfapp, xframe, "insertkey1");
 // ---------------------------------------------
 addState(new AbstractWizState("insertkey1", null, "removekey1") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Insert Key", true,
 			getResourceName("dupkey_InsertKey1.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) stateName = "keynotinserted";
@@ -73,11 +73,11 @@ addState(new AbstractWizState("insertkey1", null, "removekey1") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("removekey1", null, "insertkey2") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("dupkey_RemoveKey1.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.isUsbInserted()) stateName = "keynotremoved";
@@ -85,11 +85,11 @@ addState(new AbstractWizState("removekey1", null, "insertkey2") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("insertkey2", null, "removekey2") {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Insert Key", true,
 			getResourceName("dupkey_InsertKey2.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (!kr.isUsbInserted()) stateName = "keynotinserted";
@@ -104,11 +104,11 @@ addState(new AbstractWizState("insertkey2", null, "removekey2") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("removekey2", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Remove Key", true,
 			getResourceName("dupkey_RemoveKey2.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		KeyRing kr = fapp.getKeyRing();
 		if (kr.isUsbInserted()) stateName = "keynotremoved";
@@ -116,31 +116,31 @@ addState(new AbstractWizState("removekey2", null, null) {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("keyerror", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Error", true,
 			getResourceName("dupkey_KeyError.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new AbstractWizState("keynotinserted", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Not Inserted", true,
 			getResourceName("KeyNotInserted.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });
 // ---------------------------------------------
 addState(new AbstractWizState("keynotremoved", null, null) {
-	public Wiz newWiz(WizState.Context con) throws Exception {
+	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new HtmlWiz(frame, "Key Not Removed", true,
 			getResourceName("KeyNotRemoved.html"));
 	}
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });

@@ -71,9 +71,9 @@ public NewGroupidWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
 addState(new AbstractWizState("grouplist", null, "catname") {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new GroupListWiz(frame); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		String table = v.getString("submit");
 		v.put("table", table);
@@ -84,9 +84,9 @@ addState(new AbstractWizState("grouplist", null, "catname") {
 // ---------------------------------------------
 // Query for name of new category
 addState(new AbstractWizState("catname", "grouplist", "finished") {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new CatNameWiz(frame, v.getString("table")); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		String catname = v.getString("catname");
 		if (catname == null || "".equals(catname)) return;
@@ -102,9 +102,9 @@ System.out.println(sql);
 // ---------------------------------------------
 // Query for name of new donation category
 addState(new AbstractWizState("donationname", "grouplist", "finished") {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new DonationNameWiz(frame); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		String catname = v.getString("catname");
 		if (catname == null || "".equals(catname)) return;
@@ -121,9 +121,9 @@ System.out.println(sql);
 // ---------------------------------------------
 // Query for name of new donation category
 addState(new AbstractWizState("finished", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new FinishedWiz(frame); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 	}
 });

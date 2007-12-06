@@ -62,7 +62,7 @@ addState(new AbstractWizState("", "", "") {
 */
 
 /** Does an insert, using all the field names in v automatically. */
-void vInsert(WizState.Context con, String table) throws SQLException
+void vInsert(Wizard.Context con, String table) throws SQLException
 {
 	ConsSqlQuery sql = newInsertQuery(table, con.v);
 	sql.addColumn("entityid", SqlInteger.sql(entityid));
@@ -91,9 +91,9 @@ int xentityid, int xactypeid)
 //});
 // ---------------------------------------------
 addState(new AbstractWizState("cashpayment", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new CashpaymentWiz(frame, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		con.v.put("amount", new Double(-namount));
@@ -101,9 +101,9 @@ addState(new AbstractWizState("cashpayment", null, null) {
 	}
 });
 addState(new AbstractWizState("adjpayment", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new AdjpaymentWiz(frame, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		con.v.put("amount", new Double(-namount));
@@ -111,9 +111,9 @@ addState(new AbstractWizState("adjpayment", null, null) {
 	}
 });
 addState(new AbstractWizState("checkpayment", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new CheckpaymentWiz(frame, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
@@ -121,9 +121,9 @@ addState(new AbstractWizState("checkpayment", null, null) {
 	}
 });
 addState(new AbstractWizState("ccpayment", null, null) {
-	public HtmlWiz newWiz(WizState.Context con) throws Exception
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new CcpaymentWiz(frame, con.str, entityid, fapp); }
-	public void process(WizState.Context con) throws Exception
+	public void process(Wizard.Context con) throws Exception
 	{
 		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;
 //		cwiz.getWidget("ccchooser")
