@@ -165,7 +165,7 @@ void processBatch(SqlRunner str)
 				" where e.entityid = p.entityid" +
 				" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
 				" order by date";
-		str.next().execSql(sql, new RssRunnable() {
+		str.execSql(sql, new RssRunnable() {
 		public void run(SqlRunner str, ResultSet[] rss) throws Exception {
 			ResultSet rs;
 			

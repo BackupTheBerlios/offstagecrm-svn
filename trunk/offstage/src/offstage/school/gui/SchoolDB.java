@@ -126,7 +126,7 @@ throws SQLException
 		
 		for (Integer payerid : payers) {
 			System.out.println("Recalculating tuition for " + payerid);
-			w_tuitiontrans_calcTuitionByAdult(str.next(), termid, payerid, null);
+			w_tuitiontrans_calcTuitionByAdult(str, termid, payerid, null);
 		}
 	}});
 }
@@ -330,8 +330,8 @@ System.out.println("Processing results, adultid = " + adultid);
 		}
 	
 System.out.println(sqlOut);
-		str.next().execSql(sqlOut.toString());
-		str.next().execUpdate(rr);
+		str.execSql(sqlOut.toString());
+		str.execUpdate(rr);
 	}});
 }
 // -------------------------------------------------------------------------------

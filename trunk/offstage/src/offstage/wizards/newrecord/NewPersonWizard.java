@@ -88,12 +88,12 @@ addState(new AbstractWizState("person", null, null) {
 					String idSql = (String)str.get("idsql");
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
-					DB.countIDList("count", str.next(), idSql);
-					str.next().execUpdate(new UpdRunnable() {
+					DB.countIDList("count", str, idSql);
+					str.execUpdate(new UpdRunnable() {
 					public void run(SqlRunner str) throws Exception {
 						int ndups = (Integer)str.get("count");
 						if (ndups == 0) {
-							createPerson(str.next(), false);
+							createPerson(str, false);
 							stateName = null; //"finished";
 						} else {
 							stateName = "checkdups";
@@ -139,12 +139,12 @@ addState(new AbstractWizState("org", null, null) {
 					String idSql = (String)str.get("idsql");
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
-					DB.countIDList("ndups", str.next(), idSql);
-					str.next().execUpdate(new UpdRunnable() {
+					DB.countIDList("ndups", str, idSql);
+					str.execUpdate(new UpdRunnable() {
 					public void run(SqlRunner str) throws SQLException {
 						int ndups = (Integer)str.get("ndups");
 						if (ndups == 0) {
-							createPerson(str.next(), true);
+							createPerson(str, true);
 							stateName = null;// "finished";
 						} else {
 							stateName = "checkdups";
@@ -201,7 +201,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 		q.addColumn("isorg", SqlBool.sql(isorg));
 		String sql = q.getSql();
 	System.out.println(sql);
-		str.next().execSql(sql);
+		str.execSql(sql);
 		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("persons")));
 
 		// Make phone record --- first dig for keyed model...
@@ -214,7 +214,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 			q.addColumn("phone", SqlString.sql(phone));
 			sql = q.getSql();
 	System.out.println(sql);
-			str.next().execSql(sql);
+			str.execSql(sql);
 
 			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
 		}
@@ -227,7 +227,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 			q.addColumn("groupid", SqlInteger.sql(interestid));
 			sql = q.getSql();
 	System.out.println(sql);
-			str.next().execSql(sql);
+			str.execSql(sql);
 			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
 		}
 	}});

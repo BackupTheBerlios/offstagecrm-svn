@@ -243,7 +243,7 @@ int courseid;
 		public void run(SqlRunner str) throws Exception {
 			offstage.db.DB.w_meetings_autofill(str, courseid, fapp.getTimeZone(),
 			new UpdRunnable() { public void run(SqlRunner str) throws Exception {
-				meetingsSb.doSelect(str.next());
+				meetingsSb.doSelect(str);
 			}});
 		}});
 // TODO add your handling code here:

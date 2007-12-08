@@ -163,7 +163,7 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			"	where mailings.entityid = e.entityid\n" +
 			"	and mailings.groupid = " + groupID + ";\n";
 
-		str.next().execSql(sql, new UpdRunnable() {
+		str.execSql(sql, new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			if (rr != null) rr.run(str);
 		}});
@@ -396,7 +396,7 @@ final int entityid, final int actypeid, final UpdRunnable rr)
 			" where entityid = " + SqlInteger.sql(entityid) +
 			" and actypeid = " + SqlInteger.sql(actypeid) +
 			(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
-		str.next().execSql(sql, new RsRunnable() {
+		str.execSql(sql, new RsRunnable() {
 		public void run(SqlRunner str, ResultSet rs) throws Exception {
 			rs.next();
 			double bal = fbal + rs.getDouble(1);
@@ -450,7 +450,7 @@ final int courseid, final TimeZone tz, final UpdRunnable rr)
 				sts.toSql(ts1) + ");\n");
 			cal.add(Calendar.WEEK_OF_YEAR, 1);
 		}
-		str.next().execSql(sbuf.toString(), rr);
+		str.execSql(sbuf.toString(), rr);
 	}});
 }
 // --------------------------------------------------

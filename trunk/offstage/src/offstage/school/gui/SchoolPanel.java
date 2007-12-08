@@ -84,12 +84,12 @@ class AllDbModel extends MultiDbModel
 			parent2Dm.setKey((Integer)schoolRm.get("parent2id"));
 			payerDm.setKey(studentDm.getAdultID());
 
-			parentDm.doSelect(str.next());
-			parent2Dm.doSelect(str.next());
+			parentDm.doSelect(str);
+			parent2Dm.doSelect(str);
 			Integer pid = (Integer)studentRm.get("primaryentityid");
-			familyTable.setPrimaryEntityID(str.next(), pid);
-			payerDm.doSelect(str.next());
-			enrolledDb.doSelect(str.next());
+			familyTable.setPrimaryEntityID(str, pid);
+			payerDm.doSelect(str);
+			enrolledDb.doSelect(str);
 			studentDirty = false;
 			setIDDirty(false);
 		}});
@@ -127,17 +127,17 @@ class AllDbModel extends MultiDbModel
 			studentRm.set("primaryentityid", str.get("primaryentityid"));
 
 			// Do the rest
-			superDoUpdate(str.next());
+			superDoUpdate(str);
 
 			// Calculate the tuition
 			int col = schoolRm.findColumn("adultid");
 			Integer Oldadultid = (Integer)schoolRm.getOrigValue(col);
 			Integer Adultid = (Integer)schoolRm.get(col);
 
-			actransDb.doUpdate(str.next());
+			actransDb.doUpdate(str);
 			int termid = getTermID(); //(Integer)vTermID.getValue();
-			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Oldadultid, null);
-			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str.next(), termid, Adultid, null);
+			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldadultid, null);
+			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Adultid, null);
 		}});
 	}
 }
@@ -385,9 +385,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		}});
 
 //	//	vStudentID.setValue((Integer)12633);
-//		changeStudent(str.next(), 12633);
+//		changeStudent(str, 12633);
 //	//	all.setKey(new Integer(12633));
-//		all.doSelect(str.next());
+//		all.doSelect(str);
 
 	}});
 	

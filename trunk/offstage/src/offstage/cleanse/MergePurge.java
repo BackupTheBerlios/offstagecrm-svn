@@ -190,7 +190,7 @@ System.out.println("Done getting names (" + nameMap.size() + " records)");
 		// efficiency, you train on an iterator over StringWrapper
 		// objects, which are produced with the 'prepare' function.
 
-		str.next().execSql(process(nameMap, .9, "n"));	// Just merge by name
+		str.execSql(process(nameMap, .9, "n"));	// Just merge by name
 //		process(addrMap, .8, "a");
 //		process(orgMap, .8, "o");
 	}});
