@@ -34,6 +34,24 @@
             <Property name="text" type="java.lang.String" value="Window"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="miSchool">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="School"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miSchoolActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miDups">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Duplicate Names"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miDupsActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JSeparator" name="jSeparator2">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miMailPrefs">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Mail Preferences"/>

@@ -15,7 +15,7 @@ import org.apache.commons.collections.ArrayStack;
 import java.text.*;
 
 /**
- *
+ * For making histograms
  * @author citibob
  */
 public class Hist

@@ -38,6 +38,13 @@ import citibob.types.*;
 public class AcctStatement
 {
 
+
+/** Data created in making this report.  To be read out later. */
+public List<HashMap<String,Object>> models;
+/** Temporary data... */
+private Map<Integer,String> studentNames;
+
+	
 /**
      * Get a listing of students for each parent.  Calls rr on 
      * @param app 
@@ -48,7 +55,7 @@ public class AcctStatement
      * @throws java.sql.SQLException 
      *
      */
-public static void getStudentNames(SqlRunner str, App app, int termid, int payerid)
+void getStudentNames(SqlRunner str, App app, int termid, int payerid)
 //throws SQLException
 {
 	String sql =
@@ -82,12 +89,15 @@ System.out.println("sql");
 				map.put(id, names);
 			}
 		}
-		str.put("studentNames", map);
+		AcctStatement.this.studentNames = map;
+//		str.put("studentNames", map);
 	}});
 }
 
 /* @param str Stores result under "models" List<HashMap<String,Object>> */
-public static void makeJodModels(SqlRunner str, final App app,
+//public static void makeJodModels(
+public AcctStatement(
+SqlRunner str, final App app,
 int termid, int payerid, final java.util.Date today)
 {
 	// Fetch name of students in family
@@ -128,7 +138,8 @@ int termid, int payerid, final java.util.Date today)
 
 		// Group it by payer...
 		String[][] sgcols = new String[][] {{"entityid"}};
-		List<HashMap<String,Object>> models = new ArrayList();
+//		List<HashMap<String,Object>> models = new ArrayList();
+		models = new ArrayList();
 		TableModelGrouper grouper = new TableModelGrouper(rsmod, sgcols);
 		for (Map sbo : grouper.groupRowsList()) {
 			JTypeTableModel sb = (JTypeTableModel)sbo.get("rs"); //JTypeTableModel)sbo;
@@ -243,19 +254,19 @@ int termid, int payerid, final java.util.Date today)
 			data.put("duedate", (rs1.getRowCount() == 0 ? "" :
 				dfmt.format((java.util.Date)rs1.getValueAt(0,dtcol))));
 		}
-		str.put("models", models);
+		// str.put("models", models);
 	}});
 }
 public static void doAccountStatements(SqlRunner str, final FrontApp fapp, int termid, int payerid, java.util.Date dt)
 throws Exception
 {
 	if (dt == null) dt = new java.util.Date();
-	makeJodModels(str, fapp, termid, payerid, fapp.sqlDate.truncate(dt));
+	final AcctStatement rep = new AcctStatement(str, fapp, termid, payerid, fapp.sqlDate.truncate(dt));
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		List models = (List)str.get("models");
-		Reports reports = new OffstageReports(fapp);
-		File f = reports.writeJodPdfs(models, "AcctStatement.odt", null);
+		//List models = (List)str.get("models");
+		Reports reports = fapp.getReports(); //new OffstageReports(fapp);
+		File f = reports.writeJodPdfs(rep.models, "AcctStatement.odt", null);
 		reports.viewPdf(f);
 	}});
 }

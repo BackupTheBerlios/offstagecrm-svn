@@ -1993,7 +1993,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jPanel11" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="1926" max="32767" attributes="0"/>
+                                              <EmptySpace pref="2022" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -2593,6 +2593,7 @@
                           </Group>
                           <Component id="bConfirmationLetters" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="bParentLabels" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="bStudentAccounts" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="513" max="32767" attributes="0"/>
                   </Group>
@@ -2614,7 +2615,9 @@
                       <Component id="bConfirmationLetters" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="bParentLabels" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="492" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                      <Component id="bStudentAccounts" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="441" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2666,6 +2669,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bConfirmationLettersActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="bStudentAccounts">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Student Accounts"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bStudentAccountsActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

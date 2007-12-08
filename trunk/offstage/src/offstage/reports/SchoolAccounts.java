@@ -22,7 +22,7 @@ import javax.swing.table.*;
  * To be written out to XLS, so we don't need to include JType information
  * @author citibob
  */
-public class SchoolAccounts extends DefaultTableModel
+public class SchoolAccounts
 {
 	
 // =================================================================
@@ -123,23 +123,20 @@ static class Acct
 }
 // =================================================================
 
-SqlDate sqlDate;		// Used for reading date from database
-public SchoolAccounts(App app)
+/** Report result */
+public Map<String,Object> model;
+
+/** @param tz TimeZone used to read from database. */
+public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid)
 {
 //	JType money = new SqlNumeric(10,2);
 //	JType string = new JavaJType(String.class);
 //	JType integer = new JavaJType(Integer.class);
-	super(
-		new String[] {"entityid", "lastname", "firstname", "totalbilled_term",
-			"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term","unpaid_all","overpay"},
-//		new JType[] {integer, string, string, money, money, money, money, money, money, money},
-		0);
-	sqlDate = new SqlDate(app.getTimeZone(), false);
-}
+	final SqlDate sqlDate;		// Used for reading date from database
+	sqlDate = new SqlDate(tz, false);
 
-public void findUnpaid(SqlRunner str, final int termid)
-{
 	String sql =
+		// rss[0]
 		" select ac.tableoid,klass.relname,ac.entityid, e.lastname, e.firstname, ac.date,ac.amount,ac.description,ac.actransid,-1 as termid" +
 		" from actrans ac, pg_class klass, actypes, entities e" +
 		" where klass.oid = ac.tableoid" +
@@ -150,12 +147,24 @@ public void findUnpaid(SqlRunner str, final int termid)
 		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, ac.date,ac.amount,ac.description,ac.actransid,ac.termid" +
 		" from tuitiontrans ac, entities e" +
 		" where e.entityid = ac.entityid and not e.obsolete" +
-		" order by lastname,firstname,entityid,date,amount desc";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		" order by lastname,firstname,entityid,date,amount desc;\n" +
+		
+		// rss[1]
+		" select name from termids where groupid=" + termid + ";\n";
+	str.execSql(sql, new RssRunnable() {
+	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+		model = new TreeMap();
+		DefaultTableModel table = new DefaultTableModel(
+			new String[] {"entityid", "lastname", "firstname", "totalbilled_term",
+				"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term","unpaid_all","overpay"},
+//			new JType[] {integer, string, string, money, money, money, money, money, money, money},
+			0);
+		model.put("rs", table);
+
 		List<Acct> accts = new ArrayList();
 		int lastEntityid = -1;
 		Acct acct = null;
+		ResultSet rs = rss[0];
 		while (rs.next()) {
 			// Change over entityid
 			int entityid = rs.getInt("entityid");
@@ -196,7 +205,7 @@ public void findUnpaid(SqlRunner str, final int termid)
 				if (b.termid == termid) unpaid_term += b.amountUnpaid;
 				unpaid_all += b.amountUnpaid;
 			}
-			addRow(new Object[] {
+			table.addRow(new Object[] {
 				ac.entityid, ac.lastname, ac.firstname,
 				ac.totalbilled_term,
 				ac.regfees_term,
@@ -206,26 +215,29 @@ public void findUnpaid(SqlRunner str, final int termid)
 				unpaid_term, unpaid_all, ac.overpay});
 		}
 		
-		
+		// Add miscellaneous stuff
+		rss[1].next();
+		model.put("sterm", rss[1].getString("name"));
+		model.put("date", new java.util.Date());
+		model.put("regfee", new Double(25));
 	}});
 }
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	offstage.FrontApp fapp = new offstage.FrontApp(pool,null);
-
-	SqlBatch str = new SqlBatch();
-	int termid = 346;
-	SchoolAccounts sa = new SchoolAccounts(fapp);
-	sa.findUnpaid(str, termid);
-	str.exec(pool);
-
-	Map<String,Object> map = new TreeMap();
-	map.put("rs", sa);
-	map.put("date", new java.util.Date());
-	fapp.getReports().writeXls(map, "StudentAccounts.xls", new java.io.File("x2.xls"));
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	offstage.FrontApp fapp = new offstage.FrontApp(pool,null);
+//
+//	SqlBatch str = new SqlBatch();
+//	int termid = 346;
+//	SchoolAccounts sa = new SchoolAccounts(fapp);
+//	sa.findUnpaid(str, termid);
+//	str.exec(pool);
+//
+//	Map<String,Object> map = new TreeMap();
+//	map.put("rs", sa);
+//	fapp.getReports().writeXls(map, "StudentAccounts.xls", new java.io.File("x2.xls"));
+//}
 
 }
 

@@ -22,15 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package offstage.gui;
+import citibob.multithread.BatchRunnable;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
 import citibob.swing.prefs.*;
-import citibob.jschema.swing.*;
-import citibob.gui.*;
 import offstage.FrontApp;
 //import offstage.EQueryBrowserApp;
 import citibob.sql.*;
+import offstage.cleanse.CleansePanel;
 
 /**
  *
@@ -39,30 +39,31 @@ import citibob.sql.*;
 public class OffstageGui extends javax.swing.JFrame {
 
 FrameSet frameSet;
-FrontApp app;
+FrontApp fapp;
 
 	/** Creates new form FrontGui */
 	public OffstageGui() {
 		initComponents();
 	}
 
-	public void initRuntime(SqlRunner str, final FrontApp app, FrameSet frameSet, Preferences guiPrefs)
+	public void initRuntime(SqlRunner str, final FrontApp fapp, FrameSet frameSet, Preferences guiPrefs)
 //	throws java.sql.SQLException
 //	throws Exception
 	throws org.xml.sax.SAXException, java.io.IOException
 	{
+		this.fapp = fapp;
 		//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
-		actions.initRuntime(app);
-		people.initRuntime(str, app);
-		school.initRuntime(str, app);
+		actions.initRuntime(fapp);
+		people.initRuntime(str, fapp);
+		school.initRuntime(str, fapp);
 //			queries.initRuntime(app);
-		mailings.initRuntime(str, app); //st, eapp.getMailingidsSb(), app.getMailingsDm());
+		mailings.initRuntime(str, fapp); //st, eapp.getMailingidsSb(), app.getMailingsDm());
 
 		//JSchemaWidgetTree.initWithStatement(this, st);
 
-		app.addListener(new FrontApp.Adapter() {
+		fapp.addListener(new FrontApp.Adapter() {
 		public void screenChanged() {
-			switch(app.getScreen()) {
+			switch(fapp.getScreen()) {
 				case FrontApp.ACTIONS_SCREEN :
 					tabs.setSelectedIndex(0);
 				break;
@@ -80,7 +81,7 @@ FrontApp app;
 
 		// Mess with preferences
 //			Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-		Preferences prefs = app.userRoot().node("OffstageGui");
+		Preferences prefs = fapp.userRoot().node("OffstageGui");
 		new SwingPrefs().setPrefs(this, "", prefs);
 	}
 
@@ -103,6 +104,9 @@ FrontApp app;
         jSeparator1 = new javax.swing.JSeparator();
         miQuit = new javax.swing.JMenuItem();
         mWindow = new javax.swing.JMenu();
+        miSchool = new javax.swing.JMenuItem();
+        miDups = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JSeparator();
         miMailPrefs = new javax.swing.JMenuItem();
         Console = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -148,6 +152,30 @@ FrontApp app;
         jMenuBar1.add(jMenu1);
 
         mWindow.setText("Window");
+        miSchool.setText("School");
+        miSchool.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                miSchoolActionPerformed(evt);
+            }
+        });
+
+        mWindow.add(miSchool);
+
+        miDups.setText("Duplicate Names");
+        miDups.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                miDupsActionPerformed(evt);
+            }
+        });
+
+        mWindow.add(miDups);
+
+        mWindow.add(jSeparator2);
+
         miMailPrefs.setText("Mail Preferences");
         miMailPrefs.addActionListener(new java.awt.event.ActionListener()
         {
@@ -180,8 +208,33 @@ FrontApp app;
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+	private void miDupsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miDupsActionPerformed
+	{//GEN-HEADEREND:event_miDupsActionPerformed
+		fapp.runGui(OffstageGui.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+
+			final offstage.cleanse.CleansePanel panel = new CleansePanel();
+			panel.initRuntime(str, fapp, "n");
+			str.execUpdate(new UpdRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				JFrame frame = new JFrame("Duplicate Names");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.getContentPane().add(panel);
+				new citibob.swing.prefs.SwingPrefs().setPrefs(frame, "", fapp.userRoot().node("CleanseFrame"));
+
+				frame.setVisible(true);
+			}});
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_miDupsActionPerformed
+
+	private void miSchoolActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miSchoolActionPerformed
+	{//GEN-HEADEREND:event_miSchoolActionPerformed
+// TODO add your handling code here:
+	}//GEN-LAST:event_miSchoolActionPerformed
+
 private void miThrowExceptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miThrowExceptionActionPerformed
-	app.runGui(this, new citibob.multithread.StRunnable() {
+	fapp.runGui(this, new citibob.multithread.StRunnable() {
 	public void run(Statement st) throws Exception {
 		throw new Exception("Hello");
 	}});
@@ -227,10 +280,13 @@ private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JMenu mWindow;
     private offstage.gui.MailingsEditor mailings;
+    private javax.swing.JMenuItem miDups;
     private javax.swing.JMenuItem miMailPrefs;
     private javax.swing.JMenuItem miQuit;
+    private javax.swing.JMenuItem miSchool;
     private javax.swing.JMenuItem miThrowException;
     private offstage.gui.EditorPanel people;
     private offstage.school.gui.SchoolPanel school;

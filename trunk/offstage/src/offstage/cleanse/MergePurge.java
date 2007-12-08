@@ -102,7 +102,7 @@ System.out.println("Full Processing");
 	int i,j;
 	i=0; j=0;
 	for (Map.Entry<Integer,StringWrapper> aa : map.entrySet()) {
-		if (i % 100 == 0) System.out.println("  " + i);
+		if (i % 1000 == 0) System.out.println("  " + i);
 		j=0;
 		for (Map.Entry<Integer,StringWrapper> bb : map.entrySet()) {
 			if (j >= i) continue;
@@ -152,8 +152,8 @@ public MergePurge(SqlRunner str)
 		" SELECT entityid,primaryentityid," +
 		" address1,address2,city,state,zip,country," +
 		" firstname,lastname,orgname,isorg from persons p" +
-		" where city = 'Cambridge'" +
-		" and not obsolete";
+		" where not obsolete";
+//		" and city = 'Cambridge'";
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws SQLException {
         // create a SoftTFIDF distance learner
@@ -163,7 +163,7 @@ public MergePurge(SqlRunner str)
 		Map<Integer,String> nameMap = new TreeMap();
 		Map<Integer,String> addrMap = new TreeMap();
 		Map<Integer,String> orgMap = new TreeMap();
-		int n = 0;
+//		int n = 0;
 		while (rs.next()) {
 			// Check for multiple entries at same address
 			int eid = rs.getInt("entityid");
@@ -183,14 +183,14 @@ public MergePurge(SqlRunner str)
 //			if (rs.getBoolean("isorg") && !empty(orgname)) orgMap.put(eid, orgname);
 //			++n;
 		}
-System.out.println("Done getting names (" + n + " records)");
+System.out.println("Done getting names (" + nameMap.size() + " records)");
 		// train the distance on some strings - in general, this would
 		// be a large corpus of existing strings, so that some
 		// meaningful frequency estimates can be accumulated.  for
 		// efficiency, you train on an iterator over StringWrapper
 		// objects, which are produced with the 'prepare' function.
 
-		str.next().execSql(process(nameMap, .9, "n"));
+		str.next().execSql(process(nameMap, .9, "n"));	// Just merge by name
 //		process(addrMap, .8, "a");
 //		process(orgMap, .8, "o");
 	}});
