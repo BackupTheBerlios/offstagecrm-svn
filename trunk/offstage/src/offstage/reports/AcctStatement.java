@@ -302,7 +302,7 @@ public static void main(String[] args) throws Exception
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	FrontApp fapp = new FrontApp(pool,null);
 
-	SqlBatch str = new SqlBatch();
+	SqlBatchSet str = new SqlBatchSet();
 	int termid = 346;
 	AcctStatement.doAccountStatements(str, fapp, termid, 12633, new java.util.Date());
 	str.exec(pool);

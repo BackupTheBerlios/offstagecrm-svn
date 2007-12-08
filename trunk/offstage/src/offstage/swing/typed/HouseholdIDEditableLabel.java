@@ -68,7 +68,7 @@ public void setValue(Object o)
 //	app.runApp(new BatchRunnable() {
 //	public void run(SqlRunner str) throws SQLException {
 		
-	SqlBatch str = new SqlBatch();
+	SqlBatchSet str = new SqlBatchSet();
 	offstage.db.DB.getPrimaryEntityID(str, ID);
 	str.exec(app);
 	super.setValue((Integer)str.get("primaryentityid"));

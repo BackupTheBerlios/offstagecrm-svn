@@ -223,7 +223,7 @@ throws Exception
 	
 	this.pool = pool;
 	// ================
-	SqlBatch str = new SqlBatch();
+	SqlBatchSet str = new SqlBatchSet();
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	expHandler = new MailExpHandler(sender,
@@ -262,7 +262,7 @@ throws Exception
 	// ================
 	
 	// ================
-	str = new SqlBatch();
+	str = new SqlBatchSet();
 	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
 	fullEntityDm = new FullEntityDbModel(this);
 	mailings = new MailingModel2(str, this);//, appRunner);

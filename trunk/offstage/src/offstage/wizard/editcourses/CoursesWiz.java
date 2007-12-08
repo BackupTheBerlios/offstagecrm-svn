@@ -62,7 +62,7 @@ FrontApp fapp;
 		this.fapp = xfapp;
 		
 		// Set up terms selector
-		SqlBatch str0 = new SqlBatch();
+		SqlBatchSet str0 = new SqlBatchSet();
 		terms.setKeyedModel(new DbKeyedModel(str0, fapp.getDbChange(), "termids",
 			"select groupid, name from termids where iscurrent order by firstdate"));
 		str0.exec(fapp);

@@ -503,7 +503,7 @@ public static void main(String[] args) throws Exception
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	FrontApp fapp = new FrontApp(pool,null);
-	SqlBatch str = new SqlBatch();
+	SqlBatchSet str = new SqlBatchSet();
 	
 	CleansePanel panel = new CleansePanel();
 	panel.initRuntime(str, fapp, "n");

@@ -2853,7 +2853,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 {
 	// TODO: We should really append all into one batch for maximum parallelism
 	// (meaning: one chained bach of two steps.  Won't make much difference.)
-	SqlBatch str0 = new SqlBatch();
+	SqlBatchSet str0 = new SqlBatchSet();
 	all.doUpdate(str0);
 	str0.exec(fapp.getPool());
 	all.doSelect(str);

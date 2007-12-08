@@ -68,7 +68,7 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 //		st.close();
 //		pool.checkin(dbb);
 
-		SqlBatch str = new SqlBatch();
+		SqlBatchSet str = new SqlBatchSet();
 		
 		consoleFrame = new ConsoleFrame();
 		consoleFrame.initRuntime("Java Console", OffstageVersion.guiPrefs.absolutePath() + "/ConsoleFrame");
