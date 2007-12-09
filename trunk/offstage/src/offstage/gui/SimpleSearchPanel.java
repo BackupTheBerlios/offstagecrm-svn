@@ -78,15 +78,16 @@ implements java.beans.PropertyChangeListener
 
 public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
-	app.runGui(SimpleSearchPanel.this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Exception {
+//	app.runGui(SimpleSearchPanel.this, new BatchRunnable() {
+//	public void run(SqlRunner str) throws Exception {
+	SqlRunner str = app.getBatchSet();
 		Integer Entityid = (Integer)evt.getNewValue();
 		if (Entityid == null) return;
 		int entityid = Entityid;
 		if (entityid < 0) return;
 		dm.setKey(entityid);
 		dm.doSelect(str);
-	}});
+//	}});
 }	
 
 /** This method is called from within the constructor to

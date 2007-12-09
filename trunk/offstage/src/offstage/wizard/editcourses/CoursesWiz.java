@@ -53,32 +53,36 @@ public class CoursesWiz extends citibob.swing.JPanelWiz
 IntKeyedDbModel coursesSb;
 FrontApp fapp;
 
-	/** Creates new form CompleteStatusPanel */
-	public CoursesWiz(FrontApp xfapp, SqlRunner str, int termid)
-	throws SQLException
-	{
-		super("Edit Courses");
-		initComponents();
-		this.fapp = xfapp;
-		
-		// Set up terms selector
-		SqlBatchSet str0 = new SqlBatchSet();
-		terms.setKeyedModel(new DbKeyedModel(str0, fapp.getDbChange(), "termids",
-			"select groupid, name from termids where iscurrent order by firstdate"));
-		str0.exec(fapp);
+/** Creates new form CompleteStatusPanel */
+public CoursesWiz(FrontApp xfapp, SqlRunner str, final int termid)
+throws SQLException
+{
+	super("Edit Courses");
+	initComponents();
+	this.fapp = xfapp;
+
+	// Set up terms selector
+//	SqlBatchSet str0 = new SqlBatchSet();
+	terms.setKeyedModel(new DbKeyedModel(str, fapp.getDbChange(), "termids",
+		"select groupid, name from termids where iscurrent order by firstdate"));
+//	str0.runBatches(fapp);
+
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
-	    public void propertyChange(PropertyChangeEvent evt) {
+		public void propertyChange(PropertyChangeEvent evt) {
 			fapp.runApp(new BatchRunnable() {
 			public void run(SqlRunner str) throws Exception {
 				termChanged(str);
 			}});
 		}});
-	
+
 		// Set up courses editor
 		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
 			"termid", fapp.getDbChange(), new IntKeyedDbModel.Params());
 		coursesSb.setOrderClause("dayofweek, tstart, name");
-		
+
 		terms.setValue(termid);
 		//termChanged(str);
 //		terms.setSelectedIndex(0);		// Should throw a value changed event
@@ -102,14 +106,14 @@ FrontApp fapp;
 //		Swinger swing = new SqlTimeSwinger(true, "HH:mm");
 //		courses.setRenderEditU("tstart", swing);
 //		courses.setRenderEditU("tnext", swing);
-		
+
 //		KeyedRenderEdit tkre = new KeyedRenderEdit(new TimeSKeyedModel(7,0, 23,0, 15*60));
 //		courses.setRenderEditU("tstart_s", tkre);
 //		courses.setRenderEditU("tnext_s", tkre);
-		
-		if (courses.getModelU().getRowCount() > 0) courses.setRowSelectionInterval(0,0);
 
-	}
+		if (courses.getModelU().getRowCount() > 0) courses.setRowSelectionInterval(0,0);
+	}});
+}
 
 void termChanged(SqlRunner str) throws SQLException
 {

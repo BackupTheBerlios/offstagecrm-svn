@@ -37,7 +37,7 @@ import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.types.*;
 
-public class EntityIDEditableLabel extends JTypedEditableLabel
+public class EntityIDEditableLabel extends JTypedEditableLabelDB
 {
 
 
@@ -57,9 +57,9 @@ EntitySelector sel;
 
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
-public void setJType(JType jt, citibob.text.SFormat sformat)
+public void setJType(JType jt, SqlRunner str)
 {
-	super.setJType(jt, new EntityIDLabel.EntityIDSFormat(app.getPool()));
+	super.setJType(jt, str, new EntityIDLabel.EntityIDDBFormat(this));
 }
 //public void setJType(JType jt, JFormattedTextField.AbstractFormatter formatter)
 //{
@@ -76,6 +76,7 @@ public void initRuntime(App app)
 {
 	this.app = app;
 //	super.setJType(new SqlInteger(), ));
+	setJType(new SqlInteger(), app.getBatchSet());
 	sel = new EntitySelector();
 	sel.initRuntime(app);
 	super.setPopupWidget(sel);		// Makes superclass listen to sel
@@ -88,7 +89,7 @@ protected void showPopup()
 	sel.requestTextFocus();
 }
 public void setSearch(SqlRunner str, String text)
-throws SQLException
+//throws SQLException
 {
 	sel.setSearch(str, text);
 }

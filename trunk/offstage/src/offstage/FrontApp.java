@@ -54,6 +54,7 @@ Properties props;
 KeyRing keyRing;
 DbChangeModel dbChange;
 ConnPool pool;
+SqlBatchSet batchSet;
 SwingerMap swingerMap;
 //SFormatMap sFormatterMap;
 OffstageSchemaSet sset;
@@ -91,6 +92,7 @@ public SwingPrefs getSwingPrefs() { return swingPrefs; }
 public QueryLogger getLogger() { return logger; }
 public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
+public SqlBatchSet getBatchSet() { return batchSet; }
 public ExpHandler getExpHandler() { return expHandler; }
 public File getConfigDir() { return configDir; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
@@ -222,14 +224,15 @@ throws Exception
 //	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
 	
 	this.pool = pool;
+	this.batchSet = new SqlBatchSet(pool);
 	// ================
 	SqlBatchSet str = new SqlBatchSet();
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	expHandler = new MailExpHandler(sender,
 			new InternetAddress("citibob@comcast.net"), "OffstageArts", stdoutDoc);
-	guiRunner = new BusybeeDbActionRunner(pool, expHandler);
-	appRunner = new SimpleDbActionRunner(pool, expHandler);
+	guiRunner = new BusybeeDbActionRunner(batchSet, pool, expHandler);
+	appRunner = new SimpleDbActionRunner(batchSet, pool, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
 	
 	// Figure out who we're logged in as
@@ -258,7 +261,7 @@ throws Exception
 	
 	dbChange = new DbChangeModel();
 	this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
-	str.exec(pool);		// Our SchemaSet must be set up before we go on.
+	str.runBatches(pool);		// Our SchemaSet must be set up before we go on.
 	// ================
 	
 	// ================
@@ -272,7 +275,7 @@ throws Exception
 	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 	
 	equerySchema = new EQuerySchema(getSchemaSet());
-	str.exec(pool);
+	str.runBatches(pool);
 	// ================
 	
 	reports = new offstage.reports.OffstageReports(this);

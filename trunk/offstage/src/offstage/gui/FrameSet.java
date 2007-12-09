@@ -68,18 +68,18 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 //		st.close();
 //		pool.checkin(dbb);
 
-		SqlBatchSet str = new SqlBatchSet();
+//		SqlBatchSet str = new SqlBatchSet();
 		
 		consoleFrame = new ConsoleFrame();
 		consoleFrame.initRuntime("Java Console", OffstageVersion.guiPrefs.absolutePath() + "/ConsoleFrame");
 		
 		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
 		offstageGui = new OffstageGui();
-		offstageGui.initRuntime(str, app, this, OffstageVersion.guiPrefs);
+		offstageGui.initRuntime(app.getBatchSet(), app, this, OffstageVersion.guiPrefs);
 
 app.getFullEntityDm().setKey(12633);	// Go to Bob's record (for debuggin)'
-app.getFullEntityDm().doSelect(str);
-		str.exec(pool);
+app.getFullEntityDm().doSelect(app.getBatchSet());
+		app.getBatchSet().runBatches();
 		
 		offstageGui.pack();
 	    offstageGui.setVisible(true);

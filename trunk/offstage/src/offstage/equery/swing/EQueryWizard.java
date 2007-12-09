@@ -92,7 +92,7 @@ addState(new AbstractWizState("newquery", null, "editquery") {
 				SqlInteger.sql(equeryID) + ", " +
 				SqlString.sql(con.v.getString("queryname")) +
 				", '', now())";
-			con.str.next().execSql(sql);
+			con.str.execSql(sql);
 		}});
 	}
 });
@@ -128,7 +128,7 @@ addState(new AbstractWizState("reporttype", "editquery", null) {
 			public void run(SqlRunner str) {
 				final int mailingID = (Integer)con.str.get("groupids_groupid_seq");
 				fapp.getMailingModel().setKey(mailingID);
-				fapp.getMailingModel().doSelect(con.str.next());
+				fapp.getMailingModel().doSelect(con.str);
 				fapp.setScreen(FrontApp.MAILINGS_SCREEN);
 			}});
 			stateName = stateRec.getNext();

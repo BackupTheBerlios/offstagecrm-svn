@@ -49,6 +49,29 @@ void superSetValue(Object o)
 /** Called when parent record changes. */
 public void setEntityID(int entityid) { this.entityid = entityid; }
 
+
+
+
+
+
+
+
+/** Called when popup widget's value changes.  Resolve to primary entity id... */
+public void propertyChange(java.beans.PropertyChangeEvent evt)
+{
+	final Object oldval = propertyChangeNoFire(evt);	// Calls our setValue() below.
+	if (oldval == null) return;
+
+	// Run final result after we've finished batch set in setValue()
+	app.getBatchSet().execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		Object newval = getValue();
+		firePropertyChange("value", oldval, newval);
+	}});
+}
+
+
+
 /** Resolve this to a primary entity id */
 public void setValue(Object o)
 {
@@ -68,10 +91,13 @@ public void setValue(Object o)
 //	app.runApp(new BatchRunnable() {
 //	public void run(SqlRunner str) throws SQLException {
 		
-	SqlBatchSet str = new SqlBatchSet();
+	SqlRunner str = app.getBatchSet();
+//	SqlBatchSet str = app.getBatchSet();
 	offstage.db.DB.getPrimaryEntityID(str, ID);
-	str.exec(app);
-	super.setValue((Integer)str.get("primaryentityid"));
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		HouseholdIDEditableLabel.super.setValue((Integer)str.get("primaryentityid"));
+	}});
 }
 }
 

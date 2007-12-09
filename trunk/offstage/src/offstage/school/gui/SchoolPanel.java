@@ -176,7 +176,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	new TypedWidgetBinder().bind(lEntityID, studentRm, smap);
 //	vHouseholdID.initRuntime(fapp);
 //		new TypedWidgetBinder().bind(vHouseholdID, studentRm, smap);
-	vStudentID.initRuntime(fapp);
+//	vStudentID.initRuntime(fapp);
+	vStudentID.setJType(fapp.getBatchSet());
 		new TypedWidgetBinder().bind(vStudentID, studentRm, smap);
 	KeyedModel gmodel = new KeyedModel();
 		gmodel.addItem(null, "<Unknown>");
@@ -198,8 +199,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		// Do something when user moves to a different student
 		public void curRowChanged(final int col) {
 			setIDDirty(true);
-			fapp.runApp(new BatchRunnable() {
-			public void run(SqlRunner str) throws Exception {
+//			fapp.runApp(new BatchRunnable() {
+//			public void run(SqlRunner str) throws Exception {
+			SqlRunner str = fapp.getBatchSet();
 				Integer ID = (Integer)studentRm.get(col);
 				if (ID == null) return;
 				String lastname = (String)studentRm.get(studentRm.findColumn("lastname"));
@@ -207,7 +209,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 //				vHouseholdID.setSearch(st, lastname);
 				vParentID.setSearch(str, lastname);
 				vParent2ID.setSearch(str, lastname);
-			}});
+//			}});
 		}
 	});
 
@@ -297,13 +299,13 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		public void valueChanged(int col) {}
 		// Do something when user saves and re-loads
 		public void curRowChanged(final int col) {
-			fapp.runApp(new BatchRunnable() {
-			public void run(SqlRunner str) throws Exception {
+//			fapp.runApp(new BatchRunnable() {
+//			public void run(SqlRunner str) throws Exception {
 
 				Integer ID = (Integer)schoolRm.get(col);
 				if (ID == null) return;
-				changeAccount(str, ID);
-			}});
+				changeAccount(fapp.getBatchSet(), ID);
+//			}});
 		}
 	});
 
@@ -360,13 +362,14 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	searchBox.initRuntime(fapp);
 	searchBox.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+//		fapp.runApp(new BatchRunnable() {
+//		public void run(SqlRunner str) throws Exception {
+		SqlRunner str = fapp.getBatchSet();
 			Integer EntityID = (Integer)searchBox.getValue();
 			if (EntityID == null) return;
 			int entityid = EntityID;
 			changeStudent(str, entityid);
-		}});
+//		}});
 	}});
 
 	// Set up terms selector
@@ -440,13 +443,13 @@ public void changeStudent(SqlRunner str, int entityid)// throws SQLException
 	all.doSelect(str);
 }
 
-public void changeAccount(SqlRunner str, int payerid) throws SQLException
+public void changeAccount(SqlRunner str, int payerid) // throws SQLException
 {
 
 	actransDb.setKey(payerid);
 	refreshAccount(str);
 }
-public void refreshAccount(SqlRunner str) throws SQLException
+public void refreshAccount(SqlRunner str) // throws SQLException
 {
 	actransDb.doSelect(str);
 	
@@ -2853,10 +2856,13 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 {
 	// TODO: We should really append all into one batch for maximum parallelism
 	// (meaning: one chained bach of two steps.  Won't make much difference.)
-	SqlBatchSet str0 = new SqlBatchSet();
-	all.doUpdate(str0);
-	str0.exec(fapp.getPool());
-	all.doSelect(str);
+//	SqlBatchSet str0 = new SqlBatchSet();
+	all.doUpdate(str);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+//	str0.runBatches(fapp.getPool());
+		all.doSelect(str);
+	}});
 	
 //	// But we can't just do it the strightforward way, or else updates won't
 // redisplya properly...

@@ -200,7 +200,7 @@ public static void main(String[] args) throws Exception
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	SqlBatchSet str = new SqlBatchSet();
 	new MergePurge(str);
-	str.exec(pool);
+	str.runBatches(pool);
 }
 
 }

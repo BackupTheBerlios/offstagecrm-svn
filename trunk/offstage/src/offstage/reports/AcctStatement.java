@@ -305,7 +305,7 @@ public static void main(String[] args) throws Exception
 	SqlBatchSet str = new SqlBatchSet();
 	int termid = 346;
 	AcctStatement.doAccountStatements(str, fapp, termid, 12633, new java.util.Date());
-	str.exec(pool);
+	str.runBatches(pool);
 }
 // ================================================================
 static class BalTableModel extends DefaultJTypeTableModel

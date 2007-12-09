@@ -50,6 +50,24 @@ public EntitySelector() {
 	initComponents();
 }
 
+/** Property change in the "main" widget (search panel) is the result of a user
+ action (we know this to be the case, in this case).  Therefore, it must get
+ its own DB transaction. */
+public void propertyChange(final java.beans.PropertyChangeEvent evt) {
+//	if (searchResultsTable.isInSelect()) {
+//		// Maybe this code should go back in a superclass of searchResultsTable...
+		
+		// We were started by mouse click (or some semblance thereof)
+		app.runGui(EntitySelector.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			EntitySelector.super.propertyChange(evt);
+		}});
+//	} else {
+//		// We're just in the middle of a long line of cascading events
+//		EntitySelector.super.propertyChange(evt);		
+//	}
+}	
+
 
 public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel dm)
 {
@@ -61,29 +79,35 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 	searchWord.addKeyListener(new KeyAdapter() {
 	public void keyTyped(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
-		if (e.getKeyChar() == '\n') runSearch();
+		if (e.getKeyChar() == '\n') {
+			app.runGui(EntitySelector.this, new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				runSearch(str);
+			}});
+		}
 	}});
 }
 
 public void setSearch(SqlRunner str, String text)
-throws SQLException
+//throws SQLException
 {
 		String idSql = DB.simpleSearchSql(text);
 		searchResultsTable.executeQuery(str, idSql, null);
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			if (searchResultsTable.getModel().getRowCount() == 1) {
-				searchResultsTable.setRowSelectionInterval(0,0);	// Should fire an event...
+				searchResultsTable.setRowSelectionInterval(0,0);	// Auto-select the one item; Should fire an event...
 			}
 		}});
 }
 
-void runSearch() {
-	app.runGui(this, new BatchRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		String text = searchWord.getText();
-		setSearch(str, text);
-	}});
+void runSearch(SqlRunner str) { //throws Exception {
+//	app.runGui(this, new BatchRunnable() {
+//	public void run(SqlRunner str) throws Exception {
+	String text = searchWord.getText();
+	setSearch(app.getBatchSet(), text);
+//	app.getBatchSet().runBatches();
+//	}});
 }
 
 
@@ -155,10 +179,11 @@ public void requestTextFocus()
 
 	
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-//	app.runGui(this, new StRunnable() {
-//	public void run(Statement st) throws Exception {
-		runSearch();
-//	}});
+		app.runGui(EntitySelector.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			runSearch(str);
+//			app.getBatchSet().runBatches();
+		}});
 	}//GEN-LAST:event_bSearchActionPerformed
 	
 	

@@ -38,44 +38,28 @@ import citibob.sql.pgsql.*;
 import citibob.types.*;
 import citibob.text.*;
 
-public class EntityIDLabel extends JTypedLabel
+public class EntityIDLabel extends JTypedLabelDB
 {
 
-
-App app;
-
-//public void setJType(Swinger swing)
-//{
-//	super.setJType(swing.getJType(), new EntityIDFormatter(app.getPool()));
-//	super.setNullText("<No Person>");
-//}
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
-public void setJType(JType jt, SFormat sformat)
+public void setJType(SqlRunner str)
 {
-	super.setJType(jt, new EntityIDLabel.EntityIDSFormat(app.getPool()));
-}
-
-public void initRuntime(App app)
-{
-	this.app = app;
-//	super.setJType(new SqlInteger(), ));
+	super.setJType(str, new EntityIDDBFormat(this));
 }
 
 // =========================EntityIDFormatter=============
-protected static class EntityIDSFormat extends DBSFormat
+protected static class EntityIDDBFormat implements DBFormat
 {
 
-public EntityIDSFormat(ConnPool pool)
+TextTypedWidget tw;
+	
+public EntityIDDBFormat(TextTypedWidget tw)
+	{ this.tw = tw; }
+	
+public void setDisplayValue(SqlRunner str, final Object value)
 {
-	super(pool);
-//	nullText = "<No Person Selected>";
-}
-
-public String valueToString(Statement st, Object value)
-throws java.sql.SQLException
-{
-	String s = SQL.readString(st,
+	String sql =
 		" select " +
 			" (case when firstname is null then '' else firstname || ' ' end ||" +
 			" case when middlename is null then '' else middlename || ' ' end ||" +
@@ -83,8 +67,15 @@ throws java.sql.SQLException
 //			" case when orgname is null then '' else ' (' || orgname || ')' end" +
 			" ) as name" +
 		" from entities" +
-		" where entityid = " + SqlInteger.sql((Integer)value));
-	return s;
+		" where entityid = " + SqlInteger.sql((Integer)value);
+	str.execSql(sql, new RsRunnable() {
+	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+		if (rs.next()) {
+			tw.setDisplayValue(value, rs.getString("name"));
+		} else {
+			tw.setDisplayValue(value, "");
+		}
+	}});
 }
 
 }

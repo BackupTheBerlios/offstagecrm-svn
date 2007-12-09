@@ -85,6 +85,7 @@ String dupType;
 			" and dups.entityid1 = e1.entityid" +
 			" and dups.type=" + SqlString.sql(dupType) +
 			" and not e0.obsolete and not e1.obsolete" +
+			" and score <= 1.0" +
 			"    EXCEPT" +
 			" select dups.* from dups, mergelog ml" +
 			" where ml.dupok" +
@@ -490,6 +491,7 @@ public static void showFrame(SqlRunner str, final FrontApp fapp, String dupType,
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		JFrame frame = new JFrame(title);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(panel);
 			new citibob.swing.prefs.SwingPrefs().setPrefs(frame, "", fapp.userRoot().node("CleanseFrame"));
@@ -507,7 +509,7 @@ public static void main(String[] args) throws Exception
 	
 	CleansePanel panel = new CleansePanel();
 	panel.initRuntime(str, fapp, "n");
-	str.exec(pool);
+	str.runBatches(pool);
 	
 	JFrame frame = new JFrame();
 //	frame.setSize(600,800);

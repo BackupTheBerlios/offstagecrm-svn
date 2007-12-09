@@ -123,8 +123,9 @@ extends javax.swing.JPanel {
 		// Change family table contents when user re-reads from db
 		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			app.runApp(new BatchRunnable() {
-			public void run(SqlRunner str) throws Exception {
+			SqlRunner str = app.getBatchSet();
+//			app.runApp(new BatchRunnable() {
+//			public void run(SqlRunner str) throws Exception {
 				if (model.getCurRow() < 0) return;
 //				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
@@ -139,7 +140,7 @@ extends javax.swing.JPanel {
 					familyTable.setPrimaryEntityID(str, EntityID);
 //					vHouseholdID.setEntityID(EntityID);
 				}
-			}});
+//			}});
 		}});
 
 		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
