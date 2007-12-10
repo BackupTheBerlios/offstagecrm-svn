@@ -9,18 +9,10 @@
 
 package offstage.reports;
 
-//import com.artofsolving.jodconverter.*;
-//import com.artofsolving.jodconverter.openoffice.connection.*;
-//import com.artofsolving.jodconverter.openoffice.converter.*;
-import net.sf.jooreports.templates.*;
-import java.io.*;
-import java.util.*;
-import com.pdfhacks.*;
+import citibob.app.App;
 import citibob.sql.pgsql.*;
 import java.sql.*;
-import offstage.*;
 import citibob.sql.*;
-import citibob.swing.table.*;
 import citibob.text.*;
 
 /**
@@ -57,6 +49,28 @@ public static String getSql(int termid, int studentid)
 		" c.dayofweek, c.tstart\n";
 
 }
+
+
+public static void viewStudentSchedules(final App app, SqlRunner str, int termid, int entityid)
+throws Exception
+{
+	String sql = offstage.reports.StudentSchedule.getSql(termid, entityid);
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		citibob.reports.Reports reports = app.getReports();
+		
+		java.util.List models = reports.toJodList(rs,
+			new String[][] {{"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"}},
+			new String[] {"firstdate", "firstyear", "lastyear"},
+			new SFormat[] {
+				new DateSFormat("EEEEE, MMMMM d", "", app.getTimeZone()),
+				new DateSFormat("yyyy", "", app.getTimeZone()),
+				new DateSFormat("yyyy", "", app.getTimeZone())
+		});
+		reports.viewJodPdfs(models, "StudentSchedule.odt");
+	}});
+}
+
 
 //public static void main(String[] args) throws Exception
 //{

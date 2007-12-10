@@ -27,18 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import citibob.swing.html.*;
-import java.util.*;
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
-import offstage.types.*;
-import javax.swing.*;
-import offstage.wizards.*;
 import citibob.wizard.*;
-import offstage.schema.*;
-import citibob.util.*;
 import java.sql.*;
 import citibob.sql.*;
+import citibob.sql.pgsql.SqlInteger;
 import citibob.types.*;
 
 /**
@@ -56,7 +50,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	super(owner, "New Org Record", app.getSwingerMap(), true);
 	setSize(600,460);
 	addWidget("sperson", new JTypedLabel((String)v.get("sperson")));
-	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));
+//	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));
 	
 //	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
 	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
@@ -68,12 +62,21 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 		" and termid = " + v.get("termid") +
 		" order by c.dayofweek, c.name, c.tstart";
 	final KeyedModel cModel = new citibob.sql.DbKeyedModel(str, null, "courseids", sql);
+	sql =
+		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
+	str.execSql(sql, new RsRunnable() {
+	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+		rs.next();
+		addWidget("sterm", new JTypedLabel(rs.getString("name")));	
+	}});
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		addWidget("courserole", new JKeyedComboBox(crModel));
 		addWidget("courseid", new JKeyedComboBox(cModel));
 		loadHtml();
 	}});	
+
+
 }
 
 

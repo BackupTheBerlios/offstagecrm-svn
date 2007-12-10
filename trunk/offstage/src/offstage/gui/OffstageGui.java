@@ -55,7 +55,7 @@ FrontApp fapp;
 		//EQueryBrowserApp eapp = app.getEqueryBrowserApp();
 		actions.initRuntime(fapp);
 		people.initRuntime(str, fapp);
-		school.initRuntime(str, fapp);
+//		school.initRuntime(str, fapp);
 //			queries.initRuntime(app);
 		mailings.initRuntime(str, fapp); //st, eapp.getMailingidsSb(), app.getMailingsDm());
 
@@ -96,7 +96,6 @@ FrontApp fapp;
         tabs = new javax.swing.JTabbedPane();
         actions = new offstage.gui.ActionPanel();
         people = new offstage.gui.EditorPanel();
-        school = new offstage.school.gui.SchoolPanel();
         mailings = new offstage.gui.MailingsEditor();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -116,9 +115,6 @@ FrontApp fapp;
         tabs.addTab("Actions", actions);
 
         tabs.addTab("Development", people);
-
-        school.setPreferredSize(new java.awt.Dimension(836, 600));
-        tabs.addTab("School", school);
 
         tabs.addTab("Mailings", mailings);
 
@@ -230,6 +226,11 @@ FrontApp fapp;
 
 	private void miSchoolActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miSchoolActionPerformed
 	{//GEN-HEADEREND:event_miSchoolActionPerformed
+	fapp.runGui(this, new citibob.multithread.BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		offstage.school.gui.SchoolFrame.showFrame(str, fapp);
+	}});
+
 // TODO add your handling code here:
 	}//GEN-LAST:event_miSchoolActionPerformed
 
@@ -289,8 +290,24 @@ private void ConsoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
     private javax.swing.JMenuItem miSchool;
     private javax.swing.JMenuItem miThrowException;
     private offstage.gui.EditorPanel people;
-    private offstage.school.gui.SchoolPanel school;
     private javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
-	
+
+/** @param frameTitle Text for frame's title bar
+ @param frameName Name of frame, for defaults. */
+public static void showPanelInFrame(SqlRunner str, final FrontApp fapp,
+final JPanel panel, final String frameTitle, final String frameName)
+{
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		JFrame frame = new JFrame(frameTitle);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(panel);
+			new citibob.swing.prefs.SwingPrefs().setPrefs(frame, "", fapp.userRoot().node(frameName));
+
+		frame.setVisible(true);
+	}});
+}
+
 }

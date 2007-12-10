@@ -131,7 +131,7 @@ int termid, int payerid, final java.util.Date today)
 		String sterm = rs.getString(1);
 		
 		// Retrieve from getStudentNames
-		final Map<Integer,String> studentMap = (Map<Integer,String>)str.get("studentNames");
+//		final Map<Integer,String> studentMap = (Map<Integer,String>)str.get("studentNames");
 
 		// =========== Main processing
 
@@ -245,13 +245,13 @@ int termid, int payerid, final java.util.Date today)
 
 			// Add misc stuff
 			data.put("sterm", sterm);
-			String studentName = studentMap.get(PayerID);
+			String studentName = studentNames.get(PayerID);
 			data.put("studentname", studentName == null ? "<none>" : studentName);
 			data.put("payername", rs0.getValueAt(0, mod.findColumn("payername")));
 			DateFormat dfmt = new SimpleDateFormat("MMM dd, yyyy");
 				dfmt.setTimeZone(app.getTimeZone());
 			data.put("date", dfmt.format(today));
-			data.put("duedate", (rs1.getRowCount() == 0 ? "" :
+			data.put("duedate", (rs1.getRowCount() == 0 ? "Immediately" :
 				dfmt.format((java.util.Date)rs1.getValueAt(0,dtcol))));
 		}
 		// str.put("models", models);

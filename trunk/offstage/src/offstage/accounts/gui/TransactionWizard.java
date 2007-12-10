@@ -65,7 +65,7 @@ addState(new AbstractWizState("", "", "") {
 void vInsert(Wizard.Context con, String table) throws SQLException
 {
 	ConsSqlQuery sql = newInsertQuery(table, con.v);
-	sql.addColumn("entityid", SqlInteger.sql(entityid));
+	if (!sql.containsColumn("entityid")) sql.addColumn("entityid", SqlInteger.sql(entityid));
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 //	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 	sql.addColumn("datecreated", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
@@ -73,9 +73,9 @@ void vInsert(Wizard.Context con, String table) throws SQLException
 }
 
 public TransactionWizard(offstage.FrontApp xfapp, java.awt.Frame xframe,
-int xentityid, int xactypeid)
+Integer xentityid, int xactypeid)
 {
-	super("Transactions", xfapp, xframe, "ccpayment");
+	super("Transactions", xfapp, xframe, "transtype");
 	this.entityid = xentityid;
 	this.actypeid = xactypeid;
 	sqlDate = new SqlDate(fapp.getTimeZone(), false);
@@ -90,6 +90,12 @@ int xentityid, int xactypeid)
 //	}
 //});
 // ---------------------------------------------
+addState(new AbstractWizState("transtype", null, null) {
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
+		{ return new TransTypeWiz(frame, con.str, fapp, v); }
+	public void process(Wizard.Context con) throws Exception
+		{ stateName = v.getString("submit"); }
+});
 addState(new AbstractWizState("cashpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new CashpaymentWiz(frame, fapp); }
@@ -97,6 +103,14 @@ addState(new AbstractWizState("cashpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		con.v.put("amount", new Double(-namount));
+		vInsert(con, "cashpayments");
+	}
+});
+addState(new AbstractWizState("cashrefund", null, null) {
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
+		{ return new CashRefundWiz(frame, fapp); }
+	public void process(Wizard.Context con) throws Exception
+	{
 		vInsert(con, "cashpayments");
 	}
 });
@@ -117,6 +131,14 @@ addState(new AbstractWizState("checkpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
+		vInsert(con, "checkpayments");
+	}
+});
+addState(new AbstractWizState("checkrefund", null, null) {
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
+		{ return new CheckRefundWiz(frame, fapp); }
+	public void process(Wizard.Context con) throws Exception
+	{
 		vInsert(con, "checkpayments");
 	}
 });

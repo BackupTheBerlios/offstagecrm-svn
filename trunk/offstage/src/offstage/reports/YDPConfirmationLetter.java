@@ -31,20 +31,25 @@ import citibob.reports.*;
 public class YDPConfirmationLetter
 {
 
-public static void doReport(SqlRunner str, final citibob.app.App app, int termid)
+public static void viewReport(SqlRunner str, final citibob.app.App app, int termid, int entityid)
 throws Exception
 {
 	
-	String idSql =
-		" select xx.entityid\n" +
-		" from (\n" +
-		" 	select distinct s.parentid as entityid\n" +
-		" 	from termregs tr, entities_school s\n" +
-		" 	where tr.groupid = " + termid + "\n" +
-		" 	and tr.entityid = s.entityid\n" +
-		" ) xx, persons p\n" +
-		" where xx.entityid = p.entityid\n" +
-		" order by p.lastname, p.firstname";
+	String idSql;
+	if (entityid < 0) {
+		idSql =
+			" select xx.entityid\n" +
+			" from (\n" +
+			" 	select distinct s.parentid as entityid\n" +
+			" 	from termregs tr, entities_school s\n" +
+			" 	where tr.groupid = " + termid + "\n" +
+			" 	and tr.entityid = s.entityid\n" +
+			" ) xx, persons p\n" +
+			" where xx.entityid = p.entityid\n" +
+			" order by p.lastname, p.firstname";
+	} else {
+		idSql = "select parentid from entities e, entities_school s where e.entityid = s.entityid and e.entityid = " + entityid;
+	}
 	String sql = LabelReport.getSql(idSql);
 	
 	str.execSql(sql, new RsRunnable() {
