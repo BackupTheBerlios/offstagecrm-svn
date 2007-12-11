@@ -37,9 +37,9 @@ throws SQLException
 	cols = new Column[] {
 		new Column(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
 		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlNumeric(9,2), "tuition"),
-		new Column(new SqlNumeric(9,2), "scholarship"),
-		new Column(new SqlNumeric(9,2), "tuitionoverride"),
+		new Column(new SqlNumeric(9,2, false), "tuition"),
+		new Column(new SqlNumeric(9,2, false), "scholarship"),
+		new Column(new SqlNumeric(9,2, true), "tuitionoverride"),
 		new Column(new SqlDate(tz, true), "dtsigned"),
 		new Column(new SqlDate(tz, true), "dtregistered"),
 		new Column(new SqlEnum(kmodel, "<No Level Selected>"), "programid")		

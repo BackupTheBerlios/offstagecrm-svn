@@ -1907,7 +1907,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jPanel11" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="2374" max="32767" attributes="0"/>
+                                              <EmptySpace pref="2406" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -2385,7 +2385,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel19">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Tuition: "/>
+                            <Property name="text" type="java.lang.String" value="Calculated Tuition: "/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2426,7 +2426,6 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="tuitionOverride">
                           <Properties>
-                            <Property name="editable" type="boolean" value="false"/>
                             <Property name="text" type="java.lang.String" value="jTypedTextField1"/>
                             <Property name="colName" type="java.lang.String" value="tuitionoverride"/>
                           </Properties>

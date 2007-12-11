@@ -1955,7 +1955,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(2374, Short.MAX_VALUE))
+                .addContainerGap(2406, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2302,7 +2302,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.weightx = 1.0;
         TermRegPanel.add(programs, gridBagConstraints);
 
-        jLabel19.setText("Tuition: ");
+        jLabel19.setText("Calculated Tuition: ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -2339,7 +2339,6 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         TermRegPanel.add(jLabel33, gridBagConstraints);
 
-        tuitionOverride.setEditable(false);
         tuitionOverride.setText("jTypedTextField1");
         tuitionOverride.setColName("tuitionoverride");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -2546,6 +2545,10 @@ void newAdultAction(final String colName)
 		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			all.doSelect(str);
+//str.execUpdate(new UpdRunnable() {
+//public void run(SqlRunner str) throws Exception {
+//	tuitionOverride.setValue(null);
+//}});
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bUndoActionPerformed

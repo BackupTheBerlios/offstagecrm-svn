@@ -63,20 +63,21 @@ FrontApp fapp;
 
 		fapp.addListener(new FrontApp.Adapter() {
 		public void screenChanged() {
-			switch(fapp.getScreen()) {
-				case FrontApp.ACTIONS_SCREEN :
-					tabs.setSelectedIndex(0);
-				break;
-				case FrontApp.PEOPLE_SCREEN :
-					tabs.setSelectedIndex(1);
-				break;
-				case FrontApp.SCHOOL_SCREEN :
-					tabs.setSelectedIndex(2);
-				break;
-				case FrontApp.MAILINGS_SCREEN :
-					tabs.setSelectedIndex(3);
-				break;
-			}
+			tabs.setSelectedIndex(fapp.getScreen());
+//			switch(fapp.getScreen()) {
+//				case FrontApp.ACTIONS_SCREEN :
+//					tabs.setSelectedIndex(0);
+//				break;
+//				case FrontApp.PEOPLE_SCREEN :
+//					tabs.setSelectedIndex(1);
+//				break;
+////				case FrontApp.SCHOOL_SCREEN :
+////					tabs.setSelectedIndex(2);
+////				break;
+//				case FrontApp.MAILINGS_SCREEN :
+//					tabs.setSelectedIndex(2);
+//				break;
+//			}
 		}});
 
 		// Mess with preferences

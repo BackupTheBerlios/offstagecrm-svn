@@ -95,6 +95,14 @@ public static String createPayerSql(int payerid)
 //	
 //}
 
+
+/** A record of data for one student */
+private static class TermregRec
+{
+	
+}
+
+/** A line in the account */
 private static class TuitionRec implements Comparable<TuitionRec>
 {
 	public int studentid;
@@ -103,6 +111,7 @@ private static class TuitionRec implements Comparable<TuitionRec>
 	public String description;
 	public double scholarship;
 	public double tuition;
+	public Double tuitionOverride;
 	public int compareTo(TuitionRec o) {
 		double d = o.tuition - tuition;		// Sort descending
 		if (d > 0) return 1;
@@ -131,6 +140,7 @@ throws SQLException
 	}});
 }
 
+static SqlMoney nullableMoney = new SqlMoney(true);
 public static void w_tuitiontrans_calcTuitionByAdult(SqlRunner str,
 final int termid, final int adultid, final UpdRunnable rr)
 throws SQLException
@@ -154,7 +164,7 @@ throws SQLException
 		" where es.entityid = " + SqlInteger.sql(adultid) + "\n" +
 		" and es.entityid = e.entityid;" +
 
-		// Speed up rss[4] query below
+		// Speed up rss[4+5] queries below
 		" create temporary table _ids (entityid int);\n" +
 		" insert into _ids select entityid from entities_school" +
 		"    where adultid = " + SqlInteger.sql(adultid) + ";\n" +
@@ -164,7 +174,14 @@ throws SQLException
 		" and termregs.groupid = " + SqlInteger.sql(termid) + ";\n" +
 		
 		// rss[4]
-		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, c.*\n" +
+		" select st.entityid as studentid, tr.tuitionoverride\n" +
+		" from _ids st, termregs tr\n" +
+		" where st.entityid = tr.entityid\n" +
+		" and tr.groupid = " + SqlInteger.sql(termid) + "\n" +
+		" and tr.tuitionoverride is not null;\n" +
+
+		// rss[5]
+		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, tr.tuitionoverride, c.*\n" +
 		" from _ids st, entities p, courseids c, enrollments e, termregs tr\n" +
 		" where st.entityid = p.entityid\n" +
 		" and tr.entityid = p.entityid and tr.groupid = c.termid" +
@@ -172,6 +189,7 @@ throws SQLException
 		" and e.courseid = c.courseid and e.entityid = st.entityid" +
 		" and e.courserole = (select courseroleid from courseroles where name = 'student')" +
 		" order by st.entityid, dayofweek, c.tstart;" +
+		
 		" drop table _ids;";
 
 	str.execSql(sql, new RssRunnable() {
@@ -207,8 +225,16 @@ System.out.println("Processing results, adultid = " + adultid);
 			" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
 			" and entityid = " + SqlInteger.sql(adultid) + ";\n");
 	
+		// Get tuition overrides, even for people who have dropped all courses
+		Map<Integer,Double> tuitionOverrides = new TreeMap();
+		rs = rss[5];
+		while (rs.next()) {
+			tuitionOverrides.put(rs.getInt("studentid"),
+				(Double)nullableMoney.get(rs, "tuitionoverride"));
+		}
+		
 		// Calculate sum of hours in enrolled courses, per student
-		rs = rss[4];
+		rs = rss[5];
 		TuitionRec tr = null;
 		double scholarship = 0;
 		int nsiblings = 0;				// Total number of siblings
@@ -240,6 +266,8 @@ System.out.println("Processing results, adultid = " + adultid);
 					tr.studentName = rs.getString("firstname") + " " + rs.getString("lastname");
 					tr.description = termName + ": Tuition for " + tr.studentName;
 					tr.tuition = 0;
+					tr.tuitionOverride = (Double)nullableMoney.get(rs, "tuitionoverride");
+					tuitionOverrides.remove(tr.studentid);
 					scholarship = rs.getDouble("scholarship");
 					weeklyS = 0;
 				}
@@ -306,6 +334,7 @@ System.out.println("Processing results, adultid = " + adultid);
 					tq.description = trx.description + " --- Quarter " + i;
 					tq.studentid = trx.studentid;
 					tq.tuition = trx.tuition * .25;
+					if (trx.tuitionOverride != null) tq.tuitionOverride = new Double(trx.tuitionOverride.doubleValue() * .25);
 					t2.add(tq);
 				}
 			}
@@ -325,7 +354,8 @@ System.out.println("Processing results, adultid = " + adultid);
 				" values (" + SqlInteger.sql(adultid) + ", " +
 				" (select actypeid from actypes where name = 'school'), " +
 				(trx.sdate == null ? "null" : "'" + trx.sdate + "'") + ", " +
-				money.sql(trx.tuition) + ", " + SqlString.sql(trx.description) + ", " +
+				money.sql(trx.tuitionOverride != null ? trx.tuitionOverride : trx.tuition) + ", " +
+				SqlString.sql(trx.description) + ", " +
 				SqlInteger.sql(trx.studentid) + ", " + SqlInteger.sql(termid) + ");\n");
 		}
 	

@@ -42,7 +42,8 @@ public static final int T_CHECKPAYMENTS = 6;
 
 public final KeyedModel tableKmodel;
 public final KeyedModel tableoidKmodel;
-	
+public final KeyedModel actypeKmodel;
+
 public ActransSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
@@ -58,7 +59,7 @@ throws SQLException
 	tableKmodel.addItem(new Integer(T_CHECKPAYMENTS), "check payment");
 	
 	table = "actrans";
-	KeyedModel actypeKmodel = new DbKeyedModel(str, change,
+	actypeKmodel = new DbKeyedModel(str, change,
 		"actypes", "actypeid", "name", "name");
 	tableoidKmodel = new KeyedModel();
 	tableoidKmodel.addAllItems(str,

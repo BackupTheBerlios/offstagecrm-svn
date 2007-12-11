@@ -114,9 +114,11 @@ protected void showPopup()
         llast4 = new citibob.swing.typed.JTypedLabel();
         jLabel12 = new javax.swing.JLabel();
         lexpdate = new citibob.swing.typed.JTypedLabel();
-        jButton1 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         lccname = new citibob.swing.typed.JTypedLabel();
+        jPanel2 = new javax.swing.JPanel();
+        bSetCC = new javax.swing.JButton();
+        bClearCC = new javax.swing.JButton();
 
         popupPanel.setLayout(new java.awt.BorderLayout());
 
@@ -145,7 +147,7 @@ protected void showPopup()
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         add(jLabel10, gridBagConstraints);
 
         lcctype.setText("jTypedLabel1");
@@ -178,6 +180,7 @@ protected void showPopup()
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.weightx = 1.0;
         add(jLabel12, gridBagConstraints);
 
         lexpdate.setText("jTypedLabel1");
@@ -188,21 +191,6 @@ protected void showPopup()
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         add(lexpdate, gridBagConstraints);
-
-        jButton1.setText("Set CC Details");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
-        add(jButton1, gridBagConstraints);
 
         jLabel13.setText("Name onCard: ");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -220,7 +208,43 @@ protected void showPopup()
         gridBagConstraints.weightx = 1.0;
         add(lccname, gridBagConstraints);
 
+        bSetCC.setText("Set CC Details");
+        bSetCC.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bSetCCActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(bSetCC);
+
+        bClearCC.setText("Clear CC");
+        bClearCC.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bClearCCActionPerformed(evt);
+            }
+        });
+
+        jPanel2.add(bClearCC);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jPanel2, gridBagConstraints);
+
     }// </editor-fold>//GEN-END:initComponents
+
+	private void bClearCCActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bClearCCActionPerformed
+	{//GEN-HEADEREND:event_bClearCCActionPerformed
+		this.clear();
+		lccname.setValue(null);
+// TODO add your handling code here:
+	}//GEN-LAST:event_bClearCCActionPerformed
 
 	private void bOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOKActionPerformed
 	{//GEN-HEADEREND:event_bOKActionPerformed
@@ -246,21 +270,23 @@ protected void showPopup()
 // TODO add your handling code here:
 	}//GEN-LAST:event_bOKActionPerformed
 
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-	{//GEN-HEADEREND:event_jButton1ActionPerformed
+	private void bSetCCActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSetCCActionPerformed
+	{//GEN-HEADEREND:event_bSetCCActionPerformed
 		showPopup();
-	}//GEN-LAST:event_jButton1ActionPerformed
+	}//GEN-LAST:event_bSetCCActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bClearCC;
     private javax.swing.JButton bOK;
+    private javax.swing.JButton bSetCC;
     private offstage.swing.typed.JTypedCCInfo ccinfo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     protected citibob.swing.typed.JTypedLabel lccinfo;
     private citibob.swing.typed.JTypedLabel lccname;
     private citibob.swing.typed.JTypedLabel lcctype;

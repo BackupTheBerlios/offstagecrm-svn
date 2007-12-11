@@ -43,8 +43,8 @@ public class FrontApp extends citibob.app.App
 
 public static final int ACTIONS_SCREEN = 0;
 public static final int PEOPLE_SCREEN = 1;
-public static final int SCHOOL_SCREEN = 2;
-public static final int MAILINGS_SCREEN = 3;
+//public static final int SCHOOL_SCREEN = 2;
+public static final int MAILINGS_SCREEN = 2;
 int screen = PEOPLE_SCREEN;
 
 final File configDir;
