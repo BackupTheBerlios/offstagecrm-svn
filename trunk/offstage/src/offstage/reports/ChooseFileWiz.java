@@ -19,19 +19,23 @@ import citibob.app.*;
 public class ChooseFileWiz extends citibob.swing.JPanelWiz
 {
 
+public static final int M_READ = 0;		// We're choosing a file to read'
+public static final int M_WRITE = 1;		// We're choosing a file to read'
+
+int mode;				// Reading or writing this file we're selecting?
 boolean checkOverwrite = true;		// Ask user if we're overwriting a file?
 File file;
 
 	/** Creates new form SaveReportWiz 
 @param reportName Name of report to be used in preferences node pathname.
  @param ext Filename extension (WITH the dot) to use on report. */
-	public ChooseFileWiz(App app, String message, final String reportName, String ext)
+	public ChooseFileWiz(App app, int xmode, String message, final String reportName, String ext)
 	{
 		super(null);
 		initComponents();
 		lmessage.setText(message);
 		
-		
+		this.mode = xmode;
 		final java.util.prefs.Preferences pref;
 		pref = app.userRoot().node("reports");
 		final String dotExt = ext;
@@ -84,7 +88,7 @@ System.out.println("god dir: " + chooser.getCurrentDirectory());
 					String fname = chooser.getSelectedFile().getPath();
 					if (!fname.endsWith(dotExt)) fname = fname + dotExt;
 					file = new File(fname);
-					if (file.exists()) {
+					if (mode == M_WRITE && file.exists()) {
 						if (JOptionPane.showConfirmDialog(ChooseFileWiz.this,
 							"The file " + file.getName() + " already exists.\nWould you like to ovewrite it?",
 							"Overwrite File?", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)

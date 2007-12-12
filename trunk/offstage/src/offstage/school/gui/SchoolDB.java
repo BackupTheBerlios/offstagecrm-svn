@@ -120,250 +120,250 @@ private static class TuitionRec implements Comparable<TuitionRec>
 	}
 }
 
-public static void w_tuitiontrans_recalcAllTuitions(SqlRunner str, final int termid)
-throws SQLException
-{
-	ResultSet rs;
+//public static void w_tuitiontrans_recalcAllTuitions(SqlRunner str, final int termid)
+//throws SQLException
+//{
+//	ResultSet rs;
+//
+//	if (termid < 0) return;
+//	
+//	String sql = "select distinct adultid from entities_school union select entityid from entities_school";
+//	str.execSql(sql, new RsRunnable() {
+//	public void run(SqlRunner str, ResultSet rs) throws Exception {
+//		final List<Integer> payers = new ArrayList();
+//		while (rs.next()) payers.add(rs.getInt(1));
+//		
+//		for (Integer payerid : payers) {
+//			System.out.println("Recalculating tuition for " + payerid);
+//			w_tuitiontrans_calcTuitionByAdult(str, termid, payerid, null);
+//		}
+//	}});
+//}
 
-	if (termid < 0) return;
-	
-	String sql = "select distinct adultid from entities_school union select entityid from entities_school";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		final List<Integer> payers = new ArrayList();
-		while (rs.next()) payers.add(rs.getInt(1));
-		
-		for (Integer payerid : payers) {
-			System.out.println("Recalculating tuition for " + payerid);
-			w_tuitiontrans_calcTuitionByAdult(str, termid, payerid, null);
-		}
-	}});
-}
-
-static SqlMoney nullableMoney = new SqlMoney(true);
-public static void w_tuitiontrans_calcTuitionByAdult(SqlRunner str,
-final int termid, final int adultid, final UpdRunnable rr)
-throws SQLException
-{
-	String sql =
-		// rss[0]
-		" select name,duedate from termduedates" +
-		" where termid = " + SqlInteger.sql(termid) + ";\n" +
-
-		// rss[1]
-		" select t.name as termname" +
-		" from termids t" +
-		" where t.groupid = " + SqlInteger.sql(termid) + ";\n" +
-
-		// rss[2] --- NOP... make sure next ResultSet has data
-		"select w_student_create(" + SqlInteger.sql(adultid) + ");\n" +
-
-		// rss[3]
-		" select es.billingtype, e.isorg\n" +
-		" from entities_school es, entities e\n" +
-		" where es.entityid = " + SqlInteger.sql(adultid) + "\n" +
-		" and es.entityid = e.entityid;" +
-
-		// Speed up rss[4+5] queries below
-		" create temporary table _ids (entityid int);\n" +
-		" insert into _ids select entityid from entities_school" +
-		"    where adultid = " + SqlInteger.sql(adultid) + ";\n" +
-		// Use _ids to clear tuition, in case no enrollments down below
-		" update termregs set tuition = 0" +
-		" from _ids st where termregs.entityid = st.entityid" +
-		" and termregs.groupid = " + SqlInteger.sql(termid) + ";\n" +
-		
-		// rss[4]
-		" select st.entityid as studentid, tr.tuitionoverride\n" +
-		" from _ids st, termregs tr\n" +
-		" where st.entityid = tr.entityid\n" +
-		" and tr.groupid = " + SqlInteger.sql(termid) + "\n" +
-		" and tr.tuitionoverride is not null;\n" +
-
-		// rss[5]
-		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, tr.tuitionoverride, c.*\n" +
-		" from _ids st, entities p, courseids c, enrollments e, termregs tr\n" +
-		" where st.entityid = p.entityid\n" +
-		" and tr.entityid = p.entityid and tr.groupid = c.termid" +
-		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
-		" and e.courseid = c.courseid and e.entityid = st.entityid" +
-		" and e.courserole = (select courseroleid from courseroles where name = 'student')" +
-		" order by st.entityid, dayofweek, c.tstart;" +
-		
-		" drop table _ids;";
-
-	str.execSql(sql, new RssRunnable() {
-	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
-System.out.println("Processing results, adultid = " + adultid);
-		ResultSet rs;
-		HashMap<String,String> duedates = new HashMap();
-		final StringBuffer sqlOut = new StringBuffer();	// SQL to store results
-		SqlNumeric money = new SqlNumeric(9, 2);
-		SqlTime time = new SqlTime(true);
-		
-		// rss[0]
-		// Read term due dates: rss[0]
-		rs = rss[0];
-		while (rs.next()) duedates.put(rs.getString("name"), rs.getString("duedate"));
-		rs.close();
-		
-		// Get name of the term: rss[1]
-		rs = rss[1];
-		rs.next();
-		String termName = rs.getString("termname");
-	
-		// Get billing type for this payer
-		rs = rss[3];
-		rs.next();
-		String sBillingType = rs.getString("billingtype");
-		char btype = (sBillingType == null ? 'y' : sBillingType.charAt(0));
-		boolean isorg = rs.getBoolean("isorg");
-		rs.close();
-
-		// Remove previous tuition invoice records
-		sqlOut.append(
-			" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
-			" and entityid = " + SqlInteger.sql(adultid) + ";\n");
-	
-		// Get tuition overrides, even for people who have dropped all courses
-		Map<Integer,Double> tuitionOverrides = new TreeMap();
-		rs = rss[5];
-		while (rs.next()) {
-			tuitionOverrides.put(rs.getInt("studentid"),
-				(Double)nullableMoney.get(rs, "tuitionoverride"));
-		}
-		
-		// Calculate sum of hours in enrolled courses, per student
-		rs = rss[5];
-		TuitionRec tr = null;
-		double scholarship = 0;
-		int nsiblings = 0;				// Total number of siblings
-		int weeklyS = 0;
-		ArrayList<TuitionRec> tuitions = new ArrayList();
-		for (;;) {
-			boolean hasNext = rs.next();
-			if (!hasNext || tr == null || (tr.studentid != rs.getInt("studentid"))) {
-				if (tr != null) {
-					tr.tuition += TuitionRate.getRateY(weeklyS);
-					tuitions.add(tr);
-					++nsiblings;
-
-					// Apply the scholarship
-					if (scholarship > 0) {
-						TuitionRec trs = new TuitionRec();
-						trs.studentid = tr.studentid;
-						trs.studentName = tr.studentName;
-						trs.description = termName + ": Scholarship for " + tr.studentName;
-						tuitions.add(trs);
-						trs.tuition = -scholarship;
-					}
-				}
-
-				// Make up description for this next student record.
-				if (hasNext) {
-					tr = new TuitionRec();
-					tr.studentid = rs.getInt("studentid");
-					tr.studentName = rs.getString("firstname") + " " + rs.getString("lastname");
-					tr.description = termName + ": Tuition for " + tr.studentName;
-					tr.tuition = 0;
-					tr.tuitionOverride = (Double)nullableMoney.get(rs, "tuitionoverride");
-					tuitionOverrides.remove(tr.studentid);
-					scholarship = rs.getDouble("scholarship");
-					weeklyS = 0;
-				}
-			}
-			if (!hasNext) break;
-	System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
-			// Add the price of this course to the tuition
-			String Price = rs.getString("price");
-			if (Price != null) {
-				tr.tuition += Double.parseDouble(Price);
-			} else {
-				long tstart = time.get(rs, "tstart").getTime();
-				long tnext = time.get(rs, "tnext").getTime();
-				int lengthS = (int)(tnext - tstart) / 1000;
-				weeklyS += lengthS;
-			}
-		}
-		rs.close();
-
-		// Give sibling discounts
-		if (nsiblings > 1 && (!isorg)) {
-			Collections.sort(tuitions);		// Sorted by tuition; scholarships are at end
-			Iterator<TuitionRec> ii = tuitions.iterator();
-			ii.next();
-			while (ii.hasNext()) {
-				TuitionRec trx = ii.next();
-				if (trx.tuition < 0) break;		// Scholarships
-				trx.tuition *= .9;
-				trx.description += " (w/ sibling discount)";
-			}
-		}
-
-	
-		for (TuitionRec trx : tuitions) {
-			if (trx.tuition < 0) continue;		// Scholarships
-			// Store in termregs table
-			sqlOut.append("update termregs" +
-				" set tuition = " + trx.tuition +
-				" where entityid = " + trx.studentid +
-				" and groupid = " + termid + ";\n");
-		}
-	
-		// ====================================================
-		// Make up final list of bills to account
-		ArrayList<TuitionRec> t2 = new ArrayList();
-	
-		// Add registration fees
-		for (TuitionRec trx : tuitions) {
-			if (trx.tuition < 0) continue;		// Ignore scholarhips
-			TuitionRec tq = new TuitionRec();
-			tq.sdate = duedates.get("r");
-			tq.description = "Registration Fee for " + trx.studentName;
-			tq.studentid = trx.studentid;
-			tq.tuition = 25;
-			t2.add(tq);
-		}
-	
-		// Convert to actual billing records that are quarterly or yearly...
-		if (btype == 'q') {
-			for (TuitionRec trx : tuitions) {
-				for (int i=1; i<=4; ++i) {
-					TuitionRec tq = new TuitionRec();
-					tq.sdate = duedates.get("q" + i);
-					tq.description = trx.description + " --- Quarter " + i;
-					tq.studentid = trx.studentid;
-					tq.tuition = trx.tuition * .25;
-					if (trx.tuitionOverride != null) tq.tuitionOverride = new Double(trx.tuitionOverride.doubleValue() * .25);
-					t2.add(tq);
-				}
-			}
-		} else {	// Bill Yearly
-			for (TuitionRec trx : tuitions) {
-				trx.sdate = duedates.get("y");
-				trx.description += " --- Full Year";
-				t2.add(trx);		
-			}
-		}
-	
-		// Write them out
-		for (TuitionRec trx : t2) {
-			// This student's records have ended; write out
-			sqlOut.append(" insert into tuitiontrans" +
-				" (entityid, actypeid, date, amount, description, studentid, termid)" +
-				" values (" + SqlInteger.sql(adultid) + ", " +
-				" (select actypeid from actypes where name = 'school'), " +
-				(trx.sdate == null ? "null" : "'" + trx.sdate + "'") + ", " +
-				money.sql(trx.tuitionOverride != null ? trx.tuitionOverride : trx.tuition) + ", " +
-				SqlString.sql(trx.description) + ", " +
-				SqlInteger.sql(trx.studentid) + ", " + SqlInteger.sql(termid) + ");\n");
-		}
-	
-System.out.println(sqlOut);
-		str.execSql(sqlOut.toString());
-		str.execUpdate(rr);
-	}});
-}
+//static SqlMoney nullableMoney = new SqlMoney(true);
+//public static void w_tuitiontrans_calcTuitionByAdult(SqlRunner str,
+//final int termid, final int adultid, final UpdRunnable rr)
+//throws SQLException
+//{
+//	String sql =
+//		// rss[0]
+//		" select name,duedate from termduedates" +
+//		" where termid = " + SqlInteger.sql(termid) + ";\n" +
+//
+//		// rss[1]
+//		" select t.name as termname" +
+//		" from termids t" +
+//		" where t.groupid = " + SqlInteger.sql(termid) + ";\n" +
+//
+//		// rss[2] --- NOP... make sure next ResultSet has data
+//		"select w_student_create(" + SqlInteger.sql(adultid) + ");\n" +
+//
+//		// rss[3]
+//		" select es.billingtype, e.isorg\n" +
+//		" from entities_school es, entities e\n" +
+//		" where es.entityid = " + SqlInteger.sql(adultid) + "\n" +
+//		" and es.entityid = e.entityid;" +
+//
+//		// Speed up rss[4+5] queries below
+//		" create temporary table _ids (entityid int);\n" +
+//		" insert into _ids select entityid from entities_school" +
+//		"    where adultid = " + SqlInteger.sql(adultid) + ";\n" +
+//		// Use _ids to clear tuition, in case no enrollments down below
+//		" update termregs set tuition = 0" +
+//		" from _ids st where termregs.entityid = st.entityid" +
+//		" and termregs.groupid = " + SqlInteger.sql(termid) + ";\n" +
+//		
+//		// rss[4]
+//		" select st.entityid as studentid, tr.tuitionoverride\n" +
+//		" from _ids st, termregs tr\n" +
+//		" where st.entityid = tr.entityid\n" +
+//		" and tr.groupid = " + SqlInteger.sql(termid) + "\n" +
+//		" and tr.tuitionoverride is not null;\n" +
+//
+//		// rss[5]
+//		" select st.entityid as studentid, p.lastname, p.firstname, tr.scholarship, tr.tuitionoverride, c.*\n" +
+//		" from _ids st, entities p, courseids c, enrollments e, termregs tr\n" +
+//		" where st.entityid = p.entityid\n" +
+//		" and tr.entityid = p.entityid and tr.groupid = c.termid" +
+//		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
+//		" and e.courseid = c.courseid and e.entityid = st.entityid" +
+//		" and e.courserole = (select courseroleid from courseroles where name = 'student')" +
+//		" order by st.entityid, dayofweek, c.tstart;" +
+//		
+//		" drop table _ids;";
+//
+//	str.execSql(sql, new RssRunnable() {
+//	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+//System.out.println("Processing results, adultid = " + adultid);
+//		ResultSet rs;
+//		HashMap<String,String> duedates = new HashMap();
+//		final StringBuffer sqlOut = new StringBuffer();	// SQL to store results
+//		SqlNumeric money = new SqlNumeric(9, 2);
+//		SqlTime time = new SqlTime(true);
+//		
+//		// rss[0]
+//		// Read term due dates: rss[0]
+//		rs = rss[0];
+//		while (rs.next()) duedates.put(rs.getString("name"), rs.getString("duedate"));
+//		rs.close();
+//		
+//		// Get name of the term: rss[1]
+//		rs = rss[1];
+//		rs.next();
+//		String termName = rs.getString("termname");
+//	
+//		// Get billing type for this payer
+//		rs = rss[3];
+//		rs.next();
+//		String sBillingType = rs.getString("billingtype");
+//		char btype = (sBillingType == null ? 'y' : sBillingType.charAt(0));
+//		boolean isorg = rs.getBoolean("isorg");
+//		rs.close();
+//
+//		// Remove previous tuition invoice records
+//		sqlOut.append(
+//			" delete from tuitiontrans where termid = " + SqlInteger.sql(termid) +
+//			" and entityid = " + SqlInteger.sql(adultid) + ";\n");
+//	
+//		// Get tuition overrides, even for people who have dropped all courses
+//		Map<Integer,Double> tuitionOverrides = new TreeMap();
+//		rs = rss[5];
+//		while (rs.next()) {
+//			tuitionOverrides.put(rs.getInt("studentid"),
+//				(Double)nullableMoney.get(rs, "tuitionoverride"));
+//		}
+//		
+//		// Calculate sum of hours in enrolled courses, per student
+//		rs = rss[5];
+//		TuitionRec tr = null;
+//		double scholarship = 0;
+//		int nsiblings = 0;				// Total number of siblings
+//		int weeklyS = 0;
+//		ArrayList<TuitionRec> tuitions = new ArrayList();
+//		for (;;) {
+//			boolean hasNext = rs.next();
+//			if (!hasNext || tr == null || (tr.studentid != rs.getInt("studentid"))) {
+//				if (tr != null) {
+//					tr.tuition += TuitionRate.getRateY(weeklyS);
+//					tuitions.add(tr);
+//					++nsiblings;
+//
+//					// Apply the scholarship
+//					if (scholarship > 0) {
+//						TuitionRec trs = new TuitionRec();
+//						trs.studentid = tr.studentid;
+//						trs.studentName = tr.studentName;
+//						trs.description = termName + ": Scholarship for " + tr.studentName;
+//						tuitions.add(trs);
+//						trs.tuition = -scholarship;
+//					}
+//				}
+//
+//				// Make up description for this next student record.
+//				if (hasNext) {
+//					tr = new TuitionRec();
+//					tr.studentid = rs.getInt("studentid");
+//					tr.studentName = rs.getString("firstname") + " " + rs.getString("lastname");
+//					tr.description = termName + ": Tuition for " + tr.studentName;
+//					tr.tuition = 0;
+//					tr.tuitionOverride = (Double)nullableMoney.get(rs, "tuitionoverride");
+//					tuitionOverrides.remove(tr.studentid);
+//					scholarship = rs.getDouble("scholarship");
+//					weeklyS = 0;
+//				}
+//			}
+//			if (!hasNext) break;
+//	System.out.println(rs.getString("studentid") + " " + rs.getString("name"));
+//			// Add the price of this course to the tuition
+//			String Price = rs.getString("price");
+//			if (Price != null) {
+//				tr.tuition += Double.parseDouble(Price);
+//			} else {
+//				long tstart = time.get(rs, "tstart").getTime();
+//				long tnext = time.get(rs, "tnext").getTime();
+//				int lengthS = (int)(tnext - tstart) / 1000;
+//				weeklyS += lengthS;
+//			}
+//		}
+//		rs.close();
+//
+//		// Give sibling discounts
+//		if (nsiblings > 1 && (!isorg)) {
+//			Collections.sort(tuitions);		// Sorted by tuition; scholarships are at end
+//			Iterator<TuitionRec> ii = tuitions.iterator();
+//			ii.next();
+//			while (ii.hasNext()) {
+//				TuitionRec trx = ii.next();
+//				if (trx.tuition < 0) break;		// Scholarships
+//				trx.tuition *= .9;
+//				trx.description += " (w/ sibling discount)";
+//			}
+//		}
+//
+//	
+//		for (TuitionRec trx : tuitions) {
+//			if (trx.tuition < 0) continue;		// Scholarships
+//			// Store in termregs table
+//			sqlOut.append("update termregs" +
+//				" set tuition = " + trx.tuition +
+//				" where entityid = " + trx.studentid +
+//				" and groupid = " + termid + ";\n");
+//		}
+//	
+//		// ====================================================
+//		// Make up final list of bills to account
+//		ArrayList<TuitionRec> t2 = new ArrayList();
+//	
+//		// Add registration fees
+//		for (TuitionRec trx : tuitions) {
+//			if (trx.tuition < 0) continue;		// Ignore scholarhips
+//			TuitionRec tq = new TuitionRec();
+//			tq.sdate = duedates.get("r");
+//			tq.description = "Registration Fee for " + trx.studentName;
+//			tq.studentid = trx.studentid;
+//			tq.tuition = 25;
+//			t2.add(tq);
+//		}
+//	
+//		// Convert to actual billing records that are quarterly or yearly...
+//		if (btype == 'q') {
+//			for (TuitionRec trx : tuitions) {
+//				for (int i=1; i<=4; ++i) {
+//					TuitionRec tq = new TuitionRec();
+//					tq.sdate = duedates.get("q" + i);
+//					tq.description = trx.description + " --- Quarter " + i;
+//					tq.studentid = trx.studentid;
+//					tq.tuition = trx.tuition * .25;
+//					if (trx.tuitionOverride != null) tq.tuitionOverride = new Double(trx.tuitionOverride.doubleValue() * .25);
+//					t2.add(tq);
+//				}
+//			}
+//		} else {	// Bill Yearly
+//			for (TuitionRec trx : tuitions) {
+//				trx.sdate = duedates.get("y");
+//				trx.description += " --- Full Year";
+//				t2.add(trx);		
+//			}
+//		}
+//	
+//		// Write them out
+//		for (TuitionRec trx : t2) {
+//			// This student's records have ended; write out
+//			sqlOut.append(" insert into tuitiontrans" +
+//				" (entityid, actypeid, date, amount, description, studentid, termid)" +
+//				" values (" + SqlInteger.sql(adultid) + ", " +
+//				" (select actypeid from actypes where name = 'school'), " +
+//				(trx.sdate == null ? "null" : "'" + trx.sdate + "'") + ", " +
+//				money.sql(trx.tuitionOverride != null ? trx.tuitionOverride : trx.tuition) + ", " +
+//				SqlString.sql(trx.description) + ", " +
+//				SqlInteger.sql(trx.studentid) + ", " + SqlInteger.sql(termid) + ");\n");
+//		}
+//	
+//System.out.println(sqlOut);
+//		str.execSql(sqlOut.toString());
+//		str.execUpdate(rr);
+//	}});
+//}
 // -------------------------------------------------------------------------------
 ///** Returns true only if ALL IDs are in the entities_school table. */
 //public static boolean isInSchool(SqlRunner str, int entityid) throws SQLException

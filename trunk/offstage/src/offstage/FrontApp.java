@@ -54,6 +54,7 @@ Properties props;
 KeyRing keyRing;
 DbChangeModel dbChange;
 ConnPool pool;
+//Stack<SqlBatchSet> batchSets = new Stack();
 SqlBatchSet batchSet;
 SwingerMap swingerMap;
 //SFormatMap sFormatterMap;

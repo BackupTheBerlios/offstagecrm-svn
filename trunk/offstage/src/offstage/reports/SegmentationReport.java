@@ -46,10 +46,10 @@ import citibob.sql.pgsql.*;
  *
  * @author citibob
  */
-public class SpreadsheetReport extends RSTableModel
+public class SegmentationReport extends RSTableModel
 {
 
-public SpreadsheetReport(SqlRunner str, SqlTypeSet tset, String idSql)
+public SegmentationReport(SqlRunner str, SqlTypeSet tset, String idSql)
 {
 	super(tset);
 	String sql =
@@ -129,5 +129,16 @@ public SpreadsheetReport(SqlRunner str, SqlTypeSet tset, String idSql)
 		" drop table pphones;\n";
 	super.executeQuery(str, sql);
 }
-	
+
+public static void writeCSV(final App app, SqlRunner str, final java.awt.Frame frame, final String title, String idSql) throws Exception
+{
+	final SegmentationReport report = new SegmentationReport(str, app.getSqlTypeSet(), idSql);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		citibob.reports.Reports rr = app.getReports();
+		rr.writeCSV(rr.format(report), frame, "Save"+title);
+//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report);	
+	}});
+}
+
 }

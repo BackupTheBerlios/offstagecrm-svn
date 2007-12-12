@@ -266,7 +266,7 @@ throws Exception
 	public void run(SqlRunner str) throws Exception {
 		//List models = (List)str.get("models");
 		Reports reports = fapp.getReports(); //new OffstageReports(fapp);
-		File f = reports.writeJodPdfs(rep.models, "AcctStatement.odt", null);
+		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", null);
 		reports.viewPdf(f);
 	}});
 }

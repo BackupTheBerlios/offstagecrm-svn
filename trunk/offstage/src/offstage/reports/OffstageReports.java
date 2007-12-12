@@ -27,8 +27,10 @@ public OffstageReports(App app)
 	oofficeExe = app.getProps().getProperty("ooffice.exe");
 }
 
-public InputStream openTemplateFile(String name) throws IOException
+public InputStream openTemplateFile(File dir, String name) throws IOException
 {
+	if (dir != null) return super.openTemplateFile(dir, name);
+
 	// First: try loading external file
 //	File dir = new File(System.getProperty("user.dir"), "config");
 	File f = new File(app.getConfigDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);

@@ -98,6 +98,7 @@ addState(new AbstractWizState("newquery", null, "editquery") {
 });
 // ---------------------------------------------
 addState(new AbstractWizState("editquery", "listquery", "reporttype") {
+//addState(new AbstractWizState("editquery", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
 		EditQueryWiz eqw = new EditQueryWiz(con.str, fapp, con.v.getInt("equeryid"));
 		return new JPanelWizWrapper(frame, "", "", eqw);
@@ -140,15 +141,21 @@ System.out.println("EQueryWizard sql: " + sql);
 			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
 			stateName = stateRec.getNext();
 		} else if ("donationreport".equals(submit)) {
-			String sql = equery.getSql(fapp.getEquerySchema(), false);
-			stateName = (doDonationReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
+			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
+			stateName = stateRec.getNext();
+//			stateName = (doDonationReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
 		} else if ("donationreport_nodup".equals(submit)) {
-			String sql = equery.getSql(fapp.getEquerySchema(), true);
+			String idSql = equery.getSql(fapp.getEquerySchema(), true);
 //			sql = DB.removeDupsIDSql(sql);
-			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
-		} else if ("spreadsheet".equals(submit)) {
-			String sql = equery.getSql(fapp.getEquerySchema(), false);
-			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
+			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
+			stateName = stateRec.getNext();			
+//			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
+		} else if ("segmentation".equals(submit)) {
+			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+			SegmentationReport.writeCSV(fapp, con.str, frame, "Segmentation Report", idSql);
+			stateName = stateRec.getNext();			
+//			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
 		}
 		
 //		// Go on no matter what we chose...
@@ -157,6 +164,28 @@ System.out.println("EQueryWizard sql: " + sql);
 	}
 });
 // ---------------------------------------------
+// ---------------------------------------------
+addState(new AbstractWizState("savecsv") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new JPanelWizWrapper(frame, null, null,
+			  new ChooseFileWiz(app, ChooseFileWiz.M_WRITE, "Please select file in which to save report", "savecsv", ".csv")); }
+//			  new ChooseFileWiz(app, "Please select file in which to save report", con.v.getString("reportname"), ".csv")); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		if ("newquery".equals(con.v.get("submit"))) stateName = "newquery";
+	}
+});
+
+addState(new AbstractWizState("choosetemplate") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new JPanelWizWrapper(frame, null, null,
+			  // Puts chosen filename in v.get("file")
+			  new ChooseFileWiz(app, ChooseFileWiz.M_READ, "Please select mail merge template for report",
+				"choosetemplate", con.v.getString("extension"))); }
+//			  new ChooseFileWiz(app, "Please select file in which to save report", con.v.getString("reportname"), ".csv")); }
+	public void process(Wizard.Context con) throws Exception
+	{}
+});
 
 
 
@@ -165,69 +194,24 @@ System.out.println("EQueryWizard sql: " + sql);
 
 }
 // ==================================================================
-public boolean doDonationReport(SqlRunner str, final String title, String sql) throws Exception
+// Different ways through this Wizard for different reports
+public void runMailMerge() throws Exception
 {
-	final DonationReport report = new DonationReport(fapp, sql);
-	report.doSelect(str);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		Reports rr = fapp.getReports();
-		rr.writeCSV(rr.format(report.newTableModel()),
-			frame, "Save" + title);
-//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
-	}});
-	return true;
+	setWizardName("Mail Merge Report");
+	setVal("extension", ".odt");
+	setNavigator(new HashNavigator(new String[] {
+		"choosetemplate", "listquery",
+		"editquery", "<end>"
+	}));
+	runWizard("choosetemplate");
+	
+EQuery equery = (EQuery)v.get("equery");
+File file = (File)v.get("file");
+
+System.out.println(equery);
+System.out.println(file);
 }
-public boolean doSpreadsheetReport(SqlRunner str, final String title, String idSql) throws Exception
-{
-	final SpreadsheetReport report = new SpreadsheetReport(str, fapp.getSqlTypeSet(), idSql);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		Reports rr = fapp.getReports();
-		rr.writeCSV(rr.format(report), frame, "Save"+title);
-//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report);	
-	}});
-	return true;
-}
-//		
-//	DonationReport report = new DonationReport(fapp, sql);
-//	report.doSelect(st);	
-//	String dir = fapp.userRoot().get("saveReportDir", null);
-//	JFileChooser chooser = new JFileChooser(dir);
-//	chooser.setDialogTitle("Save " + title);
-//	chooser.addChoosableFileFilter(
-//		new javax.swing.filechooser.FileFilter() {
-//		public boolean accept(File file) {
-//			String filename = file.getName();
-//			return filename.endsWith(".csv");
-//		}
-//		public String getDescription() {
-//			return "*.csv";
-//		}
-//	});
-//	String path = null;
-//	String fname = null;
-//	for (;;) {
-//		chooser.showSaveDialog(frame);
-//
-//		path = chooser.getCurrentDirectory().getAbsolutePath();
-//		if (chooser.getSelectedFile() == null) return false;
-//		fname = chooser.getSelectedFile().getPath();
-//		if (!fname.endsWith(".csv")) fname = fname + ".csv";
-//		File f = new File(fname);
-//		if (!f.exists()) break;
-//		if (JOptionPane.showConfirmDialog(
-//			frame, "The file " + f.getName() + " already exists.\nWould you like to ovewrite it?",
-//			"Overwrite File?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) break;
-//	}
-//	fapp.userRoot().put("saveReportDir", path);
-//
-//	CSVReportOutput csv = new CSVReportOutput(report.newTableModel(), null, null,
-//		fapp.getSFormatMap());
-//	cscon.v.writeReport(new File(fname));
-//	return true;
-//}
-// ==================================================================
+
 
 
 }

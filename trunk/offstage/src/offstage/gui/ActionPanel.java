@@ -28,21 +28,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.gui;
 
 import citibob.wizard.Wizard;
-import citibob.wizard.Wizard;
 import offstage.*;
 import citibob.swing.html.*;
 import java.util.*;
 import citibob.multithread.*;
-import java.sql.*;
 import offstage.wizards.newrecord.*;
-import offstage.wizards.modify.*;
 import citibob.swing.*;
 import javax.swing.*;
-import offstage.school.gui.*;
-import citibob.jschema.*;
-import citibob.jschema.gui.*;
 import offstage.cleanse.*;
 import citibob.sql.*;
+import java.io.File;
+import offstage.equery.EQuery;
+import offstage.equery.swing.EQueryWizard;
+import offstage.reports.MailMerge;
 
 /**
  *
@@ -98,6 +96,15 @@ throws org.xml.sax.SAXException, java.io.IOException
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, root, "listquery");
 		wizard.runWizard();
+	}}));
+
+	actionMap.put("mailmerge", new CBTask("", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, root, null);
+		wizard.runMailMerge();
+		System.out.println((String)wizard.getVal("submit"));
+		MailMerge.viewReport(str, fapp, (EQuery)wizard.getVal("equery"), (File)wizard.getVal("file"));
 	}}));
 
 	actionMap.put("newcategory", new CBTask("", "admin", new ERunnable() {

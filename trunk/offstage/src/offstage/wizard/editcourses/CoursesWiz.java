@@ -87,8 +87,8 @@ throws SQLException
 		//termChanged(str);
 //		terms.setSelectedIndex(0);		// Should throw a value changed event
 		courses.setModelU(coursesSb.getSchemaBuf(),
-			new String[] {"Name", "Day", "Start", "End", "Enroll Limit"},
-			new String[] {"name", "dayofweek", "tstart", "tnext", "enrolllimit"},
+			new String[] {"Name", "Day", "Start", "End", "Tuition", "Enroll Limit"},
+			new String[] {"name", "dayofweek", "tstart", "tnext", "price", "enrolllimit"},
 			null, fapp.getSwingerMap());
 //		courses.setRowSelectionAllowed(false);
 

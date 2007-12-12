@@ -67,7 +67,7 @@ throws Exception
 				new DateSFormat("yyyy", "", app.getTimeZone()),
 				new DateSFormat("yyyy", "", app.getTimeZone())
 		});
-		reports.viewJodPdfs(models, "StudentSchedule.odt");
+		reports.viewJodPdfs(models, null, "StudentSchedule.odt");
 	}});
 }
 

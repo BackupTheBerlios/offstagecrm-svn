@@ -57,7 +57,7 @@ throws Exception
 		Reports rr = app.getReports();
 		rr.viewJodPdfs(rr.toJodList(rs,
 			new String[][] {{"line1", "line2", "line3", "city", "state", "zip", "firstname"}}),
-			"YDPConfirmationLetter.odt");
+			null, "YDPConfirmationLetter.odt");
 	}});
 }
 

@@ -114,8 +114,25 @@ class AllDbModel extends MultiDbModel
 
 			actransDb.doUpdate(str);
 			int termid = smod.getTermID(); //(Integer)vTermID.getValue();
-			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldadultid, null);
-			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Adultid, null);
+			String payerIdSql = null;
+			if (Oldadultid != null && Adultid != null) {
+				if (Oldadultid.intValue() == Adultid.intValue()) {
+					// Didn't change, they're both the same
+					payerIdSql = "select " + Oldadultid;
+				} else {
+					// Changed from one payer to another
+					payerIdSql = "select " + Oldadultid + " union select " + Adultid;
+				}
+			} else if (Adultid != null) {
+				// Changed from no payer to a payer
+				payerIdSql = "select " + Adultid;
+			} else if (Oldadultid != null) {
+				// Changed from a payer to no payer.
+				payerIdSql = "select " + Oldadultid;
+			}
+			if (payerIdSql != null) TuitionCalc.w_recalc(str, fapp.getTimeZone(), termid, payerIdSql);
+//			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldadultid, null);
+//			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Adultid, null);
 		}});
 	}
 }
@@ -1955,7 +1972,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(2406, Short.MAX_VALUE))
+                .addContainerGap(2438, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2321,7 +2338,7 @@ void setIDDirty(boolean dirty)
         TermRegPanel.add(jLabel32, gridBagConstraints);
 
         lTuition1.setText("2500");
-        lTuition1.setColName("tuition");
+        lTuition1.setColName("defaulttuition");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -2392,9 +2409,8 @@ void setIDDirty(boolean dirty)
 			Integer EntityID = (Integer)entityid.getValue();
 			Wizard wizard = new TransactionWizard(fapp, null,
 				EntityID, ActransSchema.AC_SCHOOL);
-			TypedHashMap v = new TypedHashMap();
-			v.put("entityid", EntityID);
-			wizard.runWizard("transtype", v);
+			wizard.setVal("entityid", EntityID);
+			wizard.runWizard("transtype");
 			refreshAccount(str);
 			// actransDb.doSelect(str);
 		}});
@@ -2508,17 +2524,17 @@ void newAdultAction(final String colName)
 		public void run(SqlRunner str) throws Exception {
 			enrolledDb.doUpdate(str);
 			Wizard wizard = new EnrollWizard(fapp, null);
-			TypedHashMap v = new TypedHashMap();
-//				v.put("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
-				v.put("sperson", vStudentID.getText());
-				v.put("entityid", vStudentID.getValue());
-				v.put("termid", smod.getTermID());
-//				v.put("courseroleModel",
+//			TypedHashMap v = new TypedHashMap();
+//				wizard.setVal("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
+				wizard.setVal("sperson", vStudentID.getText());
+				wizard.setVal("entityid", vStudentID.getValue());
+				wizard.setVal("termid", smod.getTermID());
+//				wizard.setVal("courseroleModel",
 //					fapp.getSchema("courseroles"), )
 //						new citibob.sql.DbKeyedModel(st, null,
 //		"courseroles", "courseroleid", "name", "orderid")));
 
-			wizard.runWizard("add", v);
+			wizard.runWizard("add");
 			enrolledDb.doSelect(str);
 			studentDirty = true;
 		}});

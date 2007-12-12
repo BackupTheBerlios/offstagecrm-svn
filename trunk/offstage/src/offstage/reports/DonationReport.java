@@ -27,19 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.reports;
 
 import citibob.sql.AdhocOJSqlTableModel;
-import offstage.*;
 import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
-import citibob.swing.table.*;
-import citibob.multithread.*;
 import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
+import citibob.reports.Reports;
 import static citibob.sql.RSTableModel.Col;
 import java.util.*;
-import citibob.swing.typed.*;
 import citibob.sql.*;
 import offstage.db.*;
-import citibob.sql.pgsql.*;
 
 /**
  
@@ -101,4 +97,20 @@ System.out.println("year = " + year);
 	this.add(model);
 //	setTableModel();
 }
+
+public static void writeCSV(final App app, SqlRunner str, final java.awt.Frame frame, final String title, String sql) throws Exception
+{
+	final DonationReport report = new DonationReport(app, sql);
+	report.doSelect(str);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		Reports rr = app.getReports();
+		rr.writeCSV(rr.format(report.newTableModel()),
+			frame, "Save" + title);
+//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
+	}});
+}
+
+
+
 }

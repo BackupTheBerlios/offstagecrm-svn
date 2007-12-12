@@ -73,7 +73,7 @@ addState(new AbstractWizState("ticketparams", null, "editquery") {
 		int groupid = v.getInt("groupid");
 		String sql =
 			" select p.entityid,p.firstname,p.lastname,p.city,p.state,p.zip," +
-			" t.numberoftickets,t.payment,tt.tickettype\n" +
+			" t.numberoftickets,t.payment,tt.name as tickettype\n" +
 			" from persons p, ticketeventsales t, tickettypes tt\n" +
 			" where p.entityid = t.entityid\n" +
 			" and t.tickettypeid = tt.tickettypeid\n" +
@@ -93,7 +93,9 @@ addState(new AbstractWizState("ticketparams", null, "editquery") {
 addState(new AbstractWizState("savecsv") {
 	public Wiz newWiz(Wizard.Context con) throws Exception
 		{ return new JPanelWizWrapper(frame, null, null,
-			  new ChooseFileWiz(app, "Please select file in which to save report", con.v.getString("reportname"), ".csv")); }
+			  new ChooseFileWiz(app, ChooseFileWiz.M_WRITE,
+			  "Please select file in which to save report",
+			  con.v.getString("reportname"), ".csv")); }
 	public void process(Wizard.Context con) throws Exception
 	{
 		if ("newquery".equals(con.v.get("submit"))) stateName = "newquery";

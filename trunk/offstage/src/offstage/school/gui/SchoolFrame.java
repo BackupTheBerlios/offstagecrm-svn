@@ -306,7 +306,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 			str.execUpdate(new UpdRunnable() {
 			public void run(SqlRunner str) throws Exception {
 				Reports reports = fapp.getReports(); //new OffstageReports(fapp);
-				reports.viewXls(rep.model, "StudentAccounts.xls");
+				reports.viewXls(rep.model, null, "StudentAccounts.xls");
 			}});
 		}});
 // TODO add your handling code here:
@@ -343,7 +343,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 					public void run(SqlRunner str, ResultSet rs) throws Exception
 					{
 						Reports rr = fapp.getReports();
-						rr.viewJasper(rr.toJasper(rs), "AddressLabels.jrxml");
+						rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 					}});
 //			st.executeUpdate(LabelReport.cleanupSql());
 			}});
@@ -408,7 +408,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				SchoolDB.w_tuitiontrans_recalcAllTuitions(str, schoolModel.getTermID());
+				TuitionCalc.w_recalcAll(str, fapp.getTimeZone(), schoolModel.getTermID());
 			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miRecalcAllTuitionActionPerformed
