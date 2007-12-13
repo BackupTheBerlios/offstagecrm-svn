@@ -40,7 +40,9 @@ import citibob.sql.*;
 import java.io.File;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
+import offstage.reports.ClauseReport;
 import offstage.reports.MailMerge;
+import offstage.reports.SegmentationReport;
 
 /**
  *
@@ -102,9 +104,35 @@ throws org.xml.sax.SAXException, java.io.IOException
 	public void run(SqlRunner str) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, root, null);
-		wizard.runMailMerge();
-		System.out.println((String)wizard.getVal("submit"));
-		MailMerge.viewReport(str, fapp, (EQuery)wizard.getVal("equery"), (File)wizard.getVal("file"));
+		if (wizard.runMailMerge()) {
+			System.out.println((String)wizard.getVal("submit"));
+			MailMerge.viewReport(str, fapp, (EQuery)wizard.getVal("equery"), (File)wizard.getVal("file"));
+		}
+	}}));
+
+	actionMap.put("segmentation", new CBTask("", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, root, null);
+		if (wizard.runSegmentation()) {
+			EQuery equery = (EQuery)wizard.getVal("equery");
+			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+			SegmentationReport.writeCSV(fapp, str, idSql,
+				(List<String>)wizard.getVal("segtypes"),
+				(File)wizard.getVal("file"));
+		}
+	}}));
+
+	actionMap.put("clausereport", new CBTask("", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, root, null);
+		if (wizard.runClauseReport()) {
+			EQuery equery = (EQuery)wizard.getVal("equery");
+			ClauseReport.writeCSV(fapp, str,
+				(EQuery)wizard.getVal("equery"),
+				(File)wizard.getVal("file"));
+		}
 	}}));
 
 	actionMap.put("newcategory", new CBTask("", "admin", new ERunnable() {

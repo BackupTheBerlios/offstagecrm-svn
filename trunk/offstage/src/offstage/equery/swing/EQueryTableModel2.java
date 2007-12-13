@@ -97,7 +97,7 @@ void makeRowSpecs()
 		EClause c = (EClause)query.getClauses().get(ci);
 		rows.add(new RowSpec(ci, -1));
 		for (int ei=0; ei<c.getElements().size(); ++ei) {
-			Element e = (Element)c.elements.get(ei);
+			Element e = (Element)c.getElements().get(ei);
 			rows.add(new RowSpec(ci, ei));
 		}
 	}

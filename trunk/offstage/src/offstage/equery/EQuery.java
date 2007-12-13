@@ -30,7 +30,7 @@ public class EQuery extends Query
 {
 
 // Info on the query
-ArrayList clauses = new ArrayList();
+ArrayList<EClause> clauses = new ArrayList();
 java.util.Date lastUpdatedFirst;
 java.util.Date lastUpdatedNext;
 // ============================================
@@ -60,7 +60,7 @@ public EClause getClause(int n)
 public int getNumClauses()
 	{ return clauses.size(); }
 
-public ArrayList getClauses()
+public ArrayList<EClause> getClauses()
 	{ return clauses; }
 // -----------------------------------------------
 public String getSql(Column c, Element e)

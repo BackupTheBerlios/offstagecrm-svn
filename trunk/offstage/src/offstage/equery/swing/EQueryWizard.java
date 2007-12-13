@@ -67,7 +67,7 @@ public EQueryWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String s
 // ---------------------------------------------
 addState(new AbstractWizState("listquery", null, "editquery") {
 	public Wiz newWiz(Wizard.Context con) throws Exception
-		{ return new JPanelWizWrapper(frame, null, "",
+		{ return new JPanelWizWrapper(frame, "", "",
 			  new ListQueryWiz(con.str, fapp)); }
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -151,11 +151,11 @@ System.out.println("EQueryWizard sql: " + sql);
 			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
 			stateName = stateRec.getNext();			
 //			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
-		} else if ("segmentation".equals(submit)) {
-			String idSql = equery.getSql(fapp.getEquerySchema(), false);
-			SegmentationReport.writeCSV(fapp, con.str, frame, "Segmentation Report", idSql);
-			stateName = stateRec.getNext();			
-//			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
+//		} else if ("segmentation".equals(submit)) {
+//			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+//			SegmentationReport.writeCSV(fapp, con.str, frame, "Segmentation Report", idSql);
+//			stateName = stateRec.getNext();			
+////			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
 		}
 		
 //		// Go on no matter what we chose...
@@ -167,7 +167,7 @@ System.out.println("EQueryWizard sql: " + sql);
 // ---------------------------------------------
 addState(new AbstractWizState("savecsv") {
 	public Wiz newWiz(Wizard.Context con) throws Exception
-		{ return new JPanelWizWrapper(frame, null, null,
+		{ return new JPanelWizWrapper(frame, "", null,
 			  new ChooseFileWiz(app, ChooseFileWiz.M_WRITE, "Please select file in which to save report", "savecsv", ".csv")); }
 //			  new ChooseFileWiz(app, "Please select file in which to save report", con.v.getString("reportname"), ".csv")); }
 	public void process(Wizard.Context con) throws Exception
@@ -178,7 +178,7 @@ addState(new AbstractWizState("savecsv") {
 
 addState(new AbstractWizState("choosetemplate") {
 	public Wiz newWiz(Wizard.Context con) throws Exception
-		{ return new JPanelWizWrapper(frame, null, null,
+		{ return new JPanelWizWrapper(frame, "",null,
 			  // Puts chosen filename in v.get("file")
 			  new ChooseFileWiz(app, ChooseFileWiz.M_READ, "Please select mail merge template for report",
 				"choosetemplate", con.v.getString("extension"))); }
@@ -187,6 +187,12 @@ addState(new AbstractWizState("choosetemplate") {
 	{}
 });
 
+addState(new AbstractWizState("segreport") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new SegReportWiz(frame, app); }
+	public void process(Wizard.Context con) throws Exception
+	{}
+});
 
 
 
@@ -195,7 +201,7 @@ addState(new AbstractWizState("choosetemplate") {
 }
 // ==================================================================
 // Different ways through this Wizard for different reports
-public void runMailMerge() throws Exception
+public boolean runMailMerge() throws Exception
 {
 	setWizardName("Mail Merge Report");
 	setVal("extension", ".odt");
@@ -203,15 +209,33 @@ public void runMailMerge() throws Exception
 		"choosetemplate", "listquery",
 		"editquery", "<end>"
 	}));
-	runWizard("choosetemplate");
+	return runWizard("choosetemplate");
 	
-EQuery equery = (EQuery)v.get("equery");
-File file = (File)v.get("file");
-
-System.out.println(equery);
-System.out.println(file);
+//EQuery equery = (EQuery)v.get("equery");
+//File file = (File)v.get("file");
+//
+//System.out.println(equery);
+//System.out.println(file);
+}
+public boolean runSegmentation() throws Exception
+{
+	setWizardName("Segmentation Report");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "segreport",
+		"segreport", "savecsv",
+		"savecsv", "<end>"
+	}));
+	return runWizard("listquery");	
 }
 
-
+public boolean runClauseReport() throws Exception
+{
+	setWizardName("Clause Report");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "savecsv",
+		"savecsv", "<end>"
+	}));
+	return runWizard("listquery");	
+}
 
 }

@@ -54,8 +54,8 @@ Properties props;
 KeyRing keyRing;
 DbChangeModel dbChange;
 ConnPool pool;
-//Stack<SqlBatchSet> batchSets = new Stack();
-SqlBatchSet batchSet;
+Stack<SqlBatchSet> batchSets = new Stack();
+//SqlBatchSet batchSet;
 SwingerMap swingerMap;
 //SFormatMap sFormatterMap;
 OffstageSchemaSet sset;
@@ -93,7 +93,17 @@ public SwingPrefs getSwingPrefs() { return swingPrefs; }
 public QueryLogger getLogger() { return logger; }
 public int getLoginID() { return loginID; }
 public ConnPool getPool() { return pool; }
-public SqlBatchSet getBatchSet() { return batchSet; }
+public SqlBatchSet getBatchSet() { return batchSets.peek(); }
+public void pushBatchSet()
+{
+	SqlBatchSet bs = new SqlBatchSet(pool);
+	batchSets.push(bs);
+}
+public void popBatchSet() throws Exception
+{
+	SqlBatchSet bs = batchSets.pop();
+	bs.runBatches();
+}
 public ExpHandler getExpHandler() { return expHandler; }
 public File getConfigDir() { return configDir; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
@@ -225,15 +235,16 @@ throws Exception
 //	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
 	
 	this.pool = pool;
-	this.batchSet = new SqlBatchSet(pool);
+	this.batchSets = new Stack();
+	pushBatchSet();
 	// ================
 	SqlBatchSet str = new SqlBatchSet();
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	expHandler = new MailExpHandler(sender,
 			new InternetAddress("citibob@comcast.net"), "OffstageArts", stdoutDoc);
-	guiRunner = new BusybeeDbActionRunner(batchSet, pool, expHandler);
-	appRunner = new SimpleDbActionRunner(batchSet, pool, expHandler);
+	guiRunner = new BusybeeDbActionRunner(this, expHandler);
+	appRunner = new SimpleDbActionRunner(this, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
 	
 	// Figure out who we're logged in as

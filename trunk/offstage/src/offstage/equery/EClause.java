@@ -26,9 +26,9 @@ public class EClause
 public final static int ADD = 1;
 public final static int SUBTRACT = -1;
 
-	public int type = ADD;			// ADD or SUBTRACT
-	public ArrayList elements;
-	public String name;
+	public int type = ADD;			// ADD or SUBTRACT; not really public
+	protected ArrayList<Element> elements;
+	public String name;		// Not really public
 
 	public EClause(String name)
 	{
@@ -38,8 +38,11 @@ public final static int SUBTRACT = -1;
 	public EClause()
 		{ this("New Clause"); }
 	public Element getElement(int i)
-		{ return (Element)elements.get(i); }
-public ArrayList getElements() { return elements; }
+		{ return elements.get(i); }
+	public String getName()
+		{ return name; }
+	public int getType() { return type; }
+public ArrayList<Element> getElements() { return elements; }
 // ============================================
 /** Inserts clause before clause #ix */
 public void insertElement(int ix, Element c)

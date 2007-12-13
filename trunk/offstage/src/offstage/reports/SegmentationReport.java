@@ -40,6 +40,7 @@ import citibob.swing.typed.*;
 import citibob.sql.*;
 import offstage.db.*;
 import citibob.sql.pgsql.*;
+import java.io.*;
 
 /**
  
@@ -49,9 +50,26 @@ import citibob.sql.pgsql.*;
 public class SegmentationReport extends RSTableModel
 {
 
-public SegmentationReport(SqlRunner str, SqlTypeSet tset, String idSql)
+// Segment types available to report on
+public static final String[] availSegmentTypes =
+	{"classes", "events", "interests", "mailings", "notes", "status", "termenrolls", "ticketeventsales"};
+
+// We'll select rows later; don't know whether to use ColPermuteTableModel, or some kind of
+// ColPermuteJTypeTableModel, or just set up the query to only select the cols we want.
+//public static final String[] availColumns = {
+//	"relname", "groupname", "entityid", "customaddressto", "salutation", "firstname", "lastname",
+//	 "address1", "address2", "city", "state", "zip", "orgname", "isorg", "title", "occupation", "email",
+//	 "phone1type", "phone1", "phone2type", "phone2", "phone3type", "phone3", "recordsource"};
+	
+public SegmentationReport(SqlRunner str, SqlTypeSet tset, String idSql,
+List<String> segmentTypes)
 {
 	super(tset);
+
+	String sseg = "";
+	for (String ss : segmentTypes) sseg += "," + SqlString.sql(ss);
+	sseg = sseg.substring(1);
+
 	String sql =
 		" create temporary table pphones\n" +
 		" (entityid int primary key, priority1 int, priority2 int, priority3 int);\n" +
@@ -124,20 +142,22 @@ public SegmentationReport(SqlRunner str, SqlTypeSet tset, String idSql)
 		" and e.entityid = g.entityid\n" +
 		" and g.groupid = gid.groupid\n" +
 		" and pgc.oid = g.tableoid\n" +
-		" and pgc.relname not in ('phones', 'mailings')\n" +
+		" and pgc.relname in (" + sseg + ")\n" +
+//		" and pgc.relname not in ('phones', 'mailings')\n" +
 		" order by e.lastname,e.firstname,e.entityid,relname, gid.name, e.lastname, e.firstname;\n" +
 		" drop table pphones;\n";
 	super.executeQuery(str, sql);
 }
 
-public static void writeCSV(final App app, SqlRunner str, final java.awt.Frame frame, final String title, String idSql) throws Exception
+public static void writeCSV(final App app, SqlRunner str,
+String idSql, List<String> segmentTypes, final File outFile) throws Exception
 {
-	final SegmentationReport report = new SegmentationReport(str, app.getSqlTypeSet(), idSql);
+	final SegmentationReport report = new SegmentationReport(str, app.getSqlTypeSet(),
+		idSql, segmentTypes);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		citibob.reports.Reports rr = app.getReports();
-		rr.writeCSV(rr.format(report), frame, "Save"+title);
-//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report);	
+		rr.writeCSV(rr.format(report), outFile);
 	}});
 }
 
