@@ -17,6 +17,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miRecalcAllTuitionActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miApplyLateFees">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Apply Late Fees"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miApplyLateFeesActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="mStudent">
@@ -99,7 +107,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miStudentAccounts">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Student Accounts"/>
+                <Property name="text" type="java.lang.String" value="School Accounts Summary"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miStudentAccountsActionPerformed"/>

@@ -16,6 +16,7 @@ import citibob.swing.table.JTypeTableModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
+import java.util.Calendar;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import offstage.reports.AcctStatement;
@@ -96,6 +97,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         jMenuBar1 = new javax.swing.JMenuBar();
         mActions = new javax.swing.JMenu();
         miRecalcAllTuition = new javax.swing.JMenuItem();
+        miApplyLateFees = new javax.swing.JMenuItem();
         mStudent = new javax.swing.JMenu();
         miConfirmationLetter = new javax.swing.JMenuItem();
         miSchedule = new javax.swing.JMenuItem();
@@ -146,6 +148,17 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         });
 
         mActions.add(miRecalcAllTuition);
+
+        miApplyLateFees.setText("Apply Late Fees");
+        miApplyLateFees.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                miApplyLateFeesActionPerformed(evt);
+            }
+        });
+
+        mActions.add(miApplyLateFees);
 
         jMenuBar1.add(mActions);
 
@@ -243,7 +256,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
         mReports.add(jSeparator1);
 
-        miStudentAccounts.setText("Student Accounts");
+        miStudentAccounts.setText("School Accounts Summary");
         miStudentAccounts.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -264,6 +277,31 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+	private void miApplyLateFeesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miApplyLateFeesActionPerformed
+	{//GEN-HEADEREND:event_miApplyLateFeesActionPerformed
+		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			final LateFeesWizard wizard = new LateFeesWizard(fapp, SchoolFrame.this);
+			if (!wizard.runWizard("latefees")) return;
+			
+//			int termid = schoolModel.getTermID();
+//			Calendar cal = Calendar.getInstance(fapp.getTimeZone());
+//				cal.set(Calendar.HOUR_OF_DAY, 0);
+//				cal.set(Calendar.MINUTE, 0);
+//				cal.set(Calendar.SECOND, 0);
+//				cal.set(Calendar.MILLISECOND, 0);
+//				cal.add(Calendar.DAY_OF_MONTH, -30);
+System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
+			final SchoolAccounts rep = new SchoolAccounts(str, fapp.getTimeZone(), -1,
+				(java.util.Date)wizard.getVal("asofdate"), (Integer)wizard.getVal("latedays"));
+			str.execUpdate(new UpdRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				rep.applyLateFees(str, (Double)wizard.getVal("multiplier"));
+			}});
+		}});
+// TODO add your handling code here:
+	}//GEN-LAST:event_miApplyLateFeesActionPerformed
+
 	private void miConfirmationLetterActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miConfirmationLetterActionPerformed
 	{//GEN-HEADEREND:event_miConfirmationLetterActionPerformed
 		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
@@ -282,7 +320,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		public void run(SqlRunner str) throws Exception {
 			int termid = schoolModel.getTermID();
 			Integer payerid = (Integer)schoolModel.schoolRm.get("adultid");
-			AcctStatement.doAccountStatements(str, fapp, termid, payerid, new java.util.Date());
+			AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, payerid, new java.util.Date());
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miAccountStatementActionPerformed
@@ -302,7 +340,14 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = schoolModel.getTermID();
-			final SchoolAccounts rep = new SchoolAccounts(str, fapp.getTimeZone(), termid);
+//			Calendar cal = Calendar.getInstance(fapp.getTimeZone());
+//				cal.set(Calendar.HOUR_OF_DAY, 0);
+//				cal.set(Calendar.MINUTE, 0);
+//				cal.set(Calendar.SECOND, 0);
+//				cal.set(Calendar.MILLISECOND, 0);
+//				cal.add(Calendar.DAY_OF_MONTH, -30);
+			final SchoolAccounts rep = new SchoolAccounts(str, fapp.getTimeZone(),
+				termid, new java.util.Date(), 30);
 			str.execUpdate(new UpdRunnable() {
 			public void run(SqlRunner str) throws Exception {
 				Reports reports = fapp.getReports(); //new OffstageReports(fapp);
@@ -367,7 +412,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 			public void run(SqlRunner str) throws Exception
 			{
 				int termid = schoolModel.getTermID();
-				AcctStatement.doAccountStatements(str, fapp, termid, -1, new java.util.Date());
+				AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, -1, new java.util.Date());
 			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miAccountStatementsActionPerformed
@@ -425,6 +470,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
     private javax.swing.JMenu mStudent;
     private javax.swing.JMenuItem miAccountStatement;
     private javax.swing.JMenuItem miAccountStatements;
+    private javax.swing.JMenuItem miApplyLateFees;
     private javax.swing.JMenuItem miConfirmationLetter;
     private javax.swing.JMenuItem miConfirmationLetters;
     private javax.swing.JMenuItem miPayerLabels;

@@ -10,12 +10,12 @@
 package offstage.reports;
 
 import citibob.sql.*;
-import citibob.util.*;
 import java.sql.*;
 import java.util.*;
-import citibob.app.*;
-import citibob.types.*;
 import citibob.sql.pgsql.*;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import javax.swing.table.*;
 
 /**
@@ -60,6 +60,7 @@ static class Acct
 		this.firstname = firstname;
 	}
 	
+	/** @param termid current term */
 	public void addBill(Bill b, int termid)
 	{
 		if (b.termid == termid) {
@@ -122,31 +123,61 @@ static class Acct
 
 }
 // =================================================================
+TimeZone tz;
+SqlDate sqlDate;		// Used for reading date from database
+int lateDays;					// Apply late fee after # days late
+java.util.Date asOfDate;		// Apply late fee as of this date.
+//java.util.Date transCutoff;		// Don't accept payments after this date.  null: accept all payments
 
 /** Report result */
 public Map<String,Object> model;
-
-/** @param tz TimeZone used to read from database. */
-public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid)
+DefaultTableModel table;
+int unpaidLateCol;
+int entityidCol;
+// =================================================================
+/** @param tz TimeZone used to read from database.
+ @param xasOfDate Calculate late fees as of this date.  Don't list transactions after this date.  Any hours,min or sec are cleared.
+ @param xtransCutoff Don't list transactions after this date.  If null, list all transactions.
+ @param lateDays Something is late if it was billed before xlateAsOfDate - lateDays and is not yet paid.
+ */
+public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid,
+java.util.Date xasOfDate, int lateDays)
+//int xlateDays, java.util.Date xlateAsOf)
 {
-//	JType money = new SqlNumeric(10,2);
-//	JType string = new JavaJType(String.class);
-//	JType integer = new JavaJType(Integer.class);
-	final SqlDate sqlDate;		// Used for reading date from database
-	sqlDate = new SqlDate(tz, false);
+	this.lateDays = lateDays;
+	this.tz = tz;
 
+	// Calculate when a bill becomes late
+	Calendar cal = Calendar.getInstance(tz);
+		cal.setTime(xasOfDate);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+	this.asOfDate = cal.getTime();
+	cal.add(Calendar.DAY_OF_MONTH, -lateDays);
+	final java.util.Date lateCutoff = cal.getTime();
+	
+	sqlDate = new SqlDate(tz, false);
+	
 	String sql =
 		// rss[0]
-		" select ac.tableoid,klass.relname,ac.entityid, e.lastname, e.firstname, ac.date,ac.amount,ac.description,ac.actransid,-1 as termid" +
+		// Non-tuition transactions
+		" select ac.tableoid,klass.relname,ac.entityid, e.lastname, e.firstname," +
+		" ac.date,ac.amount,ac.description,ac.actransid,-1 as termid" +
 		" from actrans ac, pg_class klass, actypes, entities e" +
 		" where klass.oid = ac.tableoid" +
 		" and e.entityid = ac.entityid and not e.obsolete" +
-		" and ac.tableoid not in (select oid from pg_class where relname in ('tuitiontrans'))" +
-		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'" +
+		" and klass.relname <> 'tuitiontrans'" +
+		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
+		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		"   UNION" +
-		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, ac.date,ac.amount,ac.description,ac.actransid,ac.termid" +
+		// Tuition transactions
+		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, ac.date," +
+		" ac.amount,ac.description,ac.actransid,ac.termid" +
 		" from tuitiontrans ac, entities e" +
 		" where e.entityid = ac.entityid and not e.obsolete" +
+		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		" order by lastname,firstname,entityid,date,amount desc;\n" +
 		
 		// rss[1]
@@ -154,11 +185,14 @@ public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid)
 	str.execSql(sql, new RssRunnable() {
 	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
 		model = new TreeMap();
-		DefaultTableModel table = new DefaultTableModel(
+		table = new DefaultTableModel(
 			new String[] {"entityid", "lastname", "firstname", "totalbilled_term",
-				"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term","unpaid_all","overpay"},
+				"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term",
+				"unpaid_all","unpaid_late","overpay"},
 //			new JType[] {integer, string, string, money, money, money, money, money, money, money},
 			0);
+		unpaidLateCol = table.findColumn("unpaid_late");
+		entityidCol = table.findColumn("entityid");
 		model.put("rs", table);
 
 		List<Acct> accts = new ArrayList();
@@ -201,9 +235,11 @@ public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid)
 		for (Acct ac : accts) {
 			double unpaid_term = 0;
 			double unpaid_all = 0;
+			double unpaid_late = 0;
 			for (Bill b : ac.unpaid) {
 				if (b.termid == termid) unpaid_term += b.amountUnpaid;
 				unpaid_all += b.amountUnpaid;
+				if (b.dt.getTime() < lateCutoff.getTime()) unpaid_late += b.amountUnpaid;
 			}
 			table.addRow(new Object[] {
 				ac.entityid, ac.lastname, ac.firstname,
@@ -212,16 +248,45 @@ public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid)
 				(ac.totalbilled_term - unpaid_term - ac.rebates_term),
 				//(ac.rebates_term - ac.scholarship_term) + ", " +		// adj_term
 				ac.scholarship_term,
-				unpaid_term, unpaid_all, ac.overpay});
+				unpaid_term, unpaid_all, unpaid_late, ac.overpay});
 		}
 		
 		// Add miscellaneous stuff
-		rss[1].next();
-		model.put("sterm", rss[1].getString("name"));
-		model.put("date", new java.util.Date());
-		model.put("regfee", new Double(25));
+		if (rss[1].next()) {
+			model.put("sterm", rss[1].getString("name"));
+			model.put("date", new java.util.Date());
+			model.put("lateasofdate", new java.util.Date());
+			model.put("regfee", new Double(25));
+		} else {
+			// No extra model things needed, we're just doing
+			// this for internal late fees, not a report.
+		}
 	}});
 }
+
+public void applyLateFees(SqlRunner str, double multiplier)
+{
+	DateFormat dfmt = new SimpleDateFormat("MMM dd, yyyy");
+	NumberFormat nfmt = NumberFormat.getCurrencyInstance();
+	StringBuffer sql = new StringBuffer();
+	int nrow = table.getRowCount();
+	for (int i=0; i<nrow; ++i) {
+		int entityid = (Integer)table.getValueAt(i, entityidCol);
+		double unpaidLate = (Double)table.getValueAt(i, unpaidLateCol);
+		if (unpaidLate < 1.0D) continue;
+		double lateFee = unpaidLate * multiplier;
+		String description = "Late fee on " + lateDays + "-day overdue balance of " + nfmt.format(unpaidLate);
+		sql.append(
+			" insert into actrans (entityid, actypeid, date, amount, description, datecreated) values (" +
+			entityid + ",(select actypeid from actypes where name = 'school')," +
+			sqlDate.toSql(asOfDate) + "," + lateFee + "," +
+			SqlString.sql(description) + ",now());\n");
+	}
+	str.execSql(sql.toString());
+}
+
+
+
 
 //public static void main(String[] args) throws Exception
 //{

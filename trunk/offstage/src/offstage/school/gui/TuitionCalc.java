@@ -88,6 +88,8 @@ static class Student implements Comparable<Student>
 
 	// Calculated Stuff
 	double defaulttuition = 0;
+	double secProrate;				// Pro-rate multiplier for seconds per week of class
+	int sec;						// Seconds of week per class
 	double tuition = 0;				// Tuition we calculated
 	String tuitionDesc;				// Discription of our tuition for account
 	
@@ -107,17 +109,26 @@ static class Student implements Comparable<Student>
 		enrollments = new ArrayList(1);
 	}
 	public String toString() { return "Student(" + entityid + ", " + getName() + ")"; }
-	public double getPrice()
+	public double getProratedPrice()
 	{
 		double price = 0;
-		for (Enrollment e : enrollments) price += e.getPrice();
+		for (Enrollment e : enrollments) {
+			price += e.getPrice() * e.getProrate();
+System.out.println(entityid + "     : price += " + e.getPrice() + " * " + e.getProrate());
+		}
+System.out.println(entityid + ": price = " + price);
 		return price;
 	}
-	public int getSec()
+	public void setSec()
 	{
-		int sec = 0;
-		for (Enrollment e : enrollments) sec += e.getSec();
-		return sec;
+		sec = 0;
+		double psec = 0;		// Prorated # of seconds
+		for (Enrollment e : enrollments) {
+			int s = e.getSec();
+			sec += s;
+			psec += s * e.getProrate();
+		}
+		secProrate = psec / (double)sec;
 	}
 	public String getName() { return firstname + " " + lastname; }
 
@@ -145,7 +156,11 @@ static class Enrollment
 	Double price;		// Price of just this one course
 	int locationid;		// Where the course is held
 	
-	public Enrollment(ResultSet rs, SqlDate date) throws SQLException
+	// Calculated
+	private double prorate;		// Pro-rating fraction
+	public double getProrate() { return prorate; }
+	
+	public Enrollment(ResultSet rs, SqlDate date, Map<Integer,Course> courses) throws SQLException
 	{
 		entityid = rs.getInt("entityid");
 		courseid = rs.getInt("courseid");
@@ -155,8 +170,12 @@ static class Enrollment
 		tnextMS = (int)time.get(rs, "tnext").getTime();
 		price = (Double)money.get(rs, "price");
 		locationid = rs.getInt("locationid");
+		
+		Course course = courses.get(courseid);
+		prorate = (course == null ? 1.0D :
+			(double)course.numMeetings(dstart,dend) / (double)course.numMeetings());
 	}
-	
+
 	public double getPrice()
 	{
 		if (price == null) return 0;
@@ -164,26 +183,65 @@ static class Enrollment
 	}
 	public int getSec()
 	{
-		if (price == null) return (tnextMS - tstartMS) / 1000;
-		return 0;
+		if (price != null) return 0;
+		return (tnextMS - tstartMS) / 1000;
 	}
 }
 
-/** A line in the account */
-private static class TuitionRec implements Comparable<TuitionRec>
+static class Course
 {
-	Student student;
-	double defaulttuition;		// Calculated tuition
-	double tuition;			// Actual tuition (could be from override)
-	String description;		// How we describe this in account
-	public int compareTo(TuitionRec o) {
-		double d = o.tuition - tuition;		// Sort descending
-		if (d > 0) return 1;
-		if (d < 0) return -1;
-		return 0;
+	int courseid;
+	List<Meeting> meetings;
+	/** Full number of meetings in course */
+	public int numMeetings() { return meetings.size(); }
+	
+	/** Finds number of meetings >=dstart and <=dend.  dstart and dend are dates ONLY,
+	 they have no time component. */
+	public int numMeetings(java.util.Date dstart, java.util.Date dend)
+	{
+		int n = 0;
+		if (dstart != null && dend != null) {
+			long startMS = dstart.getTime();
+			long nextMS = dend.getTime() + 86400*1000L;
+			for (Meeting mm : meetings) {
+				long ms = mm.dtstart.getTime();
+				if (ms >= startMS && ms < nextMS) ++n;
+			}
+		} else if (dstart != null) {
+			long startMS = dstart.getTime();
+			for (Meeting mm : meetings) {
+				long ms = mm.dtstart.getTime();
+				if (ms >= startMS) ++n;
+			}
+		} else if (dend != null) {
+			long nextMS = dend.getTime() + 86400*1000L;
+			for (Meeting mm : meetings) {
+				long ms = mm.dtstart.getTime();
+				if (ms < nextMS) ++n;
+			}
+		} else {
+			n = numMeetings();
+		}
+		return n;
+	}
+	public Course(int courseid)
+	{
+		this.courseid = courseid;
+		meetings = new LinkedList();
 	}
 }
+Map<Integer,Course> courses;
 
+static class Meeting
+{
+	java.util.Date dtstart;
+	java.util.Date dtnext;
+	public Meeting(ResultSet rs, SqlDate date) throws SQLException
+	{
+		dtstart = date.get(rs, "dtstart");
+		dtnext = date.get(rs, "dtnext");
+	}
+}
 // ==========================================================================
 int termid;
 String payerIdSql;
@@ -280,7 +338,22 @@ void readTuitionData(SqlRunner str)
 		" and _students.entityid = tr.entityid\n" +
 		" and _students.entityid = e.entityid;\n" +
 
-		// rss[4]: Enrollments
+		// Set up list of courses
+		" create temporary table _courses (courseid int);\n" +
+		" insert into _courses" +
+		"   select distinct c.courseid\n" +
+		"   from _students, enrollments en, courseids c\n" +
+		"   where _students.entityid = en.entityid" +
+		"   and en.courseid = c.courseid" +
+		"   and c.termid = " + SqlInteger.sql(termid) + ";\n" +
+		
+		// rss[4]: Meetings (for pro-rating)
+		" select m.courseid,dtstart,dtnext" +
+		" from meetings m, _courses" +
+		" where m.courseid = _courses.courseid\n" +
+		" order by m.courseid,m.dtstart;\n" +
+
+		// rss[5]: Enrollments
 		" select _students.entityid, en.dstart, en.dend, c.*\n" +
 		" from _students, enrollments en, courseids c, courseroles cr" +
 		" where _students.entityid = en.entityid" +
@@ -288,9 +361,11 @@ void readTuitionData(SqlRunner str)
 		" and c.termid = " + SqlInteger.sql(termid) +
 		" and en.courserole = cr.courseroleid and cr.name = 'student';\n" +
 //		" order by st.entityid, c.dayofweek, c.tstart;\n" + 
-		
+
+
 		// Drop temporary tables
 		" drop table _payers;" +
+		" drop table _courses;" +
 		" drop table _students;";
 	str.execSql(sql, new RssRunnable() {
 	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet[] rss) throws Exception {
@@ -327,10 +402,23 @@ void readTuitionData(SqlRunner str)
 			students.put(ss.entityid, ss);
 		}
 		
-		// rss[4]: Enrollments
+		// rss[4]: Meetings
 		rs = rss[4];
+		courses = new TreeMap();
 		while (rs.next()) {
-			Enrollment ee = new Enrollment(rs, date);
+			int courseid = rs.getInt("courseid");
+			Course course = courses.get(courseid);
+			if (course == null) {
+				course = new Course(courseid);
+				courses.put(courseid, course);
+			}
+			course.meetings.add(new Meeting(rs, date));
+		}
+		
+		// rss[5]: Enrollments
+		rs = rss[5];
+		while (rs.next()) {
+			Enrollment ee = new Enrollment(rs, date, courses);
 			Student ss = students.get(ee.entityid);
 			if (ss != null) ss.enrollments.add(ee);
 		}
@@ -437,7 +525,6 @@ double getRegistrationFee() { return 25; }
 /** Changes the student records inside payer.students */
 void calcTuition(Payer payer)
 {
-	List<TuitionRec> trs = new ArrayList(payer.students.size());
 	for (Student ss : payer.students) {
 		// Get the tuition...
 		ss.defaulttuition = calcTuition(ss);
@@ -470,14 +557,10 @@ System.out.println("student: " + ss + ", tuition=" + ss.tuition);
 
 /** Returns the (one) tuition number for a particular student. */
 double calcTuition(Student ss)
-{	
-	int sec = ss.getSec();			// Price goes by time
-	double price = ss.getPrice();		// Non-timed items
-	
-	double tuition = getPrice(sec) + price;
-	
-	// Apply pro-rating here
-	
+{
+	ss.setSec();
+	double price = ss.getProratedPrice();		// Non-timed items	
+	double tuition = getPrice(ss.sec) * ss.secProrate + price;
 	return tuition;
 }
 

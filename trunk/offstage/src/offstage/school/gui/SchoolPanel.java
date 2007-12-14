@@ -465,10 +465,23 @@ public void refreshAccount(SqlRunner str) // throws SQLException
 	
 	// Set up account balance
 	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
-	DB.r_acct_balance("bal", str, actransDb.getIntKey(), ActransSchema.AC_SCHOOL,
-	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
-		acbal.setValue(str.get("bal"));
+	int entityid = actransDb.getIntKey();
+	String sql =
+		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", ActransSchema.AC_SCHOOL) +
+		" select bal from _bal;\n" +
+		" drop table _bal;";
+	str.execSql(sql, new RsRunnable() {
+	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+		rs.next();
+		acbal.setValue(rs.getDouble(1));
 	}});
+	
+//	
+//	
+//	DB.r_acct_balance("bal", str, , ,
+//	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
+//		acbal.setValue(str.get("bal"));
+//	}});
 }
 
 //void termChanged(SqlRunner str) throws SQLException

@@ -26,22 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
-import citibob.sql.AdhocOJSqlTableModel;
-import offstage.*;
 import citibob.app.*;
 import java.sql.*;
-import citibob.jschema.*;
-import citibob.swing.table.*;
-import citibob.multithread.*;
 import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
+import citibob.reports.Reports;
 import static citibob.sql.RSTableModel.Col;
-import java.util.*;
-import citibob.swing.typed.*;
 import citibob.sql.*;
-import offstage.db.*;
-import citibob.sql.pgsql.*;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.*;
 
 /**
  
@@ -168,7 +158,18 @@ public static String getSql(String idSql)
 		" drop table _mailings;";
 	return sql;
 }
-	
+
+public static void viewReport(SqlRunner str, final App app, String idSql)
+{
+	String sql = LabelReport.getSql(idSql);
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		Reports rr = app.getReports();
+		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
+	}});
+}
+
+
 //public static void main(String[] args) throws Exception
 //{
 //	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();

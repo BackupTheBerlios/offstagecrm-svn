@@ -10,13 +10,8 @@
 package offstage.reports;
 
 import citibob.reports.*;
-import com.artofsolving.jodconverter.*;
-import com.artofsolving.jodconverter.openoffice.connection.*;
-import com.artofsolving.jodconverter.openoffice.converter.*;
-import net.sf.jooreports.templates.*;
 import java.io.*;
 import java.util.*;
-import com.pdfhacks.*;
 import citibob.sql.pgsql.*;
 import java.sql.*;
 import offstage.*;
@@ -24,12 +19,10 @@ import citibob.sql.*;
 import citibob.swing.table.*;
 import citibob.text.*;
 import citibob.app.*;
-import citibob.jschema.*;
 import offstage.schema.*;
-import citibob.swing.typed.*;
 import java.text.*;
-import offstage.reports.*;
 import citibob.types.*;
+import offstage.accounts.gui.AccountsDB;
 
 /**
  *
@@ -55,16 +48,18 @@ private Map<Integer,String> studentNames;
      * @throws java.sql.SQLException 
      *
      */
-void getStudentNames(SqlRunner str, App app, int termid, int payerid)
+void getStudentNames(SqlRunner str, App app, int termid, String payerIdSql)
 //throws SQLException
 {
 	String sql =
 		" select es.adultid, p.lastname, p.firstname" +
 		" from persons p, entities_school es\n" +
+		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
 		" where p.entityid = es.entityid\n" +
 		" and es.entityid <> es.adultid" +
 //		" and tr.termid = " + SqlInteger.sql(termid) +
-		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
+//		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
+		(payerIdSql == null ? "" : " and es.adultid = xx.id") +
 		" order by es.adultid";
 System.out.println("sql");
 	final RSTableModel mod = new RSTableModel(app.getSqlTypeSet());
@@ -94,14 +89,20 @@ System.out.println("sql");
 	}});
 }
 
-/* @param str Stores result under "models" List<HashMap<String,Object>> */
-//public static void makeJodModels(
+///* @param str Stores result under "models" List<HashMap<String,Object>> */
+////public static void makeJodModels(
+//public AcctStatement(
+//SqlRunner str, final App app,
+//int termid, int payerid, final java.util.Date today)
+//{
+//	this(str, app, termid, payerid < 0 ? null : "select " + payerid + " as id", today);
+//}
 public AcctStatement(
 SqlRunner str, final App app,
-int termid, int payerid, final java.util.Date today)
+int termid, String payerIdSql, final java.util.Date today)
 {
 	// Fetch name of students in family
-	getStudentNames(str, app, termid, payerid);
+	getStudentNames(str, app, termid, payerIdSql);
 	
 	// Fetch main stuff
 	int actypeid = ActransSchema.AC_SCHOOL;
@@ -113,9 +114,10 @@ int termid, int payerid, final java.util.Date today)
 //		" case when p.orgname is null then '' else ' (' || p.orgname || ')' end) as name" +
 //		p.firstname || ' ' || p.lastname as payername" +
 		" from actrans act, persons p" +		// p is payer
+		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
 		" where act.entityid = p.entityid" +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
-		(payerid < 0 ? "" : " and act.entityid = " + SqlInteger.sql(payerid)) +
+		(payerIdSql == null ? "" : " and act.entityid = xx.id") +
 //		" and act.termid = " + SqlInteger.sql(termid) + "\n" +
 		" order by p.lastname, p.firstname, act.entityid, act.date, act.actransid";
 	final RSTableModel rsmod = new RSTableModel(app.getSqlTypeSet());
@@ -257,11 +259,27 @@ int termid, int payerid, final java.util.Date today)
 		// str.put("models", models);
 	}});
 }
-public static void doAccountStatements(SqlRunner str, final FrontApp fapp, int termid, int payerid, java.util.Date dt)
+public static void doAccountStatementsAndLabels(SqlRunner str, final FrontApp fapp,
+	int termid, int payerid, java.util.Date dt)
 throws Exception
 {
 	if (dt == null) dt = new java.util.Date();
-	final AcctStatement rep = new AcctStatement(str, fapp, termid, payerid, fapp.sqlDate.truncate(dt));
+	String idSql;
+	if (payerid < 0) {
+		str.execSql(AccountsDB.w_tmp_acct_balance_sql(null, ActransSchema.AC_SCHOOL));
+		idSql = " select e.entityid as id" +
+			" from _bal, entities e" +
+			" where _bal.entityid = e.entityid" +
+			" and bal <> 0" +
+			" order by e.lastname, e.firstname";
+		LabelReport.viewReport(str, fapp, idSql);
+	} else {
+		idSql = "select " + payerid + " as id";
+	}
+
+	// Only generate statements with non-zero balances
+	final AcctStatement rep = new AcctStatement(str, fapp, termid, idSql,
+		fapp.sqlDate.truncate(dt));
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		//List models = (List)str.get("models");
@@ -269,6 +287,9 @@ throws Exception
 		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", null);
 		reports.viewPdf(f);
 	}});
+	if (payerid < 0) {
+		str.execSql("drop table _bal");
+	}
 }
 //public static void main(String[] args) throws Exception
 //{
@@ -304,7 +325,7 @@ public static void main(String[] args) throws Exception
 
 	SqlBatchSet str = new SqlBatchSet();
 	int termid = 346;
-	AcctStatement.doAccountStatements(str, fapp, termid, 12633, new java.util.Date());
+	AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, 12633, new java.util.Date());
 	str.runBatches(pool);
 }
 // ================================================================

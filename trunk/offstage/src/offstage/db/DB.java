@@ -367,51 +367,54 @@ public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 //	return rs;
 }
 // -------------------------------------------------------------------------------
-public static void r_acct_balance(final String retVar, SqlRunner str,
-final int entityid, final int actypeid, final UpdRunnable rr)
-//throws SQLException
-{
-	String sql;
-	
-	// Figure out latest balance
-	sql =
-		" select dtime, bal from acbal" +
-		" where entityid = " + SqlInteger.sql(entityid) +
-		" and actypeid = " + SqlInteger.sql(actypeid) +
-		" order by dtime desc";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		double bal = 0;
-		String sdtime = null;
-		if (rs.next()) {
-			bal = rs.getDouble("bal");
-			sdtime = rs.getString("dtime");
-		}
-		rs.close();
-		final double fbal = bal;
-		
-		// Get transactions since then
-		String sql =
-			" select sum(amount) from actrans" +
-			" where entityid = " + SqlInteger.sql(entityid) +
-			" and actypeid = " + SqlInteger.sql(actypeid) +
-			(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
-		str.execSql(sql, new RsRunnable() {
-		public void run(SqlRunner str, ResultSet rs) throws Exception {
-			rs.next();
-			double bal = fbal + rs.getDouble(1);
-			str.put(retVar, bal);
-			rr.run(str);
-		}});
-	}});
+
+// -------------------------------------------------------------------------------
+//public static void r_acct_balance(final String retVar, SqlRunner str,
+//final int entityid, final int actypeid, final UpdRunnable rr)
+////throws SQLException
+//{
+//	String sql;
 //	
-//	rs = st.executeQuery(sql);
-//	rs.next();
-//	bal += rs.getDouble(1);
-//	rs.close();
-//	
-//	return bal;
-}
+//	// TODO: We can do this in one round trip with a temporary table!!!
+//	// Figure out latest balance
+//	sql =
+//		" select dtime, bal from acbal" +
+//		" where entityid = " + SqlInteger.sql(entityid) +
+//		" and actypeid = " + SqlInteger.sql(actypeid) +
+//		" order by dtime desc";
+//	str.execSql(sql, new RsRunnable() {
+//	public void run(SqlRunner str, ResultSet rs) throws Exception {
+//		double bal = 0;
+//		String sdtime = null;
+//		if (rs.next()) {
+//			bal = rs.getDouble("bal");
+//			sdtime = rs.getString("dtime");
+//		}
+//		rs.close();
+//		final double fbal = bal;
+//		
+//		// Get transactions since then
+//		String sql =
+//			" select sum(amount) from actrans" +
+//			" where entityid = " + SqlInteger.sql(entityid) +
+//			" and actypeid = " + SqlInteger.sql(actypeid) +
+//			(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
+//		str.execSql(sql, new RsRunnable() {
+//		public void run(SqlRunner str, ResultSet rs) throws Exception {
+//			rs.next();
+//			double bal = fbal + rs.getDouble(1);
+//			str.put(retVar, bal);
+//			rr.run(str);
+//		}});
+//	}});
+////	
+////	rs = st.executeQuery(sql);
+////	rs.next();
+////	bal += rs.getDouble(1);
+////	rs.close();
+////	
+////	return bal;
+//}
 // -------------------------------------------------------------------------------
 public static void w_meetings_autofill(SqlRunner str,
 final int courseid, final TimeZone tz, final UpdRunnable rr)
@@ -524,6 +527,8 @@ public static String simpleSearchSql(String text)
 		return idSql;
 	}
 }
+
+
 }
 
 
