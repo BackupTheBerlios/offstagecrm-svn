@@ -61,7 +61,7 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 
 	final JTypedLabel npayments = new JTypedLabel(Integer.class, "#");
 //	npayments.setJType(Integer.class, "#");
-	addWidget("npayments", npayments);
+	addComponent("npayments", npayments);
 	
 	// Populate npayments
 	String sql =

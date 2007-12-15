@@ -64,8 +64,9 @@ class AllDbModel extends MultiDbModel
 
 			smod.parentDm.doSelect(str);
 			smod.parent2Dm.doSelect(str);
-			Integer pid = (Integer)smod.studentRm.get("primaryentityid");
-			familyTable.setPrimaryEntityID(str, pid);
+//			Integer pid = (Integer)smod.studentRm.get("primaryentityid");
+			Integer payerid = (Integer)smod.schoolRm.get("adultid");
+			familyTable.setPrimaryEntityID(str, payerid);
 			smod.payerDm.doSelect(str);
 			enrolledDb.doSelect(str);
 			studentDirty = false;
@@ -649,6 +650,9 @@ void setIDDirty(boolean dirty)
         jPanel14 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         acbal = new citibob.swing.typed.JTypedLabel();
+        jTabbedPane6 = new javax.swing.JTabbedPane();
+        FamilyScrollPanel = new javax.swing.JScrollPane();
+        familyTable = new offstage.school.gui.SchoolFamilySelectorTable();
         jPanel19 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         ObsoleteStuff = new javax.swing.JPanel();
@@ -668,8 +672,6 @@ void setIDDirty(boolean dirty)
         jPanel8 = new javax.swing.JPanel();
         householdPhonePanel = new offstage.gui.GroupPanel();
         jPanel9 = new javax.swing.JPanel();
-        FamilyScrollPanel = new javax.swing.JScrollPane();
-        familyTable = new offstage.swing.typed.FamilySelectorTable();
         jPanel10 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
@@ -1668,7 +1670,7 @@ void setIDDirty(boolean dirty)
         StudentTab.addTab("Student", StudentPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -1784,6 +1786,28 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         StudentAccounts.add(AccountTab, gridBagConstraints);
+
+        familyTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][]
+            {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String []
+            {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        FamilyScrollPanel.setViewportView(familyTable);
+
+        jTabbedPane6.addTab("Payer Group", FamilyScrollPanel);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        StudentAccounts.add(jTabbedPane6, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1918,30 +1942,15 @@ void setIDDirty(boolean dirty)
         );
         jTabbedPane3.addTab("Phone", jPanel8);
 
-        familyTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][]
-            {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String []
-            {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        FamilyScrollPanel.setViewportView(familyTable);
-
         org.jdesktop.layout.GroupLayout jPanel9Layout = new org.jdesktop.layout.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(FamilyScrollPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .add(0, 143, Short.MAX_VALUE)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(FamilyScrollPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .add(0, 2520, Short.MAX_VALUE)
         );
         jTabbedPane3.addTab("Family", jPanel9);
 
@@ -1985,7 +1994,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(2438, Short.MAX_VALUE))
+                .addContainerGap(2486, Short.MAX_VALUE))
         );
         jTabbedPane3.addTab("Misc.", jPanel10);
 
@@ -2405,6 +2414,7 @@ void setIDDirty(boolean dirty)
 
         RegistrationsTab.add(jPanel20, java.awt.BorderLayout.CENTER);
 
+        searchBox.setAutoSelectOnOne(true);
         searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
         searchBox.setPreferredSize(new java.awt.Dimension(200, 89));
         RegistrationsTab.add(searchBox, java.awt.BorderLayout.EAST);
@@ -2588,7 +2598,14 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 	// TODO: We should really append all into one batch for maximum parallelism
 	// (meaning: one chained bach of two steps.  Won't make much difference.)
 //	SqlBatchSet str0 = new SqlBatchSet();
-	all.doUpdate(str);
+	
+	// This update requires more than one round.  Ensure that all
+	// updates are complete before querying select.  We could solve
+	// this problem by putting the tuition update code in a stored procedure.
+	fapp.pushBatchSet();
+	all.doUpdate(fapp.getBatchSet());
+	fapp.popBatchSet();
+	
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 //	str0.runBatches(fapp.getPool());
@@ -2731,7 +2748,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private citibob.swing.typed.JTypedTextField entityid1;
     private citibob.swing.typed.JTypedTextField entityid2;
     private citibob.swing.typed.JTypedTextField entityid3;
-    private offstage.swing.typed.FamilySelectorTable familyTable;
+    private offstage.school.gui.SchoolFamilySelectorTable familyTable;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.JTypedTextField firstname1;
     private citibob.swing.typed.JTypedTextField firstname2;
@@ -2797,6 +2814,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTabbedPane jTabbedPane5;
+    private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JToolBar jToolBar1;
     private citibob.swing.typed.JTypedLabel lDtregistered;
     private citibob.swing.typed.JTypedLabel lEntityID;

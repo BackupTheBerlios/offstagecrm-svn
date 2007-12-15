@@ -59,6 +59,10 @@ public EntityIDDBFormat(TextTypedWidget tw)
 	
 public void setDisplayValue(SqlRunner str, final Object value)
 {
+	if (value == null) {
+		tw.setDisplayValue(null, "");
+		return;
+	}
 	String sql =
 		" select " +
 			" (case when firstname is null then '' else firstname || ' ' end ||" +

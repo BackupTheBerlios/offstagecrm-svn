@@ -78,7 +78,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	kmodel.addItem(null, "<No Interest Specified>");
 	JKeyedComboBox interests = new JKeyedComboBox(kmodel);
 	interests.setValue(null);
-	addWidget("interestid", interests);
+	addComponent("interestid", interests);
 
 	loadHtml();
 }

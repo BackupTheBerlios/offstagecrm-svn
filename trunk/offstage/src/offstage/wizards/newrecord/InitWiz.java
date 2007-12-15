@@ -55,11 +55,11 @@ throws org.xml.sax.SAXException, java.io.IOException
 	b = new JRadioButton("Person");
 		b.setOpaque(false);
 		type.add("person", b);
-		addWidget("person", b);
+		addComponent("person", b);
 	b = new JRadioButton("Organization");
 		b.setOpaque(false);
 		type.add("organization", b);
-		addWidget("organization", b);
+		addComponent("organization", b);
 	html.getMap().put("type", type);
 	
 	loadHtml();

@@ -127,8 +127,11 @@ System.out.println(entityid + ": price = " + price);
 			int s = e.getSec();
 			sec += s;
 			psec += s * e.getProrate();
+System.out.println(entityid + "     : sec += " + e.getSec() + " * " + e.getProrate());
 		}
-		secProrate = psec / (double)sec;
+System.out.println(entityid + ": sec = " + sec + " " + psec);
+		secProrate = (double)psec / (double)sec;
+		if (Double.isNaN(secProrate)) secProrate = 1.0D;	// 0/0 = 1 in this case.
 	}
 	public String getName() { return firstname + " " + lastname; }
 
@@ -307,8 +310,10 @@ void readTuitionData(SqlRunner str)
 		" create temporary table _students (entityid int);\n" +
 		" insert into _students\n" +
 		" select distinct es.entityid\n" +
-		" from entities_school es, _payers\n" +
-		" where es.adultid = _payers.entityid;\n" +
+		" from entities_school es, entities e, _payers\n" +
+		" where es.adultid = _payers.entityid\n" +
+		" and e.entityid = es.entityid\n" +
+		" and not e.obsolete;\n" +
 		
 		// Delete previous tuition records in account
 		" delete from tuitiontrans using _payers" +
@@ -326,8 +331,9 @@ void readTuitionData(SqlRunner str)
 		" select e.entityid, e.isorg,\n" +
 		" (case when es.billingtype is null then 'y' else es.billingtype end) as billingtype\n" +
 		" from entities e left outer join entities_school es on (e.entityid = es.entityid), _payers" +
-		" where _payers.entityid = e.entityid;\n" +
-
+		" where _payers.entityid = e.entityid\n" +
+		" and not e.obsolete;\n" +
+		
 		// rss[3]: Students
 		" select _students.entityid, es.adultid as payerid, e.lastname, e.firstname,\n" +
 		" tr.scholarship, tr.tuition, tr.defaulttuition, tr.tuitionoverride\n" +
@@ -336,8 +342,9 @@ void readTuitionData(SqlRunner str)
 		"     termregs tr\n" +
 		" where tr.groupid = " + SqlInteger.sql(termid) + "\n" +
 		" and _students.entityid = tr.entityid\n" +
-		" and _students.entityid = e.entityid;\n" +
-
+		" and _students.entityid = e.entityid\n" +
+		" and not e.obsolete;\n" +
+		
 		// Set up list of courses
 		" create temporary table _courses (courseid int);\n" +
 		" insert into _courses" +
@@ -528,6 +535,9 @@ void calcTuition(Payer payer)
 	for (Student ss : payer.students) {
 		// Get the tuition...
 		ss.defaulttuition = calcTuition(ss);
+if (Double.isNaN(ss.defaulttuition)) {
+			System.out.println("hoi");
+}
 		if (ss.tuitionoverride != null) {
 			// Manual override of tuition --- just set it
 			ss.tuition = ss.tuitionoverride;

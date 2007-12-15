@@ -45,6 +45,8 @@ public class EntitySelector extends citibob.swing.typed.JTypedPanel {
 // searchResultsTable is the main "sub widget", whose value change events get reported in JTypedPanel
 citibob.app.App app;
 
+private boolean autoSelectOnOne = false;		// If true, auto-select if we get only one element in our search results
+
 /** Creates new form SimpleSearchPanel */
 public EntitySelector() {
 	initComponents();
@@ -95,7 +97,7 @@ public void setSearch(SqlRunner str, String text)
 		searchResultsTable.executeQuery(str, idSql, null);
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			if (searchResultsTable.getModel().getRowCount() == 1) {
+			if (searchResultsTable.getModel().getRowCount() == 1 && isAutoSelectOnOne()) {
 				searchResultsTable.setRowSelectionInterval(0,0);	// Auto-select the one item; Should fire an event...
 			}
 		}});
@@ -217,6 +219,16 @@ public static void main(String[] args) throws Exception
 	frame.pack();
 	frame.setVisible(true);
 }
+
+	public boolean isAutoSelectOnOne()
+	{
+		return autoSelectOnOne;
+	}
+
+	public void setAutoSelectOnOne(boolean autoSelectOnOne)
+	{
+		this.autoSelectOnOne = autoSelectOnOne;
+	}
 
 	
 }

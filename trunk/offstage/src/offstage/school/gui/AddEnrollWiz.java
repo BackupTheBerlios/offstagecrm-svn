@@ -49,7 +49,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, "New Org Record", app.getSwingerMap(), true);
 	setSize(600,460);
-	addWidget("sperson", new JTypedLabel((String)v.get("sperson")));
+	addComponent("sperson", new JTypedLabel((String)v.get("sperson")));
 //	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));
 	
 //	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
@@ -67,12 +67,12 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	str.execSql(sql, new RsRunnable() {
 	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
-		addWidget("sterm", new JTypedLabel(rs.getString("name")));	
+		addComponent("sterm", new JTypedLabel(rs.getString("name")));	
 	}});
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		addWidget("courserole", new JKeyedComboBox(crModel));
-		addWidget("courseid", new JKeyedComboBox(cModel));
+		addComponent("courserole", new JKeyedComboBox(crModel));
+		addComponent("courseid", new JKeyedComboBox(cModel));
 		loadHtml();
 	}});	
 

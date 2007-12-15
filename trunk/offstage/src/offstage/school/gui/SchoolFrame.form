@@ -81,7 +81,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miAccountStatements">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Account Statements"/>
+                <Property name="text" type="java.lang.String" value="Acct Statements &amp; Labels"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miAccountStatementsActionPerformed"/>
@@ -90,6 +90,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="miPayerLabels">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Parent/Payer Lables"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miPayerLabelsActionPerformed"/>

@@ -1325,7 +1325,7 @@
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-                                      <GridBagConstraints gridX="1" gridY="0" gridWidth="1" gridHeight="1" fill="3" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
+                                      <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="3" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="17" weightX="0.0" weightY="0.0"/>
                                     </Constraint>
                                   </Constraints>
 
@@ -1650,6 +1650,42 @@
                                     </Container>
                                   </SubComponents>
                                 </Container>
+                                <Container class="javax.swing.JTabbedPane" name="jTabbedPane6">
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                                      <GridBagConstraints gridX="-1" gridY="-1" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="1.0" weightY="0.0"/>
+                                    </Constraint>
+                                  </Constraints>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+                                  <SubComponents>
+                                    <Container class="javax.swing.JScrollPane" name="FamilyScrollPanel">
+                                      <Constraints>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                          <JTabbedPaneConstraints tabName="Payer Group">
+                                            <Property name="tabTitle" type="java.lang.String" value="Payer Group"/>
+                                          </JTabbedPaneConstraints>
+                                        </Constraint>
+                                      </Constraints>
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                      <SubComponents>
+                                        <Component class="offstage.school.gui.SchoolFamilySelectorTable" name="familyTable">
+                                          <Properties>
+                                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                              <Table columnCount="4" rowCount="4">
+                                                <Column editable="true" title="Title 1" type="java.lang.Object"/>
+                                                <Column editable="true" title="Title 2" type="java.lang.Object"/>
+                                                <Column editable="true" title="Title 3" type="java.lang.Object"/>
+                                                <Column editable="true" title="Title 4" type="java.lang.Object"/>
+                                              </Table>
+                                            </Property>
+                                          </Properties>
+                                        </Component>
+                                      </SubComponents>
+                                    </Container>
+                                  </SubComponents>
+                                </Container>
                               </SubComponents>
                             </Container>
                           </SubComponents>
@@ -1858,35 +1894,15 @@
                                   <Layout>
                                     <DimensionLayout dim="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="FamilyScrollPanel" alignment="0" pref="0" max="32767" attributes="0"/>
+                                          <EmptySpace min="0" pref="143" max="32767" attributes="0"/>
                                       </Group>
                                     </DimensionLayout>
                                     <DimensionLayout dim="1">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="FamilyScrollPanel" alignment="0" pref="0" max="32767" attributes="0"/>
+                                          <EmptySpace min="0" pref="2520" max="32767" attributes="0"/>
                                       </Group>
                                     </DimensionLayout>
                                   </Layout>
-                                  <SubComponents>
-                                    <Container class="javax.swing.JScrollPane" name="FamilyScrollPanel">
-
-                                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                                      <SubComponents>
-                                        <Component class="offstage.swing.typed.FamilySelectorTable" name="familyTable">
-                                          <Properties>
-                                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                              <Table columnCount="4" rowCount="4">
-                                                <Column editable="true" title="Title 1" type="java.lang.Object"/>
-                                                <Column editable="true" title="Title 2" type="java.lang.Object"/>
-                                                <Column editable="true" title="Title 3" type="java.lang.Object"/>
-                                                <Column editable="true" title="Title 4" type="java.lang.Object"/>
-                                              </Table>
-                                            </Property>
-                                          </Properties>
-                                        </Component>
-                                      </SubComponents>
-                                    </Container>
-                                  </SubComponents>
                                 </Container>
                                 <Container class="javax.swing.JPanel" name="jPanel10">
                                   <Constraints>
@@ -1907,7 +1923,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jPanel11" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace pref="2438" max="32767" attributes="0"/>
+                                              <EmptySpace pref="2486" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
@@ -2467,6 +2483,7 @@
             </Container>
             <Component class="offstage.swing.typed.EntitySelector" name="searchBox">
               <Properties>
+                <Property name="autoSelectOnOne" type="boolean" value="true"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[200, 47]"/>
                 </Property>

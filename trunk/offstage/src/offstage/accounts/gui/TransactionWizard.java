@@ -149,7 +149,7 @@ addState(new AbstractWizState("ccpayment", null, null) {
 	{
 		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;
 //		cwiz.getWidget("ccchooser")
-		CCChooser cc = (CCChooser)cwiz.getWidget("ccchooser");
+		CCChooser cc = (CCChooser)cwiz.getComponent("ccchooser");
 		// TODO: Log change to credit card # on file (or should I?)
 		cc.saveNewCardIfNeeded(con.str);
 		

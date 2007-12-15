@@ -59,7 +59,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	str.execSql(sql, new RsRunnable() {
 	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
-		addWidget("name", new JTypedLabel(rs.getString("name")));	
+		addComponent("name", new JTypedLabel(rs.getString("name")));	
 		loadHtml();
 	}});	
 }

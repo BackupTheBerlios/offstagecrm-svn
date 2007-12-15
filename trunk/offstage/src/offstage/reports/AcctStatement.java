@@ -53,11 +53,13 @@ void getStudentNames(SqlRunner str, App app, int termid, String payerIdSql)
 {
 	String sql =
 		" select es.adultid, p.lastname, p.firstname" +
-		" from persons p, entities_school es\n" +
+		" from persons p, entities_school es, termregs tr\n" +
 		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
 		" where p.entityid = es.entityid\n" +
-		" and es.entityid <> es.adultid" +
-//		" and tr.termid = " + SqlInteger.sql(termid) +
+//		" and es.entityid <> es.adultid" +
+		" and tr.entityid = es.entityid" +
+		" and tr.groupid = " + SqlInteger.sql(termid) +
+		" and tr.tuition <> 0" +
 //		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
 		(payerIdSql == null ? "" : " and es.adultid = xx.id") +
 		" order by es.adultid";

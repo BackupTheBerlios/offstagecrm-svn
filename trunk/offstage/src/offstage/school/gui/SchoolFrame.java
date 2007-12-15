@@ -221,7 +221,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
         mReports.add(miStudentSchedules);
 
-        miAccountStatements.setText("Account Statements");
+        miAccountStatements.setText("Acct Statements & Labels");
         miAccountStatements.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -233,6 +233,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         mReports.add(miAccountStatements);
 
         miPayerLabels.setText("Parent/Payer Lables");
+        miPayerLabels.setEnabled(false);
         miPayerLabels.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)

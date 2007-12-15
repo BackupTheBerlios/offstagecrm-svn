@@ -61,7 +61,7 @@ public void initRuntime(citibob.app.App app) //SqlRunner str, FullEntityDbModel 
 }
 
 /** Re-query */
-void executeQuery(SqlRunner str, final String idSql, String orderBy)// throws SQLException
+protected void executeQuery(SqlRunner str, final String idSql, String orderBy)// throws SQLException
 {
 	searchResults.executeQuery(str, idSql, orderBy);
 }

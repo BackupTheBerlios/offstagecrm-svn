@@ -68,9 +68,9 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	latedays.setValue(30);
 	multiplier.setValue(.015D);
 		
-	addTypedWidget("latedays", latedays);
-	addTypedWidget("asofdate", asofdate);
-	addTypedWidget("multiplier", multiplier);
+	addWidget("latedays", latedays);
+	addWidget("asofdate", asofdate);
+	addWidget("multiplier", multiplier);
 	
 	loadHtml();
 }

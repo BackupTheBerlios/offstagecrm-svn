@@ -85,7 +85,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	JScrollPane pane = new JScrollPane();
 	pane.setViewportView(segtable);
 	pane.setPreferredSize(new Dimension(200,200));
-	super.addWidget("segtable", pane);
+	super.addComponent("segtable", pane);
 	
 	loadHtml();
 }
