@@ -102,6 +102,7 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 
         setLayout(new java.awt.BorderLayout());
 
+        selector.setAutoSelectOnOne(true);
         add(selector, java.awt.BorderLayout.CENTER);
 
     }// </editor-fold>//GEN-END:initComponents
