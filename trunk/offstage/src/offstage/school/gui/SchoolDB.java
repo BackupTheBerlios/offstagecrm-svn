@@ -63,6 +63,19 @@ public static String createPayerSql(int payerid)
 	return "select w_payer_create(" + SqlInteger.sql(payerid) + ")";
 }
 
+public static String w_delteOrpanMeetingsSql()
+{
+	return
+		"delete from meetings\n" +
+		"using (\n" +
+		"	select m.meetingid\n" +
+		"	from meetings m left outer join courseids c on m.courseid = c.courseid\n" +
+		"	where c.courseid is null\n" +
+		") xx\n" +
+		"where meetings.meetingid = xx.meetingid;";
+}
+
+
 ///** Recalculate tuition for adultid associated with this student. */
 //public static void w_tuitiontrans_calcTuition(SqlRunner str, int termid, int studentid)
 //throws SQLException

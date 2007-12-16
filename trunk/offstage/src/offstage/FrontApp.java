@@ -238,7 +238,7 @@ throws Exception
 	this.batchSets = new Stack();
 	pushBatchSet();
 	// ================
-	SqlBatchSet str = new SqlBatchSet();
+	SqlBatchSet str = new SqlBatchSet(pool);
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	expHandler = new MailExpHandler(sender,
@@ -273,11 +273,11 @@ throws Exception
 	
 	dbChange = new DbChangeModel();
 	this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
-	str.runBatches(pool);		// Our SchemaSet must be set up before we go on.
+	str.runBatches();		// Our SchemaSet must be set up before we go on.
 	// ================
 	
 	// ================
-	str = new SqlBatchSet();
+	str = new SqlBatchSet(pool);
 	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
 	fullEntityDm = new FullEntityDbModel(this);
 	mailings = new MailingModel2(str, this);//, appRunner);
@@ -287,7 +287,7 @@ throws Exception
 	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 	
 	equerySchema = new EQuerySchema(getSchemaSet());
-	str.runBatches(pool);
+	str.runBatches();
 	// ================
 	
 	reports = new offstage.reports.OffstageReports(this);

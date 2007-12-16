@@ -49,10 +49,10 @@ public SchoolModel(App fapp)
 
 public void setTermID(Integer TermID)
 	{ setTermID(TermID == null ? -1 : TermID.intValue()); }
-public void setTermID(int termID)
+public void setTermID(int newTermID)
 {
 	int oldTermID = termID;
-	this.termID = termID;
+	this.termID = newTermID;
 	if (oldTermID != termID) fireTermIDChanged(oldTermID, termID);
 }
 public int getTermID()

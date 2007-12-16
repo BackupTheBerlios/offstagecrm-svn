@@ -505,11 +505,11 @@ public static void main(String[] args) throws Exception
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	FrontApp fapp = new FrontApp(pool,null);
-	SqlBatchSet str = new SqlBatchSet();
+	SqlBatchSet str = new SqlBatchSet(pool);
 	
 	CleansePanel panel = new CleansePanel();
 	panel.initRuntime(str, fapp, "n");
-	str.runBatches(pool);
+	str.runBatches();
 	
 	JFrame frame = new JFrame();
 //	frame.setSize(600,800);

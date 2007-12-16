@@ -34,7 +34,7 @@ import citibob.types.*;
  *
  * @author  citibob
  */
-public class SchoolPanel extends javax.swing.JPanel
+public class RegistrationPanel extends javax.swing.JPanel
 {
 
 FrontApp fapp;
@@ -90,7 +90,7 @@ class AllDbModel extends MultiDbModel
 	public void doUpdate(SqlRunner str)
 	{
 		if (smod.schoolRm.get("parentid") == null || smod.schoolRm.get("adultid") == null) {
-			JOptionPane.showMessageDialog(SchoolPanel.this,
+			JOptionPane.showMessageDialog(RegistrationPanel.this,
 				"Cannot save record.  You must have a payer\nand parent in order to save.");
 			return;
 		}
@@ -144,7 +144,7 @@ class AllDbModel extends MultiDbModel
 //	return (Termid == null ? -1 : Termid);
 //}
 /** Creates new form SchoolPanel */
-public SchoolPanel()
+public RegistrationPanel()
 {
 	initComponents();
 }
@@ -213,7 +213,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	// Change person when user clicks on family...
 	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(final PropertyChangeEvent evt) {
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)evt.getNewValue();
 			if (EntityID == null) return;
@@ -374,7 +374,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
     public void termIDChanged(int oldTermID, int termID)  {
 		SqlRunner str = fapp.getBatchSet();
 		Integer eid = (Integer)smod.studentRm.get("entityid");
-
+		if (eid == null) return;
+		
 		// Ensure a registration record for this term
 		str.execSql(SchoolDB.registerStudentSql(termID, eid, fapp.sqlDate));
 
@@ -417,7 +418,7 @@ public void changeStudent(SqlRunner str, int entityid)// throws SQLException
 		"Would you like to save before moving on?",
 			JOptionPane.QUESTION_MESSAGE, JOptionPane.DEFAULT_OPTION,
 			null, options, options[0]);
-        JDialog dialog = pane.createDialog(SchoolPanel.this, "Student not Saved");
+        JDialog dialog = pane.createDialog(RegistrationPanel.this, "Student not Saved");
 
         //pane.selectInitialValue();
         dialog.show();
@@ -516,8 +517,6 @@ void setIDDirty(boolean dirty)
     {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        RegistrationsTab = new javax.swing.JPanel();
         jPanel20 = new javax.swing.JPanel();
         cardPanel = new javax.swing.JPanel();
         PeopleMain = new javax.swing.JPanel();
@@ -725,8 +724,6 @@ void setIDDirty(boolean dirty)
         setLayout(new java.awt.BorderLayout());
 
         setBackground(new java.awt.Color(102, 255, 51));
-        RegistrationsTab.setLayout(new java.awt.BorderLayout());
-
         jPanel20.setLayout(new java.awt.BorderLayout());
 
         cardPanel.setLayout(new java.awt.CardLayout());
@@ -958,7 +955,7 @@ void setIDDirty(boolean dirty)
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(157, Short.MAX_VALUE))
         );
         jTabbedPane2.addTab("Misc.", jPanel6);
 
@@ -1203,7 +1200,7 @@ void setIDDirty(boolean dirty)
             jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel21Layout.createSequentialGroup()
                 .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addContainerGap(155, Short.MAX_VALUE))
         );
         jTabbedPane4.addTab("Misc.", jPanel21);
 
@@ -1440,7 +1437,7 @@ void setIDDirty(boolean dirty)
             jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel25Layout.createSequentialGroup()
                 .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addContainerGap(155, Short.MAX_VALUE))
         );
         jTabbedPane5.addTab("Misc.", jPanel25);
 
@@ -2412,22 +2409,18 @@ void setIDDirty(boolean dirty)
 
         jPanel20.add(PeopleHeader, java.awt.BorderLayout.NORTH);
 
-        RegistrationsTab.add(jPanel20, java.awt.BorderLayout.CENTER);
+        add(jPanel20, java.awt.BorderLayout.CENTER);
 
         searchBox.setAutoSelectOnOne(true);
         searchBox.setMinimumSize(new java.awt.Dimension(200, 47));
         searchBox.setPreferredSize(new java.awt.Dimension(200, 89));
-        RegistrationsTab.add(searchBox, java.awt.BorderLayout.EAST);
-
-        jTabbedPane1.addTab("Registrations", RegistrationsTab);
-
-        add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        add(searchBox, java.awt.BorderLayout.EAST);
 
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bOtherTransActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOtherTransActionPerformed
 	{//GEN-HEADEREND:event_bOtherTransActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)entityid.getValue();
 			Wizard wizard = new TransactionWizard(fapp, null,
@@ -2460,9 +2453,9 @@ void setIDDirty(boolean dirty)
 
 void newAdultAction(final String colName)
 {
-	fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+	fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(RegistrationPanel.this);
 		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
 		wizard.runWizard();
 		Integer eid = (Integer)wizard.getVal("entityid");
@@ -2477,9 +2470,9 @@ void newAdultAction(final String colName)
 
 	private void bNewHouseholdActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewHouseholdActionPerformed
 	{//GEN-HEADEREND:event_bNewHouseholdActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
+			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(RegistrationPanel.this);
 			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
 			wizard.runWizard();
 			Integer eid = (Integer)wizard.getVal("entityid");
@@ -2501,9 +2494,9 @@ void newAdultAction(final String colName)
 
 	private void bNewStudentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewStudentActionPerformed
 	{//GEN-HEADEREND:event_bNewStudentActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(SchoolPanel.this);
+			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(RegistrationPanel.this);
 			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
 			wizard.runWizard();
 			Integer eid = (Integer)wizard.getVal("entityid");
@@ -2516,13 +2509,13 @@ void newAdultAction(final String colName)
 
 	private void bRemoveEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRemoveEnrollmentActionPerformed
 	{//GEN-HEADEREND:event_bRemoveEnrollmentActionPerformed
-		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
+		if (JOptionPane.showConfirmDialog(RegistrationPanel.this,
 			"Are you sure you wish to\n" +
 			"remove the selected enrollment?",
 			"Remove Enrollment", JOptionPane.YES_NO_OPTION)
 			== JOptionPane.NO_OPTION) return;
 		
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			
 			int row = enrollments.getSelectedRow();
@@ -2543,7 +2536,7 @@ void newAdultAction(final String colName)
 
 	private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddEnrollmentActionPerformed
 	{//GEN-HEADEREND:event_bAddEnrollmentActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			enrolledDb.doUpdate(str);
 			Wizard wizard = new EnrollWizard(fapp, null);
@@ -2572,7 +2565,7 @@ void newAdultAction(final String colName)
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			smod.studentRm.set("primaryentityid", all.getIntKey());
 		}});
@@ -2581,7 +2574,7 @@ void newAdultAction(final String colName)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			all.doSelect(str);
 //str.execUpdate(new UpdRunnable() {
@@ -2620,7 +2613,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 	
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			doUpdateSelect(str);
 		}});
@@ -2628,7 +2621,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 
 	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
 	{//GEN-HEADEREND:event_bCcActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
@@ -2641,7 +2634,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 
 	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
 	{//GEN-HEADEREND:event_bCheckActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
@@ -2655,7 +2648,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 
 	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
 	{//GEN-HEADEREND:event_bCashActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
@@ -2694,7 +2687,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JPanel PeopleHeader;
     private javax.swing.JPanel PeopleHeader1;
     private javax.swing.JPanel PeopleMain;
-    private javax.swing.JPanel RegistrationsTab;
     private javax.swing.JPanel StudentAccounts;
     private javax.swing.JPanel StudentPane;
     private javax.swing.JTabbedPane StudentTab;
@@ -2809,7 +2801,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;

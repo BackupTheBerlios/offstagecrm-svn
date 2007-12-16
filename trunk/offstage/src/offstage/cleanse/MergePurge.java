@@ -198,9 +198,9 @@ System.out.println("Done getting names (" + nameMap.size() + " records)");
 public static void main(String[] args) throws Exception
 {
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	SqlBatchSet str = new SqlBatchSet();
+	SqlBatchSet str = new SqlBatchSet(pool);
 	new MergePurge(str);
-	str.runBatches(pool);
+	str.runBatches();
 }
 
 }

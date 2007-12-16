@@ -325,10 +325,10 @@ public static void main(String[] args) throws Exception
 	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
 	FrontApp fapp = new FrontApp(pool,null);
 
-	SqlBatchSet str = new SqlBatchSet();
+	SqlBatchSet str = new SqlBatchSet(pool);
 	int termid = 346;
 	AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, 12633, new java.util.Date());
-	str.runBatches(pool);
+	str.runBatches();
 }
 // ================================================================
 static class BalTableModel extends DefaultJTypeTableModel

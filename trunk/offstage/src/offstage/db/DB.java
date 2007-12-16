@@ -417,7 +417,7 @@ public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 //}
 // -------------------------------------------------------------------------------
 public static void w_meetings_autofill(SqlRunner str,
-final int courseid, final TimeZone tz, final UpdRunnable rr)
+final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //throws SQLException
 {
 	
@@ -453,7 +453,7 @@ final int courseid, final TimeZone tz, final UpdRunnable rr)
 				sts.toSql(ts1) + ");\n");
 			cal.add(Calendar.WEEK_OF_YEAR, 1);
 		}
-		str.execSql(sbuf.toString(), rr);
+		str.execSql(sbuf.toString());
 	}});
 }
 // --------------------------------------------------

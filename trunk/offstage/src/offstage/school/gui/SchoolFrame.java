@@ -41,6 +41,7 @@ SchoolModel schoolModel;
 public SchoolFrame()
 {
 	initComponents();
+	tabs.setSelectedComponent(regPanel);
 }
 
 public void initRuntime(SqlRunner str, FrontApp xfapp)
@@ -50,6 +51,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
 	this.schoolModel = new SchoolModel(fapp);
 	
+	coursesPanel.initRuntime(fapp, schoolModel, str);
+	
+
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
 	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.getDbChange(), "termids",
@@ -58,13 +62,18 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	public void run(SqlRunner str) throws Exception {
 		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			schoolModel.setTermID((Integer)(vTermID.getValue()));
+			// Property change was (almost probably) due to a mouse click;
+			// So we need the runApp() here.
+			fapp.runApp(new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				schoolModel.setTermID((Integer)(vTermID.getValue()));
+			}});
 		}});
 		vTermID.setKeyedModel(tkmodel);
-			
+//		if (tkmodel.size() > 0) vTermID.setSelectedIndex(0);
 	}});
-	
-	panel.initRuntime(str, xfapp, schoolModel);
+
+	regPanel.initRuntime(str, xfapp, schoolModel);
 	
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
@@ -90,10 +99,12 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents()
     {
-        panel = new offstage.school.gui.SchoolPanel();
         jPanel1 = new javax.swing.JPanel();
         vTermID = new citibob.swing.typed.JKeyedComboBox();
         jLabel3 = new javax.swing.JLabel();
+        tabs = new javax.swing.JTabbedPane();
+        coursesPanel = new offstage.school.gui.CoursesPanel();
+        regPanel = new offstage.school.gui.RegistrationPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         mActions = new javax.swing.JMenu();
         miRecalcAllTuition = new javax.swing.JMenuItem();
@@ -114,8 +125,6 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("School -- OffstageArts");
-        getContentPane().add(panel, java.awt.BorderLayout.CENTER);
-
         vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
 
@@ -128,7 +137,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jLabel3)
                 .add(3, 3, 3)
-                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 794, Short.MAX_VALUE))
+                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 851, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -136,6 +145,12 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
             .add(vTermID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        tabs.addTab("Courses", coursesPanel);
+
+        tabs.addTab("Registration", regPanel);
+
+        getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
 
         mActions.setText("Actions");
         miRecalcAllTuition.setText("Recalc All Tuition");
@@ -461,6 +476,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private offstage.school.gui.CoursesPanel coursesPanel;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
@@ -480,7 +496,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private javax.swing.JMenuItem miSchedule;
     private javax.swing.JMenuItem miStudentAccounts;
     private javax.swing.JMenuItem miStudentSchedules;
-    private offstage.school.gui.SchoolPanel panel;
+    private offstage.school.gui.RegistrationPanel regPanel;
+    private javax.swing.JTabbedPane tabs;
     private citibob.swing.typed.JKeyedComboBox vTermID;
     // End of variables declaration//GEN-END:variables
 
