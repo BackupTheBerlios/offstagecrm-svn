@@ -84,8 +84,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	coursesDb.setOrderClause("dayofweek, tstart, name");
 
 	courses.setModelU(coursesDb.getSchemaBuf(),
-		new String[] {"Name", "Day", "Start", "End", "Tuition", "Enroll Limit"},
-		new String[] {"name", "dayofweek", "tstart", "tnext", "price", "enrolllimit"},
+		new String[] {"Status", "#", "Name", "Day", "Start", "End", "Tuition", "Enroll Limit"},
+		new String[] {"__status__", "__rowno__", "name", "dayofweek", "tstart", "tnext", "price", "enrolllimit"},
 		null, fapp.getSwingerMap());
 	courses.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
 
@@ -107,8 +107,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 		"courseid", fapp.getDbChange(), new IntKeyedDbModel.Params(false));
 	meetingsDb.setOrderClause("dtstart");
 	meetings.setModelU(meetingsDb.getSchemaBuf(),
-		new String[] {"Start", "End"},
-		new String[] {"dtstart", "dtnext"},
+		new String[] {"Status", "#", "Start", "End"},
+		new String[] {"__status__", "__rowno__", "dtstart", "dtnext"},
 		null, fapp.getSwingerMap());
 
 	// Dates are internally represented (in the database) in GMT, but displayed in local timezone.
@@ -159,7 +159,7 @@ void all_doSelect(SqlRunner str)
 
         jPanel2 = new javax.swing.JPanel();
         coursesPane = new javax.swing.JScrollPane();
-        courses = new citibob.jschema.swing.StatusTable();
+        courses = new citibob.jschema.swing.SchemaBufTable();
         coursesButtons = new javax.swing.JPanel();
         bAddCourse = new javax.swing.JButton();
         bDelCourse = new javax.swing.JButton();
@@ -168,7 +168,7 @@ void all_doSelect(SqlRunner str)
         bUndelAllCourse = new javax.swing.JButton();
         bAutoFillMeetings1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        meetings = new citibob.jschema.swing.StatusTable();
+        meetings = new citibob.jschema.swing.SchemaBufTable();
         jPanel1 = new javax.swing.JPanel();
         bAddMeeting = new javax.swing.JButton();
         bDelMeeting = new javax.swing.JButton();
@@ -443,6 +443,7 @@ void all_doSelect(SqlRunner str)
 		fapp.runGui(CoursesPanel.this, new ERunnable() {
 		public void run() throws Exception {
 			coursesDb.getSchemaBuf().undeleteRow(courses.getSelectedRow());
+			courses.requestFocus();
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bUndelCourseActionPerformed
@@ -565,6 +566,7 @@ void all_doSelect(SqlRunner str)
 		fapp.runGui(CoursesPanel.this, new ERunnable() {
 		public void run() throws Exception {
 			coursesDb.getSchemaBuf().deleteRow(courses.getSelectedRow());
+			courses.requestFocus();
 		}});
 	}//GEN-LAST:event_bDelCourseActionPerformed
 
@@ -594,7 +596,7 @@ void all_doSelect(SqlRunner str)
     private javax.swing.JButton bUndelCourse;
     private javax.swing.JButton bUndo;
     private javax.swing.JButton bUndoDelMeeting;
-    private citibob.jschema.swing.StatusTable courses;
+    private citibob.jschema.swing.SchemaBufTable courses;
     private javax.swing.JPanel coursesButtons;
     private javax.swing.JScrollPane coursesPane;
     private javax.swing.JLabel jLabel1;
@@ -603,7 +605,7 @@ void all_doSelect(SqlRunner str)
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
-    private citibob.jschema.swing.StatusTable meetings;
+    private citibob.jschema.swing.SchemaBufTable meetings;
     // End of variables declaration//GEN-END:variables
 	
 }

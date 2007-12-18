@@ -59,7 +59,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addWidget("namount", "amount", schema);		// Negative of amount...
+	addWidget("amount", "amount", schema);
 	addTextField("description", schema);
 	addWidget("date", schema).setValue(schema.getCol("date").newDate());
 	loadHtml();

@@ -119,8 +119,8 @@ addState(new AbstractWizState("adjpayment", null, null) {
 		{ return new AdjpaymentWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		double namount = ((Number)v.get("namount")).doubleValue();
-		con.v.put("amount", new Double(-namount));
+//		double namount = ((Number)v.get("namount")).doubleValue();
+//		con.v.put("amount", new Double(-namount));
 		vInsert(con, "adjpayments");
 	}
 });
