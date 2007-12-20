@@ -96,6 +96,7 @@
 	<copy todir="build/classes/offstage/reports">
 	    <fileset dir="./reports"><include name="*.odt"/></fileset>
 	    <fileset dir="./reports"><include name="*.jrxml"/></fileset>
+	    <fileset dir="./reports"><include name="*.xls"/></fileset>
 	</copy>
 </target>
 
@@ -117,7 +118,7 @@
 <taskdef name="mvcgen" classname="citibob.mvcgen.MVCGenTask" classpath="compilelib/MVCGen.jar"/>
     
 <target name="mvc">
-    <mvcgen file="./src/offstage/DbChangeModelMVC.mvc"/>
+    <mvcgen file="./src/offstage/school/gui/SchoolModelMVC.mvc"/>
 </target>
 
     
