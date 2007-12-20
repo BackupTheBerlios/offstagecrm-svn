@@ -1,10 +1,10 @@
 #!/bin/sh
 # Usage: newuser name password
 
-psql template1 <<EOF
+psql template1 -U postgres <<EOF
 CREATE ROLE $1 LOGIN PASSWORD '$2'
    VALID UNTIL 'infinity'
-   CONNECTION LIMIT 50
+   CONNECTION LIMIT 5
    IN ROLE offstageusers;
 
 CREATE DATABASE $1

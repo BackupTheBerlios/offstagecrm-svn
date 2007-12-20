@@ -1,4 +1,4 @@
-psql template1 <<EOF
+psql template1 -U postgres <<EOF
 
 CREATE ROLE offstageusers
   NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
