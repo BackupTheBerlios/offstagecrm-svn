@@ -21,9 +21,11 @@ import java.util.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.types.JType;
+import citibob.types.JavaJType;
+import com.Ostermiller.util.CSVParser;
 import java.sql.*;
 import java.io.*;
-import com.thoughtworks.xstream.*;
 import offstage.db.*;
 
 public class EQuery extends Query
@@ -63,16 +65,20 @@ public int getNumClauses()
 public ArrayList<EClause> getClauses()
 	{ return clauses; }
 // -----------------------------------------------
-public String getSql(Column c, Element e)
+/** @param viewName The user's view of this column name */
+public String getSql(Column c, Element e, String viewName)
+throws IOException
 {
-	// Ferret out "is null" and "is not null""
 	if ("=".equals(e.comparator) && e.value == null) {
+		// Ferret out "is null" and "is not null""
 		return e.colName.toString() + " is null";
 	} else if ("<>".equals(e.comparator) && e.value == null) {
+		// Ferret out "is null" and "is not null""
 		return e.colName.toString() + " is not null";
-	} else if ("in".equals(e.comparator) &&
+	} else if (("in".equals(e.comparator) || "not in".equals(e.comparator)) &&
 	String.class.isAssignableFrom(e.value.getClass())) {
-		StringBuffer sql = new StringBuffer(e.colName.toString() + " in (");
+		// Handle in lists for strings
+		StringBuffer sql = new StringBuffer(e.colName.toString() + " " + e.comparator + " (");
 		String[] ll = ((String)(e.value)).trim().split(",");
 		if (ll.length == 0) return "false";
 		for (int i=0; ;) {
@@ -84,6 +90,15 @@ public String getSql(Column c, Element e)
 			sql.append(",");
 		}
 		return sql.toString();
+	} else if (("in file".equals(e.comparator) || "not in file".equals(e.comparator))) {
+		String vals = readCSVColumn(new File((String)e.value), viewName, c.getType());
+		
+		// Remove "file" from end of string
+		String comp = e.comparator;
+		int space = comp.lastIndexOf(' ');
+		comp = comp.substring(0,space);
+		
+		return e.colName.toString() + " " + comp + " (" + vals + ")";
 	} else {
 		return e.colName.toString() + " " + e.comparator + " " +
 			" (" + c.getType().toSql(e.value) + ")";
@@ -91,6 +106,7 @@ public String getSql(Column c, Element e)
 }
 // -----------------------------------------------
 public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
+throws IOException
 {
 	List elements = clause.elements;
 	if (elements.size() == 0) return null;		// Degenerate clause
@@ -103,7 +119,7 @@ public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
 		addTableInnerJoin(schema, sql, cn);
 		if (ewhere == null) ewhere = new StringBuffer("(");
 		else ewhere.append(" and\n");
-		ewhere.append(getSql(c, e));
+		ewhere.append(getSql(c, e, qsc.viewName));
 	}
 	ewhere.append(")");
 	return ewhere.toString();
@@ -112,6 +128,7 @@ public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
 
 /** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
 public String getSql(QuerySchema schema, EClause clause, boolean primaryOnly)
+throws IOException
 {
 	if (clause.elements.size() == 0) return null;
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
@@ -134,6 +151,7 @@ public String getSql(QuerySchema schema, EClause clause, boolean primaryOnly)
 
 /** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
 public String getSql(QuerySchema schema, boolean primaryOnly)
+throws IOException
 {
 	boolean first = true;
 	StringBuffer sql = new StringBuffer();
@@ -141,6 +159,7 @@ public String getSql(QuerySchema schema, boolean primaryOnly)
 		EClause clause = (EClause)ii.next();
 		String csql = getSql(schema, clause, primaryOnly);
 		if (csql == null) continue;
+		if (clause.type == EClause.ZERO) continue;		// Clause temporary disabled
 		if (!first) sql.append(clause.type == EClause.ADD ? "\n    UNION\n" : "\n    EXCEPT\n");
 		sql.append("(" + csql + ")");
 		first = false;
@@ -210,7 +229,7 @@ public String getSql(QuerySchema schema, boolean primaryOnly)
 // ------------------------------------------------------
 /** Returns the mailing id */
 public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema,
-final UpdRunnable rr) throws SQLException
+final UpdRunnable rr) throws SQLException, IOException
 {
 	String eqXml = toXML();
 	String eqSql = getSql(schema, true);
@@ -218,5 +237,99 @@ final UpdRunnable rr) throws SQLException
 	// Create the mailing list and insert EntityID records
 	DB.w_mailingids_create(str, queryName, eqXml, eqSql, rr);
 }
+// ------------------------------------------------------
 
+static final int STRING = 0;
+static final int INTEGER = 1;
+static final int NUMBER = 2;
+/** @param file the CSV file to read.  (FUTURE: work on .xls as well)
+ @param colName name of column in file to read out.
+ @param sqlType Type that column should be */
+public static String readCSVColumn(File file, String colName, JType sqlType)
+throws IOException
+{
+	int type;
+	
+	// Figure out which of three types we handle
+	Class klass = sqlType.getObjClass();
+	if (String.class.isAssignableFrom(klass)) {
+		type = STRING;
+	} else if (Integer.class.isAssignableFrom(klass)) {
+		type = INTEGER;
+	} else if (Number.class.isAssignableFrom(klass)) {
+		type = NUMBER;
+	} else throw new IOException("Invalid SqlType " + sqlType + " (" + sqlType.getClass().getName() + ") for CSV column");
+	
+	CSVParser csv = new CSVParser(new FileReader(file));
+	try {
+		String[] ll;
+		String[] headers;
+		int col;
+		Set<String> vals = new TreeSet();
+
+		// Search for the headers
+		for (;;) {
+			if ((ll = csv.getLine()) == null) return null;
+			if (ll.length == 0) continue;
+
+			// Assume first non-zero line is the header
+			headers = ll;
+			break;
+		}
+
+		// Find the column # that's the column we want
+		for (col=0; ; ++col) {
+			if (col >= headers.length) throw new IOException("Column " + colName + " not available in CSV file " + file);
+			if (colName.equals(headers[col])) break;
+		}
+
+		// Collect values
+		for (;;) {
+			if ((ll = csv.getLine()) == null) break;
+			if (ll.length <= col) continue;
+			String sval = ll[col].trim();
+			if (type == STRING) {
+				sval = SqlString.sql(sval);
+			} else {
+//				sval = sval.replace(",", "");
+				if (type == INTEGER) {
+					try {
+						sval = SqlInteger.sql(Integer.parseInt(sval));
+					} catch(NumberFormatException e) {
+						// Ignore any non-integers in the column
+						sval = null;
+					}
+				} else if (type == NUMBER) {
+					try {
+						Double.parseDouble(ll[col]);		// try to parse
+					} catch(NumberFormatException e) {
+						// Ignore any unparseable numbers
+						sval = null;
+					}
+				}
+			}
+			if (sval != null) vals.add(sval);
+		}
+
+		// Convert to list for inclusion in SQL
+		int nval = 0;
+		StringBuffer sb = new StringBuffer();
+		for (String sval : vals) {
+			if (nval++ > 0) sb.append(',');
+			if (nval % 10 == 0) sb.append('\n');
+			sb.append(sval);
+		}
+		return sb.toString();
+	} finally {
+		csv.close();
+	}
+}
+// ------------------------------------------------------
+// ------------------------------------------------------
+public static void main(String[] args) throws Exception
+{
+	File f = new File("/export/home/citibob/x.csv");
+	String s = readCSVColumn(f, "entityid", JavaJType.jtInteger);
+System.out.println(s);
+}
 }

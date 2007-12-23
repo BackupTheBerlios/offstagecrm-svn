@@ -24,6 +24,7 @@ public class EClause
 {
 // EClause types
 public final static int ADD = 1;
+public final static int ZERO = 0;
 public final static int SUBTRACT = -1;
 
 	public int type = ADD;			// ADD or SUBTRACT; not really public

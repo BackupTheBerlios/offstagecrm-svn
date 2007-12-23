@@ -60,8 +60,8 @@ static JType[] jtypesQuery;
 static {
 	jtypesQuery = new JType[] {
 		new JEnum(new KeyedModel(
-			new Object[] {new Integer(EClause.ADD), new Integer(EClause.SUBTRACT)},
-			new Object[] {"+", "-"})),
+			new Object[] {new Integer(EClause.ADD), new Integer(EClause.SUBTRACT), new Integer(EClause.ZERO)},
+			new Object[] {"+", "-", "0"})),
 		new JavaJType(String.class), null};
 }
 public EQueryTableModel2(QuerySchema schema)
@@ -480,7 +480,13 @@ public JType getJType(int row, int column)
 		if (col == null) return null;
 		if (column == C_COMPARE) return col.comparators;
 		if (col.col == null) return null;
-		if (column == C_VALUE) return col.col.getType();
+		if (column == C_VALUE) {
+			if (el.comparator.contains("file")) {
+				return JavaJType.jtString;
+			} else {
+				return col.col.getType();
+			}
+		}
 		return null;
 	}
 }

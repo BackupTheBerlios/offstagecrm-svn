@@ -212,7 +212,7 @@ throws SQLException
 	private void bApplyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bApplyActionPerformed
 	{//GEN-HEADEREND:event_bApplyActionPerformed
 		fapp.runGui(this, new BatchRunnable() {
-		public void run(SqlRunner str) throws SQLException {
+		public void run(SqlRunner str) throws SQLException, IOException {
 			eQueryEditor.commitValue();
 			EQuery eqy = eQueryEditor.getEQuery();
 			

@@ -165,10 +165,10 @@ protected QuerySchema()
 {
 	addTypeComparator(SqlBool.class, new String[] {"="});
 	addTypeComparator(SqlDate.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
-	addTypeComparator(SqlInteger.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+	addTypeComparator(SqlInteger.class, new String[] {"=", "in file", "not in file", ">", "<", ">=", "<=", "<>"});
 	addTypeComparator(SqlNumeric.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
 	addTypeComparator(SqlEnum.class, new String[] {"=", "<>"});
-	addTypeComparator(SqlString.class, new String[] {"=", "in", "<>", "ilike", "not ilike", "similar to", "not similar to"});
+	addTypeComparator(SqlString.class, new String[] {"=", "in", "not in", "in file", "not in file", "<>", "ilike", "not ilike", "similar to", "not similar to"});
 	addTypeComparator(SqlTimestamp.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
 	cols = new KeyedModel();
 	colsJType = new JEnum(cols);

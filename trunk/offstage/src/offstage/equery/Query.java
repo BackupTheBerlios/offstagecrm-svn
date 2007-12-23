@@ -68,7 +68,8 @@ protected void addTableInnerJoin(QuerySchema schema, ConsSqlQuery sql, ColName c
 ///** Creates a standard ConsSqlQuery out of the data in this query. */
 //public abstract void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql);
 // ------------------------------------------------------
-public abstract String getSql(QuerySchema qs, boolean primaryOnly);
+public abstract String getSql(QuerySchema qs, boolean primaryOnly)
+throws IOException;
 //{
 //	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
 //	sql.addTable("entities as main");

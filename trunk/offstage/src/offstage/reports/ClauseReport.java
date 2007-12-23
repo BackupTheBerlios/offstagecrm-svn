@@ -62,6 +62,7 @@ public static final String[] availSegmentTypes =
 //	 "phone1type", "phone1", "phone2type", "phone2", "phone3type", "phone3", "recordsource"};
 	
 public ClauseReport(FrontApp fapp, SqlRunner str, final SqlTypeSet tset, EQuery equery)
+throws IOException
 {
 	// Create the main query
 	String idSql = equery.getSql(fapp.getEquerySchema(), true);
