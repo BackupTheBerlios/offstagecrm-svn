@@ -464,6 +464,10 @@ public Object getValueAt(int row, int column)
 // Implementation of CitibobTableModel (prototype stuff)
 // ===============================================================
 // Implementation of JTypeTableModel (prototype stuff)
+JFile jFile = new JFile(new javax.swing.filechooser.FileFilter() {
+	public boolean accept(File file) { return file.getName().endsWith(".csv"); }
+	public String getDescription() { return "*.csv"; }
+}, new File("."), true);
 public JType getJType(int row, int column)
 {
 	RowSpec rs = getRow(row);
@@ -482,7 +486,8 @@ public JType getJType(int row, int column)
 		if (col.col == null) return null;
 		if (column == C_VALUE) {
 			if (el.comparator.contains("file")) {
-				return JavaJType.jtString;
+//				return JavaJType.jtString;
+				return jFile;
 			} else {
 				return col.col.getType();
 			}

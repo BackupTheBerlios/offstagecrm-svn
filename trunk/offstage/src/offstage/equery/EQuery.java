@@ -91,7 +91,7 @@ throws IOException
 		}
 		return sql.toString();
 	} else if (("in file".equals(e.comparator) || "not in file".equals(e.comparator))) {
-		String vals = readCSVColumn(new File((String)e.value), viewName, c.getType());
+		String vals = readCSVColumn((File)e.value, viewName, c.getType());
 		
 		// Remove "file" from end of string
 		String comp = e.comparator;
