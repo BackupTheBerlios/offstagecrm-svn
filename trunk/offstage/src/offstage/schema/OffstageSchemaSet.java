@@ -90,6 +90,8 @@ throws SQLException
 	map.put("adjpayments", new CcpaymentsSchema(str, change,tz));
 	map.put("termregs", new TermregsSchema(str, change,tz));
 	map.put("termenrolls", new TermenrollsSchema(str, change));		// VIEW
+	map.put("termduedates", new TermduedatesSchema(str, change, tz));
+	map.put("holidays", new HolidaysSchema(str, change, tz));
 }
 	
 }

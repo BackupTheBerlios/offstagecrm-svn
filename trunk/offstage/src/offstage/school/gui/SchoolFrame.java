@@ -52,7 +52,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	this.schoolModel = new SchoolModel(fapp);
 	
 	coursesPanel.initRuntime(fapp, schoolModel, str);
-	
+	termPanel.initRuntime(fapp, schoolModel, str);
 
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
@@ -103,6 +103,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         vTermID = new citibob.swing.typed.JKeyedComboBox();
         jLabel3 = new javax.swing.JLabel();
         tabs = new javax.swing.JTabbedPane();
+        termPanel = new offstage.school.gui.TermsPanel();
         coursesPanel = new offstage.school.gui.CoursesPanel();
         regPanel = new offstage.school.gui.RegistrationPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -145,6 +146,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
             .add(vTermID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         );
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        tabs.addTab("Terms", termPanel);
 
         tabs.addTab("Courses", coursesPanel);
 
@@ -498,6 +501,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private javax.swing.JMenuItem miStudentSchedules;
     private offstage.school.gui.RegistrationPanel regPanel;
     private javax.swing.JTabbedPane tabs;
+    private offstage.school.gui.TermsPanel termPanel;
     private citibob.swing.typed.JKeyedComboBox vTermID;
     // End of variables declaration//GEN-END:variables
 
