@@ -53,7 +53,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 	
 	coursesPanel.initRuntime(fapp, schoolModel, str);
 	termPanel.initRuntime(fapp, schoolModel, str);
-
+	termsAddPanel.initRuntime(fapp, schoolModel, str);
+	
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
 	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.getDbChange(), "termids",
@@ -103,6 +104,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         vTermID = new citibob.swing.typed.JKeyedComboBox();
         jLabel3 = new javax.swing.JLabel();
         tabs = new javax.swing.JTabbedPane();
+        termsAddPanel = new offstage.school.gui.TermsAddPanel();
         termPanel = new offstage.school.gui.TermsPanel();
         coursesPanel = new offstage.school.gui.CoursesPanel();
         regPanel = new offstage.school.gui.RegistrationPanel();
@@ -110,6 +112,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         mActions = new javax.swing.JMenu();
         miRecalcAllTuition = new javax.swing.JMenuItem();
         miApplyLateFees = new javax.swing.JMenuItem();
+        miRefresh = new javax.swing.JMenuItem();
         mStudent = new javax.swing.JMenu();
         miConfirmationLetter = new javax.swing.JMenuItem();
         miSchedule = new javax.swing.JMenuItem();
@@ -147,7 +150,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         );
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        tabs.addTab("Terms", termPanel);
+        tabs.addTab("Terms", termsAddPanel);
+
+        tabs.addTab("Holidays", termPanel);
 
         tabs.addTab("Courses", coursesPanel);
 
@@ -177,6 +182,17 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         });
 
         mActions.add(miApplyLateFees);
+
+        miRefresh.setText("Refresh");
+        miRefresh.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                miRefreshActionPerformed(evt);
+            }
+        });
+
+        mActions.add(miRefresh);
 
         jMenuBar1.add(mActions);
 
@@ -295,6 +311,13 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+	private void miRefreshActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRefreshActionPerformed
+	{//GEN-HEADEREND:event_miRefreshActionPerformed
+// TODO: This is just here for testing.
+vTermID.setKeyedModel(vTermID.getKeyedModel());
+// TODO add your handling code here:
+	}//GEN-LAST:event_miRefreshActionPerformed
 
 	private void miApplyLateFeesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miApplyLateFeesActionPerformed
 	{//GEN-HEADEREND:event_miApplyLateFeesActionPerformed
@@ -495,6 +518,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private javax.swing.JMenuItem miConfirmationLetters;
     private javax.swing.JMenuItem miPayerLabels;
     private javax.swing.JMenuItem miRecalcAllTuition;
+    private javax.swing.JMenuItem miRefresh;
     private javax.swing.JMenuItem miRollBooks;
     private javax.swing.JMenuItem miSchedule;
     private javax.swing.JMenuItem miStudentAccounts;
@@ -502,6 +526,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private offstage.school.gui.RegistrationPanel regPanel;
     private javax.swing.JTabbedPane tabs;
     private offstage.school.gui.TermsPanel termPanel;
+    private offstage.school.gui.TermsAddPanel termsAddPanel;
     private citibob.swing.typed.JKeyedComboBox vTermID;
     // End of variables declaration//GEN-END:variables
 

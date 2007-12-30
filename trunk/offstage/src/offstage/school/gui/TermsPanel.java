@@ -125,8 +125,6 @@ void all_doSelect(SqlRunner str)
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
-        bDeleteTerm = new javax.swing.JButton();
-        bNewTerm = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -332,41 +330,9 @@ void all_doSelect(SqlRunner str)
 
         jToolBar1.add(bUndo);
 
-        bDeleteTerm.setText("Delete Term");
-        bDeleteTerm.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bDeleteTermActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.add(bDeleteTerm);
-
-        bNewTerm.setText("New Term");
-        bNewTerm.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bNewTermActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.add(bNewTerm);
-
         add(jToolBar1, java.awt.BorderLayout.SOUTH);
 
     }// </editor-fold>//GEN-END:initComponents
-
-	private void bDeleteTermActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteTermActionPerformed
-	{//GEN-HEADEREND:event_bDeleteTermActionPerformed
-// TODO add your handling code here:
-	}//GEN-LAST:event_bDeleteTermActionPerformed
-
-	private void bNewTermActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewTermActionPerformed
-	{//GEN-HEADEREND:event_bNewTermActionPerformed
-// TODO add your handling code here:
-	}//GEN-LAST:event_bNewTermActionPerformed
 
 	private void ddUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddUndelActionPerformed
 	{//GEN-HEADEREND:event_ddUndelActionPerformed
@@ -446,8 +412,6 @@ void all_doSelect(SqlRunner str)
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bDeleteTerm;
-    private javax.swing.JButton bNewTerm;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
     private javax.swing.JButton ddAdd;
