@@ -312,18 +312,15 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	new Schema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
 	null, fapp.getSqlTypeSet(),
 	fapp.getSchema("enrollments"), null, fapp.getDbChange()) {
-		int entityid;
-		public void setKey(int id) { entityid = id; }
-		public String getSelectSql(boolean proto) {
-			return
-				" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
-				" from enrollments e, courseids c" +
-				" where e.courseid = c.courseid" +
-				" and c.termid = " + SqlInteger.sql(smod.getTermID()) +
-				(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(entityid)) +
-				" order by dayofweek, tstart, name";
-		}
-	};
+	public String getSelectSql(boolean proto) {
+		return
+			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
+			" from enrollments e, courseids c" +
+			" where e.courseid = c.courseid" +
+			" and c.termid = " + SqlInteger.sql(smod.getTermID()) +
+			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(intKey)) +
+			" order by dayofweek, tstart, name";
+	}};
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) {
 		RSSchema schema = (RSSchema)enrolledDb.getSchemaBuf().getSchema();
