@@ -70,8 +70,8 @@ public class EntityPanel extends javax.swing.JPanel {
 			new String[] {"Type"},
 			new String[] {"groupid"}, true, app.getSwingerMap());
 		eventsPanel.initRuntime(str, dm.getEventsSb(),
-			new String[] {"Event", "Role"},
-			new String[] {"groupid", "role"}, true, app.getSwingerMap());
+			new String[] {"Event"},//, "Role"},
+			new String[] {"groupid"/*, "role"*/}, true, app.getSwingerMap());
 		notesPanel.initRuntime(str, dm.getNotesSb(),
 			new String[] {"Type", "Date", "Note"},
 			new String[] {"groupid", "date", "note"}, true, app.getSwingerMap());

@@ -12,7 +12,6 @@ package offstage.school.gui;
 import citibob.app.App;
 import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.IntsKeyedDbModel;
-import citibob.jschema.JoinedSchemaBufDbModel;
 import citibob.jschema.SchemaBufRowModel;
 
 /**

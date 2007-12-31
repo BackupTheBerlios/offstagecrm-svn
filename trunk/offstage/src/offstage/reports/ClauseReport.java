@@ -27,13 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.reports;
 
 import offstage.*;
-import citibob.app.*;
 import citibob.swing.table.*;
-import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
 import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.sql.*;
-import citibob.sql.pgsql.*;
 import citibob.types.JType;
 import citibob.types.JavaJType;
 import java.io.*;

@@ -16,8 +16,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
-import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
-import citibob.jschema.JoinedSqlGenDbModel.TableSpec;
 import static citibob.swing.typed.TypedWidgetBinder.*;
 import offstage.schema.*;
 import citibob.wizard.*;
@@ -40,7 +38,8 @@ public class RegistrationPanel extends javax.swing.JPanel
 FrontApp fapp;
 SchoolModel smod;
 
-public JoinedSchemaBufDbModel enrolledDb;
+//public JoinedSchemaBufDbModel enrolledDb;
+public IntKeyedDbModel enrolledDb;
 public IntKeyedDbModel actransDb;
 
 
@@ -81,9 +80,9 @@ class AllDbModel extends MultiDbModel
 		
 		// Set "key" for enrollments
 		int termid = smod.getTermID();
-		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
-			" and courseids.termid = " + SqlInteger.sql(termid) +
-			" and enrollments.entityid = " + SqlInteger.sql(entityid));
+//		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
+//			" and courseids.termid = " + SqlInteger.sql(termid) +
+//			" and enrollments.entityid = " + SqlInteger.sql(entityid));
 	}
 	void superDoUpdate(SqlRunner str)
 		{ super.doUpdate(str); }
@@ -308,19 +307,21 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	// =====================================================================
 	// Enrollments
-	all.add(enrolledDb = new JoinedSchemaBufDbModel(null, new TableSpec[] {
-			new TableSpec(fapp.getSchema("enrollments")),
-			new TableSpec(fapp.getSchema("courseids"))
-		}));
-	enrolledDb.setOrderClause("courseids_dayofweek, courseids_tstart, courseids_name");
-	enrollments.setModelU(enrolledDb.getTableModel(),
-		new String[] {"Course", "Day", "Start", "Finish",
-			"Role", "Custom Start", "Custom End (+1)", "Enrolled"},
-		new String[] {"courseids_name", "courseids_dayofweek", "courseids_tstart", "courseids_tnext",
-			"enrollments_courserole", "enrollments_dstart", "enrollments_dend", "enrollments_dtenrolled"},
-		new boolean[] {false, false, false, false,
-			true, true, true, false}, fapp.getSwingerMap());
-	enrollments.setRenderEditU("courseids_dayofweek", new DayOfWeekKeyedModel());
+//	all.add(enrolledDb = new JoinedSchemaBufDbModel(null, new TableSpec[] {
+//			new TableSpec(fapp.getSchema("enrollments")),
+//			new TableSpec(fapp.getSchema("courseids"))
+//		}));
+	all.add(enrolledDb = new IntKeyedDbModel(
+		fapp.getSchema("enrollments"), "entityid", new IntKeyedDbModel.Params(true)));
+//	enrolledDb.setOrderClause("courseids_dayofweek, courseids_tstart, courseids_name");
+//	enrollments.setModelU(enrolledDb.getTableModel(),
+//		new String[] {"Course", "Day", "Start", "Finish",
+//			"Role", "Custom Start", "Custom End (+1)", "Enrolled"},
+//		new String[] {"courseids_name", "courseids_dayofweek", "courseids_tstart", "courseids_tnext",
+//			"enrollments_courserole", "enrollments_dstart", "enrollments_dend", "enrollments_dtenrolled"},
+//		new boolean[] {false, false, false, false,
+//			true, true, true, false}, fapp.getSwingerMap());
+//	enrollments.setRenderEditU("courseids_dayofweek", new DayOfWeekKeyedModel());
 //		new TypedWidgetRenderEdit(new JKeyedComboBox(new DayOfWeekKeyedModel())));
 
 //		new KeyedRenderEdit(new DayOfWeekKeyedModel()));

@@ -30,7 +30,6 @@ import citibob.sql.AdhocOJSqlTableModel;
 import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
-import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
 import citibob.reports.Reports;
 import static citibob.sql.RSTableModel.Col;
 import java.util.*;

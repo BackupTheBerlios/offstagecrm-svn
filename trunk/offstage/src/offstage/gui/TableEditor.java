@@ -29,7 +29,6 @@ import java.sql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.multithread.*;
-import static citibob.jschema.JoinedSchemaBufDbModel.TableSpec;
 //import offstage.gui.MultiSBTest;
 import citibob.sql.*;
 
