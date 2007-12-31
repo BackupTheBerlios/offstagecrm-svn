@@ -39,7 +39,7 @@ FrontApp fapp;
 SchoolModel smod;
 
 //public JoinedSchemaBufDbModel enrolledDb;
-public IntKeyedDbModel enrolledDb;
+public SqlBufDbModel enrolledDb;
 public IntKeyedDbModel actransDb;
 
 
@@ -80,6 +80,7 @@ class AllDbModel extends MultiDbModel
 		
 		// Set "key" for enrollments
 		int termid = smod.getTermID();
+		enrolledDb.setKey(entityid);
 //		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
 //			" and courseids.termid = " + SqlInteger.sql(termid) +
 //			" and enrollments.entityid = " + SqlInteger.sql(entityid));
@@ -307,12 +308,44 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	// =====================================================================
 	// Enrollments
-//	all.add(enrolledDb = new JoinedSchemaBufDbModel(null, new TableSpec[] {
-//			new TableSpec(fapp.getSchema("enrollments")),
-//			new TableSpec(fapp.getSchema("courseids"))
-//		}));
-	all.add(enrolledDb = new IntKeyedDbModel(
-		fapp.getSchema("enrollments"), "entityid", new IntKeyedDbModel.Params(true)));
+	enrolledDb = new SqlBufDbModel(str,
+	new Schema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
+	null, fapp.getSqlTypeSet(),
+	fapp.getSchema("enrollments"), null, fapp.getDbChange()) {
+		int entityid;
+		public void setKey(int id) { entityid = id; }
+		public String getSelectSql(boolean proto) {
+			return
+				" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
+				" from enrollments e, courseids c" +
+				" where e.courseid = c.courseid" +
+				" and c.termid = " + SqlInteger.sql(smod.getTermID()) +
+				(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(entityid)) +
+				" order by dayofweek, tstart, name";
+		}
+	};
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) {
+		RSSchema schema = (RSSchema)enrolledDb.getSchemaBuf().getSchema();
+//		schema.setJTypes(fapp.getSchema("courseids"));
+//		schema.setJTypes(fapp.getSchema("enrollments"));
+		all.add(enrolledDb);
+		enrollments.setModelU(enrolledDb.getTableModel(),
+			new String[] {"Course", "Day", "Start", "Finish",
+				"Role", "Custom Start", "Custom End (+1)"},
+			new String[] {"name", "dayofweek", "tstart", "tnext",
+				"courserole", "dstart", "dend"},
+			new boolean[] {false, false, false, false,
+				true, true, true, false}, fapp.getSwingerMap());
+		enrollments.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
+//		enrollments.setModelU(enrolledDb.getTableModel(),
+//			new String[] {"courseid",
+//				"Role", "Custom Start", "Custom End (+1)", "Enrolled"},
+//			new String[] {"courseid",
+//				"courserole", "dstart", "dend", "dtenrolled"},
+//			null, fapp.getSwingerMap());
+	}});
+
 //	enrolledDb.setOrderClause("courseids_dayofweek, courseids_tstart, courseids_name");
 //	enrollments.setModelU(enrolledDb.getTableModel(),
 //		new String[] {"Course", "Day", "Start", "Finish",
