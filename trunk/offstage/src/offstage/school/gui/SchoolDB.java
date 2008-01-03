@@ -132,6 +132,87 @@ private static class TuitionRec implements Comparable<TuitionRec>
 		return 0;
 	}
 }
+// -----------------------------------------------------------------
+public static void w_meetings_autofill(SqlRunner str, int termid,
+final int courseid, final TimeZone tz)//, final UpdRunnable rr)
+//throws SQLException
+{
+	String sql =
+		// rss[0]: Holidays
+		" select h.firstday, h.lastday + 1 as nextday\n" +
+		" from holidays h, termids t\n" +
+		" where ((h.firstday <= t.firstdate and h.lastday > t.firstdate-1)\n" +
+		" or (h.lastday >= t.nextdate-1 and h.firstday < t.nextdate)\n" +
+		" or (h.firstday >= t.firstdate and h.lastday <= t.nextdate-1)\n" +
+		" or (h.firstday >= t.firstdate and h.firstday < t.nextdate and h.lastday is null))\n" +
+		" and (h.lastday >= h.firstday or h.lastday is null)\n" +
+		" and h.termid = t.groupid\n" +
+		" and t.groupid=" + SqlInteger.sql(termid) + ";\n" +
+
+		// rss[1]: Start and end of each course
+		"select t.firstdate, t.nextdate, c.dayofweek, c.tstart, c.tnext, c.courseid" +
+		" from termids t, courseids c" +
+		" where t.groupid = c.termid" +
+		(courseid < 0
+			? " and t.groupid = " + SqlInteger.sql(termid)
+			: " and c.courseid = " + SqlInteger.sql(courseid));
+
+	str.execSql(sql, new RssRunnable() {
+	public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
+		SqlTimestamp sts = new SqlTimestamp("GMT");
+		SqlDate sdt = new SqlDate(tz, true);
+		SqlTime stm = new SqlTime();
+
+		// Get the holidays into a Set.
+		ResultSet rs = rss[0];
+		Set<Long> holidays = new TreeSet();
+		while (rs.next()) {
+			java.util.Date firstDt = sdt.get(rs, "firstday");
+			java.util.Date nextDt = sdt.get(rs, "nextday");
+			Calendar cal = Calendar.getInstance(tz);
+			cal.setTime(sdt.get(rs, "firstday"));
+			if (nextDt == null) holidays.add(cal.getTimeInMillis());
+			else for (;;) {
+				long ms = cal.getTimeInMillis();
+				if (ms >= nextDt.getTime()) break;
+				holidays.add(ms);
+				cal.add(Calendar.DAY_OF_YEAR, 1);
+			}
+		}
+		rs.close();
+
+		// Get the actual meetings of each course
+		rs = rss[1];
+		StringBuffer sbuf = new StringBuffer();
+		while (rs.next()) {
+			final java.util.Date day0 = sdt.get(rs, 1);
+			final java.util.Date day1 = sdt.get(rs, 2);
+			final int dayofweek = rs.getInt(3);
+			final long tstartMS = stm.get(rs, 4).getTime();
+			final long tnextMS = stm.get(rs, 5).getTime();
+			final int xcourseid = rs.getInt(6);
+
+			// Start generating the timestamps...
+			sbuf.append("delete from meetings where courseid = " + SqlInteger.sql(xcourseid) + ";\n");
+			Calendar cal = Calendar.getInstance(tz);
+			cal.setTime(day0);
+			cal.set(Calendar.DAY_OF_WEEK, dayofweek);
+			for (;cal.getTimeInMillis() < day1.getTime(); cal.add(Calendar.WEEK_OF_YEAR, 1)) {
+				long ms0 = cal.getTimeInMillis();
+				if (holidays.contains(ms0)) continue;
+				java.util.Date ts0 = new java.util.Date(ms0 + tstartMS);
+				java.util.Date ts1 = new java.util.Date(ms0 + tnextMS);
+				sbuf.append("insert into meetings (courseid, dtstart, dtnext)" +
+					" values (" + SqlInteger.sql(xcourseid) + ", " +
+					sts.toSql(ts0) + ", " +
+					sts.toSql(ts1) + ");\n");
+			}
+		}
+		rs.close();
+		str.execSql(sbuf.toString());
+	}});
+}
+// --------------------------------------------------
 
 //public static void w_tuitiontrans_recalcAllTuitions(SqlRunner str, final int termid)
 //throws SQLException
