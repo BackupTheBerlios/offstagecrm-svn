@@ -211,19 +211,19 @@ public void requestTextFocus()
 // ===========================================================
 
 	
-public static void main(String[] args) throws Exception
-{	
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	Statement st = pool.checkout().createStatement();
-	FrontApp fapp = new FrontApp(pool,null);
-	
-	javax.swing.JFrame frame = new javax.swing.JFrame();
-	EntitySelector panel = new EntitySelector();
-	panel.initRuntime(fapp);
-	frame.getContentPane().add(panel);
-	frame.pack();
-	frame.setVisible(true);
-}
+//public static void main(String[] args) throws Exception
+//{	
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	Statement st = pool.checkout().createStatement();
+//	FrontApp fapp = new FrontApp(pool,null);
+//	
+//	javax.swing.JFrame frame = new javax.swing.JFrame();
+//	EntitySelector panel = new EntitySelector();
+//	panel.initRuntime(fapp);
+//	frame.getContentPane().add(panel);
+//	frame.pack();
+//	frame.setVisible(true);
+//}
 
 	public boolean isAutoSelectOnOne()
 	{

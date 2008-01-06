@@ -587,13 +587,13 @@ double getPrice(int weeklyS)
 	return TuitionRate.getRateY(weeklyS);
 }
 
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	offstage.FrontApp fapp = new offstage.FrontApp(pool,null);
-	TuitionCalc.w_recalc(fapp.getBatchSet(), fapp.getTimeZone(), 346,
-		"select 24822 as id");
-	fapp.getBatchSet().runBatches();
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	offstage.FrontApp fapp = new offstage.FrontApp(pool,null);
+//	TuitionCalc.w_recalc(fapp.getBatchSet(), fapp.getTimeZone(), 346,
+//		"select 24822 as id");
+//	fapp.getBatchSet().runBatches();
+//}
 
 }
