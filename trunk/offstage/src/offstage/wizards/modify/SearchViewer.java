@@ -25,12 +25,10 @@ package offstage.wizards.modify;
 
 import offstage.db.*;
 import offstage.*;
-import citibob.multithread.*;
-import citibob.swing.typed.*;
 import java.sql.*;
 import citibob.swing.*;
-import citibob.swing.table.*;
 import citibob.sql.*;
+import offstage.devel.gui.DevelModel;
 
 /**
  *
@@ -38,7 +36,7 @@ import citibob.sql.*;
  */
 public class SearchViewer extends javax.swing.JPanel {
 
-FullEntityDbModel entityDb;
+DevelModel dmod;
 EntityListTableModel dupsModel;
 
 /** Creates new form DupCheckPanel */
@@ -47,28 +45,28 @@ public SearchViewer() {
 }
 
 //public void initRuntime(SqlRunner str,
-//EntityListTableModel dupsModel, FullEntityDbModel entityDb,
+//EntityListTableModel dupsModel, FulldmodModel dmod,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
 //	this.dupsModel = dupsModel;
-//	this.entityDb = entityDb;
+//	this.dmod = dmod;
 //}
 
 public void initRuntime(SqlRunner str,
 FrontApp fapp)
-//FullEntityDbModel xentityDb,
+//FulldmodModel xdmod,
 //String idSql, String orderBy,
 //final ActionRunner guiRunner, SwingerMap smap)
 throws SQLException
 {
-	searchPanel.initRuntime(fapp);
-	mainEntityPanel.initRuntime(str, fapp, fapp.getFullEntityDm());
-	entityDb = fapp.getFullEntityDm();
-//entityDb, smap);
+	dmod = new DevelModel(fapp);
+	searchPanel.initRuntime(fapp, dmod);
+	mainEntityPanel.initRuntime(str, fapp, dmod);
+//dmod, smap);
 //
 //	dupsModel = new EntityListTableModel();
 //	dupsModel.setRows(st, idSql, orderBy);
-//	this.entityDb = xentityDb;
+//	this.dmod = xdmod;
 //	dupsTable.initRuntime(dupsModel);
 //	DClickTableMouseListener dclick =
 //		new DClickTableMouseListener(dupsTable) {
@@ -81,8 +79,8 @@ throws SQLException
 //				// Process the selection
 //				int entityid = getSelectedEntityID(dupsTable);
 //				if (entityid < 0) return;
-//				entityDb.setKey(entityid);
-//				entityDb.doSelect(st);
+//				dmod.setKey(entityid);
+//				dmod.doSelect(st);
 //			}});
 //		}};
 //	
@@ -102,7 +100,7 @@ int getSelectedEntityID(CitibobJTable searchResultsTable)
 
 public int getDisplayedEntityID()
 {
-	return entityDb.getEntityId();
+	return dmod.getEntityId();
 }
     /** This method is called from within the constructor to
      * initialize the form.
@@ -112,7 +110,7 @@ public int getDisplayedEntityID()
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         jSplitPane2 = new javax.swing.JSplitPane();
-        mainEntityPanel = new offstage.gui.PersonPanel();
+        mainEntityPanel = new offstage.devel.gui.PersonPanel();
         searchPanel = new offstage.gui.SimpleSearchPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -130,7 +128,7 @@ public int getDisplayedEntityID()
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSplitPane jSplitPane2;
-    private offstage.gui.PersonPanel mainEntityPanel;
+    private offstage.devel.gui.PersonPanel mainEntityPanel;
     private offstage.gui.SimpleSearchPanel searchPanel;
     // End of variables declaration//GEN-END:variables
 

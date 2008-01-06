@@ -23,7 +23,7 @@ import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.multithread.*;
 import offstage.FrontApp;
-import offstage.db.FullEntityDbModel;
+import offstage.devel.gui.DevelModel;
 import offstage.db.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;

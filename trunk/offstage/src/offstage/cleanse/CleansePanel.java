@@ -12,6 +12,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.SqlInteger;
 import java.util.*;
 import java.sql.*;
+import offstage.devel.gui.DevelModel;
 import offstage.schema.*;
 import citibob.jschema.log.*;
 import offstage.db.*;
@@ -31,7 +32,7 @@ public class CleansePanel extends javax.swing.JPanel
 App app;
 
 // The two records we're comparing
-FullEntityDbModel[] dm = new FullEntityDbModel[2];
+DevelModel[] dm = new DevelModel[2];
 MultiDbModel allDm;		// = dm[0] and dm[1]
 RSTableModel dupModel;
 //Integer entityid0, entityid1;
@@ -67,9 +68,9 @@ String dupType;
 		this.app = fapp;
 		this.dupType = dupType;
 		
-		dm[0] = new FullEntityDbModel(app);
+		dm[0] = new DevelModel(app);
 		entityPanel0.initRuntime(str, fapp, dm[0]);
-		dm[1] = new FullEntityDbModel(app);
+		dm[1] = new DevelModel(app);
 		entityPanel1.initRuntime(str, fapp, dm[1]);
 		allDm = new MultiDbModel(dm);
 
@@ -104,8 +105,8 @@ String dupType;
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			dupTable.setModelU(dupModel,
-				new String[] {"Score", "ID-0", "Name-0", "ID-1", "Name-1"},
-				new String[] {"score", "entityid0", "string0", "entityid1", "string1"},
+				new String[] {"#", "Score", "ID-0", "Name-0", "ID-1", "Name-1"},
+				new String[] {"__rowno__", "score", "entityid0", "string0", "entityid1", "string1"},
 				new String[] {null, "string0", "string0", "string1", "string1"},
 				new boolean[] {false,false,false,false,false},
 				app.getSwingerMap());
@@ -126,8 +127,8 @@ String dupType;
 
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
-        entityPanel0 = new offstage.gui.EntityPanel();
-        entityPanel1 = new offstage.gui.EntityPanel();
+        entityPanel0 = new offstage.devel.gui.EntityPanel();
+        entityPanel1 = new offstage.devel.gui.EntityPanel();
         jPanel2 = new javax.swing.JPanel();
         dupTablePane = new javax.swing.JScrollPane();
         dupTable = new citibob.swing.typed.JTypedSelectTable();
@@ -473,8 +474,8 @@ private void mergeAction(final int entityid0, final int entityid1)
     private javax.swing.JButton bUndo;
     private citibob.swing.typed.JTypedSelectTable dupTable;
     private javax.swing.JScrollPane dupTablePane;
-    private offstage.gui.EntityPanel entityPanel0;
-    private offstage.gui.EntityPanel entityPanel1;
+    private offstage.devel.gui.EntityPanel entityPanel0;
+    private offstage.devel.gui.EntityPanel entityPanel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSplitPane jSplitPane1;

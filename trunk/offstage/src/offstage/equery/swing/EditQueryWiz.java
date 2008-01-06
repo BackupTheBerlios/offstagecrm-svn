@@ -29,7 +29,7 @@ import javax.swing.*;
 import citibob.swing.table.*;
 import java.util.prefs.*;
 import offstage.*;
-import offstage.db.FullEntityDbModel;
+import offstage.devel.gui.DevelModel;
 import offstage.db.EntityListTableModel;
 import offstage.equery.*;
 import citibob.multithread.*;

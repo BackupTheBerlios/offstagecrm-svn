@@ -31,6 +31,7 @@ import citibob.swing.table.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.types.*;
+import offstage.devel.gui.*;
 
 /**
  *
@@ -82,7 +83,7 @@ SchemaBuf groupSb;
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
         GroupScrollPanel = new javax.swing.JScrollPane();
-        groupTable = new offstage.gui.GroupsTable();
+        groupTable = new offstage.devel.gui.GroupsTable();
         controller = new javax.swing.JPanel();
         addType = new citibob.swing.typed.JKeyedComboBox();
         jPanel1 = new javax.swing.JPanel();
@@ -159,7 +160,7 @@ System.out.println("Deleting row: " + selected);
     private citibob.swing.typed.JKeyedComboBox addType;
     private javax.swing.JPanel controller;
     private javax.swing.JButton delBtn;
-    private offstage.gui.GroupsTable groupTable;
+    private offstage.devel.gui.GroupsTable groupTable;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 	

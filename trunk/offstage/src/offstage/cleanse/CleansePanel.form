@@ -33,9 +33,9 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
           <SubComponents>
-            <Component class="offstage.gui.EntityPanel" name="entityPanel0">
+            <Component class="offstage.devel.gui.EntityPanel" name="entityPanel0">
             </Component>
-            <Component class="offstage.gui.EntityPanel" name="entityPanel1">
+            <Component class="offstage.devel.gui.EntityPanel" name="entityPanel1">
             </Component>
           </SubComponents>
         </Container>

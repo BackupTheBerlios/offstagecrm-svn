@@ -77,11 +77,11 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
 	regPanel.initRuntime(str, xfapp, schoolModel);
 	
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		// Also set up frame preferences
-		new citibob.swing.prefs.SwingPrefs().setPrefs(SchoolFrame.this, "", fapp.userRoot().node("SchoolFrame"));
-	}});
+//	str.execUpdate(new UpdRunnable() {
+//	public void run(SqlRunner str) throws Exception {
+//		// Also set up frame preferences
+//		new citibob.swing.prefs.SwingPrefs().setPrefs(SchoolFrame.this, "", fapp.userRoot().node("SchoolFrame"));
+//	}});
 
 }
 
@@ -126,6 +126,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         miRollBooks = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         miStudentAccounts = new javax.swing.JMenuItem();
+        mWindow = new javax.swing.JMenu();
         mHelp = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -282,6 +283,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
         mReports.add(miStudentAccounts);
 
         jMenuBar1.add(mReports);
+
+        mWindow.setText("Window");
+        jMenuBar1.add(mWindow);
 
         mHelp.setText("Help");
         jMenuBar1.add(mHelp);
@@ -491,6 +495,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private javax.swing.JMenu mHelp;
     private javax.swing.JMenu mReports;
     private javax.swing.JMenu mStudent;
+    private javax.swing.JMenu mWindow;
     private javax.swing.JMenuItem miAccountStatement;
     private javax.swing.JMenuItem miAccountStatements;
     private javax.swing.JMenuItem miApplyLateFees;

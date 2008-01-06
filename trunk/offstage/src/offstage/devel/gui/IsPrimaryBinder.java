@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Created on May 14, 2003, 8:52 PM
  */
 
-package offstage.gui;
+package offstage.devel.gui;
 
 import java.text.DateFormat;
 import java.util.Date;

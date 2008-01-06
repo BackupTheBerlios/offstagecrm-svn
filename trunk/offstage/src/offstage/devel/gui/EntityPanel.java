@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Created on June 5, 2005, 9:48 AM
  */
 
-package offstage.gui;
+package offstage.devel.gui;
 
 
 import java.sql.*;
@@ -37,7 +37,7 @@ import citibob.swing.typed.*;
 import java.awt.*;
 import java.awt.event.*;
 import offstage.FrontApp;
-import offstage.db.FullEntityDbModel;
+import offstage.devel.gui.DevelModel;
 import citibob.app.*;
 
 /**
@@ -53,7 +53,7 @@ public class EntityPanel extends javax.swing.JPanel {
 
 	EntityPanel getThis() { return this; }
 	
-	public void initRuntime(SqlRunner str, FrontApp fapp, FullEntityDbModel dm)
+	public void initRuntime(SqlRunner str, FrontApp fapp, DevelModel dm)
 	//throws java.sql.SQLException
 	{
 		App app = fapp;
@@ -124,7 +124,7 @@ public class EntityPanel extends javax.swing.JPanel {
         termsPanel = new offstage.gui.GroupPanel();
         flagsPanel = new offstage.gui.GroupPanel();
         cryptCCInfo = new offstage.swing.typed.CryptCCInfo();
-        mainPanel = new offstage.gui.PersonPanel();
+        mainPanel = new offstage.devel.gui.PersonPanel();
 
         groupPanels.setPreferredSize(new java.awt.Dimension(458, 200));
         groupPanels.addTab("Donations", donationsPanel);
@@ -170,7 +170,7 @@ public class EntityPanel extends javax.swing.JPanel {
     private offstage.gui.GroupPanel flagsPanel;
     private javax.swing.JTabbedPane groupPanels;
     private offstage.gui.GroupPanel interestsPanel;
-    private offstage.gui.PersonPanel mainPanel;
+    private offstage.devel.gui.PersonPanel mainPanel;
     private offstage.gui.GroupPanel notesPanel;
     private offstage.gui.GroupPanel termsPanel;
     private offstage.gui.GroupPanel ticketsPanel;

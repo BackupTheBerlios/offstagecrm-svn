@@ -18,8 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage;
 import java.sql.*;
 import java.util.*;
-import citibob.sql.*;
-import citibob.multithread.*;
 import offstage.equery.*;
 import citibob.multithread.*;
 import citibob.sql.*;
@@ -37,9 +35,11 @@ import citibob.jschema.log.*;
 import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
+import citibob.gui.*;
 
 public class FrontApp extends citibob.app.App
 {
+
 
 public static final int ACTIONS_SCREEN = 0;
 public static final int PEOPLE_SCREEN = 1;
@@ -61,11 +61,12 @@ SwingerMap swingerMap;
 OffstageSchemaSet sset;
 EQuerySchema equerySchema;
 citibob.reports.Reports reports;
+FrameSet frameSet;
 
-FullEntityDbModel fullEntityDm;
+//FullEntityDbModel fullEntityDm;
 //EQueryModel2 equeries;
-MailingModel2 mailings;
-EntityListTableModel simpleSearchResults;
+//MailingModel2 mailings;
+//EntityListTableModel simpleSearchResults;
 SwingActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
@@ -138,6 +139,7 @@ public void runGui(java.awt.Component c, String[] groups, CBRunnable r)
 public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
 public Schema getSchema(String name) { return sset.get(name); }
+public FrameSet getFrameSet() { return frameSet; }
 public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 public citibob.reports.Reports getReports() { return reports; }
 
@@ -203,11 +205,13 @@ Properties loadProps() throws IOException
 	return props;
 }
 // -------------------------------------------------------
-public FrontApp(ConnPool pool, javax.swing.text.Document stdoutDoc)
+public FrontApp(ConnPool pool)
 throws Exception
 //SQLException, java.io.IOException, javax.mail.internet.AddressException,
 //java.security.GeneralSecurityException
 {
+	frameSet = new offstage.gui.OffstageFrameSet(this);
+	ConsoleFrame consoleFrame = (ConsoleFrame)frameSet.getFrame("console");
 	configDir = new File(System.getProperty("user.dir"), "config");
 	props = loadProps();
 
@@ -242,7 +246,7 @@ throws Exception
 	//pool = new DBConnPool();
 	MailSender sender = new GuiMailSender();
 	expHandler = new MailExpHandler(sender,
-			new InternetAddress("citibob@comcast.net"), "OffstageArts", stdoutDoc);
+			new InternetAddress("citibob@comcast.net"), "OffstageArts", consoleFrame.getDocument());
 	guiRunner = new BusybeeDbActionRunner(this, expHandler);
 	appRunner = new SimpleDbActionRunner(this, expHandler);
 	//guiRunner = new SimpleDbActionRunner(pool);
@@ -279,12 +283,12 @@ throws Exception
 	// ================
 	str = new SqlBatchSet(pool);
 	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
-	fullEntityDm = new FullEntityDbModel(this);
-	mailings = new MailingModel2(str, this);//, appRunner);
+//	fullEntityDm = new FullEntityDbModel(this);
+//	mailings = new MailingModel2(str, this);//, appRunner);
 
 //	mailings.refreshMailingids();
 //		equeries = new EQueryModel2(st, mailings, sset);
-	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
+//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 	
 	equerySchema = new EQuerySchema(getSchemaSet());
 	str.runBatches();
@@ -292,8 +296,8 @@ throws Exception
 	
 	reports = new offstage.reports.OffstageReports(this);
 }
-public EntityListTableModel getSimpleSearchResults()
-	{ return simpleSearchResults; }
+//public EntityListTableModel getSimpleSearchResults()
+//	{ return simpleSearchResults; }
 //public Statement createStatement() throws java.sql.SQLException
 //	{ return db.createStatement(); }
 
@@ -301,10 +305,10 @@ public EntityListTableModel getSimpleSearchResults()
 //	{ return db; }
 
 // ------------------------------------
-public FullEntityDbModel getFullEntityDm()
-	{ return fullEntityDm; }
-public MailingModel2 getMailingModel()
-	{ return mailings; }
+//public FullEntityDbModel getFullEntityDm()
+//	{ return fullEntityDm; }
+//public MailingModel2 getMailingModel()
+//	{ return mailings; }
 //public EQueryModel2 getEQueryModel2()
 //	{ return equeries; }
 public DbChangeModel getDbChange()

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package offstage.gui;
+package offstage.devel.gui;
 
 /**
  *

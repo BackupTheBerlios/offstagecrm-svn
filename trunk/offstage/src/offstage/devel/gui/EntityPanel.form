@@ -117,7 +117,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="offstage.gui.PersonPanel" name="mainPanel">
+    <Component class="offstage.devel.gui.PersonPanel" name="mainPanel">
     </Component>
   </SubComponents>
 </Form>

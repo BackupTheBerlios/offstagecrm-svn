@@ -124,6 +124,11 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="mWindow">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Window"/>
+          </Properties>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="mHelp">
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>

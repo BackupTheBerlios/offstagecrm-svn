@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
- * FrameSet.java
+ * FrameSetX.java
  *
  * Created on March 12, 2006, 1:22 AM
  *
@@ -43,7 +43,7 @@ import offstage.config.*;
  *
  * @author citibob
  */
-public class FrameSet {
+public class OffstageLauncher {
 
 protected OffstageGui offstageGui;
 protected ConsoleFrame consoleFrame;
@@ -51,11 +51,10 @@ protected ConsoleFrame consoleFrame;
 
 
 
-    /** Creates a new instance of FrameSet */
-    public FrameSet() throws Exception {
+    /** Creates a new instance of FrameSetX */
+    public OffstageLauncher() throws Exception {
 new com.Ostermiller.util.CSVPrinter(System.out);
 
-//System.out.println(System.getProperty("os.name"));
 		ConnPool pool = offstage.db.DB.newConnPool();
 //		Connection dbb = pool.checkout();
 //
@@ -70,19 +69,20 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 
 //		SqlBatchSet str = new SqlBatchSet();
 		
-		consoleFrame = new ConsoleFrame();
-		consoleFrame.initRuntime("Java Console", OffstageVersion.guiPrefs.absolutePath() + "/ConsoleFrame");
 		
-		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
-		offstageGui = new OffstageGui();
-		offstageGui.initRuntime(app.getBatchSet(), app, this, OffstageVersion.guiPrefs);
+//		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
+		FrontApp app = new FrontApp(pool);
+		app.getFrameSet().openFrame("maintenance");
+//		offstageGui = new OffstageGui();
+//		offstageGui.initRuntime(app);
 
-app.getFullEntityDm().setKey(12633);	// Go to Bob's record (for debuggin)'
-app.getFullEntityDm().doSelect(app.getBatchSet());
-		app.getBatchSet().runBatches();
+		app.getBatchSet().flush();
+//app.getFullEntityDm().setKey(12633);	// Go to Bob's record (for debuggin)'
+//app.getFullEntityDm().doSelect(app.getBatchSet());
+//		app.getBatchSet().runBatches();
 		
-		offstageGui.pack();
-	    offstageGui.setVisible(true);
+//		offstageGui.pack();
+//	    offstageGui.setVisible(true);
     }
 
 
@@ -92,7 +92,7 @@ app.getFullEntityDm().doSelect(app.getBatchSet());
 		System.setProperty("swing.metalTheme", "ocean");
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		
-	 new FrameSet();
+	 new OffstageLauncher();
     }
 
 }

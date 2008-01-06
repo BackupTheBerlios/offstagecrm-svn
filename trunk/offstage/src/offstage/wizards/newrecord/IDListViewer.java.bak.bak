@@ -24,13 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.wizards.newrecord;
 
 import offstage.db.*;
+import offstage.*;
 import citibob.multithread.*;
+import citibob.swing.typed.*;
 import java.sql.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.app.*;
 import citibob.sql.*;
-import offstage.devel.gui.DevelModel;
 
 /**
  *
@@ -38,7 +39,7 @@ import offstage.devel.gui.DevelModel;
  */
 public class IDListViewer extends javax.swing.JPanel {
 
-DevelModel entityDb;
+FullEntityDbModel entityDb;
 EntityListTableModel dupsModel;
 
 /** Creates new form DupCheckPanel */
@@ -47,7 +48,7 @@ public IDListViewer() {
 }
 
 //public void initRuntime(SqlRunner str,
-//EntityListTableModel dupsModel, DevelModel entityDb,
+//EntityListTableModel dupsModel, FullEntityDbModel entityDb,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
 //	this.dupsModel = dupsModel;
@@ -55,7 +56,7 @@ public IDListViewer() {
 //}
 
 public void initRuntime(SqlRunner str,
-DevelModel xentityDb,
+FullEntityDbModel xentityDb,
 String idSql, String orderBy,
 final App app)
 //final ActionRunner guiRunner, SwingerMap smap)
@@ -107,7 +108,7 @@ int getSelectedEntityID(CitibobJTable searchResultsTable)
         jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         dupsTable = new offstage.gui.FamilyTable();
-        mainEntityPanel = new offstage.devel.gui.PersonPanel();
+        mainEntityPanel = new offstage.gui.PersonPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -139,7 +140,7 @@ int getSelectedEntityID(CitibobJTable searchResultsTable)
     private offstage.gui.FamilyTable dupsTable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane2;
-    private offstage.devel.gui.PersonPanel mainEntityPanel;
+    private offstage.gui.PersonPanel mainEntityPanel;
     // End of variables declaration//GEN-END:variables
 
 }

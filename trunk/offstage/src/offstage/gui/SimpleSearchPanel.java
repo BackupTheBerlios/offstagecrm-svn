@@ -28,13 +28,13 @@ import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.multithread.*;
 import offstage.FrontApp;
-import offstage.db.FullEntityDbModel;
+import offstage.devel.gui.*;
+import offstage.devel.gui.DevelModel;
 import offstage.db.*;
 import java.awt.event.*;
 import offstage.swing.typed.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;
-//import java.beans.*;
 
 /**import 
  *
@@ -43,7 +43,7 @@ import citibob.sql.*;
 public class SimpleSearchPanel extends javax.swing.JPanel
 implements java.beans.PropertyChangeListener
 {
-	FullEntityDbModel dm;
+	DevelModel dmod;
 	citibob.app.App app;
 	
 	/** Creates new form SimpleSearchPanel */
@@ -51,43 +51,23 @@ implements java.beans.PropertyChangeListener
 		initComponents();
 
 		selector.addPropertyChangeListener("value", this);
-//		// Double-clicking will go to selected person
-//		final JTypedSelectTable table = selector.getSearchTable();
-//		table.addMouseListener(
-//		new DClickTableMouseListener(table) {
-//		public void doubleClicked(final int row) {
-//			app.runGui(SimpleSearchPanel.this, new BatchRunnable() {
-//			public void run(SqlRunner str) throws Exception {
-//				// Make sure it's selected in the GUI
-//				table.getSelectionModel().setSelectionInterval(row, row);
-//
-//				// Process the selection
-//				int entityid = (Integer)selector.getValue();//getSelectedEntityID();
-//				if (entityid < 0) return;
-//				dm.setKey(entityid);
-//				dm.doSelect(st);
-//			}});
-//		}});
 	}
-	public void initRuntime(FrontApp fapp) //SqlRunner str, FullEntityDbModel dm)
+	public void initRuntime(FrontApp fapp, DevelModel dmod) //SqlRunner str, FullEntityDbModel dm)
 	{
 		this.app = fapp;
-		this.dm = fapp.getFullEntityDm();
+		this.dmod = dmod;
 		selector.initRuntime(fapp);
 	}
 
 public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
-//	app.runGui(SimpleSearchPanel.this, new BatchRunnable() {
-//	public void run(SqlRunner str) throws Exception {
 	SqlRunner str = app.getBatchSet();
 		Integer Entityid = (Integer)evt.getNewValue();
 		if (Entityid == null) return;
 		int entityid = Entityid;
 		if (entityid < 0) return;
-		dm.setKey(entityid);
-		dm.doSelect(str);
-//	}});
+		dmod.setKey(entityid);
+		dmod.doSelect(str);
 }	
 
 /** This method is called from within the constructor to

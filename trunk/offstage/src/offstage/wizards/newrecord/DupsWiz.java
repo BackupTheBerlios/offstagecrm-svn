@@ -28,17 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.wizards.newrecord;
 
 import citibob.swing.html.HtmlWiz;
-import citibob.swing.html.HtmlWiz;
-import java.util.*;
-import citibob.swing.typed.*;
-import citibob.swing.html.*;
-import offstage.types.*;
 import javax.swing.*;
-import offstage.wizards.*;
 import offstage.*;
-import offstage.gui.*;
-import citibob.wizard.*;
 import citibob.sql.*;
+import offstage.devel.gui.DevelModel;
 
 /**
  *
@@ -59,7 +52,8 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 
 	
 	IDListViewer listView = new IDListViewer();
-	listView.initRuntime(str, fapp.getFullEntityDm(),
+	DevelModel dmod = new DevelModel(fapp);
+	listView.initRuntime(str, dmod,
 		idSql, null, fapp);
 //		fapp.getGuiRunner(), fapp.getSwingerMap());
 //	html.getMap().put("idlistviewer", listView);
