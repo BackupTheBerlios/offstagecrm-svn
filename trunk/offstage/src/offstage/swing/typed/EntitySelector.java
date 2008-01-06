@@ -44,6 +44,7 @@ public class EntitySelector extends citibob.swing.typed.JTypedPanel {
 	
 // searchResultsTable is the main "sub widget", whose value change events get reported in JTypedPanel
 citibob.app.App app;
+int termid;					// If >=0, only select persons registered for this term.
 
 private boolean autoSelectOnOne = false;		// If true, auto-select if we get only one element in our search results
 
@@ -72,7 +73,11 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt) {
 
 
 public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel dm)
+{ initRuntime(xapp, -1); }
+
+public void initRuntime(citibob.app.App xapp, int termid) //Statement st, FullEntityDbModel dm)
 {
+	this.termid = termid;
 	this.app = xapp;
 	searchResultsTable.initRuntime(app);
 	super.setSubWidget(searchResultsTable);
@@ -93,14 +98,14 @@ public void initRuntime(citibob.app.App xapp) //Statement st, FullEntityDbModel 
 public void setSearch(SqlRunner str, String text)
 //throws SQLException
 {
-		String idSql = DB.simpleSearchSql(text);
-		searchResultsTable.executeQuery(str, idSql, null);
-		str.execUpdate(new UpdRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			if (searchResultsTable.getModel().getRowCount() == 1 && isAutoSelectOnOne()) {
-				searchResultsTable.setRowSelectionInterval(0,0);	// Auto-select the one item; Should fire an event...
-			}
-		}});
+	String idSql = (termid >= 0 ? DB.registeredSearchSql(text, termid) : DB.simpleSearchSql(text));
+	searchResultsTable.executeQuery(str, idSql, null);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		if (searchResultsTable.getModel().getRowCount() == 1 && isAutoSelectOnOne()) {
+			searchResultsTable.setRowSelectionInterval(0,0);	// Auto-select the one item; Should fire an event...
+		}
+	}});
 }
 
 void runSearch(SqlRunner str) { //throws Exception {

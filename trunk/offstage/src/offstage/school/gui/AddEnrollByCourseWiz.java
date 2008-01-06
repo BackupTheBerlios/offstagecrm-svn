@@ -34,48 +34,59 @@ import java.sql.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.types.*;
+import offstage.swing.typed.EntityIDEditableLabel;
 
 /**
  *
  * @author citibob
  */
-public class AddEnrollWiz extends HtmlWiz {
+public class AddEnrollByCourseWiz extends HtmlWiz {
 	
 /**
  * Creates a new instance of OrgWiz 
  */
-public AddEnrollWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app, TypedHashMap v)
+public AddEnrollByCourseWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, "New Org Record", app.getSwingerMap(), true);
 	setSize(600,460);
-	addComponent("sperson", new JTypedLabel((String)v.get("sperson")));
-//	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));
+	final EntityIDEditableLabel entityid = new EntityIDEditableLabel();
+		entityid.initRuntime(app, v.getInteger("termid"));
 	
-//	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
 	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
 		"courseroles", "courseroleid", "name", "orderid");
-	String sql =
-		" select courseid, c.name || ' (' || dw.shortname || ')'" +
-		" from courseids c, daysofweek dw" +
-		" where c.dayofweek = dw.javaid" +
-		" and termid = " + v.get("termid") +
-		" order by c.dayofweek, c.name, c.tstart";
-	final KeyedModel cModel = new citibob.sql.DbKeyedModel(str, null, "courseids", sql);
-	sql =
-		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
-	str.execSql(sql, new RsRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
-		rs.next();
-		addComponent("sterm", new JTypedLabel(rs.getString("name")));	
-	}});
+//	String sql =
+//		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
+//	str.execSql(sql, new RsRunnable() {
+//	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+//		rs.next();
+//		addComponent("sterm", new JTypedLabel(rs.getString("name")));	
+//	}});
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
+		addComponent("entityid", entityid);
 		addComponent("courserole", new JKeyedComboBox(crModel));
-		addComponent("courseid", new JKeyedComboBox(cModel));
+//		addComponent("courseid", new JKeyedComboBox(cModel));
 		loadHtml();
 	}});	
 
 
 }
+
+
+//public static void main(String[] args)
+//throws Exception
+//{
+//	JFrame f = new JFrame();
+//	f.setVisible(true);
+//	OrgWiz wiz = new OrgWiz(f, app);
+//	wiz.setVisible(true);
+//	System.out.println(wiz.getSubmitName());
+//	
+//	wiz = new OrgWiz(f, app);
+//	wiz.setVisible(true);
+//	System.out.println(wiz.getSubmitName());
+//	
+//	System.exit(0);
+//}
 }

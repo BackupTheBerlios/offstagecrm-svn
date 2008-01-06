@@ -114,55 +114,55 @@ addState(new AbstractWizState("editquery", "listquery", "reporttype") {
 	}
 });
 // ---------------------------------------------
-addState(new AbstractWizState("reporttype", "editquery", null) {
-	public Wiz newWiz(Wizard.Context con) throws Exception
-		{ return new ReportTypeWiz(frame); }
-	public void process(final Wizard.Context con) throws Exception
-	{
-//		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.WAIT_CURSOR);
-		String submit = con.v.getString("submit");
-		EQuery equery = (EQuery)con.v.get("equery");
-		String equeryName = con.v.getString("equeryname");
-		if ("mailinglabels".equals(submit)) {
-			equery.makeMailing(con.str, equeryName, fapp.getEquerySchema(), null);
-			con.str.execUpdate(new UpdRunnable() {
-			public void run(SqlRunner str) {
-				final int mailingID = (Integer)con.str.get("groupids_groupid_seq");
-				fapp.getMailingModel().setKey(mailingID);
-				fapp.getMailingModel().doSelect(con.str);
-				fapp.setScreen(FrontApp.MAILINGS_SCREEN);
-			}});
-			stateName = stateRec.getNext();
-		} else if ("peopletab".equals(submit)) {
-			EntityListTableModel res = fapp.getSimpleSearchResults();
-			String sql = equery.getSql(fapp.getEquerySchema(), false);
-System.out.println("EQueryWizard sql: " + sql);
-			res.setRows(con.str, sql, null);
-			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
-			stateName = stateRec.getNext();
-		} else if ("donationreport".equals(submit)) {
-			String idSql = equery.getSql(fapp.getEquerySchema(), false);
-			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
-			stateName = stateRec.getNext();
-//			stateName = (doDonationReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
-		} else if ("donationreport_nodup".equals(submit)) {
-			String idSql = equery.getSql(fapp.getEquerySchema(), true);
-//			sql = DB.removeDupsIDSql(sql);
-			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
-			stateName = stateRec.getNext();			
-//			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
-//		} else if ("segmentation".equals(submit)) {
+//addState(new AbstractWizState("reporttype", "editquery", null) {
+//	public Wiz newWiz(Wizard.Context con) throws Exception
+//		{ return new ReportTypeWiz(frame); }
+//	public void process(final Wizard.Context con) throws Exception
+//	{
+////		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.WAIT_CURSOR);
+//		String submit = con.v.getString("submit");
+//		EQuery equery = (EQuery)con.v.get("equery");
+//		String equeryName = con.v.getString("equeryname");
+//		if ("mailinglabels".equals(submit)) {
+//			equery.makeMailing(con.str, equeryName, fapp.getEquerySchema(), null);
+//			con.str.execUpdate(new UpdRunnable() {
+//			public void run(SqlRunner str) {
+//				final int mailingID = (Integer)con.str.get("groupids_groupid_seq");
+//				fapp.getMailingModel().setKey(mailingID);
+//				fapp.getMailingModel().doSelect(con.str);
+//				fapp.setScreen(FrontApp.MAILINGS_SCREEN);
+//			}});
+//			stateName = stateRec.getNext();
+//		} else if ("peopletab".equals(submit)) {
+//			EntityListTableModel res = fapp.getSimpleSearchResults();
+//			String sql = equery.getSql(fapp.getEquerySchema(), false);
+//System.out.println("EQueryWizard sql: " + sql);
+//			res.setRows(con.str, sql, null);
+//			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
+//			stateName = stateRec.getNext();
+//		} else if ("donationreport".equals(submit)) {
 //			String idSql = equery.getSql(fapp.getEquerySchema(), false);
-//			SegmentationReport.writeCSV(fapp, con.str, frame, "Segmentation Report", idSql);
+//			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
+//			stateName = stateRec.getNext();
+////			stateName = (doDonationReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
+//		} else if ("donationreport_nodup".equals(submit)) {
+//			String idSql = equery.getSql(fapp.getEquerySchema(), true);
+////			sql = DB.removeDupsIDSql(sql);
+//			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
 //			stateName = stateRec.getNext();			
-////			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
-		}
-		
-//		// Go on no matter what we chose...
-//		if (!"back".equals(submit)) state = stateRec.getNext();
-//		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.DEFAULT_CURSOR);
-	}
-});
+////			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
+////		} else if ("segmentation".equals(submit)) {
+////			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+////			SegmentationReport.writeCSV(fapp, con.str, frame, "Segmentation Report", idSql);
+////			stateName = stateRec.getNext();			
+//////			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
+//		}
+//		
+////		// Go on no matter what we chose...
+////		if (!"back".equals(submit)) state = stateRec.getNext();
+////		citibob.swing.SwingUtil.setCursor(frame, java.awt.Cursor.DEFAULT_CURSOR);
+//	}
+//});
 // ---------------------------------------------
 // ---------------------------------------------
 addState(new AbstractWizState("savecsv") {
@@ -190,6 +190,12 @@ addState(new AbstractWizState("choosetemplate") {
 addState(new AbstractWizState("segreport") {
 	public Wiz newWiz(Wizard.Context con) throws Exception
 		{ return new SegReportWiz(frame, app); }
+	public void process(Wizard.Context con) throws Exception
+	{}
+});
+addState(new AbstractWizState("donationyears") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new DonationYearsWiz(frame, app); }
 	public void process(Wizard.Context con) throws Exception
 	{}
 });
@@ -236,6 +242,37 @@ public boolean runClauseReport() throws Exception
 		"savecsv", "<end>"
 	}));
 	return runWizard("listquery");	
+}
+public boolean runDonationReport() throws Exception
+{
+	setWizardName("Donation Report");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "donationyears",
+		"donationyears", "savecsv",
+		"savecsv", "<end>"
+	}));
+	return runWizard("listquery");	
+}
+public boolean runMailingLabels(SqlRunner str) throws Exception
+{
+	setWizardName("Mailing Labels");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "<end>"
+	}));
+	if (!runWizard("listquery")) return false;
+
+	Wizard wizard = this;
+	EQuery equery = (EQuery)wizard.getVal("equery");
+
+	String idSql = equery.getSql(fapp.getEquerySchema(), false);
+	LabelReport.viewReport(str, fapp, idSql, "zip,address1");
+//	String sql = LabelReport.getSql(idSql, "zip");
+//	str.execSql(sql, new RsRunnable() {
+//	public void run(SqlRunner str, ResultSet rs) throws Exception {
+//		Reports rr = fapp.getReports();
+//		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
+//	}});
+	return true;
 }
 
 }

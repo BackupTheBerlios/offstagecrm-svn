@@ -278,6 +278,12 @@ public static void w_recalc(SqlRunner str, TimeZone tz, int termid, int payerID)
 {
 	w_recalc(str, tz, termid, "select " + SqlInteger.sql(payerID) + " as id");
 }
+public static void w_recalc(SqlRunner str, TimeZone tz, int termid, Set<Integer> payerIDs)
+{
+	String payerIdSql =
+		" select entityid from entities where entityid in " + SQL.intList(payerIDs);
+	w_recalc(str, tz, termid, payerIdSql);
+}
 public static void w_recalcAll(SqlRunner str, TimeZone tz, int termid)
 {
 	// It means we do ALL

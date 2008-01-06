@@ -87,6 +87,14 @@ addState(new AbstractWizState("add", null, null) {
 		con.str.execSql(newInsertQuery("enrollments", con.v).getSql());
 	}
 });
+addState(new AbstractWizState("addbycourse", null, null) {
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
+		{ return new AddEnrollByCourseWiz(frame, con.str, fapp, con.v); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		con.str.execSql(newInsertQuery("enrollments", con.v).getSql());
+	}
+});
 
 }
 

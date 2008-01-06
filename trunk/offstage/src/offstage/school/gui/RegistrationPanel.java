@@ -308,10 +308,13 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	// =====================================================================
 	// Enrollments
-	enrolledDb = new SqlBufDbModel(str,
-	new Schema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
-	null, fapp.getSqlTypeSet(),
-	fapp.getSchema("enrollments"), null, fapp.getDbChange()) {
+	enrolledDb = new SqlBufDbModel(str, fapp,
+		new String[] {"courseids", "enrollments"},
+		null,
+		new String[] {"enrollments"}) {
+//	new Schema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
+//	null, fapp.getSqlTypeSet(),
+//	fapp.getSchema("enrollments"), null, fapp.getDbChange()) {
 	public String getSelectSql(boolean proto) {
 		return
 			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +

@@ -29,7 +29,7 @@ throws Exception
 {
 	
 	String idSql = equery.getSql(fapp.getEquerySchema(), true);
-	String sql = LabelReport.getSql(idSql);
+	String sql = LabelReport.getSql(idSql, null);
 	
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {

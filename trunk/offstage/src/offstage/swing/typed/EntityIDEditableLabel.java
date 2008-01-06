@@ -72,13 +72,16 @@ public void setJType(JType jt, SqlRunner str)
 //}
 // -----------------------------------------------
 
-public void initRuntime(App app)
+public void initRuntime(App app) { initRuntime(app, -1); }
+
+public void initRuntime(App app, int termid)
 {
 	this.app = app;
 //	super.setJType(new SqlInteger(), ));
 	setJType(new SqlInteger(), app.getBatchSet());
+	label.setText("<Select a Person>");
 	sel = new EntitySelector();
-	sel.initRuntime(app);
+	sel.initRuntime(app, termid);
 	super.setPopupWidget(sel);		// Makes superclass listen to sel
 }
 

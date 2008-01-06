@@ -274,7 +274,7 @@ throws Exception
 			" where _bal.entityid = e.entityid" +
 			" and bal <> 0" +
 			" order by e.lastname, e.firstname";
-		LabelReport.viewReport(str, fapp, idSql);
+		LabelReport.viewReport(str, fapp, idSql, null);
 	} else {
 		idSql = "select " + payerid + " as id";
 	}

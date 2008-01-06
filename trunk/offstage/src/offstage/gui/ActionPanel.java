@@ -41,6 +41,7 @@ import java.io.File;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
 import offstage.reports.ClauseReport;
+import offstage.reports.DonationReport;
 import offstage.reports.MailMerge;
 import offstage.reports.SegmentationReport;
 
@@ -93,12 +94,12 @@ throws org.xml.sax.SAXException, java.io.IOException
 		wizard.runWizard();
 	}}));
 
-	actionMap.put("editquery", new CBTask("", new ERunnable() {
-	public void run() throws Exception {
-		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, root, "listquery");
-		wizard.runWizard();
-	}}));
+//	actionMap.put("editquery", new CBTask("", new ERunnable() {
+//	public void run() throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+//		Wizard wizard = new offstage.equery.swing.EQueryWizard(fapp, root, "listquery");
+//		wizard.runWizard();
+//	}}));
 
 	actionMap.put("mailmerge", new CBTask("", new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
@@ -122,6 +123,28 @@ throws org.xml.sax.SAXException, java.io.IOException
 				(File)wizard.getVal("file"));
 		}
 	}}));
+
+	actionMap.put("mailinglabels", new CBTask("", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, root, null);
+		wizard.runMailingLabels(str);
+	}}));
+
+	actionMap.put("donationreport", new CBTask("", new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, root, null);
+		if (wizard.runDonationReport()) {
+			EQuery equery = (EQuery)wizard.getVal("equery");
+			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+			DonationReport.writeCSV(fapp, str, idSql,
+				((Number)wizard.getVal("minyear")).intValue(),
+				((Number)wizard.getVal("maxyear")).intValue(),
+				(File)wizard.getVal("file"));
+		}
+	}}));
+
 
 	actionMap.put("clausereport", new CBTask("", new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
@@ -184,30 +207,30 @@ throws org.xml.sax.SAXException, java.io.IOException
 //		citibob.reports.JodPdfWriter.doTest(fapp.getProps().getProperty("ooffice.exe"));
 //	}}));
 	
-	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {
-	public void run() throws Exception {
-		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
-		Wizard wizard = new offstage.wizard.editcourses.EditCoursesWizard(fapp, root);
-		wizard.runWizard();
-//		SchemaBufDbModel tm = new SchemaBufDbModel(
-//			fapp.getSchema("termids"), fapp.getDbChange());
-//		tm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent)");
-//		tm.setOrderClause("firstdate");
-//		tm.doSelect(st);
-//		
-//		StatusPNC panel = new StatusPNC();
-//		panel.initRuntime(tm,
-// 			new String[] {"Type", "Name", "From", "To (+1)", "Is Current"},
-//			new String[] {"termtypeid", "name", "firstdate", "nextdate", "iscurrent"},
-//			null, fapp);
-////		JFrame frame = new JFrame();
-//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(ActionPanel.this);
-//		JDialog frame = new JDialog(root, true);
-//		frame.setSize(500,300);
-//		frame.getContentPane().add(panel);
-//		fapp.setUserPrefs(frame, "editterms");
-//		frame.setVisible(true);
-	}}));
+//	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {
+//	public void run() throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+//		Wizard wizard = new offstage.wizard.editcourses.EditCoursesWizard(fapp, root);
+//		wizard.runWizard();
+////		SchemaBufDbModel tm = new SchemaBufDbModel(
+////			fapp.getSchema("termids"), fapp.getDbChange());
+////		tm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent)");
+////		tm.setOrderClause("firstdate");
+////		tm.doSelect(st);
+////		
+////		StatusPNC panel = new StatusPNC();
+////		panel.initRuntime(tm,
+//// 			new String[] {"Type", "Name", "From", "To (+1)", "Is Current"},
+////			new String[] {"termtypeid", "name", "firstdate", "nextdate", "iscurrent"},
+////			null, fapp);
+//////		JFrame frame = new JFrame();
+////		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(ActionPanel.this);
+////		JDialog frame = new JDialog(root, true);
+////		frame.setSize(500,300);
+////		frame.getContentPane().add(panel);
+////		fapp.setUserPrefs(frame, "editterms");
+////		frame.setVisible(true);
+//	}}));
 
 //	actionMap.put("editcourses", new CBTask("", "admin", new ERunnable() {
 //	public void run() throws Exception {

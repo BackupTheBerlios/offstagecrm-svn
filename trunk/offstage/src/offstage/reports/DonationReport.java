@@ -30,11 +30,13 @@ import citibob.sql.AdhocOJSqlTableModel;
 import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
-import citibob.reports.Reports;
 import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.sql.*;
 import offstage.db.*;
+import citibob.sql.pgsql.*;
+import java.io.File;
+//import offstage.equery.QuerySchema.Col;
 
 /**
  
@@ -55,7 +57,7 @@ public void doSelect(SqlRunner str)
 }
 	
 /** Creates a new instance of DonorReport */
-public DonationReport(App app, String idSql)
+public DonationReport(App app, String idSql, int minYear, int maxYear)
 {
 	this.idSql = idSql;
 
@@ -68,7 +70,11 @@ public DonationReport(App app, String idSql)
 	this.add(new SqlDbModel(main));
 
 	// Outer Join the Fiscal Year summaries
-	final int[] years = new int[] {1989, 1990, 1991, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007};
+//	final int[] years = new int[] {1989, 1990, 1991, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007};
+	int nyear = maxYear - minYear + 1;
+	final int[] years = new int[nyear];
+	for (int i=0; i<nyear; ++i) years[i] = minYear + i;
+
 	Col[] cols = new Col[years.length];
 //	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
 	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new SqlNumeric(10,2,true));
@@ -77,7 +83,8 @@ public DonationReport(App app, String idSql)
 		" from donations d, donationids di, ids_donor ids" +
 		" where d.entityid = ids.id" +
 		" and d.groupid = di.groupid" +
-		" and di.fiscalyear in (1989, 1990, 1991, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007)" +
+		" and di.fiscalyear >= " + SqlInteger.sql(minYear) +
+		" and di.fiscalyear <= " + SqlInteger.sql(maxYear) +
 		" group by d.entityid, di.fiscalyear";
 
 	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(
@@ -97,19 +104,33 @@ System.out.println("year = " + year);
 //	setTableModel();
 }
 
-public static void writeCSV(final App app, SqlRunner str, final java.awt.Frame frame, final String title, String sql) throws Exception
+public static void writeCSV(final App app, SqlRunner str,
+String idSql, int minYear, int maxYear, final File outFile) throws Exception
 {
-	final DonationReport report = new DonationReport(app, sql);
+	final DonationReport report = new DonationReport(app, idSql, minYear, maxYear);
 	report.doSelect(str);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		Reports rr = app.getReports();
-		rr.writeCSV(rr.format(report.newTableModel()),
-			frame, "Save" + title);
-//		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
+		citibob.reports.Reports rr = app.getReports();
+		rr.writeCSV(rr.format(report.newTableModel()), outFile);
 	}});
 }
 
+
+//public static void writeCSV(final App app, SqlRunner str, final java.awt.Frame frame,
+//final String title, String sql) throws Exception
+//{
+//	final DonationReport report = new DonationReport(app, sql);
+//	report.doSelect(str);
+//	str.execUpdate(new UpdRunnable() {
+//	public void run(SqlRunner str) throws Exception {
+//		Reports rr = app.getReports();
+//		rr.writeCSV(rr.format(report.newTableModel()),
+//			frame, "Save" + title);
+////		ReportOutput.saveCSVReport(fapp, frame, "Save" + title, report.newTableModel());	
+//	}});
+//}
+//
 
 
 }

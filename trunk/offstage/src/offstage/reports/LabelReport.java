@@ -51,8 +51,9 @@ public class LabelReport
 //	st.executeUpdate("drop table ids_donor");
 //}
 
-/** Creates a new instance of DonorReport */
-public static String getSql(String idSql)
+/** Creates a new instance of DonorReport
+@param orderBy column(s) to order by.  If null, use natural order of idSql. */
+public static String getSql(String idSql, String orderBy)
 {
 	String sql =
 		// Create temporary table of IDs for this mailing list
@@ -153,14 +154,15 @@ public static String getSql(String idSql)
 		" where address1 is not null and address2 is null;\n" +
 		
 		// ================ Select, and then drop temp tables
-		" select * from _mailings where isgood order by orderid;" +
+		" select * from _mailings where isgood\n" +
+		(orderBy == null ? " order by orderid" : " order by " + orderBy) + ";" +
 		" drop table _mailings;";
 	return sql;
 }
 
-public static void viewReport(SqlRunner str, final App app, String idSql)
+public static void viewReport(SqlRunner str, final App app, String idSql, String orderBy)
 {
-	String sql = LabelReport.getSql(idSql);
+	String sql = LabelReport.getSql(idSql, orderBy);
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
 		Reports rr = app.getReports();

@@ -50,7 +50,7 @@ throws Exception
 	} else {
 		idSql = "select parentid from entities e, entities_school s where e.entityid = s.entityid and e.entityid = " + entityid;
 	}
-	String sql = LabelReport.getSql(idSql);
+	String sql = LabelReport.getSql(idSql, null);
 	
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
